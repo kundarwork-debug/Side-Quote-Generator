@@ -70,6 +70,11 @@
   }
 
   .field-group{margin-bottom:22px;}
+  #sharedFieldGroup{
+    background:#f6f5ef; border:1px solid var(--line); border-radius:10px;
+    padding:14px 14px 4px; margin-bottom:24px;
+  }
+  #sharedFieldGroup h2{color:#5b5647;}
   .field-group h2{
     font-size:11px; text-transform:uppercase; letter-spacing:.08em;
     color:var(--muted); margin:0 0 10px; font-weight:700;
@@ -253,17 +258,8 @@
       <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
     </div>
 
-    <div class="field-group">
-      <h2>Document details</h2>
-      <div class="row2">
-        <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
-        <div class="field"><label>Date</label><input id="f_date"></div>
-      </div>
-      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
-    </div>
-
-    <div class="field-group">
-      <h2>Customer</h2>
+    <div class="field-group" id="sharedFieldGroup">
+      <h2>Customer &amp; route <span style="text-transform:none; font-weight:400;">— shared on both PDFs</span></h2>
       <div class="field"><label>Customer name</label><input id="f_custName"></div>
       <div class="row2">
         <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
@@ -273,6 +269,15 @@
         <div class="field"><label>Moving from</label><input id="f_fromCity"></div>
         <div class="field"><label>Moving to</label><input id="f_toCity"></div>
       </div>
+    </div>
+
+    <div class="field-group">
+      <h2>Document details</h2>
+      <div class="row2">
+        <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
+        <div class="field"><label>Date</label><input id="f_date"></div>
+      </div>
+      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
     </div>
 
     <div class="field-group">
@@ -325,6 +330,15 @@
 /* ---------------------------------------------------------------
    DATA: default content extracted from the two uploaded documents
 --------------------------------------------------------------- */
+// Fields common to both quotations — one edit updates both PDFs.
+const SHARED_DEFAULTS = {
+  custName: "Soumen Santra",
+  custCompany: "Unregistered",
+  custGst: "GST Exempted",
+  fromCity: "Mapusa, Goa",
+  toCity: "Mumbai Central, Mumbai"
+};
+
 const DEFAULTS = {
   exact: {
     docNoLabel: "Estimate No.",
@@ -332,11 +346,6 @@ const DEFAULTS = {
     docNo: "2025323429",
     date: "08th Aug 2026",
     gstNo: "23AAACL1838J1ZO",
-    custName: "Soumen Santra",
-    custCompany: "Unregistered",
-    custGst: "GST Exempted",
-    fromCity: "Mapusa, Goa",
-    toCity: "Mumbai Central, Mumbai",
     costItems: [
       { label: "Freight", amount: 28800 },
       { label: "Car Freight", amount: 15500 },
@@ -375,11 +384,6 @@ const DEFAULTS = {
     docNo: "MAX202526954",
     date: "08th Aug 2026",
     gstNo: "07AAICM9877E1ZX",
-    custName: "Soumen Santra",
-    custCompany: "Unregistered",
-    custGst: "GST Exempted",
-    fromCity: "Mapusa, Goa",
-    toCity: "Mumbai Central, Mumbai",
     costItems: [
       { label: "Transportation Cost", amount: 30600 },
       { label: "Packing + Loading + Unloading + Unpacking", amount: 12750 },
@@ -409,6 +413,7 @@ const clone = (o) => JSON.parse(JSON.stringify(o));
 
 // live state (starts as a copy of defaults so edits don't mutate DEFAULTS)
 let state = { exact: clone(DEFAULTS.exact), maxcare: clone(DEFAULTS.maxcare) };
+let shared = clone(SHARED_DEFAULTS);
 let active = "exact";
 
 /* ---------------------------------------------------------------
@@ -434,11 +439,11 @@ function renderForm(){
   document.getElementById('f_docNo').value = d.docNo;
   document.getElementById('f_date').value = d.date;
   document.getElementById('f_gstNo').value = d.gstNo;
-  document.getElementById('f_custName').value = d.custName;
-  document.getElementById('f_custCompany').value = d.custCompany;
-  document.getElementById('f_custGst').value = d.custGst;
-  document.getElementById('f_fromCity').value = d.fromCity;
-  document.getElementById('f_toCity').value = d.toCity;
+  document.getElementById('f_custName').value = shared.custName;
+  document.getElementById('f_custCompany').value = shared.custCompany;
+  document.getElementById('f_custGst').value = shared.custGst;
+  document.getElementById('f_fromCity').value = shared.fromCity;
+  document.getElementById('f_toCity').value = shared.toCity;
   document.getElementById('f_gstPercent').value = d.gstPercent;
   document.getElementById('lblAddr').textContent = d.addrLabel;
   document.getElementById('f_addr').value = d.addr;
@@ -512,13 +517,13 @@ function renderPreview(){
         </div>
         <div class="meta-block">
           GST No: ${escapeHtml(d.gstNo)}<br>
-          MR. / MS.: <b>${escapeHtml(d.custName)}</b><br>
-          Company Name: ${escapeHtml(d.custCompany)}<br>
-          GST No: ${escapeHtml(d.custGst)}
+          MR. / MS.: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
         </div>
         <p class="quotation-label">QUOTATION</p>
         <p class="salut">Dear Sir / Mam,</p>
-        <p class="intro">Below are our best prices for moving your <b>${escapeHtml(d.fromCity)} to ${escapeHtml(d.toCity)}</b>. We hope you will find our price competitive enough &amp; will give us an opportunity to service you.</p>
+        <p class="intro">Below are our best prices for moving your <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We hope you will find our price competitive enough &amp; will give us an opportunity to service you.</p>
 
         <table class="exact-table">
           <thead><tr><th>Cost Item</th><th style="text-align:right;">Cost (in INR)</th></tr></thead>
@@ -555,12 +560,12 @@ function renderPreview(){
         </div>
         <div class="meta-block">
           ${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}<br>
-          TO: <b>${escapeHtml(d.custName)}</b><br>
-          Company Name: ${escapeHtml(d.custCompany)}<br>
-          GST No: ${escapeHtml(d.custGst)}
+          TO: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
         </div>
         <p class="quotation-label">QUOTATION</p>
-        <p class="intro">We thank you for your inquiry to move your household goods from <b>${escapeHtml(d.fromCity)} to ${escapeHtml(d.toCity)}</b>. We have pleasure in quoting our charges as follows:</p>
+        <p class="intro">We thank you for your inquiry to move your household goods from <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We have pleasure in quoting our charges as follows:</p>
 
         <table class="max-table">
           <thead><tr><th class="sno">S.No</th><th>Particulars</th><th style="text-align:right;">Amount</th></tr></thead>
@@ -605,11 +610,9 @@ function switchTab(company){
   renderAll();
 }
 
-// simple field bindings
+// per-template field bindings
 const simpleFields = {
-  f_docNo: 'docNo', f_date: 'date', f_gstNo: 'gstNo',
-  f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
-  f_fromCity: 'fromCity', f_toCity: 'toCity', f_gstPercent: 'gstPercent',
+  f_docNo: 'docNo', f_date: 'date', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
   f_addr: 'addr', f_phone: 'phone', f_email: 'email'
 };
 Object.keys(simpleFields).forEach(id => {
@@ -617,6 +620,18 @@ Object.keys(simpleFields).forEach(id => {
     state[active][simpleFields[id]] = e.target.value;
     renderPreview();
     if (id === 'f_gstPercent') renderForm(); // refresh totals box
+  });
+});
+
+// shared field bindings — one edit updates both templates' PDFs
+const sharedFields = {
+  f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
+  f_fromCity: 'fromCity', f_toCity: 'toCity'
+};
+Object.keys(sharedFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    shared[sharedFields[id]] = e.target.value;
+    renderPreview();
   });
 });
 
@@ -717,7 +732,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
     const d = state[active];
     const safeName = (s) => String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g,'');
-    const filename = `${safeName(d.companyName)}_Quotation_${safeName(d.custName || 'Customer')}.pdf`;
+    const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
     pdf.save(filename);
     status.textContent = 'Downloaded ✓';
   } catch (err) {
