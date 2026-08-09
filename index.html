@@ -282,6 +282,13 @@
 
     <div class="field-group">
       <h2>Cost items</h2>
+      <div class="field" style="margin-bottom:14px;">
+        <label>Total amount (auto-fills items below using standard %)</label>
+        <div style="display:flex; gap:6px;">
+          <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1;">
+          <button id="applyTotalBtn" style="flex:none; padding:0 16px; border-radius:6px; border:1.5px solid var(--line); background:#f6f5ef; color:var(--ink); font-size:12.5px; font-weight:700; cursor:pointer;">Apply</button>
+        </div>
+      </div>
       <div id="costRows"></div>
       <button class="add-btn" id="addCostRow">+ Add cost item</button>
 
@@ -408,6 +415,27 @@ const DEFAULTS = {
   }
 };
 
+// Fixed cost-item percentage splits (from the reference sheet), keyed by
+// normalized cost item label. Used to auto-fill amounts from a single total.
+const PERCENT_SPLITS = {
+  exact: {
+    "freight": 60,
+    "car freight": 0,
+    "packing charges": 20,
+    "loading charges at origin": 10,
+    "unloading charges at destination": 5,
+    "unpacking charges": 3,
+    "other charges (toll etc.)": 2
+  },
+  maxcare: {
+    "transportation cost": 60,
+    "packing + loading + unloading + unpacking": 25,
+    "car transportation (if any)": 0,
+    "toll tax + risk cover + misc. cost": 15
+  }
+};
+function normalizeLabel(s){ return String(s).trim().toLowerCase(); }
+
 // deep clone helper
 const clone = (o) => JSON.parse(JSON.stringify(o));
 
@@ -429,6 +457,30 @@ function computeTotals(data){
   const gstAmount = subtotal * (Number(data.gstPercent)||0) / 100;
   const grand = subtotal + gstAmount;
   return { subtotal, gstAmount, grand };
+}
+
+function applyTotalAmount(){
+  const total = parseFloat(document.getElementById('f_totalAmount').value) || 0;
+  const d = state[active];
+  const splits = PERCENT_SPLITS[active] || {};
+
+  const matchedIdx = d.costItems
+    .map((item, idx) => ({ idx, pct: splits[normalizeLabel(item.label)] }))
+    .filter(m => m.pct !== undefined);
+
+  if (matchedIdx.length === 0 || total <= 0) return;
+
+  let runningTotal = 0;
+  matchedIdx.forEach((m, i) => {
+    if (i === matchedIdx.length - 1) {
+      // last matched row absorbs any rounding remainder so the sum is exact
+      d.costItems[m.idx].amount = Math.round(total - runningTotal);
+    } else {
+      const amt = Math.round(total * m.pct / 100);
+      d.costItems[m.idx].amount = amt;
+      runningTotal += amt;
+    }
+  });
 }
 
 function renderForm(){
@@ -607,8 +659,21 @@ function switchTab(company){
   active = company;
   document.getElementById('tabExact').classList.toggle('active', company==='exact');
   document.getElementById('tabMaxcare').classList.toggle('active', company==='maxcare');
+  document.getElementById('f_totalAmount').value = '';
   renderAll();
 }
+
+document.getElementById('applyTotalBtn').addEventListener('click', () => {
+  applyTotalAmount();
+  renderAll();
+});
+document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    applyTotalAmount();
+    renderAll();
+  }
+});
 
 // per-template field bindings
 const simpleFields = {
