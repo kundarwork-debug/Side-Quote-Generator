@@ -65,6 +65,32 @@
     background: #7f1d1d;
   }
 
+  /* Counter Badge Container on Landing Page */
+  .counter-badge-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .counter-badge {
+    background: #ffffff;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(153, 27, 27, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .counter-badge span {
+    font-weight: 700;
+    font-size: 14px;
+  }
+
   .landing-footer {
     position: absolute;
     bottom: 32px;
@@ -491,6 +517,12 @@
 
 <div class="landing-page" id="landingPage">
   <button class="landing-btn" id="createQuoteBtn">Create side quote apml</button>
+  
+  <div class="counter-badge-container">
+    <div class="counter-badge">👁️ Visits: <span id="visitCount">...</span></div>
+    <div class="counter-badge">📥 Downloads: <span id="downloadCount">...</span></div>
+  </div>
+
   <div class="landing-footer">By Prasad</div>
 </div>
 
@@ -581,6 +613,54 @@
 </div>
 
 <script>
+/* ---------------------------------------------------------------
+   GLOBAL LIVE COUNTER (API) LOGIC
+--------------------------------------------------------------- */
+const API_NAMESPACE = "apml_quote_editor_prasad";
+
+async function fetchGlobalCounters() {
+  // Increment visit count globally
+  try {
+    const resVisit = await fetch(`https://api.counterapi.dev/v1/${API_NAMESPACE}/visits/up`);
+    const dataVisit = await resVisit.json();
+    if (dataVisit && dataVisit.count !== undefined) {
+      document.getElementById('visitCount').textContent = dataVisit.count.toLocaleString();
+    }
+  } catch (err) {
+    console.warn("Global visit counter offline:", err);
+    document.getElementById('visitCount').textContent = "1";
+  }
+
+  // Read current global download count
+  try {
+    const resDl = await fetch(`https://api.counterapi.dev/v1/${API_NAMESPACE}/downloads`);
+    const dataDl = await resDl.json();
+    if (dataDl && dataDl.count !== undefined) {
+      document.getElementById('downloadCount').textContent = dataDl.count.toLocaleString();
+    } else {
+      document.getElementById('downloadCount').textContent = "0";
+    }
+  } catch (err) {
+    console.warn("Global download counter offline:", err);
+    document.getElementById('downloadCount').textContent = "0";
+  }
+}
+
+async function incrementGlobalDownloadCount() {
+  try {
+    const res = await fetch(`https://api.counterapi.dev/v1/${API_NAMESPACE}/downloads/up`);
+    const data = await res.json();
+    if (data && data.count !== undefined) {
+      document.getElementById('downloadCount').textContent = data.count.toLocaleString();
+    }
+  } catch (err) {
+    console.warn("Could not increment global download counter:", err);
+  }
+}
+
+// Trigger global counter initialization on load
+fetchGlobalCounters();
+
 /* ---------------------------------------------------------------
    NAVIGATION TRANSITIONS
 --------------------------------------------------------------- */
@@ -1020,7 +1100,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ---------------------------------------------------------------
-   PDF DOWNLOAD WITH VALIDATION
+   PDF DOWNLOAD WITH VALIDATION & GLOBAL COUNTER INCREMENT
 --------------------------------------------------------------- */
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   // Mandatory details check
@@ -1071,6 +1151,10 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     const safeName = (s) => String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g,'');
     const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
     pdf.save(filename);
+    
+    // Increment global download count on successful PDF creation
+    incrementGlobalDownloadCount();
+
     status.textContent = 'Downloaded ✓';
   } catch (err) {
     console.error(err);
