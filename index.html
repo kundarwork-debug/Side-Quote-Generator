@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Quotation Editor</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -40,7 +41,7 @@
     align-items: center;
     min-height: 100vh;
     padding: 24px;
-    background: #fef2f2; /* Light Red Theme */
+    background: #fef2f2;
     position: relative;
   }
 
@@ -49,7 +50,7 @@
     font-size: 15px;
     font-weight: 600;
     color: #ffffff;
-    background: #991b1b; /* Accent Red Button */
+    background: #991b1b;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
@@ -508,24 +509,22 @@
     </div>
 
     <div class="field-group" id="sharedFieldGroup">
-      <h2>Customer &amp; route <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
-      <div class="field"><label>Customer name</label><input id="f_custName"></div>
+      <h2>Customer &amp; details <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
+      <div class="field"><label>Date</label><input id="f_date"></div>
+      <div class="field"><label>Customer name *</label><input id="f_custName"></div>
       <div class="row2">
         <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
         <div class="field"><label>Customer GST</label><input id="f_custGst"></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Moving from</label><input id="f_fromCity"></div>
-        <div class="field"><label>Moving to</label><input id="f_toCity"></div>
+        <div class="field"><label>Moving from *</label><input id="f_fromCity"></div>
+        <div class="field"><label>Moving to *</label><input id="f_toCity"></div>
       </div>
     </div>
 
     <div class="field-group">
       <h2>Document details</h2>
-      <div class="row2">
-        <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
-        <div class="field"><label>Date</label><input id="f_date"></div>
-      </div>
+      <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
       <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
     </div>
 
@@ -596,14 +595,29 @@ document.getElementById('backToHomeBtn').addEventListener('click', () => {
 });
 
 /* ---------------------------------------------------------------
-   DATA: default content extracted from the two uploaded documents
+   HELPERS & INITIAL DEFAULTS
 --------------------------------------------------------------- */
+function getFormattedCurrentDate() {
+  const d = new Date();
+  const day = d.getDate();
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+  const paddedDay = String(day).padStart(2, '0');
+  const month = d.toLocaleDateString('en-IN', { month: 'short' });
+  const year = d.getFullYear();
+  return `${paddedDay}${suffix} ${month} ${year}`;
+}
+
 const SHARED_DEFAULTS = {
-  custName: "Soumen Santra",
+  date: getFormattedCurrentDate(),
+  custName: "",
   custCompany: "Unregistered",
   custGst: "GST Exempted",
-  fromCity: "Mapusa, Goa",
-  toCity: "Mumbai Central, Mumbai"
+  fromCity: "",
+  toCity: ""
 };
 
 const DEFAULTS = {
@@ -611,7 +625,6 @@ const DEFAULTS = {
     docNoLabel: "Estimate No.",
     gstLabel: "GST No. (ours)",
     docNo: "2025323429",
-    date: "08th Aug 2026",
     gstNo: "23AAACL1838J1ZO",
     costItems: [
       { label: "Freight", amount: 28800 },
@@ -649,7 +662,6 @@ const DEFAULTS = {
     docNoLabel: "Reference No.",
     gstLabel: "GSTN (ours)",
     docNo: "MAX202526954",
-    date: "08th Aug 2026",
     gstNo: "07AAICM9877E1ZX",
     costItems: [
       { label: "Transportation Cost", amount: 30600 },
@@ -744,7 +756,7 @@ function renderForm(){
   document.getElementById('lblDocNoLabel').textContent = d.docNoLabel;
   document.getElementById('lblGstLabel').textContent = d.gstLabel;
   document.getElementById('f_docNo').value = d.docNo;
-  document.getElementById('f_date').value = d.date;
+  document.getElementById('f_date').value = shared.date;
   document.getElementById('f_gstNo').value = d.gstNo;
   document.getElementById('f_custName').value = shared.custName;
   document.getElementById('f_custCompany').value = shared.custCompany;
@@ -819,7 +831,7 @@ function renderPreview(){
       </div>
       <div class="body">
         <div class="meta-top">
-          <span>Date: ${escapeHtml(d.date)}</span>
+          <span>Date: ${escapeHtml(shared.date)}</span>
           <span>${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}</span>
         </div>
         <div class="meta-block">
@@ -863,7 +875,7 @@ function renderPreview(){
       <div class="body">
         <div class="meta-top">
           <span>${escapeHtml(d.gstLabel)}: ${escapeHtml(d.gstNo)}</span>
-          <span>Date: ${escapeHtml(d.date)}</span>
+          <span>Date: ${escapeHtml(shared.date)}</span>
         </div>
         <div class="meta-block">
           ${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}<br>
@@ -932,7 +944,7 @@ document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
 });
 
 const simpleFields = {
-  f_docNo: 'docNo', f_date: 'date', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
+  f_docNo: 'docNo', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
   f_addr: 'addr', f_phone: 'phone', f_email: 'email'
 };
 Object.keys(simpleFields).forEach(id => {
@@ -944,7 +956,7 @@ Object.keys(simpleFields).forEach(id => {
 });
 
 const sharedFields = {
-  f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
+  f_date: 'date', f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
   f_fromCity: 'fromCity', f_toCity: 'toCity'
 };
 Object.keys(sharedFields).forEach(id => {
@@ -965,7 +977,7 @@ document.getElementById('costRows').addEventListener('input', (e) => {
   const { subtotal, gstAmount, grand } = computeTotals(state[active]);
   document.getElementById('totalsBox').innerHTML = `
     <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
-    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(grand - subtotal)}</span></div>
     <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
   `;
 });
@@ -1003,13 +1015,20 @@ document.getElementById('addTermRow').addEventListener('click', () => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
   state[active] = clone(DEFAULTS[active]);
+  shared = clone(SHARED_DEFAULTS);
   renderAll();
 });
 
 /* ---------------------------------------------------------------
-   PDF DOWNLOAD
+   PDF DOWNLOAD WITH VALIDATION
 --------------------------------------------------------------- */
 document.getElementById('downloadBtn').addEventListener('click', async () => {
+  // Mandatory details check
+  if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
+    alert("APML ke balak details tho bharo paheley");
+    return;
+  }
+
   const btn = document.getElementById('downloadBtn');
   const status = document.getElementById('statusMsg');
   btn.disabled = true;
