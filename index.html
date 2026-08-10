@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>APML Support Page-By Prasad</title>
+<title>APML Support Page</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -33,7 +33,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ---------- LIGHT RED LANDING PAGE ---------- */
+  /* ---------- LANDING PAGE WITH BACKGROUND IMAGE ---------- */
   .landing-page {
     display: flex;
     flex-direction: column;
@@ -41,31 +41,42 @@
     align-items: center;
     min-height: 100vh;
     padding: 24px;
-    background: #fef2f2;
+    background: linear-gradient(rgba(254, 242, 242, 0.85), rgba(254, 242, 242, 0.95)), url('image_6c9245.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     position: relative;
     text-align: center;
     overflow: hidden;
   }
 
+  .welcome-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 60px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+  }
+
   .welcome-title {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 48px; /* Increased Size */
+    font-weight: 800;
     color: #991b1b;
-    margin: 0 0 8px;
-    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    letter-spacing: -0.03em;
   }
 
   .welcome-sub {
-    font-size: 15px;
+    font-size: 20px; /* Increased Size */
     color: #7f1d1d;
-    margin: 0 0 28px;
+    margin: 0 0 40px;
     font-weight: 500;
     opacity: 0.9;
   }
 
   .landing-btn {
-    padding: 16px 32px;
-    font-size: 15px;
+    padding: 20px 48px; /* Increased Padding */
+    font-size: 18px; /* Increased Font Size */
     font-weight: 600;
     color: #ffffff;
     background: #991b1b;
@@ -78,12 +89,12 @@
   }
 
   .landing-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(153, 27, 27, 0.35);
+    transform: translateY(-3px); /* Slightly higher lift */
+    box-shadow: 0 8px 24px rgba(153, 27, 27, 0.35);
     background: #7f1d1d;
   }
 
-  /* ---------- STATIC BOTTOM FOOTER ---------- */
+  /* ---------- HOVER-ACTIVATED BOTTOM FOOTER ---------- */
   .landing-footer-wrap {
     position: absolute;
     bottom: 0;
@@ -96,10 +107,19 @@
     background: rgba(254, 242, 242, 0.92);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(252, 165, 165, 0.35);
+    opacity: 0;
+    transform: translateY(100%);
+    transition: var(--transition);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Trigger footer visibility when hovering bottom area or landing page */
+  .landing-page:hover .landing-footer-wrap,
+  .landing-footer-wrap:hover {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
-    z-index: 10;
   }
 
   .footer-brand {
@@ -562,9 +582,11 @@
 <body>
 
 <div class="landing-page" id="landingPage">
-  <h1 class="welcome-title">We're glad you're here!</h1>
-  <p class="welcome-sub">To prepare 2 side quote click below</p>
-  <button class="landing-btn" id="createQuoteBtn">Create side quote apml</button>
+  <div class="welcome-box">
+    <h1 class="welcome-title">We're glad you're here!</h1>
+    <p class="welcome-sub">To prepare 2 side quote click below</p>
+    <button class="landing-btn" id="createQuoteBtn">Create side quote apml</button>
+  </div>
 
   <div class="landing-footer-wrap">
     <div class="footer-brand">By Prasad</div>
@@ -1106,7 +1128,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   // Mandatory details check
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
-    alert("APML ke balak details tho bharo paheley");
+    alert("Please fill mandatory customer fields (Name, From City, To City) before downloading.");
     return;
   }
 
