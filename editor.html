@@ -34,14 +34,14 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ---------- MAIN APP ---------- */
+  /* ---------- MAIN APP LAYOUT ---------- */
   .app {
     display: grid;
     grid-template-columns: 440px 1fr;
     min-height: 100vh;
   }
 
-  /* ---------- LEFT: Control Panel ---------- */
+  /* ---------- LEFT: CONTROL PANEL ---------- */
   .panel {
     background: var(--panel-bg);
     border-right: 1px solid var(--border-light);
@@ -332,7 +332,7 @@
     min-height: 14px;
   }
 
-  /* ---------- RIGHT: Preview Stage ---------- */
+  /* ---------- RIGHT: PREVIEW STAGE ---------- */
   .stage {
     padding: 40px;
     display: flex;
@@ -466,20 +466,12 @@
       overflow-x: auto;
     }
 
+    /* Keep live mobile view responsive without breaking document padding */
     #previewA4 {
-      width: 100% !important;
+      width: 100%;
       max-width: 794px;
       min-height: auto !important;
-      transform: scale(1);
       box-sizing: border-box;
-    }
-
-    .doc-exact .letterhead, 
-    .doc-exact .body,
-    .doc-max .letterhead, 
-    .doc-max .body {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
     }
   }
 </style>
@@ -999,9 +991,10 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ---------------------------------------------------------------
-   PDF DOWNLOAD WITH VALIDATION
+   PDF DOWNLOAD WITH MOBILE-TO-DESKTOP SCALE FIX
 --------------------------------------------------------------- */
 document.getElementById('downloadBtn').addEventListener('click', async () => {
+  // Mandatory details check
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
     alert("Please fill mandatory customer fields (Name, From City, To City) before downloading.");
     return;
@@ -1014,15 +1007,38 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   btn.textContent = 'Preparing PDF…';
   status.textContent = '';
 
+  const node = document.getElementById('previewA4');
+
+  // Save current inline styles to restore after export
+  const originalWidth = node.style.width;
+  const originalMinHeight = node.style.minHeight;
+  const originalPosition = node.style.position;
+  const originalLeft = node.style.left;
+  const originalTransform = node.style.transform;
+
   try {
-    const node = document.getElementById('previewA4');
+    // 1. Temporarily force fixed desktop dimensions off-screen (794px width)
+    node.style.width = '794px';
+    node.style.minHeight = '1123px';
+    node.style.position = 'absolute';
+    node.style.left = '-9999px';
+    node.style.transform = 'none';
+
+    // 2. Render canvas at full desktop scale
     const canvas = await html2canvas(node, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#ffffff',
-      windowWidth: node.scrollWidth,
-      windowHeight: node.scrollHeight
+      width: 794,
+      windowWidth: 794
     });
+
+    // 3. Instantly restore original styles for seamless user experience
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -1054,6 +1070,13 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   } catch (err) {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
+    
+    // Restore styles in case of error
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
   } finally {
     btn.disabled = false;
     btn.textContent = originalText;
