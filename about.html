@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Kundar Prasad</title>
+    
+    <!-- GitHub Profile Picture as Browser Tab Favicon -->
+    <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0d0d0d;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ef5350;
+        }
+
+        .username {
+            color: #a0a0a0;
+            font-size: 15px;
+            font-family: monospace;
+        }
+
+        /* Intro Section */
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .bio {
+            color: #b0b0b0;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #222222;
+            margin-bottom: 32px;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #707070;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        /* List / Cards */
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background-color: #161616;
+            border: 1px solid #262626;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .card-subtext {
+            color: #808080;
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: #262626;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #333333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <img src="https://github.com/kundarwork-debug.png" alt="Profile Picture" class="avatar">
+            <span class="username">@kundarwork-debug</span>
+        </div>
+
+        <!-- Bio Header -->
+        <h1>Hi, I'm Kundar Prasad</h1>
+        <p class="bio">
+            Based in Mumbai. Passionate about home automation, smart tech integrations, and continuous learning. Thanks for visiting my page!
+        </p>
+
+        <hr>
+
+        <!-- Dynamic Card Section -->
+        <div class="section-title">Connect & Support</div>
+        
+        <div class="card-list">
+            <!-- Github Card -->
+            <div class="card">
+                <div class="card-info">
+                    <span class="card-title">GitHub Portfolio</span>
+                    <span class="card-subtext">github.com/kundarwork-debug</span>
+                </div>
+                <a href="https://github.com/kundarwork-debug" target="_blank" class="btn">Visit ↗</a>
+            </div>
+
+            <!-- WhatsApp Card -->
+            <div class="card">
+                <div class="card-info">
+                    <span class="card-title">WhatsApp Me</span>
+                    <span class="card-subtext">+91 9910579530</span>
+                </div>
+                <a href="https://wa.me/919910579530" target="_blank" class="btn">Chat ↗</a>
+            </div>
+
+            <!-- Contact/Email Card -->
+            <div class="card">
+                <div class="card-info">
+                    <span class="card-title">Get in Touch</span>
+                    <span class="card-subtext">kundar.work@gmail.com</span>
+                </div>
+                <a href="mailto:kundar.work@gmail.com" class="btn">Email</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
