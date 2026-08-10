@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>APML Support Page-By Prasad</title>
+<title>APML Support Page</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -83,7 +83,7 @@
     background: #7f1d1d;
   }
 
-  /* ---------- HOVER-ACTIVATED BOTTOM FOOTER ---------- */
+  /* ---------- STATIC BOTTOM FOOTER ---------- */
   .landing-footer-wrap {
     position: absolute;
     bottom: 0;
@@ -96,19 +96,10 @@
     background: rgba(254, 242, 242, 0.92);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(252, 165, 165, 0.35);
-    opacity: 0;
-    transform: translateY(100%);
-    transition: var(--transition);
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  /* Trigger footer visibility when hovering bottom area or landing page */
-  .landing-page:hover .landing-footer-wrap,
-  .landing-footer-wrap:hover {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
+    z-index: 10;
   }
 
   .footer-brand {
