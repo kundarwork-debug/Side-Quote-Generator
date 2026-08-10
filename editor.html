@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quotation Editor - APML Support Page</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg-main: #f8fafc;
+    --panel-bg: #ffffff;
+    --border-light: #e2e8f0;
+    --border-hover: #cbd5e1;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --accent-exact: #b5342b;
+    --accent-exact-dark: #8c221b;
+    --accent-max-blue: #1e40af;
+    --accent-max-dark: #1e3a8a;
+    --accent-max-yellow: #f4d93e;
+    --radius: 8px;
+    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background: var(--bg-main);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- MAIN APP ---------- */
+  .app {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    min-height: 100vh;
+  }
+
+  /* ---------- LEFT: Control Panel ---------- */
+  .panel {
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border-light);
+    padding: 28px 24px 80px;
+    overflow-y: auto;
+    max-height: 100vh;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 16px;
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .back-btn:hover {
+    color: var(--text-main);
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .brand-row h1 {
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-main);
+  }
+
+  .brand-row span {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 24px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: var(--radius);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: calc(var(--radius) - 2px);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.3;
+    transition: var(--transition);
+  }
+
+  .tab-btn.active[data-company="exact"] {
+    background: var(--panel-bg);
+    color: var(--accent-exact);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .tab-btn.active[data-company="maxcare"] {
+    background: var(--panel-bg);
+    color: var(--accent-max-blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .field-group {
+    margin-bottom: 24px;
+  }
+
+  #sharedFieldGroup {
+    background: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+
+  .field-group h2 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin: 0 0 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field-group h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border-light);
+  }
+
+  .field { margin-bottom: 12px; }
+  
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: #ffffff;
+    transition: var(--transition);
+  }
+
+  .field input:focus, .field textarea:focus {
+    outline: none;
+    border-color: #0f172a;
+    box-shadow: 0 0 0 1px #0f172a;
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .cost-row, .term-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+
+  .cost-row input.label-in { flex: 1.6; }
+  .cost-row input.amt-in { flex: 1; text-align: right; }
+  .term-row textarea { flex: 1; min-height: 38px; resize: vertical; }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    background: #fff;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+  }
+
+  .icon-btn:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+  }
+
+  .add-btn {
+    margin-top: 6px;
+    width: 100%;
+    padding: 9px;
+    border-radius: var(--radius);
+    border: 1px dashed var(--border-hover);
+    background: #ffffff;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .add-btn:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+    background: #f8fafc;
+  }
+
+  .totals-box {
+    background: #f8fafc;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .totals-box .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--text-muted);
+  }
+
+  .totals-box .line.total {
+    font-weight: 600;
+    color: var(--text-main);
+    border-top: 1px dashed var(--border-light);
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-light);
+    background: #fff;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: var(--transition);
+  }
+
+  .reset-btn:hover {
+    color: var(--text-main);
+    border-color: var(--border-hover);
+    background: #f8fafc;
+  }
+
+  .download-bar {
+    position: sticky;
+    bottom: -1px;
+    margin-top: 28px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-light);
+    background: var(--panel-bg);
+  }
+
+  .download-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .download-btn[data-company="exact"] { background: var(--accent-exact); }
+  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); }
+  .download-btn[data-company="maxcare"] { background: var(--accent-max-blue); }
+  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); }
+  .download-btn:disabled { opacity: 0.6; cursor: wait; }
+
+  .status-msg {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    color: var(--text-muted);
+    min-height: 14px;
+  }
+
+  /* ---------- RIGHT: Preview Stage ---------- */
+  .stage {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: 100vh;
+    background: #f1f5f9;
+  }
+
+  .sheet-wrap { width: 100%; max-width: 794px; }
+
+  .sheet-shadow {
+    background: #fff;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #previewA4 {
+    width: 794px;
+    min-height: 1123px;
+    margin: 0 auto;
+    background: #fff;
+    position: relative;
+    padding: 0;
+    transform-origin: top left;
+  }
+
+  /* ===== PDF TEMPLATE STYLES ===== */
+  .doc-exact {
+    font-family: Calibri, Carlito, Arial, sans-serif;
+    color: #111;
+    padding: 0 0 40px;
+  }
+  .doc-exact .letterhead {
+    background: #fffdf8; padding: 16px 46px 10px; text-align: center;
+    border-bottom: 3px solid #1a1a1a;
+  }
+  .doc-exact .letterhead .cname {
+    color: var(--accent-exact); font-weight: 700; font-size: 20pt; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 4px; font-family: Calibri, Carlito, Arial, sans-serif;
+  }
+  .doc-exact .letterhead .cin {
+    font-weight: 700; font-size: 10pt; letter-spacing: .02em;
+  }
+  .doc-exact .body { padding: 14px 46px 0; font-size: 10pt; }
+  .doc-exact .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 10px; }
+  .doc-exact .meta-block { font-size: 10pt; line-height: 1.55; margin-bottom: 8px; }
+  .doc-exact .quotation-label {
+    text-decoration: underline; font-weight: 700; font-size: 14pt; margin: 6px 0 10px;
+  }
+  .doc-exact .salut { font-weight: 700; font-size: 10pt; margin-bottom: 6px; }
+  .doc-exact .intro { font-size: 10pt; line-height: 1.4; margin-bottom: 12px; text-align: justify; }
+  .doc-exact .intro b { font-weight: 700; }
+  table.exact-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 12px; }
+  table.exact-table th, table.exact-table td {
+    border: 1px solid #1a1a1a; padding: 4px 12px;
+  }
+  table.exact-table th { background: #f1ede3; font-weight: 700; text-align: left; }
+  table.exact-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.exact-table tr.total-row td { font-weight: 700; }
+  table.exact-table tr.grand-row td { font-weight: 700; background: #f7f3ea; }
+  .doc-exact .terms-title { font-weight: 700; font-size: 11pt; margin: 4px 0 6px; letter-spacing: .01em; }
+  .doc-exact ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.35; }
+  .doc-exact ol.terms li { margin-bottom: 3px; text-align: justify; }
+  .doc-exact .footer { margin-top: 12px; font-size: 10pt; line-height: 1.5; }
+  .doc-exact .footer b { font-weight: 700; }
+
+  .doc-max {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #141414;
+    padding: 0 0 40px;
+  }
+  .doc-max .letterhead {
+    background: linear-gradient(180deg, #fff7cf 0%, #fdf0a8 100%);
+    padding: 16px 40px; border-bottom: 4px solid var(--accent-max-blue);
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+  }
+  .doc-max .letterhead .cname {
+    color: var(--accent-max-blue); font-weight: 700; font-size: 18pt; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 4px;
+  }
+  .doc-max .letterhead .sub { font-size: 9pt; font-weight: 700; color: #222; }
+  .doc-max .body { padding: 20px 40px 0; font-size: 10pt; }
+  .doc-max .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 12px; font-weight: 700; }
+  .doc-max .meta-block { font-size: 10pt; line-height: 1.7; margin-bottom: 8px; }
+  .doc-max .quotation-label {
+    font-weight: 700; font-size: 15pt; margin: 10px 0 14px; color: var(--accent-max-blue);
+    text-align: center; letter-spacing: .04em;
+  }
+  .doc-max .intro { font-size: 10pt; line-height: 1.5; margin-bottom: 16px; text-align: justify; }
+  .doc-max .intro b { font-weight: 700; }
+  table.max-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 18px; }
+  table.max-table th, table.max-table td {
+    border: 1px solid #16234a; padding: 6px 10px;
+  }
+  table.max-table th { background: var(--accent-max-blue); color: #fff; font-weight: 700; text-align: left; }
+  table.max-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.max-table td.sno { text-align: center; width: 34px; }
+  table.max-table tr.total-row td { font-weight: 700; background: #fff7cf; }
+  table.max-table tr.grand-row td { font-weight: 700; background: var(--accent-max-yellow); }
+  .doc-max .terms-title { font-weight: 700; font-size: 13.5pt; margin: 6px 0 8px; color: var(--accent-max-blue); }
+  .doc-max ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.5; }
+  .doc-max ol.terms li { margin-bottom: 6px; text-align: justify; }
+  .doc-max .footer { margin-top: 18px; font-size: 10pt; line-height: 1.6; }
+  .doc-max .footer .sign { margin-top: 14px; font-weight: 700; }
+
+  /* ---------- RESPONSIVE MEDIA QUERIES ---------- */
+  @media (max-width: 768px) {
+    .app {
+      grid-template-columns: 1fr !important;
+      min-height: auto;
+    }
+
+    .panel {
+      max-height: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid var(--border-light);
+      padding: 20px 16px 40px !important;
+    }
+
+    .stage {
+      padding: 16px 8px !important;
+      max-height: none !important;
+      overflow-x: auto;
+    }
+
+    .sheet-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    #previewA4 {
+      width: 100% !important;
+      max-width: 794px;
+      min-height: auto !important;
+      transform: scale(1);
+      box-sizing: border-box;
+    }
+
+    .doc-exact .letterhead, 
+    .doc-exact .body,
+    .doc-max .letterhead, 
+    .doc-max .body {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="appView">
+  <div class="panel">
+    <a href="index.html" class="back-btn">← Back to Main Page</a>
+
+    <div class="brand-row">
+      <h1>Quotation Editor</h1>
+      <span id="dateStamp"></span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-company="exact" id="tabExact">Exact Container<br>Logistics</button>
+      <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
+    </div>
+
+    <div class="field-group" id="sharedFieldGroup">
+      <h2>Customer &amp; details <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
+      <div class="field"><label>Date</label><input id="f_date"></div>
+      <div class="field"><label>Customer name *</label><input id="f_custName"></div>
+      <div class="row2">
+        <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
+        <div class="field"><label>Customer GST</label><input id="f_custGst"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Moving from *</label><input id="f_fromCity"></div>
+        <div class="field"><label>Moving to *</label><input id="f_toCity"></div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <h2>Document details</h2>
+      <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
+      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
+    </div>
+
+    <div class="field-group">
+      <h2>Cost items</h2>
+      <div class="field" style="margin-bottom:14px;">
+        <label>Total amount (auto-fills below using standard %)</label>
+        <div style="display:flex; gap:8px;">
+          <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1;">
+          <button id="applyTotalBtn" style="flex:none; padding:0 16px; border-radius:var(--radius); border:1px solid var(--border-light); background:#f8fafc; color:var(--text-main); font-size:12.5px; font-weight:600; cursor:pointer;">Apply</button>
+        </div>
+      </div>
+      <div id="costRows"></div>
+      <button class="add-btn" id="addCostRow">+ Add cost item</button>
+
+      <div class="field" style="margin-top:14px;">
+        <label>GST %</label>
+        <input id="f_gstPercent" style="max-width:100px;">
+      </div>
+
+      <div class="totals-box" id="totalsBox"></div>
+    </div>
+
+    <div class="field-group">
+      <h2>Terms &amp; conditions</h2>
+      <div id="termRows"></div>
+      <button class="add-btn" id="addTermRow">+ Add term</button>
+    </div>
+
+    <div class="field-group">
+      <h2 id="footerHeading">Registered office</h2>
+      <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Phone</label><input id="f_phone"></div>
+        <div class="field" id="emailFieldWrap"><label>Email</label><input id="f_email"></div>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Reset template to default</button>
+
+    <div class="download-bar">
+      <button class="download-btn" id="downloadBtn" data-company="exact">Download PDF</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="sheet-wrap">
+      <div class="sheet-shadow">
+        <div id="previewA4"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------------------------------------------------------
+   HELPERS & INITIAL DEFAULTS
+--------------------------------------------------------------- */
+function getFormattedCurrentDate() {
+  const d = new Date();
+  const day = d.getDate();
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+  const paddedDay = String(day).padStart(2, '0');
+  const month = d.toLocaleDateString('en-IN', { month: 'short' });
+  const year = d.getFullYear();
+  return `${paddedDay}${suffix} ${month} ${year}`;
+}
+
+const SHARED_DEFAULTS = {
+  date: getFormattedCurrentDate(),
+  custName: "",
+  custCompany: "Unregistered",
+  custGst: "GST Exempted",
+  fromCity: "",
+  toCity: ""
+};
+
+const DEFAULTS = {
+  exact: {
+    docNoLabel: "Estimate No.",
+    gstLabel: "GST No. (ours)",
+    docNo: "2025323429",
+    gstNo: "23AAACL1838J1ZO",
+    costItems: [
+      { label: "Freight", amount: 28800 },
+      { label: "Car Freight", amount: 15500 },
+      { label: "Packing Charges", amount: 9600 },
+      { label: "Loading Charges at Origin", amount: 4800 },
+      { label: "Unloading Charges at Destination", amount: 2400 },
+      { label: "Unpacking Charges", amount: 1440 },
+      { label: "Other Charges (Toll etc.)", amount: 960 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please keep your cash / jewelry in your custody.",
+      "Carrying liquor, gas cylinder, acid or any type of liquid/explosive and illegal items is prohibited.",
+      "Minimum 15 litres of fuel should be available in the car to run up to the car carrier point and the same way from the car carrier point to the destination.",
+      "We don't undertake electrical, carpentry & plumbing work. It can be provided depending on availability and charged accordingly.",
+      "If there is any extra packing of any article, or an article outside the article list, it will be charged accordingly.",
+      "Extra services provided other than mentioned will be charged accordingly.",
+      "20% of the amount to be paid in advance along with the work order and the balance amount on completion of work at the loading point.",
+      "Payment in cash/cheque/draft should be in favor of Exact Container Logistics (P) Ltd.",
+      "In case of carrier risk, no individual policy / receipt from the insurance company will be given.",
+      "In case of monsoon / rainy season / foggy weather / riots / vehicle breakdown / any other natural calamity, 7 extra days will be added to the transit time.",
+      "No responsibility on the breakage of flower pots.",
+      "This quotation is valid for 15 days."
+    ],
+    companyName: "EXACT CONTAINER LOGISTIC PVT. LTD.",
+    cin: "CIN : U74899DL2000PTC107846",
+    addrLabel: "Registered address",
+    addr: "7737/XV RAM NAGAR QUTUB ROAD, PAHARGANJ NEW DELHI 110063",
+    phone: "9667724226",
+    email: "",
+    showEmail: false
+  },
+  maxcare: {
+    docNoLabel: "Reference No.",
+    gstLabel: "GSTN (ours)",
+    docNo: "MAX202526954",
+    gstNo: "07AAICM9877E1ZX",
+    costItems: [
+      { label: "Transportation Cost", amount: 30600 },
+      { label: "Packing + Loading + Unloading + Unpacking", amount: 12750 },
+      { label: "Car Transportation (if any)", amount: 17000 },
+      { label: "Toll Tax + Risk Cover + Misc. Cost", amount: 7650 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please note that lorry transportation charges without quotes are the present prevailing rates and will be charged on actuals at the time of transportation. Extra charges will be charged extra as actual.",
+      "The carrier or agent shall be exempted from any loss or damage through accident, pilferage, fire, rain, collision or any other road-driven hazard; we therefore recommend that goods be insured covering risk. While on carrier risk, no individual policy/receipt from the insurance co. will be given.",
+      "We would request you to please pay 25% of all charges in advance along with your order, and the balance charges on completion of the packing. For insurance, the full amount of the premium value is to be paid at the packing location before departure of the consignment.",
+      "Please note that the above quotation has been prepared keeping in view our basic standards of packing with the best packing material, as the type of packing will depend on our discretion.",
+      "We would be grateful if you could please give us one week's advance notice as to when we may commence the above job. Payment will be done in favor of M/S Max Care Packers & Movers Pvt. Ltd."
+    ],
+    companyName: "MAXCARE PACKERS & MOVERS PVT. LTD.",
+    cin: "CIN: U63090DL2009PTC196378",
+    addrLabel: "Regd. office",
+    addr: "308, Neelkanth Plaza, Pitampura Community Centre, New Delhi-110034",
+    phone: "9311204263",
+    email: "maxcaremoverspvtltd@gmail.com",
+    showEmail: true
+  }
+};
+
+const PERCENT_SPLITS = {
+  exact: {
+    "freight": 60,
+    "car freight": 0,
+    "packing charges": 20,
+    "loading charges at origin": 10,
+    "unloading charges at destination": 5,
+    "unpacking charges": 3,
+    "other charges (toll etc.)": 2
+  },
+  maxcare: {
+    "transportation cost": 60,
+    "packing + loading + unloading + unpacking": 25,
+    "car transportation (if any)": 0,
+    "toll tax + risk cover + misc. cost": 15
+  }
+};
+
+function normalizeLabel(s){ return String(s).trim().toLowerCase(); }
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+let state = { exact: clone(DEFAULTS.exact), maxcare: clone(DEFAULTS.maxcare) };
+let shared = clone(SHARED_DEFAULTS);
+let active = "exact";
+
+/* ---------------------------------------------------------------
+   RENDER: Form panel
+--------------------------------------------------------------- */
+function fmt(n){
+  n = Number(n) || 0;
+  return n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function computeTotals(data){
+  const subtotal = data.costItems.reduce((s,i)=> s + (Number(i.amount)||0), 0);
+  const gstAmount = subtotal * (Number(data.gstPercent)||0) / 100;
+  const grand = subtotal + gstAmount;
+  return { subtotal, gstAmount, grand };
+}
+
+function applyTotalAmount(){
+  const total = parseFloat(document.getElementById('f_totalAmount').value) || 0;
+  const d = state[active];
+  const splits = PERCENT_SPLITS[active] || {};
+
+  const matchedIdx = d.costItems
+    .map((item, idx) => ({ idx, pct: splits[normalizeLabel(item.label)] }))
+    .filter(m => m.pct !== undefined);
+
+  if (matchedIdx.length === 0 || total <= 0) return;
+
+  let runningTotal = 0;
+  matchedIdx.forEach((m, i) => {
+    if (i === matchedIdx.length - 1) {
+      d.costItems[m.idx].amount = Math.round(total - runningTotal);
+    } else {
+      const amt = Math.round(total * m.pct / 100);
+      d.costItems[m.idx].amount = amt;
+      runningTotal += amt;
+    }
+  });
+}
+
+function renderForm(){
+  const d = state[active];
+
+  document.getElementById('lblDocNoLabel').textContent = d.docNoLabel;
+  document.getElementById('lblGstLabel').textContent = d.gstLabel;
+  document.getElementById('f_docNo').value = d.docNo;
+  document.getElementById('f_date').value = shared.date;
+  document.getElementById('f_gstNo').value = d.gstNo;
+  document.getElementById('f_custName').value = shared.custName;
+  document.getElementById('f_custCompany').value = shared.custCompany;
+  document.getElementById('f_custGst').value = shared.custGst;
+  document.getElementById('f_fromCity').value = shared.fromCity;
+  document.getElementById('f_toCity').value = shared.toCity;
+  document.getElementById('f_gstPercent').value = d.gstPercent;
+  document.getElementById('lblAddr').textContent = d.addrLabel;
+  document.getElementById('f_addr').value = d.addr;
+  document.getElementById('f_phone').value = d.phone;
+  document.getElementById('f_email').value = d.email;
+  document.getElementById('emailFieldWrap').style.display = d.showEmail ? '' : 'none';
+  document.getElementById('footerHeading').textContent = 'Registered office';
+
+  // cost rows
+  const costWrap = document.getElementById('costRows');
+  costWrap.innerHTML = '';
+  d.costItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'cost-row';
+    row.innerHTML = `
+      <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
+      <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
+      <button class="icon-btn" data-remove-cost="${idx}" title="Remove">×</button>
+    `;
+    costWrap.appendChild(row);
+  });
+
+  // term rows
+  const termWrap = document.getElementById('termRows');
+  termWrap.innerHTML = '';
+  d.terms.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.className = 'term-row';
+    row.innerHTML = `
+      <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
+      <button class="icon-btn" data-remove-term="${idx}" title="Remove">×</button>
+    `;
+    termWrap.appendChild(row);
+  });
+
+  // totals
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+
+  document.getElementById('downloadBtn').dataset.company = active;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+/* ---------------------------------------------------------------
+   RENDER: A4 preview
+--------------------------------------------------------------- */
+function renderPreview(){
+  const d = state[active];
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  const container = document.getElementById('previewA4');
+
+  if (active === 'exact') {
+    container.className = 'doc-exact';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="cin">${escapeHtml(d.cin)}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>Date: ${escapeHtml(shared.date)}</span>
+          <span>${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}</span>
+        </div>
+        <div class="meta-block">
+          GST No: ${escapeHtml(d.gstNo)}<br>
+          MR. / MS.: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="salut">Dear Sir / Mam,</p>
+        <p class="intro">Below are our best prices for moving your <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We hope you will find our price competitive enough &amp; will give us an opportunity to service you.</p>
+
+        <table class="exact-table">
+          <thead><tr><th>Cost Item</th><th style="text-align:right;">Cost (in INR)</th></tr></thead>
+          <tbody>
+            ${d.costItems.map(i => `<tr><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td>Total with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          <b>${escapeHtml(d.addrLabel)}:</b> ${escapeHtml(d.addr)}<br>
+          <b>Phone:</b> ${escapeHtml(d.phone)}
+        </div>
+      </div>
+    `;
+  } else {
+    container.className = 'doc-max';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="sub">${escapeHtml(d.cin)} &nbsp;•&nbsp; Regd. Office: ${escapeHtml(d.addr)} &nbsp;•&nbsp; Phone: ${escapeHtml(d.phone)}${d.showEmail ? ' &nbsp;•&nbsp; Email: ' + escapeHtml(d.email) : ''}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>${escapeHtml(d.gstLabel)}: ${escapeHtml(d.gstNo)}</span>
+          <span>Date: ${escapeHtml(shared.date)}</span>
+        </div>
+        <div class="meta-block">
+          ${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}<br>
+          TO: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="intro">We thank you for your inquiry to move your household goods from <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We have pleasure in quoting our charges as follows:</p>
+
+        <table class="max-table">
+          <thead><tr><th class="sno">S.No</th><th>Particulars</th><th style="text-align:right;">Amount</th></tr></thead>
+          <tbody>
+            ${d.costItems.map((i,idx) => `<tr><td class="sno">${idx+1}</td><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td class="sno">${d.costItems.length+1}</td><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td class="sno">${d.costItems.length+2}</td><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td></td><td>Total Charges with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          Thanking you and looking forward to rendering our service to you.<br>
+          With Regards,
+          <div class="sign">M/s ${escapeHtml(d.companyName.replace(/ PVT\. LTD\.$/i,' Pvt. Ltd.'))}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderAll(){
+  renderForm();
+  renderPreview();
+}
+
+/* ---------------------------------------------------------------
+   EVENTS & INITIALIZATION
+--------------------------------------------------------------- */
+document.getElementById('tabExact').addEventListener('click', () => switchTab('exact'));
+document.getElementById('tabMaxcare').addEventListener('click', () => switchTab('maxcare'));
+
+function switchTab(company){
+  active = company;
+  document.getElementById('tabExact').classList.toggle('active', company==='exact');
+  document.getElementById('tabMaxcare').classList.toggle('active', company==='maxcare');
+  document.getElementById('f_totalAmount').value = '';
+  renderAll();
+}
+
+document.getElementById('applyTotalBtn').addEventListener('click', () => {
+  applyTotalAmount();
+  renderAll();
+});
+
+document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    applyTotalAmount();
+    renderAll();
+  }
+});
+
+const simpleFields = {
+  f_docNo: 'docNo', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
+  f_addr: 'addr', f_phone: 'phone', f_email: 'email'
+};
+Object.keys(simpleFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    state[active][simpleFields[id]] = e.target.value;
+    renderPreview();
+    if (id === 'f_gstPercent') renderForm();
+  });
+});
+
+const sharedFields = {
+  f_date: 'date', f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
+  f_fromCity: 'fromCity', f_toCity: 'toCity'
+};
+Object.keys(sharedFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    shared[sharedFields[id]] = e.target.value;
+    renderPreview();
+  });
+});
+
+document.getElementById('costRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  if (idx === undefined) return;
+  const item = state[active].costItems[idx];
+  if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
+  else item.label = e.target.value;
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(grand - subtotal)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+});
+
+document.getElementById('costRows').addEventListener('click', (e) => {
+  const idx = e.target.dataset.removeCost;
+  if (idx === undefined) return;
+  state[active].costItems.splice(Number(idx), 1);
+  renderAll();
+});
+
+document.getElementById('addCostRow').addEventListener('click', () => {
+  state[active].costItems.push({ label: 'New Charge', amount: 0 });
+  renderAll();
+});
+
+document.getElementById('termRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.termIdx;
+  if (idx === undefined) return;
+  state[active].terms[idx] = e.target.value;
+  renderPreview();
+});
+
+document.getElementById('termRows').addEventListener('click', (e) => {
+  const idx = e.target.dataset.removeTerm;
+  if (idx === undefined) return;
+  state[active].terms.splice(Number(idx), 1);
+  renderAll();
+});
+
+document.getElementById('addTermRow').addEventListener('click', () => {
+  state[active].terms.push('New term or condition.');
+  renderAll();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state[active] = clone(DEFAULTS[active]);
+  shared = clone(SHARED_DEFAULTS);
+  renderAll();
+});
+
+/* ---------------------------------------------------------------
+   PDF DOWNLOAD WITH VALIDATION
+--------------------------------------------------------------- */
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+  if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
+    alert("Please fill mandatory customer fields (Name, From City, To City) before downloading.");
+    return;
+  }
+
+  const btn = document.getElementById('downloadBtn');
+  const status = document.getElementById('statusMsg');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'Preparing PDF…';
+  status.textContent = '';
+
+  try {
+    const node = document.getElementById('previewA4');
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      windowWidth: node.scrollWidth,
+      windowHeight: node.scrollHeight
+    });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    let imgW = pageW;
+    let imgH = (canvas.height * imgW) / canvas.width;
+
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (imgH > pageH) {
+      const scale = pageH / imgH;
+      imgH = pageH;
+      imgW = imgW * scale;
+      xOffset = (pageW - imgW) / 2;
+    }
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgW, imgH);
+
+    const d = state[active];
+    const safeName = (s) => String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g,'');
+    const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
+    pdf.save(filename);
+
+    status.textContent = 'Downloaded ✓';
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Something went wrong generating the PDF. Please try again.';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
+
+document.getElementById('dateStamp').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+renderAll();
+</script>
+</body>
+</html>
