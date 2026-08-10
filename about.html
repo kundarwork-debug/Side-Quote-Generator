@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - Kundar Prasad</title>
     
-    <!-- GitHub Profile Picture as Browser Tab Favicon -->
     <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
     
     <style>
@@ -28,6 +27,11 @@
         .container {
             width: 100%;
             max-width: 650px;
+        }
+
+        /* Navigation / Back Button */
+        .back-nav {
+            margin-bottom: 24px;
         }
 
         /* Profile Header */
@@ -138,18 +142,31 @@
         .btn:hover {
             background-color: #333333;
         }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #262626;
+            color: #a0a0a0;
+        }
+
+        .btn-outline:hover {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Profile Header -->
+        <div class="back-nav">
+            <a href="index.html" class="btn btn-outline">← Back to Home</a>
+        </div>
+
         <div class="profile-header">
             <img src="https://github.com/kundarwork-debug.png" alt="Profile Picture" class="avatar">
             <span class="username">@kundarwork-debug</span>
         </div>
 
-        <!-- Bio Header -->
         <h1>Hi, I'm Kundar Prasad</h1>
         <p class="bio">
             Based in Mumbai. Passionate about home automation, smart tech integrations, and continuous learning. Thanks for visiting my page!
@@ -157,11 +174,9 @@
 
         <hr>
 
-        <!-- Dynamic Card Section -->
         <div class="section-title">Connect & Support</div>
         
         <div class="card-list">
-            <!-- Github Card -->
             <div class="card">
                 <div class="card-info">
                     <span class="card-title">GitHub Portfolio</span>
@@ -170,16 +185,14 @@
                 <a href="https://github.com/kundarwork-debug" target="_blank" class="btn">Visit ↗</a>
             </div>
 
-            <!-- WhatsApp Card -->
             <div class="card">
                 <div class="card-info">
                     <span class="card-title">WhatsApp Me</span>
-                    <span class="card-subtext">+91 9910579530</span>
+                    <span class="card-subtext">+91 9599588135</span>
                 </div>
-                <a href="https://wa.me/919910579530" target="_blank" class="btn">Chat ↗</a>
+                <a href="https://wa.me/919599588135" target="_blank" class="btn">Chat ↗</a>
             </div>
 
-            <!-- Contact/Email Card -->
             <div class="card">
                 <div class="card-info">
                     <span class="card-title">Get in Touch</span>
