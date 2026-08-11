@@ -12,7 +12,6 @@
     --primary-dark: #7f1d1d;
     --primary-light: #fef2f2;
     --border-color: rgba(252, 165, 165, 0.4);
-    --radius-lg: 20px;
     --radius-sm: 8px;
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -128,20 +127,13 @@
     pointer-events: none;
   }
 
-  /* ---------- HERO WELCOME CARD ---------- */
-  .welcome-box {
+  /* ---------- OPEN HERO CONTENT (NO BOX) ---------- */
+  .hero-content {
     position: relative;
-    background: rgba(255, 255, 255, 0.88);
-    padding: 56px 48px;
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 
-      0 20px 40px -15px rgba(153, 27, 27, 0.12),
-      0 0 0 1px rgba(252, 165, 165, 0.25);
-    backdrop-filter: blur(12px);
-    max-width: 540px;
+    max-width: 580px;
     width: 100%;
     animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    z-index: 1;
   }
 
   @keyframes fadeInUp {
@@ -151,23 +143,25 @@
 
   .pill-tag {
     display: inline-block;
-    padding: 6px 14px;
-    background: var(--primary-light);
+    padding: 6px 16px;
+    background: rgba(255, 255, 255, 0.8);
     color: var(--primary);
-    border: 1px solid rgba(252, 165, 165, 0.5);
+    border: 1px solid rgba(252, 165, 165, 0.6);
     border-radius: 30px;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(153, 27, 27, 0.05);
+    backdrop-filter: blur(4px);
   }
 
   .welcome-title {
-    font-size: 42px;
+    font-size: 52px;
     font-weight: 800;
     color: #0f172a;
-    margin: 0 0 16px;
+    margin: 0 0 18px;
     letter-spacing: -0.03em;
     line-height: 1.15;
   }
@@ -177,11 +171,12 @@
   }
 
   .welcome-subtitle {
-    font-size: 16px;
-    color: #64748b;
-    margin: 0 0 32px;
-    line-height: 1.5;
+    font-size: 18px;
+    color: #475569;
+    margin: 0 auto 36px;
+    line-height: 1.6;
     font-weight: 400;
+    max-width: 460px;
   }
 
   /* Modern shine button */
@@ -191,8 +186,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    width: 100%;
-    padding: 18px 36px;
+    padding: 18px 42px;
     font-size: 17px;
     font-weight: 700;
     color: #ffffff;
@@ -232,19 +226,21 @@
   .feature-list {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    margin-top: 24px;
-    padding-top: 24px;
-    border-top: 1px dashed rgba(203, 213, 225, 0.6);
+    gap: 20px;
+    margin-top: 36px;
   }
 
   .feature-item {
-    font-size: 12px;
-    color: #64748b;
+    font-size: 13px;
+    color: #475569;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(252, 165, 165, 0.3);
   }
 
   /* ---------- BOTTOM FOOTER ---------- */
@@ -318,16 +314,16 @@
 
     .status-badge { display: none; }
 
-    .welcome-box {
-      width: 90%;
-      padding: 36px 20px !important;
+    .welcome-title {
+      font-size: 34px !important;
     }
 
-    .welcome-title {
-      font-size: 30px !important;
+    .welcome-subtitle {
+      font-size: 15px !important;
     }
 
     .landing-btn {
+      width: 100%;
       padding: 15px 20px !important;
       font-size: 15px !important;
     }
@@ -340,6 +336,7 @@
 
     .feature-list {
       flex-direction: column;
+      align-items: center;
       gap: 8px;
     }
   }
@@ -356,7 +353,7 @@
 </header>
 
 <div class="landing-page" id="landingPage">
-  <div class="welcome-box">
+  <div class="hero-content">
     <span class="pill-tag">Quote Generator</span>
     <h1 class="welcome-title">We're glad <span>you're here!</span></h1>
     <p class="welcome-subtitle">Create beautiful supporting quotations quickly and effortlessly.</p>
@@ -376,7 +373,7 @@
   <div class="landing-footer-wrap">
     <div class="footer-brand">By Prasad</div>
     <a href="about.html" class="about-me-btn">
-      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" class="github-avatar">
+      <img src="https://github.com/kundarwork-debug.png" alt="GitHub Profile" class="github-avatar">
       About Me ↗
     </a>
   </div>
