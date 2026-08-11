@@ -441,7 +441,7 @@
   .doc-max .footer { margin-top: 18px; font-size: 10pt; line-height: 1.6; }
   .doc-max .footer .sign { margin-top: 14px; font-weight: 700; }
 
-  /* ---------- RESPONSIVE MEDIA QUERIES ---------- */
+  /* ---------- RESPONSIVE MEDIA QUERIES (MOBILE) ---------- */
   @media (max-width: 768px) {
     .app {
       grid-template-columns: 1fr !important;
@@ -455,6 +455,13 @@
       padding: 20px 16px 40px !important;
     }
 
+    /* HIDE Document details, Terms & conditions, and Registered office on mobile */
+    #docDetailsGroup,
+    #termsGroup,
+    #regOfficeGroup {
+      display: none !important;
+    }
+
     .stage {
       padding: 16px 8px !important;
       max-height: none !important;
@@ -466,7 +473,6 @@
       overflow-x: auto;
     }
 
-    /* Keep live mobile view responsive without breaking document padding */
     #previewA4 {
       width: 100%;
       max-width: 794px;
@@ -506,13 +512,13 @@
       </div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="docDetailsGroup">
       <h2>Document details</h2>
       <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
       <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="costItemsGroup">
       <h2>Cost items</h2>
       <div class="field" style="margin-bottom:14px;">
         <label>Total amount (auto-fills below using standard %)</label>
@@ -532,13 +538,13 @@
       <div class="totals-box" id="totalsBox"></div>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="termsGroup">
       <h2>Terms &amp; conditions</h2>
       <div id="termRows"></div>
       <button class="add-btn" id="addTermRow">+ Add term</button>
     </div>
 
-    <div class="field-group">
+    <div class="field-group" id="regOfficeGroup">
       <h2 id="footerHeading">Registered office</h2>
       <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
       <div class="row2">
@@ -996,7 +1002,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   // Mandatory details check
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
-    alert("Please fill mandatory customer fields (Name, From City, To City) before downloading.");
+    alert("APML ke balak details tho bharo paheley");
     return;
   }
 
