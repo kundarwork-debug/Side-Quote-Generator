@@ -476,4 +476,142 @@
       height: 56px;
     }
 
-    .status-
+    .status-badge { display: none; }
+
+    .welcome-title {
+      font-size: 34px !important;
+    }
+
+    .welcome-subtitle {
+      font-size: 15px !important;
+    }
+
+    .hero-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .landing-btn, .gallery-btn-preview {
+      width: 100%;
+      padding: 15px 20px !important;
+      font-size: 15px !important;
+    }
+
+    .feature-list {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .site-footer {
+      padding: 20px 16px !important;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <img src="https://github.com/kundarwork-debug.png" alt="Profile Logo" class="github-profile-pic">
+    <span class="header-brand-name">APML</span>
+    <span class="status-badge"><span class="status-dot"></span> Staff Portal</span>
+  </div>
+</header>
+
+<section class="hero-section" id="landingPage">
+  <div class="hero-content">
+    <span class="pill-tag">Internal Staff Portal</span>
+    <h1 class="welcome-title">We're glad <span>you're here!</span></h1>
+    <p class="welcome-subtitle">Draft supporting quotations and download consignment packing photos & videos to share directly with APML customers.</p>
+    
+    <div class="hero-actions">
+      <a href="editor.html" class="landing-btn">
+        Supporting Quotation
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+      </a>
+      <a href="#modules" class="gallery-btn-preview">
+        Packing Gallery <span class="badge-upcoming">Soon</span>
+      </a>
+    </div>
+
+    <div class="feature-list">
+      <span class="feature-item">⚡ Quick Quote Downloads</span>
+      <span class="feature-item">📦 Consignment Media Assets</span>
+      <span class="feature-item">📲 Easy Customer Sharing</span>
+    </div>
+  </div>
+</section>
+
+<section class="section-container" id="modules">
+  <div class="section-header">
+    <h2 class="section-title">Staff Resources</h2>
+    <p class="section-desc">Internal APML tools for downloading assets and sending official updates to clients.</p>
+  </div>
+
+  <div class="grid-2">
+    <div class="module-card">
+      <span class="module-tag tag-active">● Active</span>
+      <div class="card-icon">📝</div>
+      <h3 class="card-title">Quotation Editor</h3>
+      <p class="card-desc">Draft and download customized supporting quotation files to send to customers for price confirmation.</p>
+      <a href="editor.html" class="card-link">
+        Launch Quotation Editor ↗
+      </a>
+    </div>
+
+    <div class="module-card">
+      <span class="module-tag tag-soon">Coming Soon</span>
+      <div class="card-icon">📸</div>
+      <h3 class="card-title">Packing Gallery</h3>
+      <p class="card-desc">Download consignment packing photos and videos recorded by field staff to share packing proof with customers.</p>
+      <span class="card-link disabled">
+        Gallery Opening Soon 🔒
+      </span>
+    </div>
+  </div>
+</section>
+
+<section class="section-container" style="padding-top: 0;">
+  <div class="section-header">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-desc">Employee workflow for downloading materials and providing customer updates.</p>
+  </div>
+
+  <div class="steps-wrapper">
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-text">
+        <h4>Generate & Download Quotations</h4>
+        <p>Use the Editor to quickly draft and export supporting quotation files formatted for your clients.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <div class="step-text">
+        <h4>Download Packing Media</h4>
+        <p>Access and download consignment packing photos and video clips directly from the internal gallery.</p>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <div class="step-text">
+        <h4>Share Directly with Customers</h4>
+        <p>Send downloaded quotation files and packing proof to customers via email, WhatsApp, or chat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-brand">By Prasad</div>
+  <a href="about.html" class="about-me-btn">
+    <img src="https://github.com/kundarwork-debug.png" alt="GitHub Profile" class="github-avatar">
+    About Me ↗
+  </a>
+</footer>
+
+</body>
+</html>
