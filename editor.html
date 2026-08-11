@@ -39,6 +39,7 @@
     display: grid;
     grid-template-columns: 440px 1fr;
     min-height: 100vh;
+    width: 100%;
   }
 
   /* ---------- LEFT: CONTROL PANEL ---------- */
@@ -202,8 +203,8 @@
     align-items: center;
   }
 
-  .cost-row input.label-in { flex: 1.6; }
-  .cost-row input.amt-in { flex: 1; text-align: right; }
+  .cost-row input.label-in { flex: 1.6; min-width: 0; }
+  .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
   .term-row textarea { flex: 1; min-height: 38px; resize: vertical; }
 
   .icon-btn {
@@ -445,14 +446,37 @@
   @media (max-width: 768px) {
     .app {
       grid-template-columns: 1fr !important;
+      width: 100% !important;
       min-height: auto;
     }
 
     .panel {
+      width: 100% !important;
       max-height: none !important;
       border-right: none !important;
       border-bottom: 1px solid var(--border-light);
       padding: 20px 16px 40px !important;
+      box-sizing: border-box;
+    }
+
+    /* Totals calculation box screen fit on mobile */
+    .totals-box {
+      width: 100% !important;
+      padding: 10px 12px !important;
+      font-size: 12px !important;
+      box-sizing: border-box !important;
+    }
+
+    .totals-box .line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      word-break: break-word;
+    }
+
+    .totals-box .line span {
+      font-size: 12px !important;
     }
 
     /* HIDE Document details, Terms & conditions, and Registered office on mobile */
@@ -462,22 +486,9 @@
       display: none !important;
     }
 
+    /* HIDE PDF Preview stage on mobile screens */
     .stage {
-      padding: 16px 8px !important;
-      max-height: none !important;
-      overflow-x: auto;
-    }
-
-    .sheet-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    #previewA4 {
-      width: 100%;
-      max-width: 794px;
-      min-height: auto !important;
-      box-sizing: border-box;
+      display: none !important;
     }
   }
 </style>
@@ -572,7 +583,7 @@
 
 <script>
 /* ---------------------------------------------------------------
-   HELPERS & INITIAL DEFAULTS
+   HELPERS & INITIAL DEFAULTS (All cost item amounts start at 0)
 --------------------------------------------------------------- */
 function getFormattedCurrentDate() {
   const d = new Date();
@@ -604,13 +615,13 @@ const DEFAULTS = {
     docNo: "2025323429",
     gstNo: "23AAACL1838J1ZO",
     costItems: [
-      { label: "Freight", amount: 28800 },
-      { label: "Car Freight", amount: 15500 },
-      { label: "Packing Charges", amount: 9600 },
-      { label: "Loading Charges at Origin", amount: 4800 },
-      { label: "Unloading Charges at Destination", amount: 2400 },
-      { label: "Unpacking Charges", amount: 1440 },
-      { label: "Other Charges (Toll etc.)", amount: 960 }
+      { label: "Freight", amount: 0 },
+      { label: "Car Freight", amount: 0 },
+      { label: "Packing Charges", amount: 0 },
+      { label: "Loading Charges at Origin", amount: 0 },
+      { label: "Unloading Charges at Destination", amount: 0 },
+      { label: "Unpacking Charges", amount: 0 },
+      { label: "Other Charges (Toll etc.)", amount: 0 }
     ],
     gstPercent: 0,
     terms: [
@@ -641,10 +652,10 @@ const DEFAULTS = {
     docNo: "MAX202526954",
     gstNo: "07AAICM9877E1ZX",
     costItems: [
-      { label: "Transportation Cost", amount: 30600 },
-      { label: "Packing + Loading + Unloading + Unpacking", amount: 12750 },
-      { label: "Car Transportation (if any)", amount: 17000 },
-      { label: "Toll Tax + Risk Cover + Misc. Cost", amount: 7650 }
+      { label: "Transportation Cost", amount: 0 },
+      { label: "Packing + Loading + Unloading + Unpacking", amount: 0 },
+      { label: "Car Transportation (if any)", amount: 0 },
+      { label: "Toll Tax + Risk Cover + Misc. Cost", amount: 0 }
     ],
     gstPercent: 0,
     terms: [
@@ -997,7 +1008,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 });
 
 /* ---------------------------------------------------------------
-   PDF DOWNLOAD WITH MOBILE-TO-DESKTOP SCALE FIX
+   PDF DOWNLOAD WITH MOBILE FIX
 --------------------------------------------------------------- */
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   // Mandatory details check
@@ -1014,8 +1025,10 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   status.textContent = '';
 
   const node = document.getElementById('previewA4');
+  const stage = document.querySelector('.stage');
 
   // Save current inline styles to restore after export
+  const originalStageDisplay = stage.style.display;
   const originalWidth = node.style.width;
   const originalMinHeight = node.style.minHeight;
   const originalPosition = node.style.position;
@@ -1023,7 +1036,8 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const originalTransform = node.style.transform;
 
   try {
-    // 1. Temporarily force fixed desktop dimensions off-screen (794px width)
+    // 1. Temporarily unhide stage & force desktop dimensions off-screen (794px width)
+    stage.style.display = 'block';
     node.style.width = '794px';
     node.style.minHeight = '1123px';
     node.style.position = 'absolute';
@@ -1039,7 +1053,8 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       windowWidth: 794
     });
 
-    // 3. Instantly restore original styles for seamless user experience
+    // 3. Instantly restore original styles
+    stage.style.display = originalStageDisplay;
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
     node.style.position = originalPosition;
@@ -1078,6 +1093,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
     
     // Restore styles in case of error
+    stage.style.display = originalStageDisplay;
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
     node.style.position = originalPosition;
