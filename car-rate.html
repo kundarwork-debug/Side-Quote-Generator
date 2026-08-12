@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APML - Vehicle Transport Calculator</title>
     
-    <!-- GitHub Profile Picture as Favicon -->
-    <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
+    
+    <link rel="stylesheet" href="header.css">
     
     <style>
         * {
@@ -23,33 +24,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
-        }
-
-        /* Top Bar */
-        .top-nav {
-            width: 100%;
-            max-width: 900px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 0;
-            margin-bottom: 20px;
-        }
-
-        .top-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #b71c1c;
-        }
-
-        .brand-name {
-            font-weight: 800;
-            font-size: 18px;
-            color: #b71c1c;
-            letter-spacing: 0.5px;
+            padding: 100px 20px 40px 20px; /* Padding for fixed header */
         }
 
         /* Header Title */
@@ -125,6 +100,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
+            position: relative;
         }
 
         label {
@@ -151,6 +127,49 @@
         input:focus, select:focus {
             border-color: #b71c1c;
             background-color: #ffffff;
+        }
+
+        /* AUTOCOMPLETE SUGGESTIONS DROPDOWN */
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ffcdd2;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(183, 28, 28, 0.12);
+            max-height: 180px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .suggestion-item {
+            padding: 10px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.15s;
+        }
+
+        .suggestion-item:hover {
+            background-color: #fff0f0;
+            color: #b71c1c;
+        }
+
+        .suggestion-tag {
+            font-size: 10px;
+            font-weight: 700;
+            color: #b71c1c;
+            background: #ffebee;
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
         .detected-badge {
@@ -262,72 +281,19 @@
             background-color: #ffebee;
             font-weight: bold;
         }
-
-        /* Footer */
-        footer {
-            margin-top: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .footer-label {
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            color: #b71c1c;
-            text-transform: uppercase;
-        }
-
-        .btn-about {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background-color: #ffffff;
-            border: 1px solid #ffcdd2;
-            color: #333333;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .btn-about:hover {
-            transform: translateY(-2px);
-            border-color: #b71c1c;
-        }
-
-        .btn-about img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Top Navigation -->
-    <div class="top-nav">
-        <img src="https://github.com/kundarwork-debug.png" alt="Logo" class="top-avatar">
-        <span class="brand-name">APML</span>
-    </div>
+    <div id="header-container"></div>
 
-    <!-- Title Section -->
     <div class="hero-title">
         <div class="pill-badge">VEHICLE TRANSPORT</div>
         <h1>Car Transport <span>Rate Calculator</span></h1>
     </div>
 
-    <!-- Main Side-by-Side Wrapper -->
     <div class="calc-wrapper">
         
-        <!-- Left Side: Calculation Inputs -->
         <div class="left-card">
             <div class="card-header-title">
                 <span>📝</span> Vehicle & Route Input
@@ -335,7 +301,8 @@
 
             <div class="form-group">
                 <label for="carInput">Car Model / Name:</label>
-                <input type="text" id="carInput" placeholder="e.g. Tata Nano, Honda City, Fortuner..." value="Tata Nano">
+                <input type="text" id="carInput" placeholder="Type car name e.g. Fortuner, Swift, Creta..." value="" autocomplete="off">
+                <div id="suggestionsBox" class="suggestions-dropdown"></div>
                 <div><span id="detectedType" class="detected-badge">Detected: Small Car (Hatchback)</span></div>
             </div>
 
@@ -350,11 +317,10 @@
 
             <div class="form-group">
                 <label for="kmInput">Total Distance (in KM):</label>
-                <input type="number" id="kmInput" value="601" min="1" placeholder="e.g. 600">
+                <input type="number" id="kmInput" value="" min="1" placeholder="e.g. 600">
             </div>
         </div>
 
-        <!-- Right Side: Live Results Output -->
         <div class="right-card">
             <div>
                 <div class="card-header-title">
@@ -372,20 +338,19 @@
                     </div>
                     <div class="price-row">
                         <span>Additional Distance Charge:</span>
-                        <strong id="outExtra">₹9 (1 KM @ ₹9/KM)</strong>
+                        <strong id="outExtra">₹0</strong>
                     </div>
                 </div>
             </div>
 
             <div class="total-box">
                 <div class="total-label">Estimated Total Price</div>
-                <div id="outTotal" class="total-amount">₹11,009</div>
+                <div id="outTotal" class="total-amount">₹0</div>
             </div>
         </div>
 
     </div>
 
-    <!-- Rate Schedule Table -->
     <div class="table-section">
         <div class="section-title">📌 Standard Rate Schedule</div>
         <table>
@@ -416,21 +381,65 @@
         </table>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-label">BY PRASAD</div>
-        <a href="about.html" class="btn-about">
-            <img src="https://github.com/kundarwork-debug.png" alt="Profile">
-            About Me ↗
-        </a>
-    </footer>
-
     <script>
         const RATES = {
             hatchback: { name: "Small Car (Hatchback)", base: 11000, perKm: 9 },
             sedan:     { name: "Medium Car (Sedan)",    base: 13500, perKm: 10 },
             suv:       { name: "Big Car (SUV/Luxury)",  base: 16000, perKm: 11 }
         };
+
+        // POPULAR CAR MODELS DATABASE FOR SUGGESTIONS
+        const CAR_DATABASE = [
+            // Hatchbacks
+            { name: "Tata Nano", type: "hatchback" },
+            { name: "Maruti Suzuki Alto", type: "hatchback" },
+            { name: "Maruti Suzuki WagonR", type: "hatchback" },
+            { name: "Maruti Suzuki Swift", type: "hatchback" },
+            { name: "Hyundai i10", type: "hatchback" },
+            { name: "Hyundai i20", type: "hatchback" },
+            { name: "Renault Kwid", type: "hatchback" },
+            { name: "Tata Tiago", type: "hatchback" },
+            { name: "Maruti Suzuki Celerio", type: "hatchback" },
+            { name: "Maruti Suzuki Baleno", type: "hatchback" },
+            { name: "Volkswagen Polo", type: "hatchback" },
+            { name: "Maruti S-Presso", type: "hatchback" },
+            { name: "Maruti Ignis", type: "hatchback" },
+
+            // Sedans
+            { name: "Honda City", type: "sedan" },
+            { name: "Hyundai Verna", type: "sedan" },
+            { name: "Maruti Suzuki Dzire", type: "sedan" },
+            { name: "Maruti Suzuki Ciaz", type: "sedan" },
+            { name: "Skoda Slavia", type: "sedan" },
+            { name: "Volkswagen Virtus", type: "sedan" },
+            { name: "Honda Amaze", type: "sedan" },
+            { name: "Tata Tigor", type: "sedan" },
+            { name: "Hyundai Aura", type: "sedan" },
+
+            // SUVs / Luxury
+            { name: "Toyota Fortuner", type: "suv" },
+            { name: "Hyundai Creta", type: "suv" },
+            { name: "Tata Harrier", type: "suv" },
+            { name: "Tata Safari", type: "suv" },
+            { name: "Mahindra XUV700", type: "suv" },
+            { name: "Mahindra Thar", type: "suv" },
+            { name: "Mahindra Scorpio-N", type: "suv" },
+            { name: "Kia Seltos", type: "suv" },
+            { name: "Kia Sonet", type: "suv" },
+            { name: "Tata Nexon", type: "suv" },
+            { name: "Tata Punch", type: "suv" },
+            { name: "Maruti Brezza", type: "suv" },
+            { name: "Toyota Innova Crysta", type: "suv" },
+            { name: "Toyota Innova Hycross", type: "suv" },
+            { name: "MG Hector", type: "suv" },
+            { name: "Mahindra Bolero", type: "suv" },
+            { name: "Maruti Ertiga", type: "suv" },
+            { name: "Renault Triber", type: "suv" },
+            { name: "Jeep Compass", type: "suv" },
+            { name: "BMW X5 / 3 Series", type: "suv" },
+            { name: "Audi Q5 / A4", type: "suv" },
+            { name: "Mercedes-Benz GLC", type: "suv" }
+        ];
 
         const HATCHBACK_KEYWORDS = ["nano", "alto", "i10", "i20", "swift", "kwid", "wagonr", "tiago", "celerio", "baleno", "hatchback", "polo", "s-presso", "ignis", "figo", "micra", "ritz", "beat"];
         const SUV_KEYWORDS       = ["fortuner", "creta", "harrier", "safari", "xuv", "thar", "scorpio", "seltos", "hector", "brezza", "nexon", "innova", "endeavour", "audi", "bmw", "mercedes", "range rover", "suv", "luxury", "duster", "compass", "bolero", "ertiga", "triber"];
@@ -439,6 +448,7 @@
         const kmInput = document.getElementById('kmInput');
         const selectType = document.getElementById('carCategorySelect');
         const detectedBadge = document.getElementById('detectedType');
+        const suggestionsBox = document.getElementById('suggestionsBox');
 
         function autoDetectType(name) {
             const cleanName = name.toLowerCase().trim();
@@ -453,27 +463,75 @@
             return 'sedan';
         }
 
+        function getSuggestions(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            if (!cleanQuery) return [];
+
+            return CAR_DATABASE.filter(item => {
+                const name = item.name.toLowerCase();
+                if (name.includes(cleanQuery)) return true;
+                
+                let score = 0;
+                for (let char of cleanQuery) {
+                    if (name.includes(char)) score++;
+                }
+                return score >= Math.max(2, cleanQuery.length - 1);
+            }).slice(0, 5);
+        }
+
+        function showSuggestions() {
+            const matches = getSuggestions(carInput.value);
+            if (matches.length === 0) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+
+            suggestionsBox.innerHTML = '';
+            matches.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.innerHTML = `
+                    <span>${item.name}</span>
+                    <span class="suggestion-tag">${RATES[item.type].name.split(' ')[0]}</span>
+                `;
+                div.onclick = () => {
+                    carInput.value = item.name;
+                    selectType.value = item.type;
+                    detectedBadge.innerText = `Selected: ${item.name} (${RATES[item.type].name})`;
+                    suggestionsBox.style.display = 'none';
+                    calculate();
+                };
+                suggestionsBox.appendChild(div);
+            });
+
+            suggestionsBox.style.display = 'block';
+        }
+
         function calculate() {
             let category = selectType.value;
-            const distance = parseInt(kmInput.value) || 0;
+            const distanceVal = kmInput.value.trim();
+            const distance = parseInt(distanceVal) || 0;
             const rateInfo = RATES[category];
-
-            let extraKm = Math.max(0, distance - 600);
-            let extraCharge = extraKm * rateInfo.perKm;
-
-            // Minimum base price enforcement for <= 600 KM
-            let total = rateInfo.base + extraCharge;
 
             document.getElementById('outType').innerText = rateInfo.name;
             document.getElementById('outBase').innerText = '₹' + rateInfo.base.toLocaleString('en-IN');
-            
-            if (distance > 600) {
-                document.getElementById('outExtra').innerText = `₹${extraCharge.toLocaleString('en-IN')} (${extraKm} KM @ ₹${rateInfo.perKm}/KM)`;
-            } else {
-                document.getElementById('outExtra').innerText = `₹0 (Flat minimum rate applied)`;
-            }
 
-            document.getElementById('outTotal').innerText = '₹' + total.toLocaleString('en-IN');
+            if (!distanceVal || distance <= 0) {
+                document.getElementById('outExtra').innerText = '₹0';
+                document.getElementById('outTotal').innerText = '₹0';
+            } else {
+                let extraKm = Math.max(0, distance - 600);
+                let extraCharge = extraKm * rateInfo.perKm;
+                let total = rateInfo.base + extraCharge;
+
+                if (distance > 600) {
+                    document.getElementById('outExtra').innerText = `₹${extraCharge.toLocaleString('en-IN')} (${extraKm} KM @ ₹${rateInfo.perKm}/KM)`;
+                } else {
+                    document.getElementById('outExtra').innerText = `₹0 (Flat minimum rate applied)`;
+                }
+
+                document.getElementById('outTotal').innerText = '₹' + total.toLocaleString('en-IN');
+            }
 
             document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('active-row'));
             document.getElementById('row-' + category).classList.add('active-row');
@@ -483,7 +541,16 @@
             const detected = autoDetectType(carInput.value);
             selectType.value = detected;
             detectedBadge.innerText = `Detected: ${RATES[detected].name}`;
+            showSuggestions();
             calculate();
+        });
+
+        carInput.addEventListener('focus', showSuggestions);
+
+        document.addEventListener('click', (e) => {
+            if (!carInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.style.display = 'none';
+            }
         });
 
         selectType.addEventListener('change', () => {
@@ -495,5 +562,7 @@
 
         calculate();
     </script>
+
+    <script src="header.js"></script>
 </body>
 </html>
