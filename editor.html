@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quotation Editor - APML Support Page</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
+
+<link rel="stylesheet" href="header.css">
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -40,6 +43,7 @@
     grid-template-columns: 440px 1fr;
     min-height: 100vh;
     width: 100%;
+    padding-top: 64px; /* Space for the fixed header */
   }
 
   /* ---------- LEFT: CONTROL PANEL ---------- */
@@ -48,7 +52,7 @@
     border-right: 1px solid var(--border-light);
     padding: 28px 24px 80px;
     overflow-y: auto;
-    max-height: 100vh;
+    max-height: calc(100vh - 64px);
   }
 
   .back-btn {
@@ -340,7 +344,7 @@
     justify-content: center;
     align-items: flex-start;
     overflow-y: auto;
-    max-height: 100vh;
+    max-height: calc(100vh - 64px);
     background: #f1f5f9;
   }
 
@@ -448,6 +452,7 @@
       grid-template-columns: 1fr !important;
       width: 100% !important;
       min-height: auto;
+      padding-top: 56px !important;
     }
 
     .panel {
@@ -494,6 +499,8 @@
 </style>
 </head>
 <body>
+
+<div id="header-container"></div>
 
 <div class="app" id="appView">
   <div class="panel">
@@ -1108,5 +1115,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 document.getElementById('dateStamp').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
 renderAll();
 </script>
+
+<script src="header.js"></script>
 </body>
 </html>
