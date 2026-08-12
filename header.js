@@ -1,38 +1,52 @@
-// Function to toggle mobile menu
-function toggleHeaderMenu() {
-  const menu = document.getElementById('dropdownMenu');
-  if (menu) {
-    menu.classList.toggle('active');
+// Automatically load header HTML into pages
+document.addEventListener("DOMContentLoaded", function () {
+  const headerContainer = document.getElementById("header-container");
+  if (headerContainer) {
+    fetch("header.html")
+      .then(response => response.text())
+      .then(data => {
+        headerContainer.innerHTML = data;
+        initHeaderScrollAndMenu();
+      })
+      .catch(err => console.error("Error loading header:", err));
+  } else {
+    initHeaderScrollAndMenu();
   }
+});
+
+function initHeaderScrollAndMenu() {
+  let lastScrollY = window.scrollY;
+
+  window.addEventListener("scroll", function () {
+    const header = document.getElementById("siteHeader");
+    const dropdown = document.getElementById("dropdownMenu");
+    const currentScrollY = window.scrollY;
+
+    if (header) {
+      if (currentScrollY > 60 && currentScrollY > lastScrollY) {
+        // Scroll Down -> Hide Header
+        header.classList.add("header-hidden");
+        if (dropdown) dropdown.classList.remove("active");
+      } else {
+        // Scroll Up -> Show Header
+        header.classList.remove("header-hidden");
+      }
+    }
+    lastScrollY = currentScrollY;
+  });
+
+  document.addEventListener("click", function (event) {
+    const menuContainer = document.querySelector(".menu-container");
+    const menu = document.getElementById("dropdownMenu");
+    if (menuContainer && menu && !menuContainer.contains(event.target)) {
+      menu.classList.remove("active");
+    }
+  });
 }
 
-// Close menu if clicked outside
-document.addEventListener('click', function (event) {
-  const menuContainer = document.querySelector('.menu-container');
-  const menu = document.getElementById('dropdownMenu');
-  if (menuContainer && menu && !menuContainer.contains(event.target)) {
-    menu.classList.remove('active');
+function toggleMenu() {
+  const menu = document.getElementById("dropdownMenu");
+  if (menu) {
+    menu.classList.toggle("active");
   }
-});
-
-// Auto-hide header when scrolling down, show when scrolling up
-let lastScrollY = window.scrollY;
-
-window.addEventListener('scroll', function () {
-  const header = document.getElementById('siteHeader');
-  const dropdown = document.getElementById('dropdownMenu');
-  const currentScrollY = window.scrollY;
-
-  if (header) {
-    // Hide header if scrolled down past 60px
-    if (currentScrollY > 60 && currentScrollY > lastScrollY) {
-      header.classList.add('header-hidden');
-      if (dropdown) dropdown.classList.remove('active'); // close menu if scrolling down
-    } else {
-      // Show header on scroll up
-      header.classList.remove('header-hidden');
-    }
-  }
-
-  lastScrollY = currentScrollY;
-});
+}
