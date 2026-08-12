@@ -1,33 +1,36 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const container = document.getElementById("header-container");
-  if (!container) return;
+<script>
+  let lastScrollY = window.scrollY;
 
-  // Load the shared header snippet automatically
-  fetch("header.html")
-    .then((response) => response.text())
-    .then((data) => {
-      container.innerHTML = data;
-      initMenuEvents();
-    })
-    .catch((err) => console.error("Error loading header:", err));
-});
+  window.addEventListener('scroll', function () {
+    const header = document.getElementById('siteHeader');
+    const dropdown = document.getElementById('dropdownMenu');
+    const currentScrollY = window.scrollY;
 
-function initMenuEvents() {
-  const hamburgerBtn = document.getElementById("hamburgerBtn");
-  const dropdownMenu = document.getElementById("dropdownMenu");
+    // Scroll down past 60px -> Hide header
+    if (currentScrollY > 60 && currentScrollY > lastScrollY) {
+      header.classList.add('header-hidden');
+      if (dropdown) dropdown.classList.remove('active');
+    } else {
+      // Scroll up -> Show header
+      header.classList.remove('header-hidden');
+    }
 
-  if (hamburgerBtn && dropdownMenu) {
-    // Toggle dropdown on button click
-    hamburgerBtn.addEventListener("click", function (e) {
-      e.stopPropagation();
-      dropdownMenu.classList.toggle("active");
-    });
+    lastScrollY = currentScrollY;
+  });
 
-    // Close menu when clicking outside
-    document.addEventListener("click", function (e) {
-      if (!dropdownMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-        dropdownMenu.classList.remove("active");
-      }
-    });
+  function toggleMenu() {
+    const menu = document.getElementById('dropdownMenu');
+    menu.classList.toggle('active');
   }
-}
+
+  document.addEventListener('click', function(event) {
+    const menuContainer = document.querySelector('.menu-container');
+    const menu = document.getElementById('dropdownMenu');
+    if (menuContainer && !menuContainer.contains(event.target)) {
+      menu.classList.remove('active');
+    }
+  });
+</script>
+
+</body>
+</html>
