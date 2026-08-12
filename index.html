@@ -328,6 +328,16 @@
     color: var(--primary);
   }
 
+  .badge-upcoming {
+    background: #fef2f2;
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(252, 165, 165, 0.6);
+  }
+
   .feature-list {
     display: flex;
     justify-content: center;
@@ -413,6 +423,12 @@
     border: 1px solid #bbf7d0;
   }
 
+  .tag-soon {
+    background: #fef2f2;
+    color: var(--primary);
+    border: 1px solid #fecaca;
+  }
+
   .card-icon {
     font-size: 36px;
     margin-bottom: 20px;
@@ -440,6 +456,11 @@
     font-weight: 700;
     color: var(--primary);
     text-decoration: none;
+  }
+
+  .card-link.disabled {
+    color: #94a3b8;
+    cursor: not-allowed;
   }
 
   /* Steps Section */
@@ -603,7 +624,7 @@
     </button>
 
     <div class="dropdown-menu" id="dropdownMenu">
-      <a href="apml-lite-rate-calculator.html" class="menu-item-btn">
+      <a href="APML-Lite.html" class="menu-item-btn">
         <span class="icon">📊</span> APML Lite Rate Calculator
       </a>
       <a href="car-rate-calculator.html" class="menu-item-btn">
@@ -630,8 +651,8 @@
         Supporting Quotation
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </a>
-      <a href="gallery.html" class="gallery-btn-preview">
-        Packing Gallery 📸
+      <a href="#modules" class="gallery-btn-preview">
+        Packing Gallery <span class="badge-upcoming">Soon</span>
       </a>
     </div>
 
@@ -661,13 +682,13 @@
     </div>
 
     <div class="module-card">
-      <span class="module-tag tag-active">● Active</span>
+      <span class="module-tag tag-soon">Coming Soon</span>
       <div class="card-icon">📸</div>
       <h3 class="card-title">Packing Gallery</h3>
       <p class="card-desc">Download consignment packing photos and videos recorded by field staff to share packing proof with customers.</p>
-      <a href="gallery.html" class="card-link">
-        Open Packing Gallery ↗
-      </a>
+      <span class="card-link disabled">
+        Gallery Opening Soon 🔒
+      </span>
     </div>
   </div>
 </section>
