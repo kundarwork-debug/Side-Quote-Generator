@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APML Lite Rates</title>
+    <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fff5f5;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #b71c1c;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #b71c1c;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border: 1px solid #ffcdd2;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(183, 28, 28, 0.05);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #b71c1c;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Calculator Section */
+        .calc-box {
+            background-color: #fff8f8;
+            border: 1px solid #ffdde1;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #444;
+            text-transform: uppercase;
+        }
+
+        .cft-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ffcdd2;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #111;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .cft-input:focus {
+            border-color: #b71c1c;
+        }
+
+        .error-msg {
+            color: #d32f2f;
+            font-size: 13px;
+            font-weight: 700;
+            margin-top: 6px;
+            display: none;
+        }
+
+        /* Results Cards Grid */
+        .rates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .rate-card {
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .rate-card.highlight {
+            border-color: #b71c1c;
+            background-color: #fff0f0;
+        }
+
+        .city-name {
+            font-size: 11px;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .city-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: #b71c1c;
+        }
+
+        .note-box {
+            margin-top: 20px;
+            background-color: #fff3e0;
+            border: 1px solid #ffe0b2;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #e65100;
+            line-height: 1.5;
+        }
+
+        .back-nav {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .back-link {
+            color: #b71c1c;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="https://github.com/kundarwork-debug.png" alt="APML" class="brand-logo">
+        <span class="brand-title">APML Logistics</span>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">APML Lite Rates</h1>
+
+        <!-- Calculator -->
+        <div class="calc-box">
+            <div class="input-group">
+                <label for="cftInput">Enter CFT Volume (Max 450):</label>
+                <input type="number" id="cftInput" class="cft-input" value="250" min="1" max="450" placeholder="e.g. 250">
+                <div id="errorMsg" class="error-msg">⚠️ Beyond 450 CFT, orders are not accepted under APML Lite.</div>
+            </div>
+
+            <div class="rates-grid" id="ratesGrid">
+                <div class="rate-card highlight">
+                    <div class="city-name">Delhi NCR (KWS)</div>
+                    <div class="city-price" id="delhiPrice">₹25,000</div>
+                </div>
+                <div class="rate-card">
+                    <div class="city-name">Chennai (CHE)</div>
+                    <div class="city-price" id="chePrice">₹25,000</div>
+                </div>
+                <div class="rate-card">
+                    <div class="city-name">Bangalore (BNG)</div>
+                    <div class="city-price" id="bngPrice">₹23,750</div>
+                </div>
+                <div class="rate-card">
+                    <div class="city-name">Kolkata (KOL)</div>
+                    <div class="city-price" id="kolPrice">₹26,250</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="note-box">
+            📌 <strong>Terms:</strong> Minimum booking rate for APML Lite is <strong>₹5,000</strong>. Maximum order capacity per booking is restricted to <strong>450 CFT</strong>.
+        </div>
+
+        <div class="back-nav">
+            <a href="index.html" class="back-link">← Back to Main Page</a>
+        </div>
+    </div>
+
+    <script>
+        const MIN_RATE = 5000;
+        const MAX_CFT = 450;
+
+        function calculateRates(cft) {
+            let delhi, che, bng, kol;
+            if (cft <= 50) {
+                delhi = cft * 125;
+                che = cft * 125;
+                bng = cft * 120;
+                kol = cft * 140;
+            } else if (cft <= 100) {
+                delhi = cft * 115;
+                che = cft * 115;
+                bng = cft * 110;
+                kol = cft * 130;
+            } else if (cft <= 250) {
+                delhi = cft * 100;
+                che = cft * 100;
+                bng = cft * 95;
+                kol = cft * 105;
+            } else {
+                delhi = cft * 85;
+                che = cft * 85;
+                bng = cft * 80;
+                kol = cft * 100;
+            }
+
+            // Enforce ₹5,000 minimum value constraint
+            delhi = Math.max(delhi, MIN_RATE);
+            che = Math.max(che, MIN_RATE);
+            bng = Math.max(bng, MIN_RATE);
+            kol = Math.max(kol, MIN_RATE);
+
+            return { delhi, che, bng, kol };
+        }
+
+        const input = document.getElementById('cftInput');
+        const errorMsg = document.getElementById('errorMsg');
+        const ratesGrid = document.getElementById('ratesGrid');
+
+        function updateCalc() {
+            let val = parseInt(input.value) || 0;
+
+            if (val > MAX_CFT) {
+                errorMsg.style.display = 'block';
+                ratesGrid.style.opacity = '0.3';
+                ratesGrid.style.pointerEvents = 'none';
+                return;
+            } else {
+                errorMsg.style.display = 'none';
+                ratesGrid.style.opacity = '1';
+                ratesGrid.style.pointerEvents = 'auto';
+            }
+
+            let rates = calculateRates(val);
+            document.getElementById('delhiPrice').innerText = '₹' + rates.delhi.toLocaleString('en-IN');
+            document.getElementById('chePrice').innerText = '₹' + rates.che.toLocaleString('en-IN');
+            document.getElementById('bngPrice').innerText = '₹' + rates.bng.toLocaleString('en-IN');
+            document.getElementById('kolPrice').innerText = '₹' + rates.kol.toLocaleString('en-IN');
+        }
+
+        input.addEventListener('input', updateCalc);
+        updateCalc();
+    </script>
+</body>
+</html>
