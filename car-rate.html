@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APML - Vehicle Transport Calculator</title>
+    
+    <!-- GitHub Profile Picture as Favicon -->
+    <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #fff5f5;
+            color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Top Bar */
+        .top-nav {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            margin-bottom: 20px;
+        }
+
+        .top-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #b71c1c;
+        }
+
+        .brand-name {
+            font-weight: 800;
+            font-size: 18px;
+            color: #b71c1c;
+            letter-spacing: 0.5px;
+        }
+
+        /* Header Title */
+        .hero-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .pill-badge {
+            display: inline-block;
+            background-color: #ffffff;
+            color: #b71c1c;
+            border: 1px solid #ffcdd2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            margin-bottom: 8px;
+        }
+
+        .hero-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        .hero-title h1 span {
+            color: #b71c1c;
+        }
+
+        /* Side-by-Side Main Container */
+        .calc-wrapper {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .calc-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Left Side: Inputs Card */
+        .left-card {
+            background: #ffffff;
+            border: 1px solid #ffebee;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-header-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #ffcdd2;
+            background-color: #fff8f8;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #111;
+            outline: none;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #b71c1c;
+            background-color: #ffffff;
+        }
+
+        .detected-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #2e7d32;
+            background-color: #e8f5e9;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        /* Right Side: Results Card */
+        .right-card {
+            background: #ffffff;
+            border: 1px solid #ffebee;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .price-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ffcdd2;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .price-row strong {
+            color: #111;
+        }
+
+        .total-box {
+            background-color: #fff8f8;
+            border: 1px solid #ffdde1;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .total-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .total-amount {
+            font-size: 32px;
+            font-weight: 800;
+            color: #b71c1c;
+            margin-top: 4px;
+        }
+
+        /* Reference Table */
+        .table-section {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border: 1px solid #ffebee;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 10px 12px;
+            border: 1px solid #ffcdd2;
+        }
+
+        th {
+            background-color: #fce4e4;
+            color: #b71c1c;
+            font-weight: 700;
+        }
+
+        tr.active-row {
+            background-color: #ffebee;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #b71c1c;
+            text-transform: uppercase;
+        }
+
+        .btn-about {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #ffffff;
+            border: 1px solid #ffcdd2;
+            color: #333333;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-about:hover {
+            transform: translateY(-2px);
+            border-color: #b71c1c;
+        }
+
+        .btn-about img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <img src="https://github.com/kundarwork-debug.png" alt="Logo" class="top-avatar">
+        <span class="brand-name">APML</span>
+    </div>
+
+    <!-- Title Section -->
+    <div class="hero-title">
+        <div class="pill-badge">VEHICLE TRANSPORT</div>
+        <h1>Car Transport <span>Rate Calculator</span></h1>
+    </div>
+
+    <!-- Main Side-by-Side Wrapper -->
+    <div class="calc-wrapper">
+        
+        <!-- Left Side: Calculation Inputs -->
+        <div class="left-card">
+            <div class="card-header-title">
+                <span>📝</span> Vehicle & Route Input
+            </div>
+
+            <div class="form-group">
+                <label for="carInput">Car Model / Name:</label>
+                <input type="text" id="carInput" placeholder="e.g. Tata Nano, Honda City, Fortuner..." value="Tata Nano">
+                <div><span id="detectedType" class="detected-badge">Detected: Small Car (Hatchback)</span></div>
+            </div>
+
+            <div class="form-group">
+                <label for="carCategorySelect">Vehicle Category:</label>
+                <select id="carCategorySelect">
+                    <option value="hatchback">Small Car (Hatchback)</option>
+                    <option value="sedan">Medium Car (Sedan)</option>
+                    <option value="suv">Big Car (SUV/Luxury)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="kmInput">Total Distance (in KM):</label>
+                <input type="number" id="kmInput" value="601" min="1" placeholder="e.g. 600">
+            </div>
+        </div>
+
+        <!-- Right Side: Live Results Output -->
+        <div class="right-card">
+            <div>
+                <div class="card-header-title">
+                    <span>📊</span> Estimation Summary
+                </div>
+
+                <div class="price-breakdown">
+                    <div class="price-row">
+                        <span>Vehicle Category:</span>
+                        <strong id="outType">Small Car (Hatchback)</strong>
+                    </div>
+                    <div class="price-row">
+                        <span>Base Price (Up to 600 KM):</span>
+                        <strong id="outBase">₹11,000</strong>
+                    </div>
+                    <div class="price-row">
+                        <span>Additional Distance Charge:</span>
+                        <strong id="outExtra">₹9 (1 KM @ ₹9/KM)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div class="total-box">
+                <div class="total-label">Estimated Total Price</div>
+                <div id="outTotal" class="total-amount">₹11,009</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Rate Schedule Table -->
+    <div class="table-section">
+        <div class="section-title">📌 Standard Rate Schedule</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Car Category</th>
+                    <th>Base Rate (Up to 600 KM)</th>
+                    <th>Additional Rate per KM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="row-hatchback">
+                    <td>Small Car (Hatchback)</td>
+                    <td>₹11,000</td>
+                    <td>₹9 / KM</td>
+                </tr>
+                <tr id="row-sedan">
+                    <td>Medium Car (Sedan)</td>
+                    <td>₹13,500</td>
+                    <td>₹10 / KM</td>
+                </tr>
+                <tr id="row-suv">
+                    <td>Big Car (SUV/Luxury)</td>
+                    <td>₹16,000</td>
+                    <td>₹11 / KM</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-label">BY PRASAD</div>
+        <a href="about.html" class="btn-about">
+            <img src="https://github.com/kundarwork-debug.png" alt="Profile">
+            About Me ↗
+        </a>
+    </footer>
+
+    <script>
+        const RATES = {
+            hatchback: { name: "Small Car (Hatchback)", base: 11000, perKm: 9 },
+            sedan:     { name: "Medium Car (Sedan)",    base: 13500, perKm: 10 },
+            suv:       { name: "Big Car (SUV/Luxury)",  base: 16000, perKm: 11 }
+        };
+
+        const HATCHBACK_KEYWORDS = ["nano", "alto", "i10", "i20", "swift", "kwid", "wagonr", "tiago", "celerio", "baleno", "hatchback", "polo", "s-presso", "ignis", "figo", "micra", "ritz", "beat"];
+        const SUV_KEYWORDS       = ["fortuner", "creta", "harrier", "safari", "xuv", "thar", "scorpio", "seltos", "hector", "brezza", "nexon", "innova", "endeavour", "audi", "bmw", "mercedes", "range rover", "suv", "luxury", "duster", "compass", "bolero", "ertiga", "triber"];
+
+        const carInput = document.getElementById('carInput');
+        const kmInput = document.getElementById('kmInput');
+        const selectType = document.getElementById('carCategorySelect');
+        const detectedBadge = document.getElementById('detectedType');
+
+        function autoDetectType(name) {
+            const cleanName = name.toLowerCase().trim();
+            if (!cleanName) return 'hatchback';
+
+            for (let kw of SUV_KEYWORDS) {
+                if (cleanName.includes(kw)) return 'suv';
+            }
+            for (let kw of HATCHBACK_KEYWORDS) {
+                if (cleanName.includes(kw)) return 'hatchback';
+            }
+            return 'sedan';
+        }
+
+        function calculate() {
+            let category = selectType.value;
+            const distance = parseInt(kmInput.value) || 0;
+            const rateInfo = RATES[category];
+
+            let extraKm = Math.max(0, distance - 600);
+            let extraCharge = extraKm * rateInfo.perKm;
+
+            // Minimum base price enforcement for <= 600 KM
+            let total = rateInfo.base + extraCharge;
+
+            document.getElementById('outType').innerText = rateInfo.name;
+            document.getElementById('outBase').innerText = '₹' + rateInfo.base.toLocaleString('en-IN');
+            
+            if (distance > 600) {
+                document.getElementById('outExtra').innerText = `₹${extraCharge.toLocaleString('en-IN')} (${extraKm} KM @ ₹${rateInfo.perKm}/KM)`;
+            } else {
+                document.getElementById('outExtra').innerText = `₹0 (Flat minimum rate applied)`;
+            }
+
+            document.getElementById('outTotal').innerText = '₹' + total.toLocaleString('en-IN');
+
+            document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('active-row'));
+            document.getElementById('row-' + category).classList.add('active-row');
+        }
+
+        carInput.addEventListener('input', () => {
+            const detected = autoDetectType(carInput.value);
+            selectType.value = detected;
+            detectedBadge.innerText = `Detected: ${RATES[detected].name}`;
+            calculate();
+        });
+
+        selectType.addEventListener('change', () => {
+            detectedBadge.innerText = `Selected: ${RATES[selectType.value].name}`;
+            calculate();
+        });
+
+        kmInput.addEventListener('input', calculate);
+
+        calculate();
+    </script>
+</body>
+</html>
