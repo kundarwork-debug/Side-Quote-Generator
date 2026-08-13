@@ -1,275 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APML Employee Support Hub</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APML Internal Portal - Staff Utilities</title>
 
-<link rel="stylesheet" href="header.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
-<style>
-  :root {
-    --bg-main: #fcf8f8;
-    --primary: #991b1b;
-    --primary-light: #fef2f2;
-    --border-color: rgba(252, 165, 165, 0.4);
-    --radius-sm: 8px;
-    --radius-lg: 16px;
-    --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
+  <link rel="stylesheet" href="common.css">
 
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-  body {
-    margin: 0;
-    background: var(--bg-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #0f172a;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+    body {
+      background-color: var(--bg-main, #f8fafc);
+      color: var(--text-main, #0f172a);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-  /* ---------- HERO SECTION ---------- */
-  .hero-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 85vh;
-    padding: 140px 24px 60px 24px; /* Generous top padding prevents header overlap */
-    background: 
-      radial-gradient(circle at 50% 30%, rgba(252, 165, 165, 0.25), transparent 60%),
-      radial-gradient(circle at 80% 80%, rgba(254, 242, 242, 0.8), transparent 50%),
-      linear-gradient(rgba(254, 242, 242, 0.85), rgba(254, 242, 242, 0.95)), 
-      url('image_6c9245.png');
-    background-size: cover;
-    background-position: center;
-    text-align: center;
-  }
+    /* Hero Section */
+    .hero-section {
+      text-align: center;
+      padding: 120px 20px 40px 20px;
+      background: radial-gradient(circle at 50% 30%, rgba(185, 28, 28, 0.08), transparent 60%);
+    }
 
-  body.dark-theme .hero-section {
-    background: 
-      radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.15), transparent 60%),
-      linear-gradient(rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.95));
-  }
+    .pill-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: #ffffff;
+      border: 1px solid rgba(252, 165, 165, 0.5);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #b91c1c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    }
 
-  .hero-content {
-    max-width: 620px;
-    width: 100%;
-  }
+    .welcome-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
 
-  .pill-tag {
-    display: inline-block;
-    padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--primary);
-    border: 1px solid rgba(252, 165, 165, 0.6);
-    border-radius: 30px;
-    font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 24px;
-  }
+    .welcome-title span {
+      color: #b91c1c;
+    }
 
-  body.dark-theme .pill-tag {
-    background: rgba(30, 41, 59, 0.9);
-    color: #ef4444;
-    border-color: rgba(239, 68, 68, 0.4);
-  }
+    .welcome-subtitle {
+      font-size: 15px;
+      color: #64748b;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
 
-  .welcome-title {
-    font-size: 50px;
-    font-weight: 800;
-    color: var(--text-main);
-    margin: 0 0 18px;
-    line-height: 1.15;
-  }
+    /* Grid Layout for Modules */
+    .modules-container {
+      max-width: 1000px;
+      margin: 0 auto 60px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
 
-  .welcome-title span { color: var(--primary); }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
 
-  .welcome-subtitle {
-    font-size: 18px;
-    color: #64748b;
-    margin: 0 auto 36px;
-    line-height: 1.6;
-    max-width: 520px;
-  }
+    .module-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: 16px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08);
+    }
 
-  .hero-actions {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
+    .module-card:hover {
+      transform: translateY(-4px);
+      border-color: #b91c1c;
+      box-shadow: 0px 12px 28px rgba(185, 28, 28, 0.12);
+    }
 
-  .landing-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 18px 36px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #ffffff;
-    background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    box-shadow: 0 8px 20px rgba(153, 27, 27, 0.3);
-  }
+    .card-icon-box {
+      width: 48px;
+      height: 48px;
+      background: #fef2f2;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: #b91c1c;
+    }
 
-  .gallery-btn-active {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 18px 28px;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--primary);
-    background: var(--card-bg);
-    border: 1px solid rgba(252, 165, 165, 0.8);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-  }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
 
-  .feature-list {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 40px;
-    flex-wrap: wrap;
-  }
+    .card-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
 
-  .feature-item {
-    font-size: 13px;
-    color: #64748b;
-    font-weight: 600;
-    background: rgba(255, 255, 255, 0.7);
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid rgba(252, 165, 165, 0.3);
-  }
+    .card-action {
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-  body.dark-theme .feature-item {
-    background: rgba(30, 41, 59, 0.7);
-    color: #cbd5e1;
-    border-color: rgba(239, 68, 68, 0.3);
-  }
-
-  /* ---------- MODULES SECTION ---------- */
-  .section-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 80px 24px;
-  }
-
-  .section-header { text-align: center; margin-bottom: 48px; }
-  .section-title { font-size: 32px; font-weight: 800; margin-bottom: 12px; }
-  .section-desc { font-size: 16px; color: #64748b; }
-
-  .grid-2 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 28px;
-  }
-
-  .module-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 36px 30px;
-    border-radius: var(--radius-lg);
-    position: relative;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  }
-
-  .module-tag {
-    position: absolute;
-    top: 24px; right: 24px;
-    font-size: 11px; font-weight: 700;
-    padding: 4px 10px; border-radius: 20px;
-    background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0;
-  }
-
-  .card-icon { font-size: 36px; margin-bottom: 20px; }
-  .card-title { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-  .card-desc { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
-  .card-link { font-size: 14px; font-weight: 700; color: var(--primary); text-decoration: none; }
-
-  /* ---------- FOOTER ---------- */
-  .site-footer {
-    padding: 32px 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(254, 242, 242, 0.92);
-    border-top: 1px solid var(--border-color);
-  }
-
-  body.dark-theme .site-footer {
-    background: rgba(15, 23, 42, 0.92);
-  }
-
-  .footer-brand { font-size: 12.5px; color: var(--primary); font-weight: 700; }
-
-  @media (max-width: 768px) {
-    .hero-section { padding-top: 100px !important; }
-    .welcome-title { font-size: 34px !important; }
-    .site-footer { flex-direction: column; gap: 12px; padding: 20px 16px; }
-  }
-</style>
+    @media (max-width: 768px) {
+      .hero-section {
+        padding-top: 90px;
+      }
+      .welcome-title {
+        font-size: 26px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div id="header-container"></div>
+  <div id="header-container"></div>
 
-<section class="hero-section">
-  <div class="hero-content">
-    <span class="pill-tag">Internal Staff Portal</span>
-    <h1 class="welcome-title">We're glad <span>you're here!</span></h1>
-    <p class="welcome-subtitle">Draft supporting quotations and download consignment packing photos & videos to share directly with APML customers.</p>
-    
-    <div class="hero-actions">
-      <a href="editor.html" class="landing-btn">Supporting Quotation ➔</a>
-      <a href="gallery.html" class="gallery-btn-active">Packing Gallery 📸</a>
-    </div>
+  <main>
+    <section class="hero-section">
+      <div class="pill-tag">Internal Utilities Hub</div>
+      <h1 class="welcome-title">APML Staff <span>Portal</span></h1>
+      <p class="welcome-subtitle">Access core business tools, rate calculators, quotation editors, and packing gallery standards from a single unified portal.</p>
+    </section>
 
-    <div class="feature-list">
-      <span class="feature-item">⚡ Quick Quote Downloads</span>
-      <span class="feature-item">📦 Consignment Media Assets</span>
-      <span class="feature-item">📲 Easy Customer Sharing</span>
-    </div>
-  </div>
-</section>
+    <section class="modules-container">
+      <div class="modules-grid">
+        
+        <a href="APML-Lite.html" class="module-card">
+          <div>
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">grid_view</span>
+            </div>
+            <h2 class="card-title">APML Lite Calculator</h2>
+            <p class="card-desc">Calculate volume CFT rates with slab pricing and city destination caps instantly.</p>
+          </div>
+          <div class="card-action">Open Calculator →</div>
+        </a>
 
-<section class="section-container">
-  <div class="section-header">
-    <h2 class="section-title">Staff Resources</h2>
-    <p class="section-desc">Internal APML tools for downloading assets and sending official updates to clients.</p>
-  </div>
+        <a href="car-rate.html" class="module-card">
+          <div>
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">directions_car</span>
+            </div>
+            <h2 class="card-title">Car Rate Calculator</h2>
+            <p class="card-desc">Estimate vehicle transport costs by distance in KM with auto model detection.</p>
+          </div>
+          <div class="card-action">Open Calculator →</div>
+        </a>
 
-  <div class="grid-2">
-    <div class="module-card">
-      <span class="module-tag">● Active</span>
-      <div class="card-icon">📝</div>
-      <h3 class="card-title">Quotation Editor</h3>
-      <p class="card-desc">Draft and download customized supporting quotation files to send to customers for price confirmation.</p>
-      <a href="editor.html" class="card-link">Launch Quotation Editor ↗</a>
-    </div>
+        <a href="editor.html" class="module-card">
+          <div>
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">edit_note</span>
+            </div>
+            <h2 class="card-title">Quotation Editor</h2>
+            <p class="card-desc">Create, customize, preview, and download official APML PDF quotation documents.</p>
+          </div>
+          <div class="card-action">Open Editor →</div>
+        </a>
 
-    <div class="module-card">
-      <span class="module-tag">● Active</span>
-      <div class="card-icon">📸</div>
-      <h3 class="card-title">Packing Gallery</h3>
-      <p class="card-desc">Download consignment packing photos and videos recorded by field staff to share packing proof with customers.</p>
-      <a href="gallery.html" class="card-link">Open Packing Gallery ↗</a>
-    </div>
-  </div>
-</section>
+        <a href="gallery.html" class="module-card">
+          <div>
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">photo_library</span>
+            </div>
+            <h2 class="card-title">Packing Gallery</h2>
+            <p class="card-desc">Browse packing material photos, standard box sizes, and quality guidelines.</p>
+          </div>
+          <div class="card-action">Open Gallery →</div>
+        </a>
 
-<footer class="site-footer">
-  <div class="footer-brand">APML Employee Portal</div>
-</footer>
+      </div>
+    </section>
+  </main>
 
-<script src="header.js"></script>
+  <div id="footer-container"></div>
 
+  <script src="common.js"></script>
 </body>
 </html>
