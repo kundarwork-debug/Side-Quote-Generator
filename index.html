@@ -48,7 +48,7 @@
       100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
     }
 
-    /* Main Hero Area (Upper Part Kept Exact) */
+    /* Main Hero Area */
     .hero-container {
       max-width: 860px;
       margin: 0 auto;
@@ -290,10 +290,10 @@
       line-height: 1.5;
     }
 
-    /* Additional Tools Grid (Lite Rate, Car Rate, Gallery) */
+    /* Additional Tools Grid */
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 20px;
     }
 
@@ -309,12 +309,18 @@
       justify-content: space-between;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+      position: relative;
     }
 
-    .tool-card:hover {
+    .tool-card:hover:not(.disabled) {
       transform: translateY(-6px);
       border-color: #b91c1c;
       box-shadow: 0px 14px 30px rgba(185, 28, 28, 0.12);
+    }
+
+    .tool-card.disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
     }
 
     .tool-icon-box {
@@ -330,7 +336,7 @@
       transition: all 0.3s ease;
     }
 
-    .tool-card:hover .tool-icon-box {
+    .tool-card:hover:not(.disabled) .tool-icon-box {
       background: #b91c1c;
       color: #ffffff;
       transform: scale(1.05);
@@ -345,6 +351,9 @@
       font-weight: 700;
       color: #0f172a;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .tool-desc {
@@ -364,8 +373,19 @@
       transition: gap 0.2s ease;
     }
 
-    .tool-card:hover .tool-btn-action {
+    .tool-card:hover:not(.disabled) .tool-btn-action {
       gap: 10px;
+    }
+
+    .badge-soon {
+      font-size: 10px;
+      font-weight: 800;
+      color: #b91c1c;
+      background: #fef2f2;
+      border: 1px solid rgba(252, 165, 165, 0.6);
+      padding: 2px 8px;
+      border-radius: 12px;
+      text-transform: uppercase;
     }
 
     @media (max-width: 768px) {
@@ -480,19 +500,39 @@
             </div>
           </a>
 
-          <a href="gallery.html" class="tool-card">
+          <div class="tool-card disabled">
+            <div>
+              <div class="tool-icon-box">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <h3 class="tool-title">
+                <span>APML Local Rate</span>
+                <span class="badge-soon">Soon</span>
+              </h3>
+              <p class="tool-desc">Local intra-city relocation rates and vehicle shifting estimation utility.</p>
+            </div>
+            <div class="tool-btn-action" style="color: #64748b;">
+              <span>Coming Soon</span>
+              <span class="material-symbols-outlined">lock</span>
+            </div>
+          </div>
+
+          <div class="tool-card disabled">
             <div>
               <div class="tool-icon-box">
                 <span class="material-symbols-outlined">photo_library</span>
               </div>
-              <h3 class="tool-title">Packing Gallery</h3>
+              <h3 class="tool-title">
+                <span>Packing Gallery</span>
+                <span class="badge-soon">Soon</span>
+              </h3>
               <p class="tool-desc">View standard box dimensions, packing photos, and consignment reference standards.</p>
             </div>
-            <div class="tool-btn-action">
-              <span>View Packing Gallery</span>
-              <span class="material-symbols-outlined">arrow_forward</span>
+            <div class="tool-btn-action" style="color: #64748b;">
+              <span>Coming Soon</span>
+              <span class="material-symbols-outlined">lock</span>
             </div>
-          </a>
+          </div>
 
         </div>
       </div>
