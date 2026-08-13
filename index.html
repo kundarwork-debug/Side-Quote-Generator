@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APML Internal Portal - Staff Utilities</title>
+  <title>APML - Quotation Editor</title>
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
   <link rel="stylesheet" href="common.css">
 
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -23,124 +27,278 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    /* Hero Section */
-    .hero-section {
+    /* Keyframe Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(185, 28, 28, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
+    }
+
+    /* Main Hero Area */
+    .hero-container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 120px 20px 60px 20px;
       text-align: center;
-      padding: 120px 20px 40px 20px;
-      background: radial-gradient(circle at 50% 30%, rgba(185, 28, 28, 0.08), transparent 60%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    .pill-tag {
-      display: inline-block;
+    .editor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       padding: 6px 16px;
-      background: #ffffff;
-      border: 1px solid rgba(252, 165, 165, 0.5);
+      background: #fef2f2;
+      border: 1px solid rgba(252, 165, 165, 0.6);
       border-radius: 20px;
       font-size: 12px;
       font-weight: 700;
       color: #b91c1c;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      margin-bottom: 20px;
+      transition: transform 0.25s ease;
     }
 
-    .welcome-title {
-      font-size: 32px;
+    .editor-badge:hover {
+      transform: scale(1.05);
+    }
+
+    .hero-title {
+      font-size: 40px;
       font-weight: 800;
       color: #0f172a;
-      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      line-height: 1.2;
     }
 
-    .welcome-title span {
+    .hero-title span {
       color: #b91c1c;
+      position: relative;
+      display: inline-block;
     }
 
-    .welcome-subtitle {
-      font-size: 15px;
+    .hero-desc {
+      font-size: 16px;
       color: #64748b;
       max-width: 600px;
-      margin: 0 auto;
       line-height: 1.6;
+      margin-bottom: 36px;
     }
 
-    /* Grid Layout for Modules */
-    .modules-container {
-      max-width: 1000px;
-      margin: 0 auto 60px auto;
-      padding: 0 20px;
+    /* Material UI Interactive Hero Card */
+    .main-action-card {
       width: 100%;
-    }
-
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .module-card {
       background: #ffffff;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      border-radius: 16px;
-      padding: 24px;
-      text-decoration: none;
-      color: inherit;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 24px;
+      padding: 44px 32px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.04), 0px 1px 2px rgba(0, 0, 0, 0.02);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08);
+      align-items: center;
+      gap: 24px;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .module-card:hover {
-      transform: translateY(-4px);
-      border-color: #b91c1c;
-      box-shadow: 0px 12px 28px rgba(185, 28, 28, 0.12);
+    .main-action-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(185, 28, 28, 0.4);
+      box-shadow: 0px 18px 40px rgba(185, 28, 28, 0.12), 0px 4px 12px rgba(0, 0, 0, 0.04);
     }
 
-    .card-icon-box {
-      width: 48px;
-      height: 48px;
+    .icon-box {
+      width: 72px;
+      height: 72px;
       background: #fef2f2;
-      border-radius: 12px;
+      border-radius: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
       color: #b91c1c;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .card-title {
+    .main-action-card:hover .icon-box {
+      transform: scale(1.1) rotate(-4deg);
+      background: #b91c1c;
+      color: #ffffff;
+    }
+
+    .icon-box span {
+      font-size: 38px;
+    }
+
+    /* Animated Material UI Button */
+    .btn-launch-editor {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 36px;
+      background: #b91c1c;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
+      animation: pulseGlow 3s infinite;
+    }
+
+    .btn-launch-editor span.arrow-icon {
+      font-size: 20px;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-launch-editor:hover {
+      background: #991b1b;
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 22px rgba(185, 28, 28, 0.4);
+    }
+
+    .btn-launch-editor:hover span.arrow-icon {
+      transform: translateX(6px);
+    }
+
+    .btn-launch-editor:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: 0 2px 8px rgba(185, 28, 28, 0.3);
+    }
+
+    /* Features List Chips */
+    .feature-highlights {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .feature-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #f8fafc;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.25s ease;
+    }
+
+    .feature-chip:hover {
+      background: #ffffff;
+      border-color: #b91c1c;
+      color: #b91c1c;
+      transform: translateY(-2px);
+    }
+
+    .feature-chip span.icon {
       font-size: 18px;
+      color: #16a34a;
+    }
+
+    /* Scrollable Sections Wrapper */
+    .content-sections {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 80px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    /* Material Cards Grid */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .workflow-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.03);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .workflow-card:hover {
+      transform: translateY(-4px);
+      border-color: #b91c1c;
+      box-shadow: 0px 10px 24px rgba(185, 28, 28, 0.1);
+    }
+
+    .step-number {
+      font-size: 12px;
+      font-weight: 800;
+      color: #b91c1c;
+      background: #fef2f2;
+      padding: 4px 10px;
+      border-radius: 12px;
+      width: fit-content;
+      text-transform: uppercase;
+    }
+
+    .workflow-card h3 {
+      font-size: 16px;
       font-weight: 700;
       color: #0f172a;
-      margin-bottom: 8px;
     }
 
-    .card-desc {
+    .workflow-card p {
       font-size: 13px;
       color: #64748b;
       line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .card-action {
-      font-size: 13px;
-      font-weight: 700;
-      color: #b91c1c;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
 
     @media (max-width: 768px) {
-      .hero-section {
+      .hero-container {
         padding-top: 90px;
       }
-      .welcome-title {
-        font-size: 26px;
+      .hero-title {
+        font-size: 30px;
+      }
+      .main-action-card {
+        padding: 32px 20px;
       }
     }
   </style>
@@ -150,61 +308,70 @@
   <div id="header-container"></div>
 
   <main>
-    <section class="hero-section">
-      <div class="pill-tag">Internal Utilities Hub</div>
-      <h1 class="welcome-title">APML Staff <span>Portal</span></h1>
-      <p class="welcome-subtitle">Access core business tools, rate calculators, quotation editors, and packing gallery standards from a single unified portal.</p>
-    </section>
+    
+    <section class="hero-container">
+      <div class="editor-badge">
+        <span class="material-symbols-outlined" style="font-size: 18px;">edit_note</span>
+        <span>Utility Tool</span>
+      </div>
 
-    <section class="modules-container">
-      <div class="modules-grid">
-        
-        <a href="APML-Lite.html" class="module-card">
-          <div>
-            <div class="card-icon-box">
-              <span class="material-symbols-outlined">grid_view</span>
-            </div>
-            <h2 class="card-title">APML Lite Calculator</h2>
-            <p class="card-desc">Calculate volume CFT rates with slab pricing and city destination caps instantly.</p>
-          </div>
-          <div class="card-action">Open Calculator →</div>
+      <h1 class="hero-title">APML <span>Quotation Editor</span></h1>
+      <p class="hero-desc">Draft, customize, preview, and download supporting quotation files directly in your browser.</p>
+
+      <div class="main-action-card">
+        <div class="icon-box">
+          <span class="material-symbols-outlined">description</span>
+        </div>
+
+        <a href="editor.html" class="btn-launch-editor">
+          <span>Open Quotation Editor</span>
+          <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
         </a>
 
-        <a href="car-rate.html" class="module-card">
-          <div>
-            <div class="card-icon-box">
-              <span class="material-symbols-outlined">directions_car</span>
-            </div>
-            <h2 class="card-title">Car Rate Calculator</h2>
-            <p class="card-desc">Estimate vehicle transport costs by distance in KM with auto model detection.</p>
+        <div class="feature-highlights">
+          <div class="feature-chip">
+            <span class="material-symbols-outlined icon">check_circle</span>
+            <span>Quick Document Export</span>
           </div>
-          <div class="card-action">Open Calculator →</div>
-        </a>
-
-        <a href="editor.html" class="module-card">
-          <div>
-            <div class="card-icon-box">
-              <span class="material-symbols-outlined">edit_note</span>
-            </div>
-            <h2 class="card-title">Quotation Editor</h2>
-            <p class="card-desc">Create, customize, preview, and download official APML PDF quotation documents.</p>
+          <div class="feature-chip">
+            <span class="material-symbols-outlined icon">check_circle</span>
+            <span>Live Preview Stage</span>
           </div>
-          <div class="card-action">Open Editor →</div>
-        </a>
-
-        <a href="gallery.html" class="module-card">
-          <div>
-            <div class="card-icon-box">
-              <span class="material-symbols-outlined">photo_library</span>
-            </div>
-            <h2 class="card-title">Packing Gallery</h2>
-            <p class="card-desc">Browse packing material photos, standard box sizes, and quality guidelines.</p>
+          <div class="feature-chip">
+            <span class="material-symbols-outlined icon">check_circle</span>
+            <span>Custom Terms & Rates</span>
           </div>
-          <div class="card-action">Open Gallery →</div>
-        </a>
-
+        </div>
       </div>
     </section>
+
+    <section class="content-sections">
+      
+      <div>
+        <h2 class="section-title">Quotation Creation Process</h2>
+        <div class="workflow-grid">
+          <div class="workflow-card">
+            <div class="step-number">Step 01</div>
+            <h3>Input Details</h3>
+            <p>Enter the customer's information, reference numbers, dates, origin, and destination address.</p>
+          </div>
+
+          <div class="workflow-card">
+            <div class="step-number">Step 02</div>
+            <h3>Add Items & Pricing</h3>
+            <p>Customize line items, freight charges, packing costs, insurance percentages, and service charges.</p>
+          </div>
+
+          <div class="workflow-card">
+            <div class="step-number">Step 03</div>
+            <h3>Export File</h3>
+            <p>Review the live preview in the document stage and download the generated file.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
   </main>
 
   <div id="footer-container"></div>
