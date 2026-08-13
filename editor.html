@@ -6,7 +6,7 @@
 <title>Quotation Editor - APML Support Page</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
-<link rel="stylesheet" href="header.css">
+<link rel="stylesheet" href="common.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -600,6 +600,8 @@
   </div>
 </div>
 
+<div id="footer-container"></div>
+
 <script>
 function getFormattedCurrentDate() {
   const d = new Date();
@@ -1104,6 +1106,6 @@ document.getElementById('dateStamp').textContent = new Date().toLocaleDateString
 renderAll();
 </script>
 
-<script src="header.js"></script>
+<script src="common.js"></script>
 </body>
 </html>
