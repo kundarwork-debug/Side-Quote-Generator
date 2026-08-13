@@ -14,6 +14,7 @@
   :root {
     --bg-main: #f8fafc;
     --panel-bg: #ffffff;
+    --card-bg: #ffffff;
     --border-light: #e2e8f0;
     --border-hover: #cbd5e1;
     --text-main: #0f172a;
@@ -25,6 +26,17 @@
     --accent-max-yellow: #f4d93e;
     --radius: 8px;
     --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* DARK THEME SPECIFIC OVERRIDES FOR EDITOR */
+  body.dark-theme {
+    --bg-main: #0f172a;
+    --panel-bg: #1e293b;
+    --card-bg: #1e293b;
+    --border-light: #334155;
+    --border-hover: #475569;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
   }
 
   * { box-sizing: border-box; }
@@ -43,7 +55,7 @@
     grid-template-columns: 440px 1fr;
     min-height: 100vh;
     width: 100%;
-    padding-top: 64px; /* Space for the fixed header */
+    padding-top: 64px;
   }
 
   /* ---------- LEFT: CONTROL PANEL ---------- */
@@ -94,18 +106,20 @@
     font-size: 12px;
     color: var(--text-muted);
     font-weight: 500;
-    background: #f1f5f9;
+    background: var(--bg-main);
     padding: 4px 10px;
     border-radius: 20px;
+    border: 1px solid var(--border-light);
   }
 
   .tabs {
     display: flex;
     gap: 8px;
     margin: 0 0 24px;
-    background: #f1f5f9;
+    background: var(--bg-main);
     padding: 4px;
     border-radius: var(--radius);
+    border: 1px solid var(--border-light);
   }
 
   .tab-btn {
@@ -126,13 +140,13 @@
   .tab-btn.active[data-company="exact"] {
     background: var(--panel-bg);
     color: var(--accent-exact);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .tab-btn.active[data-company="maxcare"] {
     background: var(--panel-bg);
-    color: var(--accent-max-blue);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    color: #60a5fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .field-group {
@@ -140,7 +154,7 @@
   }
 
   #sharedFieldGroup {
-    background: #f8fafc;
+    background: var(--bg-main);
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
     padding: 16px;
@@ -176,7 +190,7 @@
     font-weight: 500;
   }
 
-  .field input, .field textarea {
+  .field input, .field textarea, .cost-row input, .term-row textarea {
     width: 100%;
     padding: 9px 12px;
     border: 1px solid var(--border-light);
@@ -184,14 +198,13 @@
     font-size: 13px;
     font-family: inherit;
     color: var(--text-main);
-    background: #ffffff;
+    background: var(--panel-bg);
     transition: var(--transition);
   }
 
-  .field input:focus, .field textarea:focus {
+  .field input:focus, .field textarea:focus, .cost-row input:focus, .term-row textarea:focus {
     outline: none;
-    border-color: #0f172a;
-    box-shadow: 0 0 0 1px #0f172a;
+    border-color: var(--text-main);
   }
 
   .row2 {
@@ -217,7 +230,7 @@
     flex: none;
     border-radius: var(--radius);
     border: 1px solid var(--border-light);
-    background: #fff;
+    background: var(--panel-bg);
     color: #ef4444;
     cursor: pointer;
     font-size: 16px;
@@ -229,7 +242,7 @@
   }
 
   .icon-btn:hover {
-    background: #fef2f2;
+    background: rgba(239, 68, 68, 0.15);
     border-color: #fca5a5;
   }
 
@@ -239,7 +252,7 @@
     padding: 9px;
     border-radius: var(--radius);
     border: 1px dashed var(--border-hover);
-    background: #ffffff;
+    background: var(--panel-bg);
     color: var(--text-muted);
     font-size: 12px;
     font-weight: 600;
@@ -250,11 +263,11 @@
   .add-btn:hover {
     border-color: var(--text-main);
     color: var(--text-main);
-    background: #f8fafc;
+    background: var(--bg-main);
   }
 
   .totals-box {
-    background: #f8fafc;
+    background: var(--bg-main);
     border: 1px solid var(--border-light);
     border-radius: var(--radius);
     padding: 12px 14px;
@@ -281,7 +294,7 @@
     padding: 10px;
     border-radius: var(--radius);
     border: 1px solid var(--border-light);
-    background: #fff;
+    background: var(--panel-bg);
     color: var(--text-muted);
     font-size: 12px;
     font-weight: 500;
@@ -293,7 +306,7 @@
   .reset-btn:hover {
     color: var(--text-main);
     border-color: var(--border-hover);
-    background: #f8fafc;
+    background: var(--bg-main);
   }
 
   .download-bar {
@@ -345,23 +358,25 @@
     align-items: flex-start;
     overflow-y: auto;
     max-height: calc(100vh - 64px);
-    background: #f1f5f9;
+    background: var(--bg-main);
   }
 
   .sheet-wrap { width: 100%; max-width: 794px; }
 
   .sheet-shadow {
     background: #fff;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     border-radius: 4px;
     overflow: hidden;
   }
 
+  /* PDF Preview Page - Kept White Paper Style Always */
   #previewA4 {
     width: 794px;
     min-height: 1123px;
     margin: 0 auto;
-    background: #fff;
+    background: #ffffff !important;
+    color: #111111 !important;
     position: relative;
     padding: 0;
     transform-origin: top left;
@@ -464,7 +479,6 @@
       box-sizing: border-box;
     }
 
-    /* Totals calculation box screen fit on mobile */
     .totals-box {
       width: 100% !important;
       padding: 10px 12px !important;
@@ -484,14 +498,12 @@
       font-size: 12px !important;
     }
 
-    /* HIDE Document details, Terms & conditions, and Registered office on mobile */
     #docDetailsGroup,
     #termsGroup,
     #regOfficeGroup {
       display: none !important;
     }
 
-    /* HIDE PDF Preview stage on mobile screens */
     .stage {
       display: none !important;
     }
@@ -542,7 +554,7 @@
         <label>Total amount (auto-fills below using standard %)</label>
         <div style="display:flex; gap:8px;">
           <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1;">
-          <button id="applyTotalBtn" style="flex:none; padding:0 16px; border-radius:var(--radius); border:1px solid var(--border-light); background:#f8fafc; color:var(--text-main); font-size:12.5px; font-weight:600; cursor:pointer;">Apply</button>
+          <button id="applyTotalBtn" style="flex:none; padding:0 16px; border-radius:var(--radius); border:1px solid var(--border-light); background:var(--bg-main); color:var(--text-main); font-size:12.5px; font-weight:600; cursor:pointer;">Apply</button>
         </div>
       </div>
       <div id="costRows"></div>
@@ -589,9 +601,6 @@
 </div>
 
 <script>
-/* ---------------------------------------------------------------
-   HELPERS & INITIAL DEFAULTS (All cost item amounts start at 0)
---------------------------------------------------------------- */
 function getFormattedCurrentDate() {
   const d = new Date();
   const day = d.getDate();
@@ -707,9 +716,6 @@ let state = { exact: clone(DEFAULTS.exact), maxcare: clone(DEFAULTS.maxcare) };
 let shared = clone(SHARED_DEFAULTS);
 let active = "exact";
 
-/* ---------------------------------------------------------------
-   RENDER: Form panel
---------------------------------------------------------------- */
 function fmt(n){
   n = Number(n) || 0;
   return n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
@@ -766,7 +772,6 @@ function renderForm(){
   document.getElementById('emailFieldWrap').style.display = d.showEmail ? '' : 'none';
   document.getElementById('footerHeading').textContent = 'Registered office';
 
-  // cost rows
   const costWrap = document.getElementById('costRows');
   costWrap.innerHTML = '';
   d.costItems.forEach((item, idx) => {
@@ -780,7 +785,6 @@ function renderForm(){
     costWrap.appendChild(row);
   });
 
-  // term rows
   const termWrap = document.getElementById('termRows');
   termWrap.innerHTML = '';
   d.terms.forEach((t, idx) => {
@@ -793,7 +797,6 @@ function renderForm(){
     termWrap.appendChild(row);
   });
 
-  // totals
   const { subtotal, gstAmount, grand } = computeTotals(d);
   document.getElementById('totalsBox').innerHTML = `
     <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
@@ -809,9 +812,6 @@ function escapeHtml(s){
 }
 function escapeAttr(s){ return escapeHtml(s); }
 
-/* ---------------------------------------------------------------
-   RENDER: A4 preview
---------------------------------------------------------------- */
 function renderPreview(){
   const d = state[active];
   const { subtotal, gstAmount, grand } = computeTotals(d);
@@ -911,9 +911,6 @@ function renderAll(){
   renderPreview();
 }
 
-/* ---------------------------------------------------------------
-   EVENTS & INITIALIZATION
---------------------------------------------------------------- */
 document.getElementById('tabExact').addEventListener('click', () => switchTab('exact'));
 document.getElementById('tabMaxcare').addEventListener('click', () => switchTab('maxcare'));
 
@@ -1014,11 +1011,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   renderAll();
 });
 
-/* ---------------------------------------------------------------
-   PDF DOWNLOAD WITH MOBILE FIX
---------------------------------------------------------------- */
 document.getElementById('downloadBtn').addEventListener('click', async () => {
-  // Mandatory details check
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
     alert("APML ke balak details tho bharo paheley");
     return;
@@ -1034,7 +1027,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const node = document.getElementById('previewA4');
   const stage = document.querySelector('.stage');
 
-  // Save current inline styles to restore after export
   const originalStageDisplay = stage.style.display;
   const originalWidth = node.style.width;
   const originalMinHeight = node.style.minHeight;
@@ -1043,7 +1035,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const originalTransform = node.style.transform;
 
   try {
-    // 1. Temporarily unhide stage & force desktop dimensions off-screen (794px width)
     stage.style.display = 'block';
     node.style.width = '794px';
     node.style.minHeight = '1123px';
@@ -1051,7 +1042,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     node.style.left = '-9999px';
     node.style.transform = 'none';
 
-    // 2. Render canvas at full desktop scale
     const canvas = await html2canvas(node, {
       scale: 2,
       useCORS: true,
@@ -1060,7 +1050,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       windowWidth: 794
     });
 
-    // 3. Instantly restore original styles
     stage.style.display = originalStageDisplay;
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
@@ -1099,7 +1088,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
     
-    // Restore styles in case of error
     stage.style.display = originalStageDisplay;
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
