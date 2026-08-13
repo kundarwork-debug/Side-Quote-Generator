@@ -27,9 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="material-symbols-outlined mui-icon">directions_car</span>
               <span>Car Rate Calculator</span>
             </a>
+            <a href="local-rate.html" class="menu-item-btn">
+              <span class="material-symbols-outlined mui-icon">local_shipping</span>
+              <span>APML Local Rate (Coming Soon)</span>
+            </a>
             <a href="gallery.html" class="menu-item-btn">
               <span class="material-symbols-outlined mui-icon">photo_library</span>
-              <span>Packing Gallery</span>
+              <span>Packing Gallery (Coming Soon)</span>
             </a>
           </div>
         </div>
@@ -38,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initHeaderScrollAndMenu();
   }
 
-  // 2. INJECT COMMON FOOTER (Updated: "About Me ↗" in place of username)
+  // 2. INJECT COMMON FOOTER
   const footerContainer = document.getElementById("footer-container");
   if (footerContainer) {
     footerContainer.innerHTML = `
