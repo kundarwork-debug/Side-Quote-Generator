@@ -8,51 +8,82 @@
 
 <link rel="stylesheet" href="common.css">
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
+  /* =========================================================
+     GOOGLE MATERIAL DESIGN 3 (M3) THEME SYSTEM
+     ========================================================= */
   :root {
-    --bg-main: #f8fafc;
-    --panel-bg: #ffffff;
-    --card-bg: #ffffff;
-    --border-light: #e2e8f0;
-    --border-hover: #cbd5e1;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --accent-exact: #b5342b;
-    --accent-exact-dark: #8c221b;
+    --md-sys-color-primary: #b91c1c;
+    --md-sys-color-primary-container: #fef2f2;
+    --md-sys-color-on-primary-container: #991b1b;
+    --md-sys-color-surface: #f8fafc;
+    --md-sys-color-surface-container-lowest: #ffffff;
+    --md-sys-color-surface-container-low: #f1f5f9;
+    --md-sys-color-surface-container: #e2e8f0;
+    --md-sys-color-outline: #cbd5e1;
+    --md-sys-color-outline-variant: #e2e8f0;
+    --md-sys-color-on-surface: #0f172a;
+    --md-sys-color-on-surface-variant: #64748b;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-full: 9999px;
+    --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
+    --md-elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
+    --md-elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
+    --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+
+    /* Legacy compatibility bindings */
+    --bg-main: var(--md-sys-color-surface);
+    --panel-bg: var(--md-sys-color-surface-container-lowest);
+    --card-bg: var(--md-sys-color-surface-container-lowest);
+    --border-light: var(--md-sys-color-outline-variant);
+    --border-hover: var(--md-sys-color-outline);
+    --text-main: var(--md-sys-color-on-surface);
+    --text-muted: var(--md-sys-color-on-surface-variant);
+    --accent-exact: #b91c1c;
+    --accent-exact-dark: #991b1b;
     --accent-max-blue: #1e40af;
     --accent-max-dark: #1e3a8a;
     --accent-max-yellow: #f4d93e;
-    --radius: 8px;
-    --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* DARK THEME SPECIFIC OVERRIDES FOR EDITOR */
+  /* Dark Theme M3 Overrides */
   body.dark-theme {
-    --bg-main: #0f172a;
-    --panel-bg: #1e293b;
-    --card-bg: #1e293b;
-    --border-light: #334155;
-    --border-hover: #475569;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --md-sys-color-surface: #0b0f19;
+    --md-sys-color-surface-container-lowest: #151e2e;
+    --md-sys-color-surface-container-low: #1e293b;
+    --md-sys-color-surface-container: #334155;
+    --md-sys-color-outline: #475569;
+    --md-sys-color-outline-variant: rgba(255, 255, 255, 0.12);
+    --md-sys-color-on-surface: #f8fafc;
+    --md-sys-color-on-surface-variant: #94a3b8;
   }
 
   * { box-sizing: border-box; }
   
   body {
     margin: 0;
-    background: var(--bg-main);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: var(--text-main);
+    background: var(--md-sys-color-surface);
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--md-sys-color-on-surface);
     -webkit-font-smoothing: antialiased;
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
   }
 
   /* ---------- MAIN APP LAYOUT ---------- */
   .app {
     display: grid;
-    grid-template-columns: 440px 1fr;
+    grid-template-columns: 460px 1fr;
     min-height: 100vh;
     width: 100%;
     padding-top: 64px;
@@ -60,31 +91,35 @@
 
   /* ---------- LEFT: CONTROL PANEL ---------- */
   .panel {
-    background: var(--panel-bg);
-    border-right: 1px solid var(--border-light);
-    padding: 28px 24px 80px;
+    background: var(--md-sys-color-surface-container-lowest);
+    border-right: 1px solid var(--md-sys-color-outline-variant);
+    padding: 24px;
     overflow-y: auto;
     max-height: calc(100vh - 64px);
+    box-shadow: var(--md-elevation-1);
+    z-index: 10;
   }
 
   .back-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface-variant);
     background: transparent;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 6px 12px;
     margin-bottom: 16px;
     text-decoration: none;
-    transition: var(--transition);
+    border-radius: var(--md-sys-shape-corner-full);
+    transition: var(--transition-m3);
   }
 
   .back-btn:hover {
-    color: var(--text-main);
+    color: var(--md-sys-color-primary);
+    background: var(--md-sys-color-primary-container);
   }
 
   .brand-row {
@@ -95,79 +130,81 @@
   }
 
   .brand-row h1 {
-    font-size: 16px;
-    letter-spacing: -0.01em;
-    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
     margin: 0;
-    color: var(--text-main);
+    color: var(--md-sys-color-on-surface);
   }
 
   .brand-row span {
     font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 500;
-    background: var(--bg-main);
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--border-light);
+    color: var(--md-sys-color-primary);
+    font-weight: 700;
+    background: var(--md-sys-color-primary-container);
+    padding: 4px 12px;
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 1px solid rgba(185, 28, 28, 0.2);
   }
 
+  /* M3 Segmented Buttons / Tabs */
   .tabs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin: 0 0 24px;
-    background: var(--bg-main);
-    padding: 4px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-light);
+    background: var(--md-sys-color-surface-container-low);
+    padding: 6px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    border: 1px solid var(--md-sys-color-outline-variant);
   }
 
   .tab-btn {
     flex: 1;
-    padding: 8px 12px;
-    border-radius: calc(var(--radius) - 2px);
+    padding: 10px 14px;
+    border-radius: var(--md-sys-shape-corner-small);
     border: none;
     background: transparent;
     cursor: pointer;
     font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
+    font-weight: 700;
+    color: var(--md-sys-color-on-surface-variant);
     text-align: center;
-    line-height: 1.3;
-    transition: var(--transition);
+    line-height: 1.35;
+    transition: var(--transition-m3);
   }
 
   .tab-btn.active[data-company="exact"] {
-    background: var(--panel-bg);
-    color: var(--accent-exact);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background: var(--md-sys-color-surface-container-lowest);
+    color: var(--md-sys-color-primary);
+    box-shadow: var(--md-elevation-1);
   }
 
   .tab-btn.active[data-company="maxcare"] {
-    background: var(--panel-bg);
-    color: #60a5fa;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background: var(--md-sys-color-surface-container-lowest);
+    color: var(--accent-max-blue);
+    box-shadow: var(--md-elevation-1);
   }
 
+  /* M3 Form Field Groups */
   .field-group {
     margin-bottom: 24px;
   }
 
   #sharedFieldGroup {
-    background: var(--bg-main);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
-    padding: 16px;
+    background: var(--md-sys-color-surface-container-low);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    padding: 18px;
     margin-bottom: 24px;
   }
 
   .field-group h2 {
-    font-size: 11px;
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    margin: 0 0 12px;
-    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--md-sys-color-on-surface-variant);
+    margin: 0 0 14px;
+    font-weight: 800;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -177,34 +214,35 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: var(--border-light);
+    background: var(--md-sys-color-outline-variant);
   }
 
-  .field { margin-bottom: 12px; }
+  .field { margin-bottom: 14px; }
   
   .field label {
     display: block;
     font-size: 12px;
-    color: var(--text-main);
+    color: var(--md-sys-color-on-surface-variant);
     margin-bottom: 6px;
-    font-weight: 500;
+    font-weight: 700;
   }
 
   .field input, .field textarea, .cost-row input, .term-row textarea {
     width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
+    padding: 10px 14px;
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
     font-size: 13px;
     font-family: inherit;
-    color: var(--text-main);
-    background: var(--panel-bg);
-    transition: var(--transition);
+    color: var(--md-sys-color-on-surface);
+    background: var(--md-sys-color-surface-container-lowest);
+    transition: var(--transition-m3);
   }
 
   .field input:focus, .field textarea:focus, .cost-row input:focus, .term-row textarea:focus {
     outline: none;
-    border-color: var(--text-main);
+    border-color: var(--md-sys-color-primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
   }
 
   .row2 {
@@ -216,137 +254,145 @@
   .cost-row, .term-row {
     display: flex;
     gap: 8px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     align-items: center;
   }
 
   .cost-row input.label-in { flex: 1.6; min-width: 0; }
   .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
-  .term-row textarea { flex: 1; min-height: 38px; resize: vertical; }
+  .term-row textarea { flex: 1; min-height: 42px; resize: vertical; }
 
+  /* M3 Icon Buttons */
   .icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     flex: none;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-light);
-    background: var(--panel-bg);
+    border-radius: var(--md-sys-shape-corner-full);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-lowest);
     color: #ef4444;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: var(--transition);
+    transition: var(--transition-m3);
   }
 
   .icon-btn:hover {
-    background: rgba(239, 68, 68, 0.15);
+    background: #fef2f2;
     border-color: #fca5a5;
+    transform: scale(1.08);
   }
 
   .add-btn {
-    margin-top: 6px;
+    margin-top: 8px;
     width: 100%;
-    padding: 9px;
-    border-radius: var(--radius);
-    border: 1px dashed var(--border-hover);
-    background: var(--panel-bg);
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 600;
+    padding: 10px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    border: 1px dashed var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container-low);
+    color: var(--md-sys-color-primary);
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: var(--transition);
+    transition: var(--transition-m3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
   }
 
   .add-btn:hover {
-    border-color: var(--text-main);
-    color: var(--text-main);
-    background: var(--bg-main);
+    border-color: var(--md-sys-color-primary);
+    background: var(--md-sys-color-primary-container);
   }
 
+  /* M3 Totals Container */
   .totals-box {
-    background: var(--bg-main);
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius);
-    padding: 12px 14px;
+    background: var(--md-sys-color-primary-container);
+    border: 1px solid rgba(185, 28, 28, 0.2);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 14px 16px;
     font-size: 13px;
+    margin-top: 16px;
   }
 
   .totals-box .line {
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
-    color: var(--text-muted);
+    color: var(--md-sys-color-on-surface);
   }
 
   .totals-box .line.total {
-    font-weight: 600;
-    color: var(--text-main);
-    border-top: 1px dashed var(--border-light);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--md-sys-color-primary);
+    border-top: 1px dashed rgba(185, 28, 28, 0.3);
     margin-top: 6px;
     padding-top: 8px;
   }
 
   .reset-btn {
     width: 100%;
-    padding: 10px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-light);
-    background: var(--panel-bg);
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 500;
+    padding: 11px;
+    border-radius: var(--md-sys-shape-corner-medium);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-lowest);
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 8px;
-    transition: var(--transition);
+    margin-top: 12px;
+    transition: var(--transition-m3);
   }
 
   .reset-btn:hover {
-    color: var(--text-main);
-    border-color: var(--border-hover);
-    background: var(--bg-main);
+    color: var(--md-sys-color-on-surface);
+    border-color: var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-container-low);
   }
 
+  /* M3 Floating Download Toolbar */
   .download-bar {
     position: sticky;
     bottom: -1px;
     margin-top: 28px;
     padding: 16px 0;
-    border-top: 1px solid var(--border-light);
-    background: var(--panel-bg);
+    border-top: 1px solid var(--md-sys-color-outline-variant);
+    background: var(--md-sys-color-surface-container-lowest);
   }
 
   .download-btn {
     width: 100%;
-    padding: 12px 16px;
+    padding: 14px 20px;
     border: none;
-    border-radius: var(--radius);
-    font-size: 13.5px;
-    font-weight: 600;
+    border-radius: var(--md-sys-shape-corner-medium);
+    font-size: 14px;
+    font-weight: 700;
     cursor: pointer;
     color: #fff;
-    letter-spacing: -0.01em;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: var(--transition);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: var(--transition-m3);
+    box-shadow: var(--md-elevation-1);
   }
 
   .download-btn[data-company="exact"] { background: var(--accent-exact); }
-  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); }
+  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); transform: translateY(-2px); box-shadow: var(--md-elevation-2); }
   .download-btn[data-company="maxcare"] { background: var(--accent-max-blue); }
-  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); }
-  .download-btn:disabled { opacity: 0.6; cursor: wait; }
+  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); transform: translateY(-2px); box-shadow: var(--md-elevation-2); }
+  .download-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 
   .status-msg {
     font-size: 12px;
     text-align: center;
     margin-top: 8px;
-    color: var(--text-muted);
+    color: var(--md-sys-color-on-surface-variant);
     min-height: 14px;
   }
 
@@ -358,19 +404,19 @@
     align-items: flex-start;
     overflow-y: auto;
     max-height: calc(100vh - 64px);
-    background: var(--bg-main);
+    background: var(--md-sys-color-surface-container-low);
   }
 
   .sheet-wrap { width: 100%; max-width: 794px; }
 
   .sheet-shadow {
     background: #fff;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--md-elevation-3);
     border-radius: 4px;
     overflow: hidden;
   }
 
-  /* PDF Preview Page - Kept White Paper Style Always */
+  /* PDF Preview Page - Kept Exact White Paper Style Always */
   #previewA4 {
     width: 794px;
     min-height: 1123px;
@@ -382,7 +428,7 @@
     transform-origin: top left;
   }
 
-  /* ===== PDF TEMPLATE STYLES ===== */
+  /* ===== PDF TEMPLATE STYLES (UNTOUCHED) ===== */
   .doc-exact {
     font-family: Calibri, Carlito, Arial, sans-serif;
     color: #111;
@@ -474,7 +520,7 @@
       width: 100% !important;
       max-height: none !important;
       border-right: none !important;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--md-sys-color-outline-variant);
       padding: 20px 16px 40px !important;
       box-sizing: border-box;
     }
@@ -516,7 +562,10 @@
 
 <div class="app" id="appView">
   <div class="panel">
-    <a href="index.html" class="back-btn">← Back to Main Page</a>
+    <a href="index.html" class="back-btn">
+      <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+      <span>Back to Main Page</span>
+    </a>
 
     <div class="brand-row">
       <h1>Quotation Editor</h1>
@@ -529,7 +578,7 @@
     </div>
 
     <div class="field-group" id="sharedFieldGroup">
-      <h2>Customer &amp; details <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
       <div class="field"><label>Date</label><input id="f_date"></div>
       <div class="field"><label>Customer name *</label><input id="f_custName"></div>
       <div class="row2">
@@ -543,22 +592,25 @@
     </div>
 
     <div class="field-group" id="docDetailsGroup">
-      <h2>Document details</h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Document details</h2>
       <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
       <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
     </div>
 
     <div class="field-group" id="costItemsGroup">
-      <h2>Cost items</h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">payments</span> Cost items</h2>
       <div class="field" style="margin-bottom:14px;">
         <label>Total amount (auto-fills below using standard %)</label>
         <div style="display:flex; gap:8px;">
           <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1;">
-          <button id="applyTotalBtn" style="flex:none; padding:0 16px; border-radius:var(--radius); border:1px solid var(--border-light); background:var(--bg-main); color:var(--text-main); font-size:12.5px; font-weight:600; cursor:pointer;">Apply</button>
+          <button id="applyTotalBtn" style="flex:none; padding:0 18px; border-radius:var(--md-sys-shape-corner-medium); border:1px solid var(--md-sys-color-outline-variant); background:var(--md-sys-color-surface-container-low); color:var(--md-sys-color-on-surface); font-size:13px; font-weight:700; cursor:pointer; transition: var(--transition-m3);">Apply</button>
         </div>
       </div>
       <div id="costRows"></div>
-      <button class="add-btn" id="addCostRow">+ Add cost item</button>
+      <button class="add-btn" id="addCostRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add cost item</span>
+      </button>
 
       <div class="field" style="margin-top:14px;">
         <label>GST %</label>
@@ -569,13 +621,16 @@
     </div>
 
     <div class="field-group" id="termsGroup">
-      <h2>Terms &amp; conditions</h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">gavel</span> Terms &amp; conditions</h2>
       <div id="termRows"></div>
-      <button class="add-btn" id="addTermRow">+ Add term</button>
+      <button class="add-btn" id="addTermRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add term</span>
+      </button>
     </div>
 
     <div class="field-group" id="regOfficeGroup">
-      <h2 id="footerHeading">Registered office</h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">domain</span> <span id="footerHeading">Registered office</span></h2>
       <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
       <div class="row2">
         <div class="field"><label>Phone</label><input id="f_phone"></div>
@@ -586,7 +641,10 @@
     <button class="reset-btn" id="resetBtn">Reset template to default</button>
 
     <div class="download-bar">
-      <button class="download-btn" id="downloadBtn" data-company="exact">Download PDF</button>
+      <button class="download-btn" id="downloadBtn" data-company="exact">
+        <span class="material-symbols-outlined">download</span>
+        <span>Download PDF</span>
+      </button>
       <div class="status-msg" id="statusMsg"></div>
     </div>
   </div>
@@ -782,7 +840,7 @@ function renderForm(){
     row.innerHTML = `
       <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
       <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
-      <button class="icon-btn" data-remove-cost="${idx}" title="Remove">×</button>
+      <button class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
     `;
     costWrap.appendChild(row);
   });
@@ -794,7 +852,7 @@ function renderForm(){
     row.className = 'term-row';
     row.innerHTML = `
       <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
-      <button class="icon-btn" data-remove-term="${idx}" title="Remove">×</button>
+      <button class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
     `;
     termWrap.appendChild(row);
   });
