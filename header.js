@@ -1,4 +1,3 @@
-// Apply saved theme immediately on load
 (function applySavedTheme() {
   const savedTheme = localStorage.getItem("apml_theme") || "light";
   document.documentElement.setAttribute("data-theme", savedTheme);
@@ -69,6 +68,6 @@ function updateThemeIcon() {
   const themeIcon = document.getElementById("themeIcon");
   const currentTheme = document.documentElement.getAttribute("data-theme");
   if (themeIcon) {
-    themeIcon.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+    themeIcon.textContent = currentTheme === "dark" ? "light_mode" : "dark_mode";
   }
 }
