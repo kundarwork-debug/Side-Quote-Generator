@@ -6,7 +6,9 @@
     <title>APML Lite Rates</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
     
-    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="common.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <style>
         * {
@@ -18,137 +20,138 @@
 
         body {
             background-color: #fff5f5;
-            color: #1a1a1a;
+            color: #0f172a;
             display: flex;
             flex-direction: column;
-            align-items: center;
             min-height: 100vh;
-            padding: 100px 20px 40px 20px;
         }
 
         .container {
-            width: 100%;
             max-width: 600px;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
+            margin: 0 auto;
+            padding: 100px 20px 40px 20px;
+            width: 100%;
+            flex: 1;
         }
 
-        .page-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #b71c1c;
-            text-align: center;
+        /* Note Banner Styling */
+        .info-note-banner {
+            background: #fef2f2;
+            border: 1px solid rgba(252, 165, 165, 0.6);
+            border-left: 4px solid #b91c1c;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(185, 28, 28, 0.04);
+        }
+
+        .info-note-banner span.icon {
+            color: #b91c1c;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .info-note-banner p {
+            font-size: 13px;
+            font-weight: 600;
+            color: #991b1b;
+            line-height: 1.4;
+        }
+
+        .calc-box {
+            background: #ffffff;
+            border: 1px solid rgba(252, 165, 165, 0.4);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(185, 28, 28, 0.05);
             margin-bottom: 24px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #991b1b;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* Calculator Section */
-        .calc-box {
-            background-color: rgba(255, 255, 255, 0.7);
-            border: 1px solid #ffdde1;
-            padding: 24px;
-            border-radius: 16px;
-            backdrop-filter: blur(8px);
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .input-group label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #444;
-            text-transform: uppercase;
-        }
-
-        .cft-input {
+        input[type="number"] {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #ffcdd2;
-            border-radius: 8px;
             font-size: 18px;
             font-weight: 700;
-            color: #111;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
             outline: none;
-            background: #ffffff;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            color: #0f172a;
         }
 
-        .cft-input:focus {
-            border-color: #b71c1c;
+        input[type="number"]:focus {
+            border-color: #991b1b;
+            box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.1);
         }
 
-        .error-msg {
-            color: #d32f2f;
+        .error-text {
+            color: #dc2626;
             font-size: 13px;
-            font-weight: 700;
-            margin-top: 6px;
+            font-weight: 600;
+            margin-top: 8px;
             display: none;
         }
 
-        /* Results Cards Grid */
         .rates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 12px;
-            margin-top: 16px;
+            transition: opacity 0.2s;
         }
 
         .rate-card {
             background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            padding: 12px;
+            border: 1px solid rgba(252, 165, 165, 0.4);
+            border-radius: 12px;
+            padding: 16px;
             text-align: center;
-            transition: transform 0.2s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .rate-card:hover {
+            transform: translateY(-2px);
+            border-color: #991b1b;
         }
 
         .city-name {
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 700;
-            color: #666;
+            color: #64748b;
             margin-bottom: 4px;
             text-transform: uppercase;
         }
 
-        .city-price {
-            font-size: 18px;
+        .price {
+            font-size: 22px;
             font-weight: 800;
-            color: #b71c1c;
+            color: #991b1b;
         }
 
-        .note-box {
-            margin-top: 20px;
-            background-color: rgba(255, 243, 224, 0.8);
-            border: 1px solid #ffe0b2;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #e65100;
-            line-height: 1.5;
-        }
-
-        .back-nav {
-            margin-top: 24px;
-            text-align: center;
-        }
-
-        .back-link {
-            color: #b71c1c;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
+        @media (max-width: 480px) {
+            .rates-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding-top: 80px;
+            }
         }
     </style>
 </head>
@@ -157,73 +160,121 @@
     <div id="header-container"></div>
 
     <div class="container">
-        <h1 class="page-title">APML Lite Rates</h1>
+        <div class="info-note-banner">
+            <span class="material-symbols-outlined icon">info</span>
+            <p>Note: All rates are calculated for shipments originating from <strong>Mumbai / Pune</strong> to the 4 destination cities as per APML Lite guidelines.</p>
+        </div>
 
         <div class="calc-box">
             <div class="input-group">
-                <label for="cftInput">Enter CFT Volume (Max 450):</label>
-                <input type="number" id="cftInput" class="cft-input" value="250" min="1" max="450" placeholder="e.g. 250">
-                <div id="errorMsg" class="error-msg">⚠️ Beyond 450 CFT, orders are not accepted under APML Lite.</div>
-            </div>
-
-            <div class="rates-grid" id="ratesGrid">
-                <div class="rate-card">
-                    <div class="city-name">Delhi NCR (KWS)</div>
-                    <div class="city-price" id="delhiPrice">₹25,000</div>
-                </div>
-                <div class="rate-card">
-                    <div class="city-name">Chennai (CHE)</div>
-                    <div class="city-price" id="chePrice">₹25,000</div>
-                </div>
-                <div class="rate-card">
-                    <div class="city-name">Bangalore (BNG)</div>
-                    <div class="city-price" id="bngPrice">₹23,750</div>
-                </div>
-                <div class="rate-card">
-                    <div class="city-name">Kolkata (KOL)</div>
-                    <div class="city-price" id="kolPrice">₹26,250</div>
-                </div>
+                <label for="cftInput">Enter CFT (Volume)</label>
+                <input type="number" id="cftInput" placeholder="e.g. 150" min="1" max="450">
+                <div class="error-text" id="errorMsg">Maximum allowed CFT is 450</div>
             </div>
         </div>
 
-        <div class="note-box">
-            📌 <strong>Terms:</strong> Minimum booking rate for APML Lite is <strong>₹5,000</strong>. Maximum order capacity per booking is restricted to <strong>450 CFT</strong>.
-        </div>
-
-        <div class="back-nav">
-            <a href="index.html" class="back-link">← Back to Main Page</a>
+        <div class="rates-grid" id="ratesGrid">
+            <div class="rate-card">
+                <div class="city-name">Delhi / NCR</div>
+                <div class="price" id="delhiPrice">₹5,000</div>
+            </div>
+            <div class="rate-card">
+                <div class="city-name">Chennai / Hyderabad</div>
+                <div class="price" id="chePrice">₹5,000</div>
+            </div>
+            <div class="rate-card">
+                <div class="city-name">Bangalore</div>
+                <div class="price" id="bngPrice">₹5,000</div>
+            </div>
+            <div class="rate-card">
+                <div class="city-name">Kolkata</div>
+                <div class="price" id="kolPrice">₹5,000</div>
+            </div>
         </div>
     </div>
+
+    <div id="footer-container"></div>
 
     <script>
         const MIN_RATE = 5000;
         const MAX_CFT = 450;
 
         function calculateRates(cft) {
-            let delhi, che, bng, kol;
-            if (cft <= 50) {
-                delhi = cft * 125;
-                che = cft * 125;
-                bng = cft * 120;
-                kol = cft * 140;
-            } else if (cft <= 100) {
-                delhi = cft * 115;
-                che = cft * 115;
-                bng = cft * 110;
-                kol = cft * 130;
-            } else if (cft <= 250) {
-                delhi = cft * 100;
-                che = cft * 100;
-                bng = cft * 95;
-                kol = cft * 105;
-            } else {
-                delhi = cft * 85;
-                che = cft * 85;
-                bng = cft * 80;
-                kol = cft * 100;
+            if (!cft || cft <= 0) {
+                return { delhi: MIN_RATE, che: MIN_RATE, bng: MIN_RATE, kol: MIN_RATE };
             }
 
-            // Enforce ₹5,000 minimum value constraint
+            let delhi = 0, che = 0, bng = 0, kol = 0;
+
+            // Delhi / NCR Calculation
+            if (cft <= 100) delhi = cft * 50;
+            else if (cft <= 125) delhi = cft * 48;
+            else if (cft <= 150) delhi = cft * 46;
+            else if (cft <= 175) delhi = cft * 44;
+            else if (cft <= 200) delhi = cft * 42;
+            else if (cft <= 225) delhi = cft * 40;
+            else if (cft <= 250) delhi = cft * 38;
+            else if (cft <= 275) delhi = cft * 36;
+            else if (cft <= 300) delhi = cft * 34;
+            else if (cft <= 325) delhi = cft * 32;
+            else if (cft <= 350) delhi = cft * 30;
+            else if (cft <= 375) delhi = cft * 28;
+            else if (cft <= 400) delhi = cft * 26;
+            else if (cft <= 425) delhi = cft * 24;
+            else if (cft <= 450) delhi = cft * 22;
+
+            // Chennai / Hyderabad Calculation
+            if (cft <= 100) che = cft * 52;
+            else if (cft <= 125) che = cft * 50;
+            else if (cft <= 150) che = cft * 48;
+            else if (cft <= 175) che = cft * 46;
+            else if (cft <= 200) che = cft * 44;
+            else if (cft <= 225) che = cft * 42;
+            else if (cft <= 250) che = cft * 40;
+            else if (cft <= 275) che = cft * 38;
+            else if (cft <= 300) che = cft * 36;
+            else if (cft <= 325) che = cft * 34;
+            else if (cft <= 350) che = cft * 32;
+            else if (cft <= 375) che = cft * 30;
+            else if (cft <= 400) che = cft * 28;
+            else if (cft <= 425) che = cft * 26;
+            else if (cft <= 450) che = cft * 24;
+
+            // Bangalore Calculation
+            if (cft <= 100) bng = cft * 54;
+            else if (cft <= 125) bng = cft * 52;
+            else if (cft <= 150) bng = cft * 50;
+            else if (cft <= 175) bng = cft * 48;
+            else if (cft <= 200) bng = cft * 46;
+            else if (cft <= 225) bng = cft * 44;
+            else if (cft <= 250) bng = cft * 42;
+            else if (cft <= 275) bng = cft * 40;
+            else if (cft <= 300) bng = cft * 38;
+            else if (cft <= 325) bng = cft * 36;
+            else if (cft <= 350) bng = cft * 34;
+            else if (cft <= 375) bng = cft * 32;
+            else if (cft <= 400) bng = cft * 30;
+            else if (cft <= 425) bng = cft * 28;
+            else if (cft <= 450) bng = cft * 26;
+
+            // Kolkata Calculation
+            if (cft <= 100) kol = cft * 56;
+            else if (cft <= 125) kol = cft * 54;
+            else if (cft <= 150) kol = cft * 52;
+            else if (cft <= 175) kol = cft * 50;
+            else if (cft <= 200) kol = cft * 48;
+            else if (cft <= 225) kol = cft * 46;
+            else if (cft <= 250) kol = cft * 44;
+            else if (cft <= 275) kol = cft * 42;
+            else if (cft <= 300) kol = cft * 40;
+            else if (cft <= 325) kol = cft * 38;
+            else if (cft <= 350) kol = cft * 36;
+            else if (cft <= 375) kol = cft * 34;
+            else if (cft <= 400) kol = cft * 32;
+            else if (cft <= 425) kol = cft * 30;
+            else if (cft <= 450) kol = cft * 28;
+
+            // Apply Minimum Rate Rule (₹5000)
             delhi = Math.max(delhi, MIN_RATE);
             che = Math.max(che, MIN_RATE);
             bng = Math.max(bng, MIN_RATE);
@@ -261,6 +312,6 @@
         updateCalc();
     </script>
 
-    <script src="header.js"></script>
+    <script src="common.js"></script>
 </body>
 </html>
