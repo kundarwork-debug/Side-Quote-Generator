@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>APML - Quotation Editor</title>
+  <title>APML - Quotation Editor & Utilities</title>
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
@@ -48,11 +48,11 @@
       100% { box-shadow: 0 0 0 0 rgba(185, 28, 28, 0); }
     }
 
-    /* Main Hero Area */
+    /* Main Hero Area (Upper Part Kept Exact) */
     .hero-container {
       max-width: 860px;
       margin: 0 auto;
-      padding: 120px 20px 60px 20px;
+      padding: 120px 20px 50px 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -224,14 +224,14 @@
       color: #16a34a;
     }
 
-    /* Scrollable Sections Wrapper */
+    /* Scrollable Content Wrapper */
     .content-sections {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 40px 20px 80px 20px;
+      padding: 20px 20px 80px 20px;
       display: flex;
       flex-direction: column;
-      gap: 40px;
+      gap: 50px;
     }
 
     .section-title {
@@ -242,7 +242,7 @@
       margin-bottom: 24px;
     }
 
-    /* Material Cards Grid */
+    /* Workflow Cards */
     .workflow-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -288,6 +288,84 @@
       font-size: 13px;
       color: #64748b;
       line-height: 1.5;
+    }
+
+    /* Additional Tools Grid (Lite Rate, Car Rate, Gallery) */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 20px;
+      padding: 28px 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .tool-card:hover {
+      transform: translateY(-6px);
+      border-color: #b91c1c;
+      box-shadow: 0px 14px 30px rgba(185, 28, 28, 0.12);
+    }
+
+    .tool-icon-box {
+      width: 52px;
+      height: 52px;
+      background: #fef2f2;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b91c1c;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .tool-card:hover .tool-icon-box {
+      background: #b91c1c;
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    .tool-icon-box span {
+      font-size: 28px;
+    }
+
+    .tool-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .tool-desc {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .tool-btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #b91c1c;
+      transition: gap 0.2s ease;
+    }
+
+    .tool-card:hover .tool-btn-action {
+      gap: 10px;
     }
 
     @media (max-width: 768px) {
@@ -367,6 +445,55 @@
             <h3>Export File</h3>
             <p>Review the live preview in the document stage and download the generated file.</p>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="section-title">Additional Utilities</h2>
+        <div class="tools-grid">
+          
+          <a href="APML-Lite.html" class="tool-card">
+            <div>
+              <div class="tool-icon-box">
+                <span class="material-symbols-outlined">grid_view</span>
+              </div>
+              <h3 class="tool-title">APML Lite Rate</h3>
+              <p class="tool-desc">Calculate CFT volume pricing rates with slab constraints and city destination caps.</p>
+            </div>
+            <div class="tool-btn-action">
+              <span>Open Lite Calculator</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </div>
+          </a>
+
+          <a href="car-rate.html" class="tool-card">
+            <div>
+              <div class="tool-icon-box">
+                <span class="material-symbols-outlined">directions_car</span>
+              </div>
+              <h3 class="tool-title">Car Rate Calculator</h3>
+              <p class="tool-desc">Estimate vehicle transport rates based on distance in KM and vehicle type.</p>
+            </div>
+            <div class="tool-btn-action">
+              <span>Open Car Calculator</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </div>
+          </a>
+
+          <a href="gallery.html" class="tool-card">
+            <div>
+              <div class="tool-icon-box">
+                <span class="material-symbols-outlined">photo_library</span>
+              </div>
+              <h3 class="tool-title">Packing Gallery</h3>
+              <p class="tool-desc">View standard box dimensions, packing photos, and consignment reference standards.</p>
+            </div>
+            <div class="tool-btn-action">
+              <span>View Packing Gallery</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </div>
+          </a>
+
         </div>
       </div>
 
