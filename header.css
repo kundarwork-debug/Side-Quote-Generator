@@ -17,51 +17,102 @@
   --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* ---------- MATERIAL DARK MODE COLORS ---------- */
+/* ---------- MATERIAL DARK MODE GLOBAL OVERRIDES ---------- */
 [data-theme="dark"] {
-  --bg-main: #0f172a;
-  --card-bg: #1e293b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.1);
-  --primary-light: rgba(185, 28, 28, 0.15);
-  --elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.3);
-  --elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.4);
-  --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.5);
+  --bg-main: #0b0f19 !important;
+  --card-bg: #151e2e !important;
+  --text-main: #f8fafc !important;
+  --text-muted: #94a3b8 !important;
+  --border-color: rgba(255, 255, 255, 0.12) !important;
+  --primary-light: rgba(185, 28, 28, 0.2) !important;
+  --elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.5) !important;
+  --elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.6) !important;
+  --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.7) !important;
 }
 
-body {
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+/* Force Body & Container Backgrounds to Dark */
+[data-theme="dark"] body {
   background-color: var(--bg-main) !important;
   color: var(--text-main) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Material Symbols Adjustments */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  vertical-align: middle;
-}
-
-/* General Component Styles in Dark Mode */
+/* Darken All Cards, Containers, Tables, and Boxes */
 [data-theme="dark"] .calc-box,
 [data-theme="dark"] .left-card,
 [data-theme="dark"] .right-card,
 [data-theme="dark"] .table-section,
 [data-theme="dark"] .module-card,
-[data-theme="dark"] .rate-card {
+[data-theme="dark"] .rate-card,
+[data-theme="dark"] .total-box,
+[data-theme="dark"] .panel,
+[data-theme="dark"] .container,
+[data-theme="dark"] .hero-section {
   background-color: var(--card-bg) !important;
   color: var(--text-main) !important;
   border-color: var(--border-color) !important;
   box-shadow: var(--elevation-1) !important;
 }
 
+/* Darken Heading Text & Labels */
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4,
+[data-theme="dark"] label,
+[data-theme="dark"] span,
+[data-theme="dark"] strong,
+[data-theme="dark"] .hero-title h1,
+[data-theme="dark"] .card-header-title,
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .price-row {
+  color: var(--text-main) !important;
+}
+
+/* Darken Inputs, Selects, and Textareas */
 [data-theme="dark"] input, 
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background-color: #0f172a !important;
+  background-color: #0b0f19 !important;
   color: #f8fafc !important;
-  border-color: #334155 !important;
+  border-color: #27354a !important;
+}
+
+[data-theme="dark"] input::placeholder {
+  color: #64748b !important;
+}
+
+/* Darken Tables */
+[data-theme="dark"] table {
+  background-color: var(--card-bg) !important;
+}
+
+[data-theme="dark"] th {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] td {
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] tr.active-row {
+  background-color: rgba(185, 28, 28, 0.25) !important;
+}
+
+/* Darken Dropdown Suggestion Box */
+[data-theme="dark"] .suggestions-dropdown {
+  background-color: var(--card-bg) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .suggestion-item {
+  color: var(--text-main) !important;
+}
+
+[data-theme="dark"] .suggestion-item:hover {
+  background-color: var(--primary-light) !important;
 }
 
 /* ---------- MATERIAL FIXED TOP HEADER ---------- */
@@ -84,7 +135,7 @@ body {
 }
 
 [data-theme="dark"] .site-header {
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.92) !important;
 }
 
 .site-header.header-hidden {
