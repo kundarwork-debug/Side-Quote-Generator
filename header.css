@@ -17,140 +17,19 @@
   --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* =========================================================
-   1. GLOBAL DARK MODE THEME OVERRIDES (APPLIES TO ALL PAGES)
-   ========================================================= */
-[data-theme="dark"] {
-  --bg-main: #0b0f19 !important;
-  --card-bg: #151e2e !important;
-  --text-main: #f8fafc !important;
-  --text-muted: #94a3b8 !important;
-  --border-color: rgba(255, 255, 255, 0.12) !important;
-  --primary-light: rgba(185, 28, 28, 0.2) !important;
-  --elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.5) !important;
-  --elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.6) !important;
-  --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.7) !important;
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  background-color: var(--bg-main);
+  color: var(--text-main);
 }
 
-/* Global Background & Body */
-[data-theme="dark"] body {
-  background-color: var(--bg-main) !important;
-  color: var(--text-main) !important;
+/* Material Symbols Adjustments */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
 }
 
-/* All Cards, Containers, Sections, Calculators, Panels & Hero Sections */
-[data-theme="dark"] .calc-box,
-[data-theme="dark"] .left-card,
-[data-theme="dark"] .right-card,
-[data-theme="dark"] .table-section,
-[data-theme="dark"] .module-card,
-[data-theme="dark"] .rate-card,
-[data-theme="dark"] .total-box,
-[data-theme="dark"] .panel,
-[data-theme="dark"] .container,
-[data-theme="dark"] .hero-section,
-[data-theme="dark"] .app,
-[data-theme="dark"] .media-card,
-[data-theme="dark"] .toolbar,
-[data-theme="dark"] .step-card {
-  background-color: var(--card-bg) !important;
-  color: var(--text-main) !important;
-  border-color: var(--border-color) !important;
-  box-shadow: var(--elevation-1) !important;
-}
-
-/* Main Hero Section Override (index.html) */
-[data-theme="dark"] .hero-section {
-  background: radial-gradient(circle at 50% 30%, rgba(185, 28, 28, 0.15), transparent 60%),
-              linear-gradient(rgba(11, 15, 25, 0.92), rgba(11, 15, 25, 0.98)) !important;
-}
-
-/* Editor Stage Background (editor.html) */
-[data-theme="dark"] .stage {
-  background-color: #080b12 !important;
-}
-
-/* All Text, Headings & Labels Across Pages */
-[data-theme="dark"] h1, 
-[data-theme="dark"] h2, 
-[data-theme="dark"] h3, 
-[data-theme="dark"] h4,
-[data-theme="dark"] label,
-[data-theme="dark"] span,
-[data-theme="dark"] strong,
-[data-theme="dark"] p,
-[data-theme="dark"] .welcome-title,
-[data-theme="dark"] .welcome-subtitle,
-[data-theme="dark"] .section-title,
-[data-theme="dark"] .section-desc,
-[data-theme="dark"] .card-title,
-[data-theme="dark"] .card-desc,
-[data-theme="dark"] .card-header-title,
-[data-theme="dark"] .field label,
-[data-theme="dark"] .brand-row h1,
-[data-theme="dark"] .field-group h2,
-[data-theme="dark"] .price-row {
-  color: var(--text-main) !important;
-}
-
-/* Form Inputs, Selects, Textareas & Buttons */
-[data-theme="dark"] input, 
-[data-theme="dark"] select,
-[data-theme="dark"] textarea,
-[data-theme="dark"] .search-box {
-  background-color: #0b0f19 !important;
-  color: #f8fafc !important;
-  border-color: #27354a !important;
-}
-
-[data-theme="dark"] input::placeholder {
-  color: #64748b !important;
-}
-
-[data-theme="dark"] .add-btn,
-[data-theme="dark"] .reset-btn,
-[data-theme="dark"] .back-btn,
-[data-theme="dark"] #applyTotalBtn,
-[data-theme="dark"] .gallery-btn-preview,
-[data-theme="dark"] .gallery-btn-active,
-[data-theme="dark"] .feature-item,
-[data-theme="dark"] .about-me-btn,
-[data-theme="dark"] .filter-btn {
-  background-color: #0b0f19 !important;
-  color: var(--text-main) !important;
-  border-color: var(--border-color) !important;
-}
-
-/* Tables Across Pages */
-[data-theme="dark"] table {
-  background-color: var(--card-bg) !important;
-}
-
-[data-theme="dark"] th {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] td {
-  border-color: var(--border-color) !important;
-  color: var(--text-main) !important;
-}
-
-[data-theme="dark"] tr.active-row {
-  background-color: rgba(185, 28, 28, 0.25) !important;
-}
-
-/* Footers */
-[data-theme="dark"] .site-footer {
-  background: rgba(21, 30, 46, 0.95) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-main) !important;
-}
-
-/* =========================================================
-   2. MATERIAL FIXED TOP HEADER & DROPDOWN MENU
-   ========================================================= */
+/* ---------- FIXED TOP HEADER ---------- */
 .site-header {
   position: fixed;
   top: 0;
@@ -166,11 +45,7 @@
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--elevation-1);
   z-index: 1000;
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-}
-
-[data-theme="dark"] .site-header {
-  background: rgba(15, 23, 42, 0.92) !important;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .site-header.header-hidden {
@@ -220,14 +95,11 @@
   100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
 }
 
-.header-right-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* MENU BUTTON & DROPDOWN */
+.menu-container {
+  position: relative;
 }
 
-/* Material Icon Buttons */
-.theme-toggle-btn,
 .hamburger-btn {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
@@ -243,16 +115,10 @@
   box-shadow: var(--elevation-1);
 }
 
-.theme-toggle-btn:hover,
 .hamburger-btn:hover {
   background: var(--primary-light);
   color: var(--primary);
   transform: scale(1.05);
-}
-
-/* Material Dropdown Menu */
-.menu-container {
-  position: relative;
 }
 
 .dropdown-menu {
