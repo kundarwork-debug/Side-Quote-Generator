@@ -4,20 +4,26 @@
     <span class="status-badge"><span class="status-dot"></span> Staff Portal</span>
   </div>
 
-  <div class="menu-container">
-    <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Toggle Menu">
-      <div class="hamburger-icon">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
+  <div class="header-right-actions">
+    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+      <span class="theme-icon" id="themeIcon">🌙</span>
     </button>
 
-    <div class="dropdown-menu" id="dropdownMenu">
-      <a href="APML-Lite.html" class="menu-item-btn">📊 APML Lite Calculator</a>
-      <a href="car-rate.html" class="menu-item-btn">🚗 Car Rate Calculator</a>
-      <a href="editor.html" class="menu-item-btn">📝 Quotation Editor</a>
-      <a href="gallery.html" class="menu-item-btn">📸 Packing Gallery</a>
+    <div class="menu-container">
+      <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Toggle Menu">
+        <div class="hamburger-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+
+      <div class="dropdown-menu" id="dropdownMenu">
+        <a href="APML-Lite.html" class="menu-item-btn">📊 APML Lite Calculator</a>
+        <a href="car-rate.html" class="menu-item-btn">🚗 Car Rate Calculator</a>
+        <a href="editor.html" class="menu-item-btn">📝 Quotation Editor</a>
+        <a href="gallery.html" class="menu-item-btn">📸 Packing Gallery</a>
+      </div>
     </div>
   </div>
 </header>
