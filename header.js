@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
-    fetch("header.html")
+    fetch("header.html?v=" + new Date().getTime())
       .then(response => response.text())
       .then(data => {
         headerContainer.innerHTML = data;
