@@ -17,7 +17,9 @@
   --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* ---------- MATERIAL DARK MODE GLOBAL OVERRIDES ---------- */
+/* =========================================================
+   1. GLOBAL DARK MODE THEME OVERRIDES (APPLIES TO ALL PAGES)
+   ========================================================= */
 [data-theme="dark"] {
   --bg-main: #0b0f19 !important;
   --card-bg: #151e2e !important;
@@ -30,13 +32,13 @@
   --elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.7) !important;
 }
 
-/* Force Body & Container Backgrounds to Dark */
+/* Global Background & Body */
 [data-theme="dark"] body {
   background-color: var(--bg-main) !important;
   color: var(--text-main) !important;
 }
 
-/* Darken All Cards, Containers, Tables, and Boxes */
+/* All Cards, Containers, Sections, Calculators, Panels & Hero Sections */
 [data-theme="dark"] .calc-box,
 [data-theme="dark"] .left-card,
 [data-theme="dark"] .right-card,
@@ -46,14 +48,29 @@
 [data-theme="dark"] .total-box,
 [data-theme="dark"] .panel,
 [data-theme="dark"] .container,
-[data-theme="dark"] .hero-section {
+[data-theme="dark"] .hero-section,
+[data-theme="dark"] .app,
+[data-theme="dark"] .media-card,
+[data-theme="dark"] .toolbar,
+[data-theme="dark"] .step-card {
   background-color: var(--card-bg) !important;
   color: var(--text-main) !important;
   border-color: var(--border-color) !important;
   box-shadow: var(--elevation-1) !important;
 }
 
-/* Darken Heading Text & Labels */
+/* Main Hero Section Override (index.html) */
+[data-theme="dark"] .hero-section {
+  background: radial-gradient(circle at 50% 30%, rgba(185, 28, 28, 0.15), transparent 60%),
+              linear-gradient(rgba(11, 15, 25, 0.92), rgba(11, 15, 25, 0.98)) !important;
+}
+
+/* Editor Stage Background (editor.html) */
+[data-theme="dark"] .stage {
+  background-color: #080b12 !important;
+}
+
+/* All Text, Headings & Labels Across Pages */
 [data-theme="dark"] h1, 
 [data-theme="dark"] h2, 
 [data-theme="dark"] h3, 
@@ -61,17 +78,26 @@
 [data-theme="dark"] label,
 [data-theme="dark"] span,
 [data-theme="dark"] strong,
-[data-theme="dark"] .hero-title h1,
-[data-theme="dark"] .card-header-title,
+[data-theme="dark"] p,
+[data-theme="dark"] .welcome-title,
+[data-theme="dark"] .welcome-subtitle,
 [data-theme="dark"] .section-title,
+[data-theme="dark"] .section-desc,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .card-desc,
+[data-theme="dark"] .card-header-title,
+[data-theme="dark"] .field label,
+[data-theme="dark"] .brand-row h1,
+[data-theme="dark"] .field-group h2,
 [data-theme="dark"] .price-row {
   color: var(--text-main) !important;
 }
 
-/* Darken Inputs, Selects, and Textareas */
+/* Form Inputs, Selects, Textareas & Buttons */
 [data-theme="dark"] input, 
 [data-theme="dark"] select,
-[data-theme="dark"] textarea {
+[data-theme="dark"] textarea,
+[data-theme="dark"] .search-box {
   background-color: #0b0f19 !important;
   color: #f8fafc !important;
   border-color: #27354a !important;
@@ -81,7 +107,21 @@
   color: #64748b !important;
 }
 
-/* Darken Tables */
+[data-theme="dark"] .add-btn,
+[data-theme="dark"] .reset-btn,
+[data-theme="dark"] .back-btn,
+[data-theme="dark"] #applyTotalBtn,
+[data-theme="dark"] .gallery-btn-preview,
+[data-theme="dark"] .gallery-btn-active,
+[data-theme="dark"] .feature-item,
+[data-theme="dark"] .about-me-btn,
+[data-theme="dark"] .filter-btn {
+  background-color: #0b0f19 !important;
+  color: var(--text-main) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Tables Across Pages */
 [data-theme="dark"] table {
   background-color: var(--card-bg) !important;
 }
@@ -101,21 +141,16 @@
   background-color: rgba(185, 28, 28, 0.25) !important;
 }
 
-/* Darken Dropdown Suggestion Box */
-[data-theme="dark"] .suggestions-dropdown {
-  background-color: var(--card-bg) !important;
+/* Footers */
+[data-theme="dark"] .site-footer {
+  background: rgba(21, 30, 46, 0.95) !important;
   border-color: var(--border-color) !important;
-}
-
-[data-theme="dark"] .suggestion-item {
   color: var(--text-main) !important;
 }
 
-[data-theme="dark"] .suggestion-item:hover {
-  background-color: var(--primary-light) !important;
-}
-
-/* ---------- MATERIAL FIXED TOP HEADER ---------- */
+/* =========================================================
+   2. MATERIAL FIXED TOP HEADER & DROPDOWN MENU
+   ========================================================= */
 .site-header {
   position: fixed;
   top: 0;
@@ -191,7 +226,7 @@
   gap: 10px;
 }
 
-/* MATERIAL ICON BUTTONS */
+/* Material Icon Buttons */
 .theme-toggle-btn,
 .hamburger-btn {
   background: var(--card-bg);
@@ -215,7 +250,7 @@
   transform: scale(1.05);
 }
 
-/* MATERIAL DROPDOWN MENU */
+/* Material Dropdown Menu */
 .menu-container {
   position: relative;
 }
