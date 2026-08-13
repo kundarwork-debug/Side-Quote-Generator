@@ -1,9 +1,3 @@
-// Apply saved theme immediately on load
-(function applySavedTheme() {
-  const savedTheme = localStorage.getItem("apml_theme") || "light";
-  document.documentElement.setAttribute("data-theme", savedTheme);
-})();
-
 document.addEventListener("DOMContentLoaded", function () {
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
@@ -12,12 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(data => {
         headerContainer.innerHTML = data;
         initHeaderScrollAndMenu();
-        updateThemeIcon();
       })
       .catch(err => console.error("Error loading header:", err));
   } else {
     initHeaderScrollAndMenu();
-    updateThemeIcon();
   }
 });
 
@@ -53,22 +45,5 @@ function toggleMenu() {
   const menu = document.getElementById("dropdownMenu");
   if (menu) {
     menu.classList.toggle("active");
-  }
-}
-
-function toggleDarkMode() {
-  const currentTheme = document.documentElement.getAttribute("data-theme");
-  const newTheme = currentTheme === "dark" ? "light" : "dark";
-  
-  document.documentElement.setAttribute("data-theme", newTheme);
-  localStorage.setItem("apml_theme", newTheme);
-  updateThemeIcon();
-}
-
-function updateThemeIcon() {
-  const themeIcon = document.getElementById("themeIcon");
-  const currentTheme = document.documentElement.getAttribute("data-theme");
-  if (themeIcon) {
-    themeIcon.textContent = currentTheme === "dark" ? "light_mode" : "dark_mode";
   }
 }
