@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Load Header
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
     fetch("header.html")
@@ -10,6 +11,17 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch(err => console.error("Error loading header:", err));
   } else {
     initHeaderScrollAndMenu();
+  }
+
+  // Load Footer
+  const footerContainer = document.getElementById("footer-container");
+  if (footerContainer) {
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        footerContainer.innerHTML = data;
+      })
+      .catch(err => console.error("Error loading footer:", err));
   }
 });
 
