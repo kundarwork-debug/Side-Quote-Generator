@@ -1,6 +1,5 @@
-// Automatically load header HTML into pages
 document.addEventListener("DOMContentLoaded", function () {
-  // Apply saved theme immediately on load
+  // Apply saved theme immediately on page load
   const savedTheme = localStorage.getItem("apmlTheme");
   if (savedTheme === "dark") {
     document.body.classList.add("dark-theme");
