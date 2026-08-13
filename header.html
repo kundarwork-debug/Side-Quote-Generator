@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
 <header class="site-header" id="siteHeader">
   <div class="header-left">
     <a href="index.html" class="header-brand-name">APML</a>
@@ -6,23 +8,31 @@
 
   <div class="header-right-actions">
     <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
-      <span class="theme-icon" id="themeIcon">🌙</span>
+      <span class="material-symbols-outlined theme-icon" id="themeIcon">dark_mode</span>
     </button>
 
     <div class="menu-container">
       <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Toggle Menu">
-        <div class="hamburger-icon">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <span class="material-symbols-outlined">menu</span>
       </button>
 
       <div class="dropdown-menu" id="dropdownMenu">
-        <a href="APML-Lite.html" class="menu-item-btn">📊 APML Lite Calculator</a>
-        <a href="car-rate.html" class="menu-item-btn">🚗 Car Rate Calculator</a>
-        <a href="editor.html" class="menu-item-btn">📝 Quotation Editor</a>
-        <a href="gallery.html" class="menu-item-btn">📸 Packing Gallery</a>
+        <a href="APML-Lite.html" class="menu-item-btn">
+          <span class="material-symbols-outlined mui-icon">grid_view</span>
+          <span>APML Lite Calculator</span>
+        </a>
+        <a href="car-rate.html" class="menu-item-btn">
+          <span class="material-symbols-outlined mui-icon">directions_car</span>
+          <span>Car Rate Calculator</span>
+        </a>
+        <a href="editor.html" class="menu-item-btn">
+          <span class="material-symbols-outlined mui-icon">edit_note</span>
+          <span>Quotation Editor</span>
+        </a>
+        <a href="gallery.html" class="menu-item-btn">
+          <span class="material-symbols-outlined mui-icon">photo_library</span>
+          <span>Packing Gallery</span>
+        </a>
       </div>
     </div>
   </div>
