@@ -1,18 +1,42 @@
 // Automatically load header HTML into pages
 document.addEventListener("DOMContentLoaded", function () {
+  // Apply saved theme immediately on load
+  const savedTheme = localStorage.getItem("apmlTheme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-theme");
+  }
+
   const headerContainer = document.getElementById("header-container");
   if (headerContainer) {
     fetch("header.html")
       .then(response => response.text())
       .then(data => {
         headerContainer.innerHTML = data;
+        updateThemeIcon();
         initHeaderScrollAndMenu();
       })
       .catch(err => console.error("Error loading header:", err));
   } else {
+    updateThemeIcon();
     initHeaderScrollAndMenu();
   }
 });
+
+// Toggle Dark / Light Theme
+function toggleTheme() {
+  document.body.classList.toggle("dark-theme");
+  const isDark = document.body.classList.contains("dark-theme");
+  localStorage.setItem("apmlTheme", isDark ? "dark" : "light");
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const themeIcon = document.getElementById("themeIcon");
+  if (themeIcon) {
+    const isDark = document.body.classList.contains("dark-theme");
+    themeIcon.innerText = isDark ? "☀️" : "🌙";
+  }
+}
 
 function initHeaderScrollAndMenu() {
   let lastScrollY = window.scrollY;
