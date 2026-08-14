@@ -1,207 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - Kundar Prasad</title>
-    
-    <link rel="icon" type="image/png" href="https://github.com/kundarwork-debug.png">
-    
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me - Developer Profile</title>
 
-        body {
-            background-color: #0d0d0d;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
-        .container {
-            width: 100%;
-            max-width: 650px;
-        }
+  <link rel="stylesheet" href="common.css">
 
-        /* Navigation / Back Button */
-        .back-nav {
-            margin-bottom: 24px;
-        }
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-        /* Profile Header */
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
+  <style>
+    /* GOOGLE MATERIAL DESIGN 3 (M3) - DARK THEME TOKENS */
+    :root {
+      --md-sys-color-background: #090d16;
+      --md-sys-color-surface: #0e1422;
+      --md-sys-color-surface-container-low: #141b2d;
+      --md-sys-color-surface-container: #1b243b;
+      --md-sys-color-surface-container-high: #232e4a;
+      --md-sys-color-outline: rgba(255, 255, 255, 0.1);
+      --md-sys-color-outline-variant: rgba(255, 255, 255, 0.06);
+      --md-sys-color-primary: #ef4444;
+      --md-sys-color-primary-container: rgba(239, 68, 68, 0.15);
+      --md-sys-color-on-primary-container: #fca5a5;
+      --md-sys-color-on-surface: #f1f5f9;
+      --md-sys-color-on-surface-variant: #94a3b8;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 14px;
+      --md-sys-shape-corner-large: 24px;
+      --md-sys-shape-corner-full: 9999px;
+      --md-elevation-1: 0px 4px 14px rgba(0, 0, 0, 0.35);
+      --md-elevation-2: 0px 8px 24px rgba(0, 0, 0, 0.5);
+      --md-elevation-3: 0px 16px 40px rgba(0, 0, 0, 0.7);
+      --transition-m3: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
 
-        .avatar {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #ef5350;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-        .username {
-            color: #a0a0a0;
-            font-size: 15px;
-            font-family: monospace;
-        }
+    body {
+      background-color: var(--md-sys-color-background);
+      color: var(--md-sys-color-on-surface);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-        /* Intro Section */
-        h1 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
 
-        .bio {
-            color: #b0b0b0;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
+    /* Ambient Background Glow Effect */
+    .ambient-glow {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, rgba(9, 13, 22, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
 
-        hr {
-            border: none;
-            border-top: 1px solid #222222;
-            margin-bottom: 32px;
-        }
+    .about-main-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 110px 20px 70px 20px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
 
-        /* Section Titles */
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            color: #707070;
-            text-transform: uppercase;
-            margin-bottom: 16px;
-        }
+    /* =========================================================
+       HERO PROFILE CARD (M3 ELEVATED DARK CONTAINER)
+       ========================================================= */
+    .profile-hero-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 40px 36px;
+      box-shadow: var(--md-elevation-2);
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition-m3);
+    }
 
-        /* List / Cards */
-        .card-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
+    .profile-hero-card:hover {
+      border-color: rgba(239, 68, 68, 0.35);
+      box-shadow: var(--md-elevation-3);
+    }
 
-        .card {
-            background-color: #161616;
-            border: 1px solid #262626;
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
 
-        .card-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+    .profile-avatar-img {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--md-sys-color-primary);
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.35);
+      background: var(--md-sys-color-surface-container);
+    }
 
-        .card-title {
-            font-weight: 600;
-            font-size: 16px;
-            color: #ffffff;
-        }
+    .online-indicator {
+      position: absolute;
+      bottom: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      background-color: #22c55e;
+      border: 3px solid var(--md-sys-color-surface);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+    }
 
-        .card-subtext {
-            color: #808080;
-            font-size: 13px;
-            font-family: monospace;
-        }
+    .profile-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
 
-        /* Buttons */
-        .btn {
-            background-color: #262626;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: background-color 0.2s;
-        }
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: fit-content;
+    }
 
-        .btn:hover {
-            background-color: #333333;
-        }
+    .profile-name {
+      font-size: 30px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #262626;
-            color: #a0a0a0;
-        }
+    .profile-name span {
+      color: var(--md-sys-color-primary);
+    }
 
-        .btn-outline:hover {
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-    </style>
+    .profile-role {
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.5;
+    }
+
+    .hero-btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-m3-filled {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--md-sys-shape-corner-medium);
+      transition: var(--transition-m3);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-m3-filled:hover {
+      background: #dc2626;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+    }
+
+    .btn-m3-outlined {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      border: 1px solid var(--md-sys-color-outline);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: var(--md-sys-shape-corner-medium);
+      transition: var(--transition-m3);
+    }
+
+    .btn-m3-outlined:hover {
+      background: var(--md-sys-color-surface-container-high);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* =========================================================
+       SECTION TITLES & HEADINGS
+       ========================================================= */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .section-icon {
+      color: var(--md-sys-color-primary);
+      font-size: 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.01em;
+    }
+
+    /* =========================================================
+       GRID CONTAINERS & CARDS
+       ========================================================= */
+    .m3-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .m3-dark-card {
+      background: var(--md-sys-color-surface);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-medium);
+      padding: 24px 22px;
+      box-shadow: var(--md-elevation-1);
+      transition: var(--transition-m3);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .m3-dark-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(239, 68, 68, 0.3);
+      box-shadow: var(--md-elevation-2);
+      background: var(--md-sys-color-surface-container-low);
+    }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card-icon-box {
+      width: 42px;
+      height: 42px;
+      background: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--md-sys-color-outline-variant);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.5;
+    }
+
+    /* =========================================================
+       TECH STACK PILLS / CHIPS
+       ========================================================= */
+    .chip-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .m3-tech-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--md-sys-color-surface-container);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      transition: var(--transition-m3);
+    }
+
+    .m3-tech-chip:hover {
+      background: var(--md-sys-color-surface-container-high);
+      border-color: var(--md-sys-color-primary);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .m3-tech-chip span.dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--md-sys-color-primary);
+    }
+
+    @media (max-width: 768px) {
+      .about-main-container { padding-top: 85px; }
+      .profile-hero-card { flex-direction: column; text-align: center; gap: 20px; padding: 30px 20px; }
+      .profile-badge { margin: 0 auto; }
+      .hero-btn-group { justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="back-nav">
-            <a href="index.html" class="btn btn-outline">← Back to Home</a>
-        </div>
+  <div class="ambient-glow"></div>
 
-        <div class="profile-header">
-            <img src="https://github.com/kundarwork-debug.png" alt="Profile Picture" class="avatar">
-            <span class="username">@kundarwork-debug</span>
-        </div>
+  <div id="header-container"></div>
 
-        <h1>Hi, I'm Kundar Prasad</h1>
-        <p class="bio">
-            Based in Mumbai. Passionate about home automation, smart tech integrations, and continuous learning. Thanks for visiting my page!
+  <main class="about-main-container">
+
+    <section class="profile-hero-card">
+      <div class="avatar-wrapper">
+        <img src="https://github.com/kundarwork-debug.png" alt="Prasad Profile Avatar" class="profile-avatar-img">
+        <div class="online-indicator" title="Active Developer"></div>
+      </div>
+      
+      <div class="profile-details">
+        <div class="profile-badge">
+          <span class="material-symbols-outlined" style="font-size: 14px;">terminal</span>
+          <span>Lead Developer &amp; Architect</span>
+        </div>
+        <h1 class="profile-name">Prasad <span>(kundarwork-debug)</span></h1>
+        <p class="profile-role">
+          Full-stack developer building robust, lightning-fast digital utility suites and workflow automation systems for APML internal logistics operations.
         </p>
 
-        <hr>
-
-        <div class="section-title">Connect & Support</div>
-        
-        <div class="card-list">
-            <div class="card">
-                <div class="card-info">
-                    <span class="card-title">GitHub Portfolio</span>
-                    <span class="card-subtext">github.com/kundarwork-debug</span>
-                </div>
-                <a href="https://github.com/kundarwork-debug" target="_blank" class="btn">Visit ↗</a>
-            </div>
-
-            <div class="card">
-                <div class="card-info">
-                    <span class="card-title">WhatsApp Me</span>
-                    <span class="card-subtext">+91 9599588135</span>
-                </div>
-                <a href="https://wa.me/919599588135" target="_blank" class="btn">Chat ↗</a>
-            </div>
-
-            <div class="card">
-                <div class="card-info">
-                    <span class="card-title">Get in Touch</span>
-                    <span class="card-subtext">kundar.work@gmail.com</span>
-                </div>
-                <a href="mailto:kundar.work@gmail.com" class="btn">Email</a>
-            </div>
+        <div class="hero-btn-group">
+          <a href="https://github.com/kundarwork-debug" target="_blank" class="btn-m3-filled">
+            <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
+            <span>View GitHub Profile ↗</span>
+          </a>
+          <a href="index.html" class="btn-m3-outlined">
+            <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+            <span>Back to Portal</span>
+          </a>
         </div>
-    </div>
+      </div>
+    </section>
 
+    <section>
+      <div class="section-header">
+        <span class="material-symbols-outlined section-icon">rocket_launch</span>
+        <h2 class="section-title">Engineered Portal Modules</h2>
+      </div>
+
+      <div class="m3-card-grid">
+        <div class="m3-dark-card">
+          <div class="card-head">
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">edit_note</span>
+            </div>
+            <h3 class="card-title">Quotation Editor Studio</h3>
+          </div>
+          <p class="card-desc">
+            Client-side real-time quotation drafting engine with automated tax slabs, insurance formulas, and print-perfect A4 document rendering.
+          </p>
+        </div>
+
+        <div class="m3-dark-card">
+          <div class="card-head">
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">photo_library</span>
+            </div>
+            <h3 class="card-title">Packing Gallery Engine</h3>
+          </div>
+          <p class="card-desc">
+            Multi-media repository with background video frame thumbnail extraction, category routing, and binary blob direct-to-device local downloads.
+          </p>
+        </div>
+
+        <div class="m3-dark-card">
+          <div class="card-head">
+            <div class="card-icon-box">
+              <span class="material-symbols-outlined">calculate</span>
+            </div>
+            <h3 class="card-title">Volume &amp; Rate Calculators</h3>
+          </div>
+          <p class="card-desc">
+            APML Lite CFT estimators and vehicle distance-rate algorithms designed for instant field pricing and consignment quotes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-header">
+        <span class="material-symbols-outlined section-icon">memory</span>
+        <h2 class="section-title">Core Technologies &amp; Architecture</h2>
+      </div>
+
+      <div class="chip-container">
+        <div class="m3-tech-chip"><span class="dot"></span>Google Material Design 3 (M3)</div>
+        <div class="m3-tech-chip"><span class="dot"></span>HTML5 Canvas Frame Engine</div>
+        <div class="m3-tech-chip"><span class="dot"></span>Asynchronous Binary Blob Streamer</div>
+        <div class="m3-tech-chip"><span class="dot"></span>IntersectionObserver Animations</div>
+        <div class="m3-tech-chip"><span class="dot"></span>Zero-Dependency Vanilla JavaScript</div>
+        <div class="m3-tech-chip"><span class="dot"></span>GitHub Pages CI/CD Pipeline</div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="common.js"></script>
 </body>
 </html>
