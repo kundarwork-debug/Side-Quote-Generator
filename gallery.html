@@ -62,7 +62,7 @@
       flex: 1;
     }
 
-    /* Header & Filter Chips */
+    /* Header */
     .gallery-header {
       text-align: center;
       margin-bottom: 30px;
@@ -168,7 +168,7 @@
 
     .image-wrapper {
       width: 100%;
-      height: 200px;
+      height: 220px;
       background: var(--md-sys-color-surface-container-low);
       position: relative;
       overflow: hidden;
@@ -238,13 +238,14 @@
       background: var(--md-sys-color-primary-container);
       color: var(--md-sys-color-primary);
       border: none;
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: var(--md-sys-shape-corner-full);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      text-decoration: none;
       transition: var(--transition-m3);
     }
 
@@ -273,7 +274,7 @@
     .lightbox-content {
       background: #ffffff;
       border-radius: var(--md-sys-shape-corner-large);
-      max-width: 800px;
+      max-width: 820px;
       width: 100%;
       overflow: hidden;
       box-shadow: var(--md-elevation-3);
@@ -288,8 +289,8 @@
 
     .lightbox-img-wrap {
       width: 100%;
-      max-height: 500px;
-      background: #000;
+      max-height: 520px;
+      background: #0f172a;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -297,7 +298,7 @@
 
     .lightbox-img-wrap img {
       max-width: 100%;
-      max-height: 500px;
+      max-height: 520px;
       object-fit: contain;
     }
 
@@ -378,7 +379,7 @@
     <div class="gallery-header">
       <div class="gallery-badge">
         <span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>
-        <span>Standard Packaging Standards</span>
+        <span>Standard Packaging Guidelines</span>
       </div>
       <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
       <p class="gallery-desc">Reference guidelines, material specifications, box dimensions, and vehicle loading protocols for staff and clients.</p>
@@ -388,21 +389,21 @@
           <span class="material-symbols-outlined" style="font-size: 16px;">apps</span>
           <span>All Media</span>
         </button>
+        <button class="filter-chip" onclick="filterGallery('vehicles', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
+          <span>Bike &amp; Vehicle Packing</span>
+        </button>
         <button class="filter-chip" onclick="filterGallery('materials', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
           <span>Packing Materials</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('furniture', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">chair</span>
-          <span>Furniture & Electronics</span>
-        </button>
-        <button class="filter-chip" onclick="filterGallery('vehicles', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
-          <span>Car & Bike Packing</span>
+          <span>Furniture &amp; Electronics</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('boxes', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">aspect_ratio</span>
-          <span>Box Dimensions</span>
+          <span>Standard Cartons</span>
         </button>
       </div>
     </div>
@@ -423,7 +424,7 @@
         </div>
         <a id="lightboxDownloadBtn" href="" download class="btn-lightbox-download">
           <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
-          <span>Download</span>
+          <span>Download Image</span>
         </a>
       </div>
     </div>
@@ -435,56 +436,37 @@
 
   <script>
     /**
-     * HOW TO ADD YOUR OWN PHOTOS HOSTED ON GITHUB:
-     * 1. Create a folder in your repo named 'images' (e.g. images/corrugated-box.jpg)
-     * 2. Add an object to the GALLERY_ITEMS list below with:
-     * - title: Title of the packing standard
-     * - category: 'materials' | 'furniture' | 'vehicles' | 'boxes'
-     * - desc: Description of packing method / dimensions
-     * - img: Relative path (e.g. 'images/box1.jpg') or external URL
+     * GALLERY DATA ITEMS LIST
+     * Add new image entries here as you upload more photos to GitHub.
      */
     const GALLERY_ITEMS = [
       {
         id: 1,
-        title: "Heavy Duty Corrugated Carton",
-        category: "boxes",
-        desc: "7-Ply double wall heavy-duty carton (18x18x18 inches) for crockery and kitchenware.",
-        img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80"
+        title: "Two-Wheeler Multi-Layer Packing",
+        category: "vehicles",
+        desc: "High-density bubble sheet, corrugated wrapping, and handle/mirror safety cushioning for bikes.",
+        img: "bike-1.jpg" // Automatically checks 'bike-1.jpg' or 'images/bike-1.jpg'
       },
       {
         id: 2,
-        title: "Multi-Layer Bubble & Foam Wrap",
-        category: "materials",
-        desc: "Shock-absorbing premium high-density air bubble wrap and foam roll for delicate surfaces.",
-        img: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80"
+        title: "Heavy Duty Corrugated Carton",
+        category: "boxes",
+        desc: "7-Ply double wall heavy-duty carton (18x18x18 inches) for crockery and fragile kitchenware.",
+        img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80"
       },
       {
         id: 3,
-        title: "Sofa & Upholstery Shrink Wrap",
-        category: "furniture",
-        desc: "Moisture-proof stretch film wrapping with edge guard protection for fabric and leather sofas.",
-        img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80"
+        title: "Multi-Layer Bubble & Foam Wrap",
+        category: "materials",
+        desc: "Shock-absorbing premium high-density air bubble wrap and foam roll for scratch protection.",
+        img: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80"
       },
       {
         id: 4,
-        title: "Car Carrier Wheel Stopper & Lashing",
-        category: "vehicles",
-        desc: "Specialized safety wheel choke belts and lashing straps inside specialized vehicle carriers.",
-        img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
-      },
-      {
-        id: 5,
-        title: "LED TV & Screen Wooden Crate",
+        title: "Sofa & Upholstery Stretch Wrapping",
         category: "furniture",
-        desc: "Customized thermocol cushioned wooden crating designed for 55+ inch flat televisions.",
-        img: "https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=800&q=80"
-      },
-      {
-        id: 6,
-        title: "Standard Wardrobe Carton",
-        category: "boxes",
-        desc: "Tall wardrobe box with hanging rail bar for wrinkle-free clothes and suits transport.",
-        img: "https://images.unsplash.com/photo-1586528116493-a029325540fa?auto=format&fit=crop&w=800&q=80"
+        desc: "Moisture-proof stretch film wrapping with corrugated edge guard protection for fabric sofas.",
+        img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80"
       }
     ];
 
@@ -494,7 +476,7 @@
 
       if (items.length === 0) {
         grid.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--md-sys-color-on-surface-variant);">
+          <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--md-sys-color-on-surface-variant);">
             <span class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1;">photo_library</span>
             <p style="margin-top: 8px; font-weight: 600;">No images found in this category.</p>
           </div>
@@ -509,7 +491,7 @@
 
         card.innerHTML = `
           <div class="image-wrapper">
-            <img src="${item.img}" alt="${item.title}" loading="lazy">
+            <img src="${item.img}" alt="${item.title}" loading="lazy" onerror="handleImageError(this)">
           </div>
           <div class="card-content">
             <div>
@@ -522,7 +504,7 @@
                 <span>View Fullscreen</span>
                 <span class="material-symbols-outlined" style="font-size: 16px;">zoom_in</span>
               </span>
-              <a href="${item.img}" download="${item.title}.jpg" class="btn-download-icon" onclick="event.stopPropagation()" title="Download Photo">
+              <a href="${item.img}" download="${item.title}.jpg" class="btn-download-icon" onclick="event.stopPropagation()" title="Download Image">
                 <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
               </a>
             </div>
@@ -530,6 +512,14 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    // Auto-check for images in the 'images/' folder if root fails
+    function handleImageError(imgElement) {
+      const src = imgElement.getAttribute("src");
+      if (!src.startsWith("images/") && !src.startsWith("http")) {
+        imgElement.src = "images/" + src;
+      }
     }
 
     function filterGallery(category, btnElement) {
@@ -545,7 +535,14 @@
     }
 
     function openLightbox(item) {
-      document.getElementById("lightboxImg").src = item.img;
+      const lightboxImg = document.getElementById("lightboxImg");
+      lightboxImg.src = item.img;
+      lightboxImg.onerror = function() {
+        if (!this.src.includes("images/") && !this.src.startsWith("http")) {
+          this.src = "images/" + item.img;
+        }
+      };
+
       document.getElementById("lightboxTitle").textContent = item.title;
       document.getElementById("lightboxDesc").textContent = item.desc;
       document.getElementById("lightboxDownloadBtn").href = item.img;
