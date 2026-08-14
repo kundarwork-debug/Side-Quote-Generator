@@ -437,7 +437,7 @@
   <script>
     /**
      * GALLERY DATA ITEMS LIST
-     * Add new image entries here as you upload more photos to GitHub.
+     * Bike-1.jpg is set as primary image.
      */
     const GALLERY_ITEMS = [
       {
@@ -445,7 +445,7 @@
         title: "Two-Wheeler Multi-Layer Packing",
         category: "vehicles",
         desc: "High-density bubble sheet, corrugated wrapping, and handle/mirror safety cushioning for bikes.",
-        img: "bike-1.jpg" // Automatically checks 'bike-1.jpg' or 'images/bike-1.jpg'
+        img: "Bike-1.jpg"
       },
       {
         id: 2,
@@ -491,7 +491,7 @@
 
         card.innerHTML = `
           <div class="image-wrapper">
-            <img src="${item.img}" alt="${item.title}" loading="lazy" onerror="handleImageError(this)">
+            <img src="${item.img}" alt="${item.title}" loading="lazy" onerror="tryAlternatePaths(this, '${item.img}')">
           </div>
           <div class="card-content">
             <div>
@@ -514,11 +514,26 @@
       });
     }
 
-    // Auto-check for images in the 'images/' folder if root fails
-    function handleImageError(imgElement) {
-      const src = imgElement.getAttribute("src");
-      if (!src.startsWith("images/") && !src.startsWith("http")) {
-        imgElement.src = "images/" + src;
+    // Automatically cycles through alternate paths and casing variations if initial load fails
+    function tryAlternatePaths(img, originalPath) {
+      if (img.dataset.failed) return;
+      
+      const attempts = [
+        "images/" + originalPath,
+        originalPath.toLowerCase(),
+        "images/" + originalPath.toLowerCase(),
+        originalPath.replace('.jpg', '.jpeg'),
+        originalPath.replace('.jpg', '.png'),
+        "images/" + originalPath.replace('.jpg', '.jpeg')
+      ];
+
+      let currentAttempt = parseInt(img.dataset.attempt || "0");
+      if (currentAttempt < attempts.length) {
+        img.dataset.attempt = currentAttempt + 1;
+        img.src = attempts[currentAttempt];
+      } else {
+        img.dataset.failed = "true";
+        img.src = "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80"; // Fallback placeholder
       }
     }
 
@@ -538,9 +553,7 @@
       const lightboxImg = document.getElementById("lightboxImg");
       lightboxImg.src = item.img;
       lightboxImg.onerror = function() {
-        if (!this.src.includes("images/") && !this.src.startsWith("http")) {
-          this.src = "images/" + item.img;
-        }
+        tryAlternatePaths(this, item.img);
       };
 
       document.getElementById("lightboxTitle").textContent = item.title;
