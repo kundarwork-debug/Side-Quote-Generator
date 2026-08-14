@@ -104,7 +104,7 @@
        HERO SECTION & METRICS BAR
        ========================================================= */
     .hero-container {
-      max-width: 900px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 120px 20px 40px 20px;
       text-align: center;
@@ -154,7 +154,7 @@
       letter-spacing: 0.2px;
     }
 
-    /* Live Analytics Counter Strip */
+    /* Live Analytics Counter Strip (3 Badges) */
     .live-metrics-strip {
       display: flex;
       justify-content: center;
@@ -585,6 +585,12 @@
           <span class="metric-label">PDFs Generated:</span>
           <span class="metric-val" id="totalPdfDownloads">0</span>
         </div>
+
+        <div class="metric-chip">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #2563eb;">photo_library</span>
+          <span class="metric-label">Media Downloaded:</span>
+          <span class="metric-val" id="totalMediaDownloads">0</span>
+        </div>
       </div>
 
       <div class="hero-action-card reveal-zoom-in delay-3">
@@ -806,6 +812,14 @@
     totalDownloadsRef.on("value", (snap) => {
       const totalCount = snap.val() || 0;
       const totalEl = document.getElementById("totalPdfDownloads");
+      if (totalEl) totalEl.textContent = totalCount.toLocaleString();
+    });
+
+    // C. Total Media Downloads Realtime Listener (Photos + Videos)
+    const totalMediaRef = db.ref("analytics/totalMediaDownloads");
+    totalMediaRef.on("value", (snap) => {
+      const totalCount = snap.val() || 0;
+      const totalEl = document.getElementById("totalMediaDownloads");
       if (totalEl) totalEl.textContent = totalCount.toLocaleString();
     });
   </script>
