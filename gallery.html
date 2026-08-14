@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APML - Packing Standards Gallery</title>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
+
+  <link rel="stylesheet" href="common.css">
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    /* GOOGLE MATERIAL DESIGN 3 (M3) THEME TOKENS */
+    :root {
+      --md-sys-color-primary: #b91c1c;
+      --md-sys-color-primary-container: #fef2f2;
+      --md-sys-color-on-primary-container: #991b1b;
+      --md-sys-color-surface: #f8fafc;
+      --md-sys-color-surface-container-lowest: #ffffff;
+      --md-sys-color-surface-container-low: #f1f5f9;
+      --md-sys-color-surface-container: #e2e8f0;
+      --md-sys-color-outline-variant: #e2e8f0;
+      --md-sys-color-on-surface: #0f172a;
+      --md-sys-color-on-surface-variant: #64748b;
+      --md-sys-shape-corner-small: 8px;
+      --md-sys-shape-corner-medium: 12px;
+      --md-sys-shape-corner-large: 20px;
+      --md-sys-shape-corner-full: 9999px;
+      --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
+      --md-elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
+      --md-elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
+      --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: var(--md-sys-color-surface);
+      color: var(--md-sys-color-on-surface);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    .gallery-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 100px 20px 60px 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Header & Filter Chips */
+    .gallery-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .gallery-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-primary);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .gallery-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .gallery-title span {
+      color: var(--md-sys-color-primary);
+    }
+
+    .gallery-desc {
+      font-size: 14px;
+      color: var(--md-sys-color-on-surface-variant);
+      max-width: 600px;
+      margin: 0 auto 24px auto;
+      line-height: 1.5;
+    }
+
+    /* Filter Chips Bar */
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .filter-chip {
+      padding: 8px 18px;
+      border-radius: var(--md-sys-shape-corner-full);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      background: var(--md-sys-color-surface-container-lowest);
+      color: var(--md-sys-color-on-surface-variant);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition-m3);
+    }
+
+    .filter-chip:hover {
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-primary);
+      border-color: rgba(185, 28, 28, 0.3);
+    }
+
+    .filter-chip.active {
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+      border-color: var(--md-sys-color-primary);
+      box-shadow: var(--md-elevation-1);
+    }
+
+    /* M3 Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .gallery-card {
+      background: var(--md-sys-color-surface-container-lowest);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      overflow: hidden;
+      box-shadow: var(--md-elevation-1);
+      transition: var(--transition-m3);
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .gallery-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--md-elevation-2);
+      border-color: var(--md-sys-color-primary);
+    }
+
+    .image-wrapper {
+      width: 100%;
+      height: 200px;
+      background: var(--md-sys-color-surface-container-low);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+
+    .gallery-card:hover .image-wrapper img {
+      transform: scale(1.06);
+    }
+
+    .card-content {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+
+    .card-action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--md-sys-color-outline-variant);
+      padding-top: 12px;
+      margin-top: auto;
+    }
+
+    .btn-preview {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-download-icon {
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-primary);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--md-sys-shape-corner-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-m3);
+    }
+
+    .btn-download-icon:hover {
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+    }
+
+    /* LIGHTBOX MODAL */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 2000;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      background: #ffffff;
+      border-radius: var(--md-sys-shape-corner-large);
+      max-width: 800px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: var(--md-elevation-3);
+      position: relative;
+      animation: modalFadeIn 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .lightbox-img-wrap {
+      width: 100%;
+      max-height: 500px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-img-wrap img {
+      max-width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+    }
+
+    .lightbox-body {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .lightbox-info h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 4px;
+    }
+
+    .lightbox-info p {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-m3);
+    }
+
+    .lightbox-close-btn:hover {
+      background: var(--md-sys-color-primary);
+    }
+
+    .btn-lightbox-download {
+      padding: 10px 20px;
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--md-sys-shape-corner-medium);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: var(--transition-m3);
+      white-space: nowrap;
+    }
+
+    .btn-lightbox-download:hover {
+      background: var(--md-sys-color-on-primary-container);
+    }
+
+    @media (max-width: 768px) {
+      .gallery-container { padding-top: 80px; }
+      .gallery-title { font-size: 26px; }
+      .lightbox-body { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="header-container"></div>
+
+  <main class="gallery-container">
+    <div class="gallery-header">
+      <div class="gallery-badge">
+        <span class="material-symbols-outlined" style="font-size: 16px;">photo_library</span>
+        <span>Standard Packaging Standards</span>
+      </div>
+      <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
+      <p class="gallery-desc">Reference guidelines, material specifications, box dimensions, and vehicle loading protocols for staff and clients.</p>
+
+      <div class="filter-bar">
+        <button class="filter-chip active" onclick="filterGallery('all', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">apps</span>
+          <span>All Media</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('materials', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
+          <span>Packing Materials</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('furniture', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">chair</span>
+          <span>Furniture & Electronics</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('vehicles', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
+          <span>Car & Bike Packing</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('boxes', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">aspect_ratio</span>
+          <span>Box Dimensions</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </main>
+
+  <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox(event)">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="lightbox-close-btn" onclick="closeLightbox()">&times;</button>
+      <div class="lightbox-img-wrap">
+        <img id="lightboxImg" src="" alt="Packing Reference">
+      </div>
+      <div class="lightbox-body">
+        <div class="lightbox-info">
+          <h3 id="lightboxTitle"></h3>
+          <p id="lightboxDesc"></p>
+        </div>
+        <a id="lightboxDownloadBtn" href="" download class="btn-lightbox-download">
+          <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+          <span>Download</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-container"></div>
+
+  <script src="common.js"></script>
+
+  <script>
+    /**
+     * HOW TO ADD YOUR OWN PHOTOS HOSTED ON GITHUB:
+     * 1. Create a folder in your repo named 'images' (e.g. images/corrugated-box.jpg)
+     * 2. Add an object to the GALLERY_ITEMS list below with:
+     * - title: Title of the packing standard
+     * - category: 'materials' | 'furniture' | 'vehicles' | 'boxes'
+     * - desc: Description of packing method / dimensions
+     * - img: Relative path (e.g. 'images/box1.jpg') or external URL
+     */
+    const GALLERY_ITEMS = [
+      {
+        id: 1,
+        title: "Heavy Duty Corrugated Carton",
+        category: "boxes",
+        desc: "7-Ply double wall heavy-duty carton (18x18x18 inches) for crockery and kitchenware.",
+        img: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: 2,
+        title: "Multi-Layer Bubble & Foam Wrap",
+        category: "materials",
+        desc: "Shock-absorbing premium high-density air bubble wrap and foam roll for delicate surfaces.",
+        img: "https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: 3,
+        title: "Sofa & Upholstery Shrink Wrap",
+        category: "furniture",
+        desc: "Moisture-proof stretch film wrapping with edge guard protection for fabric and leather sofas.",
+        img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: 4,
+        title: "Car Carrier Wheel Stopper & Lashing",
+        category: "vehicles",
+        desc: "Specialized safety wheel choke belts and lashing straps inside specialized vehicle carriers.",
+        img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: 5,
+        title: "LED TV & Screen Wooden Crate",
+        category: "furniture",
+        desc: "Customized thermocol cushioned wooden crating designed for 55+ inch flat televisions.",
+        img: "https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: 6,
+        title: "Standard Wardrobe Carton",
+        category: "boxes",
+        desc: "Tall wardrobe box with hanging rail bar for wrinkle-free clothes and suits transport.",
+        img: "https://images.unsplash.com/photo-1586528116493-a029325540fa?auto=format&fit=crop&w=800&q=80"
+      }
+    ];
+
+    function renderGallery(items) {
+      const grid = document.getElementById("galleryGrid");
+      grid.innerHTML = "";
+
+      if (items.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--md-sys-color-on-surface-variant);">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: #cbd5e1;">photo_library</span>
+            <p style="margin-top: 8px; font-weight: 600;">No images found in this category.</p>
+          </div>
+        `;
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "gallery-card";
+        card.onclick = () => openLightbox(item);
+
+        card.innerHTML = `
+          <div class="image-wrapper">
+            <img src="${item.img}" alt="${item.title}" loading="lazy">
+          </div>
+          <div class="card-content">
+            <div>
+              <div class="card-tag">${item.category}</div>
+              <h3 class="card-title">${item.title}</h3>
+              <p class="card-desc">${item.desc}</p>
+            </div>
+            <div class="card-action-bar">
+              <span class="btn-preview">
+                <span>View Fullscreen</span>
+                <span class="material-symbols-outlined" style="font-size: 16px;">zoom_in</span>
+              </span>
+              <a href="${item.img}" download="${item.title}.jpg" class="btn-download-icon" onclick="event.stopPropagation()" title="Download Photo">
+                <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
+              </a>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterGallery(category, btnElement) {
+      document.querySelectorAll(".filter-chip").forEach(el => el.classList.remove("active"));
+      if (btnElement) btnElement.classList.add("active");
+
+      if (category === "all") {
+        renderGallery(GALLERY_ITEMS);
+      } else {
+        const filtered = GALLERY_ITEMS.filter(item => item.category === category);
+        renderGallery(filtered);
+      }
+    }
+
+    function openLightbox(item) {
+      document.getElementById("lightboxImg").src = item.img;
+      document.getElementById("lightboxTitle").textContent = item.title;
+      document.getElementById("lightboxDesc").textContent = item.desc;
+      document.getElementById("lightboxDownloadBtn").href = item.img;
+      document.getElementById("lightboxDownloadBtn").setAttribute("download", `${item.title}.jpg`);
+      document.getElementById("lightboxModal").classList.add("active");
+    }
+
+    function closeLightbox() {
+      document.getElementById("lightboxModal").classList.remove("active");
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderGallery(GALLERY_ITEMS);
+    });
+  </script>
+</body>
+</html>
