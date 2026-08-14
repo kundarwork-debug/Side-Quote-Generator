@@ -96,7 +96,6 @@
       transform: translate(0, 0) scale(1) !important;
     }
 
-    /* Stagger Delays */
     .delay-1 { transition-delay: 0.1s; }
     .delay-2 { transition-delay: 0.2s; }
     .delay-3 { transition-delay: 0.3s; }
@@ -256,20 +255,12 @@
       font-size: 40px;
     }
 
-    .hero-buttons-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
     .btn-launch-primary {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      padding: 16px 32px;
+      padding: 16px 36px;
       background: var(--md-sys-color-primary);
       color: #ffffff;
       text-decoration: none;
@@ -288,30 +279,6 @@
 
     .btn-launch-primary:hover span.arrow-icon {
       transform: translateX(5px);
-    }
-
-    .btn-view-source {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 15px 24px;
-      background: var(--md-sys-color-surface-container-low);
-      color: var(--md-sys-color-on-surface);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-      border-radius: var(--md-sys-shape-corner-medium);
-      cursor: pointer;
-      transition: var(--transition-m3);
-    }
-
-    .btn-view-source:hover {
-      background: var(--md-sys-color-surface-container);
-      border-color: rgba(185, 28, 28, 0.4);
-      color: var(--md-sys-color-primary);
-      transform: translateY(-2px);
     }
 
     .feature-highlights {
@@ -382,9 +349,7 @@
       letter-spacing: -0.02em;
     }
 
-    /* =========================================================
-       SHOWCASE SPOTLIGHT CARDS
-       ========================================================= */
+    /* SPOTLIGHT CARDS */
     .spotlight-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -480,9 +445,7 @@
       gap: 12px;
     }
 
-    /* =========================================================
-       UTILITIES GRID
-       ========================================================= */
+    /* UTILITIES GRID */
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -581,133 +544,11 @@
       text-transform: uppercase;
     }
 
-    /* =========================================================
-       VIEW SOURCE CODE MODAL (M3 DARK TERMINAL STYLE)
-       ========================================================= */
-    .source-modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 3000;
-    }
-
-    .source-modal-backdrop.active {
-      display: flex;
-    }
-
-    .source-modal-window {
-      background: #090d16;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: var(--md-sys-shape-corner-large);
-      max-width: 960px;
-      width: 100%;
-      height: 85vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
-      overflow: hidden;
-      animation: modalScaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes modalScaleIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    .source-modal-header {
-      padding: 16px 22px;
-      background: #0e1422;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .source-modal-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #f1f5f9;
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .source-actions-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .btn-source-action {
-      background: #1b243b;
-      color: #f1f5f9;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 6px 14px;
-      border-radius: var(--md-sys-shape-corner-small);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: var(--transition-m3);
-    }
-
-    .btn-source-action:hover {
-      background: var(--md-sys-color-primary);
-      border-color: var(--md-sys-color-primary);
-      color: #ffffff;
-    }
-
-    .btn-source-close {
-      background: transparent;
-      color: #94a3b8;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition-m3);
-    }
-
-    .btn-source-close:hover {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    .source-code-body {
-      flex: 1;
-      padding: 20px;
-      overflow: auto;
-      background: #090d16;
-    }
-
-    .source-code-body pre {
-      margin: 0;
-    }
-
-    .source-code-body code {
-      font-family: 'Consolas', 'Fira Code', 'Monaco', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #38bdf8;
-      white-space: pre;
-    }
-
     @media (max-width: 768px) {
       .hero-container { padding-top: 90px; }
       .hero-title { font-size: 30px; }
       .hero-action-card { padding: 32px 20px; }
-      .hero-buttons-wrapper { flex-direction: column; width: 100%; }
-      .btn-launch-primary, .btn-view-source { width: 100%; }
+      .btn-launch-primary { width: 100%; }
     }
   </style>
 </head>
@@ -751,17 +592,10 @@
           <span class="material-symbols-outlined">edit_note</span>
         </div>
 
-        <div class="hero-buttons-wrapper">
-          <a href="editor.html" class="btn-launch-primary">
-            <span>Open Quotation Editor</span>
-            <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
-          </a>
-
-          <button class="btn-view-source" onclick="openSourceModal()">
-            <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
-            <span>View Source Code</span>
-          </button>
-        </div>
+        <a href="editor.html" class="btn-launch-primary">
+          <span>Open Quotation Editor</span>
+          <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+        </a>
 
         <div class="feature-highlights">
           <div class="feature-chip">
@@ -899,37 +733,6 @@
 
   </main>
 
-  <div class="source-modal-backdrop" id="sourceModal" onclick="closeSourceModal(event)">
-    <div class="source-modal-window" onclick="event.stopPropagation()">
-      
-      <div class="source-modal-header">
-        <div class="source-modal-title">
-          <span class="material-symbols-outlined" style="color: #38bdf8;">code</span>
-          <span>index.html &bull; Live Source Inspector</span>
-        </div>
-
-        <div class="source-actions-group">
-          <button class="btn-source-action" onclick="copySourceCode()">
-            <span class="material-symbols-outlined" style="font-size: 16px;">content_copy</span>
-            <span id="copyBtnText">Copy Code</span>
-          </button>
-          
-          <button class="btn-source-action" onclick="downloadSourceCode()">
-            <span class="material-symbols-outlined" style="font-size: 16px;">download</span>
-            <span>Download .html</span>
-          </button>
-
-          <button class="btn-source-close" onclick="closeSourceModal()">&times;</button>
-        </div>
-      </div>
-
-      <div class="source-code-body">
-        <pre><code id="sourceCodeContainer"></code></pre>
-      </div>
-
-    </div>
-  </div>
-
   <div id="footer-container"></div>
 
   <script src="common.js"></script>
@@ -963,89 +766,47 @@
       animatedElements.forEach((el) => observer.observe(el));
     });
 
-    // 2. FIREBASE REALTIME PRESENCE & PDF COUNTER
+    // 2. FIREBASE REALTIME CONFIGURATION & LISTENERS
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
     };
 
-    // Check if configuration is provided before initializing
-    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    // A. Live Online User Presence Tracker
+    const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
+    const myPresenceRef = db.ref("presence/" + userSessionId);
+    const allPresenceRef = db.ref("presence");
+
+    db.ref(".info/connected").on("value", (snap) => {
+      if (snap.val() === true) {
+        myPresenceRef.onDisconnect().remove();
+        myPresenceRef.set({ online: true, timestamp: Date.now() });
       }
-      const db = firebase.database();
+    });
 
-      // A. Live Online Users Tracker
-      const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
-      const myPresenceRef = db.ref("presence/" + userSessionId);
-      const allPresenceRef = db.ref("presence");
+    allPresenceRef.on("value", (snap) => {
+      const activeCount = snap.numChildren() || 1;
+      const countEl = document.getElementById("liveUserCount");
+      if (countEl) countEl.textContent = activeCount.toLocaleString();
+    });
 
-      db.ref(".info/connected").on("value", (snap) => {
-        if (snap.val() === true) {
-          myPresenceRef.onDisconnect().remove();
-          myPresenceRef.set({ online: true, timestamp: Date.now() });
-        }
-      });
-
-      allPresenceRef.on("value", (snap) => {
-        const activeCount = snap.numChildren() || 1;
-        const countEl = document.getElementById("liveUserCount");
-        if (countEl) countEl.textContent = activeCount.toLocaleString();
-      });
-
-      // B. Total PDF Downloads Tracker
-      const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
-      totalDownloadsRef.on("value", (snap) => {
-        const totalCount = snap.val() || 0;
-        const totalEl = document.getElementById("totalPdfDownloads");
-        if (totalEl) totalEl.textContent = totalCount.toLocaleString();
-      });
-    }
-
-    // 3. SOURCE CODE MODAL CONTROLS
-    function openSourceModal() {
-      const docType = "<!DOCTYPE html>\n";
-      const fullHtml = docType + document.documentElement.outerHTML;
-      document.getElementById("sourceCodeContainer").textContent = fullHtml;
-      document.getElementById("sourceModal").classList.add("active");
-    }
-
-    function closeSourceModal(e) {
-      document.getElementById("sourceModal").classList.remove("active");
-    }
-
-    function copySourceCode() {
-      const codeText = document.getElementById("sourceCodeContainer").textContent;
-      navigator.clipboard.writeText(codeText).then(() => {
-        const copyBtnText = document.getElementById("copyBtnText");
-        copyBtnText.textContent = "Copied!";
-        setTimeout(() => {
-          copyBtnText.textContent = "Copy Code";
-        }, 2000);
-      });
-    }
-
-    function downloadSourceCode() {
-      const codeText = document.getElementById("sourceCodeContainer").textContent;
-      const blob = new Blob([codeText], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "index.html";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeSourceModal();
+    // B. Total PDF Downloads Realtime Listener
+    const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
+    totalDownloadsRef.on("value", (snap) => {
+      const totalCount = snap.val() || 0;
+      const totalEl = document.getElementById("totalPdfDownloads");
+      if (totalEl) totalEl.textContent = totalCount.toLocaleString();
     });
   </script>
 </body>
