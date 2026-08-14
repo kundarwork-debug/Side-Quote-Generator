@@ -411,6 +411,14 @@
           <span class="material-symbols-outlined" style="font-size: 16px;">apps</span>
           <span>All Media</span>
         </button>
+        <button class="filter-chip" onclick="filterGallery('bike', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
+          <span>Bike Packing</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('car', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
+          <span>Car Transportation</span>
+        </button>
         <button class="filter-chip" onclick="filterGallery('solid-box', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
           <span>Solid BOX</span>
@@ -418,14 +426,6 @@
         <button class="filter-chip" onclick="filterGallery('tv', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">tv</span>
           <span>TV BOX</span>
-        </button>
-        <button class="filter-chip" onclick="filterGallery('car', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
-          <span>Car Transportation</span>
-        </button>
-        <button class="filter-chip" onclick="filterGallery('bike', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
-          <span>Bike Packing</span>
         </button>
       </div>
     </div>
@@ -457,27 +457,19 @@
   <script>
     const GALLERY_ITEMS = [
       // ==========================================
-      // 1. SOLID BOX (Folder: images/solid-box/)
+      // 1. BIKE PACKING (images/bike/)
       // ==========================================
-      { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid-box/solid0.jpg", type: "image" },
-      { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid-box/solid1.jpg", type: "image" },
-      { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery and kitchenware.", src: "images/solid-box/solid2.jpg", type: "image" },
-      { id: "sb-3", title: "Solid Box - Stage 3 (Item Staging)", category: "solid-box", desc: "Standard consignment packaging with individual item separation and cushioning.", src: "images/solid-box/solid3.jpg", type: "image" },
-      { id: "sb-4", title: "Solid Box - Stage 4 (Stacking Integrity)", category: "solid-box", desc: "Stackable high-load corrugated carton designed for compact container loading.", src: "images/solid-box/solid4.jpg", type: "image" },
-      { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware and bottles.", src: "images/solid-box/solid5.jpg", type: "image" },
-      { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid-box/solid6.jpg", type: "image" },
-      { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid-box/solid7.jpg", type: "image" },
-      { id: "sb-8", title: "Solid Box Video - Packing & Handling Demonstration", category: "solid-box", desc: "Live video demonstration of solid box packing standards and strength verification.", src: "images/solid-box/solid8.mp4", type: "video" },
+      { id: "bike-1", title: "Bike Packing - Stage 1 (Initial Inspection)", category: "bike", desc: "Initial surface inspection, mirror safety prep, and vehicle staging.", src: "images/bike/bike-1.jpg", type: "image" },
+      { id: "bike-2", title: "Bike Packing - Stage 2 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike/bike-2.jpeg", type: "image" },
+      { id: "bike-3", title: "Bike Packing - Stage 3 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike/bike-3.jpg", type: "image" },
+      { id: "bike-4", title: "Bike Packing - Stage 4 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement wrapping over silencer pipe, engine, and footpegs.", src: "images/bike/bike-4.jpg", type: "image" },
+      { id: "bike-5", title: "Bike Packing - Stage 5 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike/bike-5.jpg", type: "image" },
+      { id: "bike-6", title: "Bike Packing - Stage 6 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike/bike-6.jpg", type: "image" },
+      { id: "bike-7", title: "Bike Packing - Stage 7 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike/bike-7.jpg", type: "image" },
+      { id: "bike-vid-1", title: "Bike Packing - Full Video Demonstration", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike/bike-8.mp4", type: "video" },
 
       // ==========================================
-      // 2. TV BOX (Folder: images/tv/)
-      // ==========================================
-      { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv/tv0.jpg", type: "image" },
-      { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv/tv1.jpg", type: "image" },
-      { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv/tv2.jpg", type: "image" },
-
-      // ==========================================
-      // 3. CAR TRANSPORTATION (Folder: images/car/)
+      // 2. CAR TRANSPORTATION (images/car/)
       // ==========================================
       { id: "car-1", title: "Car Transport - Inspection & Surface Guard", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car/car1.jpg", type: "image" },
       { id: "car-2", title: "Car Transport - Multi-Layer Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car/car2.jpg", type: "image" },
@@ -493,21 +485,29 @@
       { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car/car12.mp4", type: "video" },
 
       // ==========================================
-      // 4. BIKE PACKING (Folder: images/bike/)
+      // 3. SOLID BOX (images/solid-box/)
       // ==========================================
-      { id: "bike-1", title: "Bike Packing - Stage 1 (Initial Inspection)", category: "bike", desc: "Initial surface inspection, mirror safety prep, and vehicle staging.", src: "images/bike/Bike-1.jpg", type: "image" },
-      { id: "bike-2", title: "Bike Packing - Stage 2 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike/Bike-2.jpeg", type: "image" },
-      { id: "bike-3", title: "Bike Packing - Stage 3 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike/Bike-3.jpg", type: "image" },
-      { id: "bike-4", title: "Bike Packing - Stage 4 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement wrapping over silencer pipe, engine, and footpegs.", src: "images/bike/Bike-4.jpg", type: "image" },
-      { id: "bike-5", title: "Bike Packing - Stage 5 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike/Bike-5.jpg", type: "image" },
-      { id: "bike-6", title: "Bike Packing - Stage 6 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike/Bike-6.jpg", type: "image" },
-      { id: "bike-7", title: "Bike Packing - Stage 7 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike/Bike-7.jpg", type: "image" },
-      { id: "bike-vid-1", title: "Bike Packing - Full Video Demonstration", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike/Bike-8.mp4", type: "video" }
+      { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid-box/solid0.jpg", type: "image" },
+      { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid-box/solid1.jpg", type: "image" },
+      { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery and kitchenware.", src: "images/solid-box/solid2.jpg", type: "image" },
+      { id: "sb-3", title: "Solid Box - Stage 3 (Item Staging)", category: "solid-box", desc: "Standard consignment packaging with individual item separation and cushioning.", src: "images/solid-box/solid3.jpg", type: "image" },
+      { id: "sb-4", title: "Solid Box - Stage 4 (Stacking Integrity)", category: "solid-box", desc: "Stackable high-load corrugated carton designed for compact container loading.", src: "images/solid-box/solid4.jpg", type: "image" },
+      { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware and bottles.", src: "images/solid-box/solid5.jpg", type: "image" },
+      { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid-box/solid6.jpg", type: "image" },
+      { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid-box/solid7.jpg", type: "image" },
+      { id: "sb-8", title: "Solid Box Video - Packing & Handling Demonstration", category: "solid-box", desc: "Live video demonstration of solid box packing standards and strength verification.", src: "images/solid-box/solid8.mp4", type: "video" },
+
+      // ==========================================
+      // 4. TV BOX (images/tv/)
+      // ==========================================
+      { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv/tv0.jpg", type: "image" },
+      { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv/tv1.jpg", type: "image" },
+      { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv/tv2.jpg", type: "image" }
     ];
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Forces immediate download directly into device storage)
+    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to trigger download on all devices)
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
@@ -526,7 +526,6 @@
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
       } catch (err) {
-        // Direct browser fallback
         const a = document.createElement("a");
         a.href = mediaUrl;
         a.target = "_blank";
@@ -571,10 +570,10 @@
         }
 
         const categoryLabels = {
-          "solid-box": "SOLID BOX",
-          "tv": "TV BOX",
+          "bike": "BIKE PACKING",
           "car": "CAR TRANSPORTATION",
-          "bike": "BIKE PACKING"
+          "solid-box": "SOLID BOX",
+          "tv": "TV BOX"
         };
 
         const tagText = (categoryLabels[item.category] || item.category.toUpperCase()) + (item.type === 'video' ? ' • VIDEO' : '');
@@ -604,30 +603,27 @@
       });
     }
 
-    // MULTI-PATH FALLBACK ENGINE (Tests images/solid-box/, solid-box/, images/tv/, images/car/, images/bike/, and root)
+    // MULTI-PATH FALLBACK ENGINE (Tests both lowercase and capitalized variations for GitHub Pages)
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
       const fileName = originalPath.split('/').pop();
-      const folder = originalPath.includes('/') ? originalPath.split('/')[0] : '';
+      const folder = originalPath.includes('/') ? originalPath.substring(0, originalPath.lastIndexOf('/')) : '';
+
+      // Create permutations for case variations (e.g. Bike-1 vs bike-1)
+      const capitalizedFileName = fileName.charAt(0).toUpperCase() + fileName.slice(1);
+      const lowerFileName = fileName.toLowerCase();
 
       const attempts = [
         originalPath,
-        `images/solid-box/${fileName}`,
-        `solid-box/${fileName}`,
-        `images/tv/${fileName}`,
-        `tv/${fileName}`,
-        `images/car/${fileName}`,
-        `car/${fileName}`,
-        `images/bike/${fileName}`,
-        `bike/${fileName}`,
-        `images/${fileName}`,
-        fileName,
+        `./${originalPath}`,
+        folder ? `${folder}/${lowerFileName}` : lowerFileName,
+        folder ? `${folder}/${capitalizedFileName}` : capitalizedFileName,
+        `images/${lowerFileName}`,
+        `images/${capitalizedFileName}`,
         originalPath.replace('.jpg', '.jpeg'),
         originalPath.replace('.jpeg', '.jpg'),
-        originalPath.replace('.jpg', '.JPG'),
-        originalPath.replace('.JPG', '.jpg'),
-        originalPath.replace('.mp4', '.MP4')
+        originalPath.replace('.jpg', '.JPG')
       ];
 
       const uniqueAttempts = [...new Set(attempts)];
@@ -638,9 +634,6 @@
         element.src = uniqueAttempts[currentAttempt];
       } else {
         element.dataset.failed = "true";
-        if (!isVideo) {
-          element.src = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80";
-        }
       }
     }
 
