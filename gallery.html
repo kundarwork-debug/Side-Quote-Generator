@@ -404,32 +404,28 @@
         <span>Standard Packaging Guidelines</span>
       </div>
       <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
-      <p class="gallery-desc">Reference photos, videos, specialized carton dimensions, and vehicle loading protocols for staff and clients.</p>
+      <p class="gallery-desc">Comprehensive reference guidelines, specialized Solid &amp; TV cartons, vehicle loading protocols, carrier lashing, and packing demonstration videos.</p>
 
       <div class="filter-bar">
         <button class="filter-chip active" onclick="filterGallery('all', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">apps</span>
           <span>All Media</span>
         </button>
-        <button class="filter-chip" onclick="filterGallery('bike', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
-          <span>Bike Packing</span>
+        <button class="filter-chip" onclick="filterGallery('solid-box', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
+          <span>Solid BOX</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('tv', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">tv</span>
+          <span>TV BOX</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('car', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
-          <span>Car Packing</span>
+          <span>Car Transportation</span>
         </button>
-        <button class="filter-chip" onclick="filterGallery('tv-box', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">tv</span>
-          <span>TV Box</span>
-        </button>
-        <button class="filter-chip" onclick="filterGallery('solid-box', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
-          <span>Solid Box</span>
-        </button>
-        <button class="filter-chip" onclick="filterGallery('materials', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">view_in_ar</span>
-          <span>Packing Materials</span>
+        <button class="filter-chip" onclick="filterGallery('bike', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
+          <span>Bike Packing</span>
         </button>
       </div>
     </div>
@@ -461,128 +457,57 @@
   <script>
     const GALLERY_ITEMS = [
       // ==========================================
-      // 1. BIKE PACKING (Folder: images/bike/)
+      // 1. SOLID BOX (Folder: images/solid-box/)
       // ==========================================
-      { id: "bike-1", title: "Bike Packing - Stage 1 (Overview)", category: "bike", desc: "Initial surface inspection and mirror safety preparation.", src: "images/bike/Bike-1.jpg", type: "image" },
-      { id: "bike-2", title: "Bike Packing - Stage 2 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning for headlamp and handlebars.", src: "images/bike/Bike-2.jpeg", type: "image" },
-      { id: "bike-3", title: "Bike Packing - Stage 3 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam layering around petrol tank and speedometer.", src: "images/bike/Bike-3.jpg", type: "image" },
-      { id: "bike-4", title: "Bike Packing - Stage 4 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement over silencer pipe, engine guard, and footrests.", src: "images/bike/Bike-4.jpg", type: "image" },
+      { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid-box/solid0.jpg", type: "image" },
+      { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid-box/solid1.jpg", type: "image" },
+      { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery and kitchenware.", src: "images/solid-box/solid2.jpg", type: "image" },
+      { id: "sb-3", title: "Solid Box - Stage 3 (Item Staging)", category: "solid-box", desc: "Standard consignment packaging with individual item separation and cushioning.", src: "images/solid-box/solid3.jpg", type: "image" },
+      { id: "sb-4", title: "Solid Box - Stage 4 (Stacking Integrity)", category: "solid-box", desc: "Stackable high-load corrugated carton designed for compact container loading.", src: "images/solid-box/solid4.jpg", type: "image" },
+      { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware and bottles.", src: "images/solid-box/solid5.jpg", type: "image" },
+      { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid-box/solid6.jpg", type: "image" },
+      { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid-box/solid7.jpg", type: "image" },
+      { id: "sb-8", title: "Solid Box Video - Packing & Handling Demonstration", category: "solid-box", desc: "Live video demonstration of solid box packing standards and strength verification.", src: "images/solid-box/solid8.mp4", type: "video" },
+
+      // ==========================================
+      // 2. TV BOX (Folder: images/tv/)
+      // ==========================================
+      { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv/tv0.jpg", type: "image" },
+      { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv/tv1.jpg", type: "image" },
+      { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv/tv2.jpg", type: "image" },
+
+      // ==========================================
+      // 3. CAR TRANSPORTATION (Folder: images/car/)
+      // ==========================================
+      { id: "car-1", title: "Car Transport - Inspection & Surface Guard", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car/car1.jpg", type: "image" },
+      { id: "car-2", title: "Car Transport - Multi-Layer Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car/car2.jpg", type: "image" },
+      { id: "car-3", title: "Car Transport - Side Panel & Door Guard", category: "car", desc: "Corrugated sheet and protective padding along vehicle doors.", src: "images/car/car3.jpg", type: "image" },
+      { id: "car-4", title: "Car Transport - Complete Body Wrap", category: "car", desc: "Moisture-proof stretch film protection against dust and highway grime.", src: "images/car/car4.jpg", type: "image" },
+      { id: "car-5", title: "Car Transport - Hydraulic Ramp Loading", category: "car", desc: "Specialized hydraulic ramp loading into enclosed container carrier.", src: "images/car/car5.jpg", type: "image" },
+      { id: "car-6", title: "Car Transport - Wheel Choke Lashing", category: "car", desc: "High-tensile wheel stopper belts fastened securely to carrier floor.", src: "images/car/car6.jpg", type: "image" },
+      { id: "car-7", title: "Car Transport Video - Carrier Alignment", category: "car", desc: "Live video demonstration of vehicle alignment into transport carrier.", src: "images/car/car7.mp4", type: "video" },
+      { id: "car-8", title: "Car Transport Video - Multi-Layer Packaging", category: "car", desc: "Comprehensive wrapping procedure demonstration on car body.", src: "images/car/car8.mp4", type: "video" },
+      { id: "car-9", title: "Car Transport Video - Wheel Belt Tie-Down", category: "car", desc: "Safety locking protocols and wheel choke fastening demonstration.", src: "images/car/car9.mp4", type: "video" },
+      { id: "car-10", title: "Car Transport Video - Bay Lock & Inspection", category: "car", desc: "Final verification and container seal check prior to transit.", src: "images/car/car10.mp4", type: "video" },
+      { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car/car11.mp4", type: "video" },
+      { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car/car12.mp4", type: "video" },
+
+      // ==========================================
+      // 4. BIKE PACKING (Folder: images/bike/)
+      // ==========================================
+      { id: "bike-1", title: "Bike Packing - Stage 1 (Initial Inspection)", category: "bike", desc: "Initial surface inspection, mirror safety prep, and vehicle staging.", src: "images/bike/Bike-1.jpg", type: "image" },
+      { id: "bike-2", title: "Bike Packing - Stage 2 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike/Bike-2.jpeg", type: "image" },
+      { id: "bike-3", title: "Bike Packing - Stage 3 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike/Bike-3.jpg", type: "image" },
+      { id: "bike-4", title: "Bike Packing - Stage 4 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement wrapping over silencer pipe, engine, and footpegs.", src: "images/bike/Bike-4.jpg", type: "image" },
       { id: "bike-5", title: "Bike Packing - Stage 5 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike/Bike-5.jpg", type: "image" },
-      { id: "bike-6", title: "Bike Packing - Stage 6 (Outer Carton Shield)", category: "bike", desc: "Full heavy carton sheet wrapping for exterior shock absorption.", src: "images/bike/Bike-6.jpg", type: "image" },
+      { id: "bike-6", title: "Bike Packing - Stage 6 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike/Bike-6.jpg", type: "image" },
       { id: "bike-7", title: "Bike Packing - Stage 7 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike/Bike-7.jpg", type: "image" },
-      { id: "bike-vid-1", title: "Bike Packing - Live Demonstration Video", category: "bike", desc: "Full standard multi-layer bike packaging procedure video.", src: "images/bike/Bike-8.mp4", type: "video" },
-
-      // ==========================================
-      // 2. CAR PACKING (Folder: car/ or images/car/)
-      // ==========================================
-      { id: "car-1", title: "Car Packing - Stage 1 (Inspection)", category: "car", desc: "Complete vehicle body scratch inspection.", src: "car/IMG-20260319-WA0114.jpg", type: "image" },
-      { id: "car-2", title: "Car Packing - Stage 2 (Bumper Wrap)", category: "car", desc: "Multi-layer bubble wrap protection over bumpers.", src: "car/IMG-20260319-WA0115.jpg", type: "image" },
-      { id: "car-3", title: "Car Packing - Stage 3 (Side Guard)", category: "car", desc: "Corrugated edge-guard sheets and bubble pads.", src: "car/IMG-20260319-WA0116.jpg", type: "image" },
-      { id: "car-4", title: "Car Packing - Stage 4 (Full Stretch)", category: "car", desc: "Moisture-proof stretch film body covering.", src: "car/IMG-20260319-WA0117.jpg", type: "image" },
-      { id: "car-5", title: "Car Carrier - Stage 5 (Ramp Load)", category: "car", desc: "Precision hydraulic ramp alignment into carrier bay.", src: "car/IMG-20260319-WA0118.jpg", type: "image" },
-      { id: "car-6", title: "Car Carrier - Stage 6 (Wheel Choke)", category: "car", desc: "Heavy-duty tyre safety belts and safety wheel stoppers.", src: "car/IMG-20260319-WA0119.jpg", type: "image" },
-      { id: "car-vid-1", title: "Car Video - Carrier Alignment", category: "car", desc: "Live video of vehicle loading into container bay.", src: "car/VID-20251229-WA0023.mp4", type: "video" },
-      { id: "car-vid-2", title: "Car Video - Protective Wrap", category: "car", desc: "Multi-layer bubble and stretch wrapping demonstration.", src: "car/VID-20260122-WA0090.mp4", type: "video" },
-      { id: "car-vid-3", title: "Car Video - Wheel Choke Lock", category: "car", desc: "Wheel belt tie-downs and locking protocols.", src: "car/VID-20260319-WA0116.mp4", type: "video" },
-      { id: "car-vid-4", title: "Car Video - Bay Seal Inspection", category: "car", desc: "Final safety verification before sealing the carrier.", src: "car/VID-20260319-WA0119.mp4", type: "video" },
-      { id: "car-vid-5", title: "Car Video - Fleet Carrier Departure", category: "car", desc: "Vehicle carrier truck dispatch for interstate car shifting.", src: "car/WhatsApp Video 2024-10-03 at 12.16.23.mp4", type: "video" },
-
-      // ==========================================
-      // 3. TV BOX (Folder: tv-box/ or images/tv-box/)
-      // ==========================================
-      { id: "tv-1", title: "LED TV Packaging Box - Standard", category: "tv-box", desc: "Custom heavy-duty foam cushioned carton container for TV protection.", src: "tv-box/TV.jpg", type: "image" },
-      { id: "tv-2", title: "LED TV Box - Screen Edge Cushioning", category: "tv-box", desc: "Multi-layer corner guards and internal thermocol padding structure.", src: "tv-box/TV1.jpg", type: "image" },
-      { id: "tv-3", title: "LED TV Box - Final Sealed Packing", category: "tv-box", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "tv-box/TV2.jpg", type: "image" },
-
-      // ==========================================
-      // 4. SOLID BOX (Folder: solid-box/ or images/solid-box/)
-      // ==========================================
-      { id: "sb-1", title: "Solid Box - Specification 1", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight fragile consignments.", src: "solid-box/Solid1.jpg", type: "image" },
-      { id: "sb-2", title: "Solid Box - Specification 2", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "solid-box/Solid2.jpg", type: "image" },
-      { id: "sb-3", title: "Solid Box - Specification 3", category: "solid-box", desc: "Moisture-resistant heavy item storage carton for kitchenware and books.", src: "solid-box/Solid3.jpg", type: "image" },
-      { id: "sb-4", title: "Solid Box - Specification 4", category: "solid-box", desc: "Standard consignment packaging box with fragile handling indicators.", src: "solid-box/Solid4.jpg", type: "image" },
-      { id: "sb-5", title: "Solid Box - Specification 5", category: "solid-box", desc: "Stackable high-load corrugated carton for compact container loading.", src: "solid-box/Solid5.jpg", type: "image" },
-      { id: "sb-6", title: "Solid Box - Specification 6", category: "solid-box", desc: "Internal divider padding system inside solid carton for glassware.", src: "solid-box/Solid6.jpg", type: "image" },
-      { id: "sb-7", title: "Solid Box - Specification 7", category: "solid-box", desc: "Reinforced edges with plastic strapping bands for transit impact protection.", src: "solid-box/Solid7.jpg", type: "image" },
-      { id: "sb-8", title: "Solid Box - Specification 8", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "solid-box/Solid8.jpg", type: "image" },
-
-      // ==========================================
-      // 5. PACKING MATERIALS (Folder: packing-materials/ or images/packing-materials/)
-      // ==========================================
-      { id: "mat-1", title: "Packaging Material Standard 1", category: "materials", desc: "Multi-layer bubble wrapping and edge guard padding for furniture.", src: "packing-materials/IMG_20250215_171137.jpg", type: "image" },
-      { id: "mat-2", title: "Packaging Material Standard 2", category: "materials", desc: "Heavy stretch film wrapping around wooden fixtures.", src: "packing-materials/IMG_20260722_120945.jpg", type: "image" },
-      { id: "mat-3", title: "Packaging Material Standard 3", category: "materials", desc: "Corrugated roll layering on delicate finished surfaces.", src: "packing-materials/IMG_20260722_120952.jpg", type: "image" },
-      { id: "mat-4", title: "Packaging Material Standard 4", category: "materials", desc: "Foam blanket protection for wardrobes and almirahs.", src: "packing-materials/IMG_20260722_121018.jpg", type: "image" },
-      { id: "mat-5", title: "Packaging Material Standard 5", category: "materials", desc: "Anti-static foam packaging for appliances and computers.", src: "packing-materials/IMG_20260722_121110.jpg", type: "image" },
-      { id: "mat-6", title: "Packaging Material Standard 6", category: "materials", desc: "High-density cushioning around electronics and motors.", src: "packing-materials/IMG_20260722_121254.jpg", type: "image" },
-      { id: "mat-7", title: "Packaging Material Standard 7", category: "materials", desc: "Edge-guard corner protection on dining and tea tables.", src: "packing-materials/IMG_20260722_121736.jpg", type: "image" },
-      { id: "mat-8", title: "Packaging Material Standard 8", category: "materials", desc: "Moisture-barrier shrink wrap for leatherette sofas.", src: "packing-materials/IMG_20260722_121739.jpg", type: "image" },
-      { id: "mat-9", title: "Packaging Material Standard 9", category: "materials", desc: "Multi-layer wrapping for mattresses and bed boards.", src: "packing-materials/IMG_20260722_122640.jpg", type: "image" },
-      { id: "mat-10", title: "Packaging Material Standard 10", category: "materials", desc: "Custom crating and padding for mirrors and glass tops.", src: "packing-materials/IMG_20260722_122805.jpg", type: "image" },
-      { id: "mat-11", title: "Packaging Material Standard 11", category: "materials", desc: "Heavy strapping on consolidated cargo cartons.", src: "packing-materials/IMG_20260722_123010.jpg", type: "image" },
-      { id: "mat-12", title: "Packaging Material Standard 12", category: "materials", desc: "Specialized padding for home gym and fitness equipment.", src: "packing-materials/IMG_20260722_123624.jpg", type: "image" },
-      { id: "mat-13", title: "Packaging Material Standard 13", category: "materials", desc: "High-grade packing tapes and tamper-proof sealing.", src: "packing-materials/IMG_20260722_125203.jpg", type: "image" },
-      { id: "mat-14", title: "Packaging Material Standard 14", category: "materials", desc: "Multi-tier packing for kitchen crockery and dinner sets.", src: "packing-materials/IMG_20260723_114826.jpg", type: "image" },
-      { id: "mat-15", title: "Packaging Material Standard 15", category: "materials", desc: "Reinforced carton base for books and heavy archives.", src: "packing-materials/IMG_20260723_114950.jpg", type: "image" },
-      { id: "mat-16", title: "Packaging Material Standard 16", category: "materials", desc: "Air bubble wrap sheet standard thickness reference.", src: "packing-materials/IMG_20260723_115136.jpg", type: "image" },
-      { id: "mat-17", title: "Packaging Material Standard 17", category: "materials", desc: "Stretch film roll thickness and elongation inspection.", src: "packing-materials/IMG_20260723_115203.jpg", type: "image" },
-      { id: "mat-18", title: "Packaging Material Standard 18", category: "materials", desc: "Corrugated paper roll and board layers inspection.", src: "packing-materials/IMG-20250215-WA0089.jpg", type: "image" },
-      { id: "mat-19", title: "Packaging Material Standard 19", category: "materials", desc: "Wardrobe carton with hanging rod for coats and suits.", src: "packing-materials/IMG-20250308-WA0071.jpg", type: "image" },
-      { id: "mat-20", title: "Packaging Material Standard 20", category: "materials", desc: "Heavy industrial stretch film on palletized load.", src: "packing-materials/IMG-20250330-WA0022.jpg", type: "image" },
-      { id: "mat-21", title: "Packaging Material Standard 21", category: "materials", desc: "Double wall carton packing for fine china and glass.", src: "packing-materials/IMG-20250330-WA0023.jpg", type: "image" },
-      { id: "mat-22", title: "Packaging Material Standard 22", category: "materials", desc: "Bubble wrap cushioning around ceramic vases and decor.", src: "packing-materials/IMG-20250330-WA0026.jpg", type: "image" },
-      { id: "mat-23", title: "Packaging Material Standard 23", category: "materials", desc: "Strapping tape reinforcement on export carton.", src: "packing-materials/IMG-20250330-WA0027.jpg", type: "image" },
-      { id: "mat-24", title: "Packaging Material Standard 24", category: "materials", desc: "Foam edge pads on designer wooden chairs.", src: "packing-materials/IMG-20250330-WA0028.jpg", type: "image" },
-      { id: "mat-25", title: "Packaging Material Standard 25", category: "materials", desc: "Triple layer protective packing on microwave & oven.", src: "packing-materials/IMG-20250330-WA0029.jpg", type: "image" },
-      { id: "mat-26", title: "Packaging Material Standard 26", category: "materials", desc: "Washing machine transit bolt and body cushioning.", src: "packing-materials/IMG-20250330-WA0030.jpg", type: "image" },
-      { id: "mat-27", title: "Packaging Material Standard 27", category: "materials", desc: "Refrigerator body wrap and compressor shock protection.", src: "packing-materials/IMG-20250330-WA0031.jpg", type: "image" },
-      { id: "mat-28", title: "Packaging Material Standard 28", category: "materials", desc: "Air conditioner indoor & outdoor unit casing wrap.", src: "packing-materials/IMG-20250330-WA0033.jpg", type: "image" },
-      { id: "mat-29", title: "Packaging Material Standard 29", category: "materials", desc: "Shoe box and apparel carton storage setup.", src: "packing-materials/IMG-20250330-WA0034.jpg", type: "image" },
-      { id: "mat-30", title: "Packaging Material Standard 30", category: "materials", desc: "Labeling and identification barcodes on boxes.", src: "packing-materials/IMG-20250330-WA0036.jpg", type: "image" },
-      { id: "mat-31", title: "Packaging Material Standard 31", category: "materials", desc: "Waterproof wrapping on musical instruments.", src: "packing-materials/IMG-20250330-WA0037.jpg", type: "image" },
-      { id: "mat-32", title: "Packaging Material Standard 32", category: "materials", desc: "Cushioned wrapping on painting and artwork frames.", src: "packing-materials/IMG-20250330-WA0038.jpg", type: "image" },
-      { id: "mat-33", title: "Packaging Material Standard 33", category: "materials", desc: "Antique furniture velvet cloth and bubble protection.", src: "packing-materials/IMG-20250330-WA0039.jpg", type: "image" },
-      { id: "mat-34", title: "Packaging Material Standard 34", category: "materials", desc: "Heavy machinery and tools packaging container.", src: "packing-materials/IMG-20250330-WA0040.jpg", type: "image" },
-      { id: "mat-35", title: "Packaging Material Standard 35", category: "materials", desc: "Plastic bin containers for household linen.", src: "packing-materials/IMG-20250330-WA0045.jpg", type: "image" },
-      { id: "mat-36", title: "Packaging Material Standard 36", category: "materials", desc: "Moisture absorbing silica gel packets in electronics box.", src: "packing-materials/IMG-20250330-WA0046.jpg", type: "image" },
-      { id: "mat-37", title: "Packaging Material Standard 37", category: "materials", desc: "Corrugated box taping method demonstration.", src: "packing-materials/IMG-20250330-WA0047.jpg", type: "image" },
-      { id: "mat-38", title: "Packaging Material Standard 38", category: "materials", desc: "Heavy wooden crates for statues and marble items.", src: "packing-materials/IMG-20250401-WA0054.jpg", type: "image" },
-      { id: "mat-39", title: "Packaging Material Standard 39", category: "materials", desc: "Double carton encasing for luxury chandeliers.", src: "packing-materials/IMG-20250401-WA0056.jpg", type: "image" },
-      { id: "mat-40", title: "Packaging Material Standard 40", category: "materials", desc: "Foam pellets void-fill packing for fragile artifacts.", src: "packing-materials/IMG-20250401-WA0057.jpg", type: "image" },
-      { id: "mat-41", title: "Packaging Material Standard 41", category: "materials", desc: "Specialized wardrobe box rail bracket setup.", src: "packing-materials/IMG-20250827-WA0081.jpg", type: "image" },
-      { id: "mat-42", title: "Packaging Material Standard 42", category: "materials", desc: "Heavy-duty carton loading order in truck bay.", src: "packing-materials/IMG-20250827-WA0082.jpg", type: "image" },
-      { id: "mat-43", title: "Packaging Material Standard 43", category: "materials", desc: "Strapping and securing cargo in container truck.", src: "packing-materials/IMG-20250827-WA0083.jpg", type: "image" },
-      { id: "mat-44", title: "Packaging Material Standard 44", category: "materials", desc: "Lashing safety netting for household consignments.", src: "packing-materials/IMG-20250918-WA0088.jpg", type: "image" },
-      { id: "mat-45", title: "Packaging Material Standard 45", category: "materials", desc: "Multi-layer corrugated roll packing for study tables.", src: "packing-materials/IMG-20251030-WA0035.jpg", type: "image" },
-      { id: "mat-46", title: "Packaging Material Standard 46", category: "materials", desc: "Stretch wrap sealing on modular kitchen cabinets.", src: "packing-materials/IMG-20251030-WA0036.jpg", type: "image" },
-      { id: "mat-47", title: "Packaging Material Standard 47", category: "materials", desc: "Bubble sheet wrap around bathroom mirrors and fittings.", src: "packing-materials/IMG-20251116-WA0058.jpg", type: "image" },
-      { id: "mat-48", title: "Packaging Material Standard 48", category: "materials", desc: "Edge protector bands on marble table tops.", src: "packing-materials/IMG-20251116-WA0059.jpg", type: "image" },
-      { id: "mat-49", title: "Packaging Material Standard 49", category: "materials", desc: "Foam blanket protection on large wooden beds.", src: "packing-materials/IMG-20251116-WA0062.jpg", type: "image" },
-      { id: "mat-50", title: "Packaging Material Standard 50", category: "materials", desc: "Cushioned wrapping on office desks and conference tables.", src: "packing-materials/IMG-20251116-WA0064.jpg", type: "image" },
-      { id: "mat-51", title: "Packaging Material Standard 51", category: "materials", desc: "Heavy strapping on server racks and IT hardware.", src: "packing-materials/IMG-20251116-WA0065.jpg", type: "image" },
-      { id: "mat-52", title: "Packaging Material Standard 52", category: "materials", desc: "Anti-scratch foam on glass showcase cabinets.", src: "packing-materials/IMG-20260105-WA0104.jpg", type: "image" },
-      { id: "mat-53", title: "Packaging Material Standard 53", category: "materials", desc: "Corrugated corner pads on wooden storage drawers.", src: "packing-materials/IMG-20260105-WA0105.jpg", type: "image" },
-      { id: "mat-54", title: "Packaging Material Standard 54", category: "materials", desc: "Plastic pallet base packaging for industrial goods.", src: "packing-materials/IMG-20260105-WA0106.jpg", type: "image" },
-      { id: "mat-55", title: "Packaging Material Standard 55", category: "materials", desc: "Double-taped heavy cartons for kitchen utensils.", src: "packing-materials/IMG-20260130-WA0061.jpg", type: "image" },
-      { id: "mat-56", title: "Packaging Material Standard 56", category: "materials", desc: "Specialized carton size labeling for easy room sorting.", src: "packing-materials/IMG-20260131-WA0066.jpg", type: "image" },
-      { id: "mat-57", title: "Packaging Material Standard 57", category: "materials", desc: "Tamper-evident security tape application standard.", src: "packing-materials/IMG-20260131-WA0067.jpg", type: "image" },
-      { id: "mat-58", title: "Packaging Material Standard 58", category: "materials", desc: "Foam wrapping on sound systems and speakers.", src: "packing-materials/IMG-20260131-WA0068.jpg", type: "image" },
-      { id: "mat-59", title: "Packaging Material Standard 59", category: "materials", desc: "Bubble wrap layering on delicate ceramic crockery.", src: "packing-materials/IMG-20260131-WA0069.jpg", type: "image" },
-      { id: "mat-60", title: "Packaging Material Standard 60", category: "materials", desc: "High density foam rolls on temple and pooja items.", src: "packing-materials/IMG-20260131-WA0071.jpg", type: "image" },
-      { id: "mat-61", title: "Packaging Material Standard 61", category: "materials", desc: "Final consignment staging area inspection.", src: "packing-materials/IMG-20260131-WA0073.jpg", type: "image" },
-      { id: "mat-62", title: "Packaging Material Standard 62", category: "materials", desc: "Consolidated house items loading in APML truck.", src: "packing-materials/IMG-20260723-WA0026.jpg", type: "image" },
-
-      // Demonstration Videos (Folder: packing-materials/ or images/packing-materials/)
-      { id: "mat-vid-1", title: "Materials Video - Fragile Items Wrapping", category: "materials", desc: "Live demonstration of double-bubble cushioning for glassware.", src: "packing-materials/VID-20250619-WA0057.mp4", type: "video" },
-      { id: "mat-vid-2", title: "Materials Video - Furniture Multi-Layer Shield", category: "materials", desc: "Live demonstration of 3-layer furniture wrapping and corner guarding.", src: "packing-materials/VID-20251120-WA0005.mp4", type: "video" },
-      { id: "mat-vid-3", title: "Materials Video - Electronics & Appliance Pack", category: "materials", desc: "Live demonstration of shock-proof packaging for refrigerators.", src: "packing-materials/VID-20260117-WA0109.mp4", type: "video" },
-      { id: "mat-vid-4", title: "Materials Video - Heavy Wooden Crating", category: "materials", desc: "Custom wood crate fabrication and internal foam lining.", src: "packing-materials/VID-20260117-WA0110.mp4", type: "video" },
-      { id: "mat-vid-5", title: "Materials Video - Carton Strapping & Sealing", category: "materials", desc: "Automated strapping band application and high-strength adhesive sealing.", src: "packing-materials/VID-20260315-WA0007.mp4", type: "video" }
+      { id: "bike-vid-1", title: "Bike Packing - Full Video Demonstration", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike/Bike-8.mp4", type: "video" }
     ];
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Forces download directly into device local storage)
+    // DIRECT BLOB DOWNLOAD HANDLER (Forces immediate download directly into device storage)
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
@@ -646,10 +571,9 @@
         }
 
         const categoryLabels = {
-          "tv-box": "TV BOX",
           "solid-box": "SOLID BOX",
-          "materials": "PACKING MATERIALS",
-          "car": "CAR PACKING",
+          "tv": "TV BOX",
+          "car": "CAR TRANSPORTATION",
           "bike": "BIKE PACKING"
         };
 
@@ -680,7 +604,7 @@
       });
     }
 
-    // MULTI-PATH FALLBACK ENGINE (Tests all folder paths, subdirectories, and case variations)
+    // MULTI-PATH FALLBACK ENGINE (Tests images/solid-box/, solid-box/, images/tv/, images/car/, images/bike/, and root)
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
@@ -689,25 +613,21 @@
 
       const attempts = [
         originalPath,
-        `images/${originalPath}`,
-        fileName,
-        `images/${fileName}`,
-        `bike/${fileName}`,
-        `images/bike/${fileName}`,
-        `car/${fileName}`,
-        `images/car/${fileName}`,
-        `tv-box/${fileName}`,
-        `images/tv-box/${fileName}`,
-        `solid-box/${fileName}`,
         `images/solid-box/${fileName}`,
-        `packing-materials/${fileName}`,
-        `images/packing-materials/${fileName}`,
+        `solid-box/${fileName}`,
+        `images/tv/${fileName}`,
+        `tv/${fileName}`,
+        `images/car/${fileName}`,
+        `car/${fileName}`,
+        `images/bike/${fileName}`,
+        `bike/${fileName}`,
+        `images/${fileName}`,
+        fileName,
         originalPath.replace('.jpg', '.jpeg'),
         originalPath.replace('.jpeg', '.jpg'),
         originalPath.replace('.jpg', '.JPG'),
         originalPath.replace('.JPG', '.jpg'),
-        fileName.replace('.jpg', '.jpeg'),
-        fileName.replace('.jpeg', '.jpg')
+        originalPath.replace('.mp4', '.MP4')
       ];
 
       const uniqueAttempts = [...new Set(attempts)];
