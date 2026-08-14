@@ -170,7 +170,7 @@
     .media-wrapper {
       width: 100%;
       height: 220px;
-      background: var(--md-sys-color-surface-container-low);
+      background: #f1f5f9;
       position: relative;
       overflow: hidden;
       display: flex;
@@ -404,7 +404,7 @@
         <span>Standard Packaging Guidelines</span>
       </div>
       <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
-      <p class="gallery-desc">Comprehensive reference guidelines, specialized Solid &amp; TV cartons, vehicle loading protocols, carrier lashing, and packing demonstration videos.</p>
+      <p class="gallery-desc">High-speed optimized guidelines, vehicle loading protocols, specialized TV/Solid cartons, and demonstration videos.</p>
 
       <div class="filter-bar">
         <button class="filter-chip active" onclick="filterGallery('all', this)">
@@ -444,7 +444,7 @@
         </div>
         <button id="lightboxDownloadBtn" class="btn-lightbox-download">
           <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
-          <span>Download to Device</span>
+          <span>Download Original (HD)</span>
         </button>
       </div>
     </div>
@@ -508,7 +508,18 @@
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to download directly to local storage)
+    // GENERATE COMPRESSED THUMBNAIL URL (400px width WebP ~20-30KB)
+    function getThumbnailUrl(rawPath) {
+      if (rawPath.endsWith('.mp4')) return rawPath;
+      // If hosted on GitHub Pages or live domain, pass through ultra-fast WebP CDN resizer
+      if (window.location.hostname && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        const fullLiveUrl = new URL(rawPath, window.location.href).href;
+        return `https://wsrv.nl/?url=${encodeURIComponent(fullLiveUrl)}&w=400&q=65&output=webp`;
+      }
+      return rawPath;
+    }
+
+    // DIRECT BLOB DOWNLOAD HANDLER (Downloads FULL HD original to storage)
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
@@ -559,14 +570,16 @@
         let mediaHtml = "";
         if (item.type === "video") {
           mediaHtml = `
-            <video src="${item.src}" muted playsinline preload="metadata" onerror="tryAlternatePaths(this, '${item.src}', true)"></video>
+            <video src="${item.src}" muted playsinline preload="none" onerror="tryAlternatePaths(this, '${item.src}', true)"></video>
             <div class="video-play-indicator">
               <span class="material-symbols-outlined" style="font-size: 28px;">play_arrow</span>
             </div>
           `;
         } else {
+          // Low-bandwidth thumbnail with lazy-loading
+          const thumbSrc = getThumbnailUrl(item.src);
           mediaHtml = `
-            <img src="${item.src}" alt="${item.title}" loading="lazy" onerror="tryAlternatePaths(this, '${item.src}', false)">
+            <img src="${thumbSrc}" data-original="${item.src}" alt="${item.title}" loading="lazy" onerror="tryAlternatePaths(this, '${item.src}', false)">
           `;
         }
 
@@ -591,10 +604,10 @@
             </div>
             <div class="card-action-bar">
               <span class="btn-preview">
-                <span>${item.type === 'video' ? 'Play Video' : 'View Fullscreen'}</span>
+                <span>${item.type === 'video' ? 'Play Video' : 'View HD Preview'}</span>
                 <span class="material-symbols-outlined" style="font-size: 16px;">${item.type === 'video' ? 'play_circle' : 'zoom_in'}</span>
               </span>
-              <button class="btn-download-icon" onclick="event.stopPropagation(); forceDownloadMedia(this.closest('.gallery-card').querySelector('img, video').currentSrc || '${item.src}', '${item.title}')" title="Download to Device">
+              <button class="btn-download-icon" onclick="event.stopPropagation(); forceDownloadMedia('${item.src}', '${item.title}')" title="Download HD Media">
                 <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
               </button>
             </div>
@@ -604,7 +617,7 @@
       });
     }
 
-    // MULTI-PATH FALLBACK (Tests direct images/, ./images/, root, and extension variations)
+    // MULTI-PATH FALLBACK ENGINE
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
@@ -613,13 +626,11 @@
       const attempts = [
         originalPath,
         `./${originalPath}`,
-        `images/${fileName}`,
         fileName,
+        `images/${fileName}`,
         originalPath.replace('.jpg', '.jpeg'),
         originalPath.replace('.jpeg', '.jpg'),
-        originalPath.replace('.jpg', '.JPG'),
-        originalPath.replace('.JPG', '.jpg'),
-        originalPath.replace('.mp4', '.MP4')
+        originalPath.replace('.jpg', '.JPG')
       ];
 
       const uniqueAttempts = [...new Set(attempts)];
@@ -645,6 +656,7 @@
       }
     }
 
+    // LIGHTBOX LOADS FULL HD ORIGINAL QUALITY
     function openLightbox(item) {
       currentActiveItem = item;
       const mediaWrap = document.getElementById("lightboxMediaWrap");
@@ -665,7 +677,7 @@
         activeMediaElement = video;
       } else {
         const img = document.createElement("img");
-        img.src = item.src;
+        img.src = item.src; // Full Resolution HD Source
         img.alt = item.title;
         img.onerror = function() { tryAlternatePaths(this, item.src, false); };
         mediaWrap.appendChild(img);
@@ -677,7 +689,7 @@
       
       const downloadBtn = document.getElementById("lightboxDownloadBtn");
       downloadBtn.onclick = () => {
-        const activeSrc = activeMediaElement.currentSrc || activeMediaElement.src || item.src;
+        const activeSrc = item.src;
         forceDownloadMedia(activeSrc, item.title);
       };
 
