@@ -13,6 +13,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
 <style>
   /* =========================================================
      GOOGLE MATERIAL DESIGN 3 (M3) THEME SYSTEM
@@ -661,6 +664,36 @@
 <div id="footer-container"></div>
 
 <script>
+// =========================================================
+// FIREBASE REALTIME INITIALIZATION
+// =========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+  authDomain: "apml-portal.firebaseapp.com",
+  databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+  projectId: "apml-portal",
+  storageBucket: "apml-portal.firebasestorage.app",
+  messagingSenderId: "479017159240",
+  appId: "1:479017159240:web:0853422718e6195b74a67d",
+  measurementId: "G-4H1HT31DYB"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+function incrementPdfDownloadCount() {
+  if (typeof db !== "undefined") {
+    db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
+      return (currentCount || 0) + 1;
+    });
+  }
+}
+
+// =========================================================
+// QUOTATION LOGIC & DEFAULTS
+// =========================================================
 function getFormattedCurrentDate() {
   const d = new Date();
   const day = d.getDate();
@@ -1142,6 +1175,9 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     const safeName = (s) => String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g,'');
     const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
     pdf.save(filename);
+
+    // Increment global live counter in Firebase Realtime Database
+    incrementPdfDownloadCount();
 
     status.textContent = 'Downloaded ✓';
   } catch (err) {
