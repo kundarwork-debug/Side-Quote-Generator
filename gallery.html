@@ -104,7 +104,7 @@
       line-height: 1.5;
     }
 
-    /* Filter Chips Bar */
+    /* Filter Chips Bar (Without All Media) */
     .filter-bar {
       display: flex;
       justify-content: center;
@@ -179,7 +179,7 @@
     }
 
     .media-wrapper img,
-    .media-wrapper canvas {
+    .media-wrapper video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -187,7 +187,7 @@
     }
 
     .gallery-card:hover .media-wrapper img,
-    .gallery-card:hover .media-wrapper canvas {
+    .gallery-card:hover .media-wrapper video {
       transform: scale(1.06);
     }
 
@@ -414,12 +414,16 @@
         <span>Standard Packaging Guidelines</span>
       </div>
       <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
-      <p class="gallery-desc">Optimized fast-loading guidelines, vehicle loading protocols, specialized Solid &amp; TV cartons, and packing demonstration videos.</p>
+      <p class="gallery-desc">Comprehensive reference guidelines, fleet operations, specialized Solid &amp; TV cartons, vehicle loading protocols, carrier lashing, and packing demonstration videos.</p>
 
       <div class="filter-bar">
-        <button class="filter-chip active" onclick="filterGallery('all', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">apps</span>
-          <span>All Media</span>
+        <button class="filter-chip active" onclick="filterGallery('truck', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">local_shipping</span>
+          <span>Truck</span>
+        </button>
+        <button class="filter-chip" onclick="filterGallery('packing-images', this)">
+          <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
+          <span>Packing Images</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('bike', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
@@ -430,7 +434,7 @@
           <span>Car Transportation</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('solid-box', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
+          <span class="material-symbols-outlined" style="font-size: 16px;">package_2</span>
           <span>Solid BOX</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('tv', this)">
@@ -467,7 +471,40 @@
   <script>
     const GALLERY_ITEMS = [
       // ==========================================
-      // 1. BIKE PACKING (images/bike*.jpg / mp4)
+      // 1. TRUCK (images/truck*.jpg / mp4)
+      // ==========================================
+      { id: "truck-0", title: "APML Fleet Truck - Overview & Bay Inspection", category: "truck", desc: "Dedicated containerized logistics truck for secure nationwide cargo transit.", src: "images/truck.jpg", type: "image" },
+      { id: "truck-1", title: "Truck Stage 1 - Container Ramp Setup", category: "truck", desc: "Hydraulic loading ramp alignment and safety threshold verification.", src: "images/truck1.jpg", type: "image" },
+      { id: "truck-2", title: "Truck Stage 2 - Cargo Loading Demonstration", category: "truck", desc: "Live video demonstration of systematic container loading and inventory stacking.", src: "images/truck2.mp4", type: "video" },
+      { id: "truck-3", title: "Truck Stage 3 - Safety Lashing & Netting", category: "truck", desc: "Live video demonstration of heavy-duty cargo net fastening and shock strap tying.", src: "images/truck3.mp4", type: "video" },
+      { id: "truck-4", title: "Truck Stage 4 - Bay Seal & Lock Protocol", category: "truck", desc: "Live video demonstration of container seal locking and dispatch verification.", src: "images/truck4.mp4", type: "video" },
+      { id: "truck-5", title: "Truck Stage 5 - Fleet Highway Departure", category: "truck", desc: "Live video demonstration of container carrier dispatch for interstate transit.", src: "images/truck5.mp4", type: "video" },
+      { id: "truck-6", title: "Truck Stage 6 - Interior Lashing Rails", category: "truck", desc: "Reinforced internal belt anchors and weather-proof container walls.", src: "images/truck6.jpg", type: "image" },
+      { id: "truck-7", title: "Truck Stage 7 - Heavy Consignment Staging", category: "truck", desc: "Base layer placement of reinforced wooden crates and solid cartons.", src: "images/truck7.jpg", type: "image" },
+      { id: "truck-8", title: "Truck Stage 8 - Furniture & Mattress Arrangement", category: "truck", desc: "Vertical cushioned positioning of furniture panels and wrapped mattresses.", src: "images/truck8.jpg", type: "image" },
+      { id: "truck-9", title: "Truck Stage 9 - Cargo Safety Netting", category: "truck", desc: "High-strength nylon cargo containment net preventing in-transit movement.", src: "images/truck9.jpg", type: "image" },
+      { id: "truck-10", title: "Truck Stage 10 - Final Dispatch Inspection", category: "truck", desc: "Supervisor seal confirmation and delivery route checklist clearance.", src: "images/truck10.jpg", type: "image" },
+
+      // ==========================================
+      // 2. PACKING IMAGES (images/packing*.jpg / mp4)
+      // ==========================================
+      { id: "pack-0", title: "Packing Overview - Live Demonstration", category: "packing-images", desc: "Live video demonstration of multi-layer household packing procedures.", src: "images/packing.mp4", type: "video" },
+      { id: "pack-1", title: "Packing Materials & Method - Demonstration", category: "packing-images", desc: "Comprehensive step-by-step video on protective carton packing and taping standards.", src: "images/packing1.mp4", type: "video" },
+      { id: "pack-2", title: "Packing Stage 2 - Furniture Cushioning", category: "packing-images", desc: "Edge protector bands and foam cushioning applied to furniture corners.", src: "images/packing2.jpg", type: "image" },
+      { id: "pack-3", title: "Packing Stage 3 - Delicate Crockery Wrap", category: "packing-images", desc: "High-density air bubble sheet wrapping on fragile glassware and kitchen items.", src: "images/packing3.jpg", type: "image" },
+      { id: "pack-4", title: "Packing Stage 4 - Appliance Shock Proofing", category: "packing-images", desc: "Anti-static foam and heavy corrugated board protection around electronic appliances.", src: "images/packing4.jpg", type: "image" },
+      { id: "pack-5", title: "Packing Stage 5 - Moisture-Barrier Stretch Wrap", category: "packing-images", desc: "Industrial-grade stretch film sealing to prevent moisture, dust, and transit grime.", src: "images/packing5.jpg", type: "image" },
+      { id: "pack-6", title: "Packing Stage 6 - Heavy-Duty Carton Stacking", category: "packing-images", desc: "Double-walled 7-ply carton loading and room-by-room inventory staging.", src: "images/packing6.jpg", type: "image" },
+      { id: "pack-7", title: "Packing Stage 7 - Strapping Band Application", category: "packing-images", desc: "Tensioned high-tensile polypropylene strapping on consolidated cargo containers.", src: "images/packing7.jpg", type: "image" },
+      { id: "pack-8", title: "Packing Stage 8 - Screen & Mirror Protection", category: "packing-images", desc: "Multi-tier foam padding and thermocol lining for glass mirrors and table tops.", src: "images/packing8.jpg", type: "image" },
+      { id: "pack-9", title: "Packing Stage 9 - Wardrobe Clothes Transport", category: "packing-images", desc: "Wrinkle-free apparel packing in tall wardrobe boxes with hanger rail support.", src: "images/packing9.jpg", type: "image" },
+      { id: "pack-10", title: "Packing Stage 10 - Labeling & Identification", category: "packing-images", desc: "Fragile indicators, room tags, and barcode labeling on packaged consignments.", src: "images/packing10.jpg", type: "image" },
+      { id: "pack-11", title: "Packing Stage 11 - Truck Bay Cargo Loading", category: "packing-images", desc: "Safe interlocking arrangement and cargo net lashing inside container trucks.", src: "images/packing11.jpg", type: "image" },
+      { id: "pack-12", title: "Packing Stage 12 - Final Staging Inspection", category: "packing-images", desc: "Supervisor pre-transit verification of all packed household items.", src: "images/packing12.jpg", type: "image" },
+      { id: "pack-13", title: "Packing Stage 13 - Sealed Consignment Ready", category: "packing-images", desc: "Completed packing stage ready for nationwide relocation transit.", src: "images/packing13.jpg", type: "image" },
+
+      // ==========================================
+      // 3. BIKE PACKING (images/bike*.jpg / mp4)
       // ==========================================
       { id: "bike-0", title: "Bike Packing - Stage 0 (Inspection)", category: "bike", desc: "Initial surface check, mirror safety preparation, and staging.", src: "images/bike0.jpg", type: "image" },
       { id: "bike-1", title: "Bike Packing - Stage 1 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike1.jpeg", type: "image" },
@@ -479,7 +516,7 @@
       { id: "bike-7", title: "Bike Packing - Demonstration Video", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike7.mp4", type: "video" },
 
       // ==========================================
-      // 2. CAR TRANSPORTATION (images/car*.jpg / mp4)
+      // 4. CAR TRANSPORTATION (images/car*.jpg / mp4)
       // ==========================================
       { id: "car-1", title: "Car Transport - Inspection & Prep", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car1.jpg", type: "image" },
       { id: "car-2", title: "Car Transport - Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car2.jpg", type: "image" },
@@ -495,7 +532,7 @@
       { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car12.mp4", type: "video" },
 
       // ==========================================
-      // 3. SOLID BOX (images/solid*.jpg / mp4)
+      // 5. SOLID BOX (images/solid*.jpg / mp4)
       // ==========================================
       { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid0.jpg", type: "image" },
       { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid1.jpg", type: "image" },
@@ -509,7 +546,7 @@
       { id: "sb-9", title: "Solid Box Video - Strength & Transit Test (Part 2)", category: "solid-box", desc: "Live video demonstration of solid box strength verification.", src: "images/solid9.mp4", type: "video" },
 
       // ==========================================
-      // 4. TV BOX (images/tv*.jpg)
+      // 6. TV BOX (images/tv*.jpg)
       // ==========================================
       { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv0.jpg", type: "image" },
       { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv1.jpg", type: "image" },
@@ -541,7 +578,6 @@
           targetImgElement.src = canvas.toDataURL("image/jpeg", 0.6);
           targetImgElement.style.opacity = "1";
         } catch (e) {
-          // Fallback if cross-origin canvas security blocks capture
           targetImgElement.src = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 240%22><rect width=%22100%%22 height=%22100%%22 fill=%22%231e293b%22/><text x=%2250%%22 y=%2255%%22 fill=%22%2394a3b8%22 font-size=%2218%22 font-family=%22sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22>VIDEO PREVIEW</text></svg>";
           targetImgElement.style.opacity = "1";
         }
@@ -571,7 +607,6 @@
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
       } catch (err) {
-        // Direct browser fallback
         const a = document.createElement("a");
         a.href = mediaUrl;
         a.target = "_blank";
@@ -616,6 +651,8 @@
         }
 
         const categoryLabels = {
+          "truck": "TRUCK FLEET",
+          "packing-images": "PACKING IMAGES",
           "bike": "BIKE PACKING",
           "car": "CAR TRANSPORTATION",
           "solid-box": "SOLID BOX",
@@ -647,7 +684,7 @@
         `;
         grid.appendChild(card);
 
-        // If it's a video, trigger frame capture for thumbnail preview
+        // If video, capture thumbnail
         if (item.type === "video") {
           setTimeout(() => {
             const imgTarget = document.getElementById(`thumb-${item.id}`);
@@ -688,12 +725,8 @@
       document.querySelectorAll(".filter-chip").forEach(el => el.classList.remove("active"));
       if (btnElement) btnElement.classList.add("active");
 
-      if (category === "all") {
-        renderGallery(GALLERY_ITEMS);
-      } else {
-        const filtered = GALLERY_ITEMS.filter(item => item.category === category);
-        renderGallery(filtered);
-      }
+      const filtered = GALLERY_ITEMS.filter(item => item.category === category);
+      renderGallery(filtered);
     }
 
     function openLightbox(item) {
@@ -728,7 +761,8 @@
       
       const downloadBtn = document.getElementById("lightboxDownloadBtn");
       downloadBtn.onclick = () => {
-        forceDownloadMedia(item.src, item.title);
+        const activeSrc = activeMediaElement.currentSrc || activeMediaElement.src || item.src;
+        forceDownloadMedia(activeSrc, item.title);
       };
 
       document.getElementById("lightboxModal").classList.add("active");
@@ -746,8 +780,11 @@
       if (e.key === "Escape") closeLightbox();
     });
 
+    // Default to the first category (truck) on page load
     document.addEventListener("DOMContentLoaded", () => {
-      renderGallery(GALLERY_ITEMS);
+      const defaultCategory = "truck";
+      const filtered = GALLERY_ITEMS.filter(item => item.category === defaultCategory);
+      renderGallery(filtered);
     });
   </script>
 </body>
