@@ -410,8 +410,8 @@
           <span>All Media</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('vehicles', this)">
-          <span class="material-symbols-outlined" style="font-size: 16px;">two_wheeler</span>
-          <span>Bike &amp; Vehicle Packing</span>
+          <span class="material-symbols-outlined" style="font-size: 16px;">directions_car</span>
+          <span>Car &amp; Vehicle Packing</span>
         </button>
         <button class="filter-chip" onclick="filterGallery('materials', this)">
           <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
@@ -455,11 +455,104 @@
 
   <script>
     /**
-     * ALL UPLOADED BIKE PACKING ASSETS (Bike-1.jpg through Bike-8.mp4)
+     * ALL GALLERY ITEMS (Car Photos, Car Videos, and Packing Materials)
      */
     const GALLERY_ITEMS = [
+      // --- CAR PACKING PHOTOS ---
       {
         id: 1,
+        title: "Car Packing - Stage 1 (Initial Inspection)",
+        category: "vehicles",
+        desc: "Complete vehicle body scratch inspection and mirror protection setup.",
+        src: "IMG-20260319-WA0114.jpg",
+        type: "image"
+      },
+      {
+        id: 2,
+        title: "Car Packing - Stage 2 (Bumper & Panel Cover)",
+        category: "vehicles",
+        desc: "High-density multi-layer bubble wrap protection over bumpers and headlights.",
+        src: "IMG-20260319-WA0115.jpg",
+        type: "image"
+      },
+      {
+        id: 3,
+        title: "Car Packing - Stage 3 (Side Door & Mirror Guard)",
+        category: "vehicles",
+        desc: "Corrugated edge-guard sheets and bubble pads around side door panels and rear mirrors.",
+        src: "IMG-20260319-WA0116.jpg",
+        type: "image"
+      },
+      {
+        id: 4,
+        title: "Car Packing - Stage 4 (Full Body Stretch Wrap)",
+        category: "vehicles",
+        desc: "Moisture-proof stretch film covering to prevent transit dust and weather exposure.",
+        src: "IMG-20260319-WA0117.jpg",
+        type: "image"
+      },
+      {
+        id: 5,
+        title: "Car Carrier - Stage 5 (Ramp Loading)",
+        category: "vehicles",
+        desc: "Precision hydraulic ramp alignment and car positioning inside the container carrier.",
+        src: "IMG-20260319-WA0118.jpg",
+        type: "image"
+      },
+      {
+        id: 6,
+        title: "Car Carrier - Stage 6 (Wheel Choke Lashing)",
+        category: "vehicles",
+        desc: "Heavy-duty tyre safety belts and safety wheel stoppers fastened to carrier flooring.",
+        src: "IMG-20260319-WA0119.jpg",
+        type: "image"
+      },
+
+      // --- CAR PACKING VIDEOS ---
+      {
+        id: 7,
+        title: "Car Loading Video - Carrier Bay Alignment",
+        category: "vehicles",
+        desc: "Live video demonstration of vehicle loading into container carrier bay.",
+        src: "VID-20251229-WA0023.mp4",
+        type: "video"
+      },
+      {
+        id: 8,
+        title: "Car Packing Video - Complete Protective Wrap",
+        category: "vehicles",
+        desc: "Multi-layer bubble and stretch wrapping demonstration on vehicle body.",
+        src: "VID-20260122-WA0090.mp4",
+        type: "video"
+      },
+      {
+        id: 9,
+        title: "Car Lashing Video - Wheel Choke Locking",
+        category: "vehicles",
+        desc: "Specialized wheel belt tie-downs and locking protocols for zero movement in transit.",
+        src: "VID-20260319-WA0116.mp4",
+        type: "video"
+      },
+      {
+        id: 10,
+        title: "Car Carrier Video - Final Inspection & Bay Seal",
+        category: "vehicles",
+        desc: "Final safety verification before sealing the vehicle transport container.",
+        src: "VID-20260319-WA0119.mp4",
+        type: "video"
+      },
+      {
+        id: 11,
+        title: "Car Dispatch Video - Fleet Carrier Departure",
+        category: "vehicles",
+        desc: "Standard long-haul vehicle carrier truck dispatch for interstate car shifting.",
+        src: "WhatsApp Video 2024-10-03 at 12.16.23.mp4",
+        type: "video"
+      },
+
+      // --- BIKE PACKING PHOTOS & VIDEOS ---
+      {
+        id: 12,
         title: "Bike Packing - Stage 1 (Overview)",
         category: "vehicles",
         desc: "Initial safety check and complete vehicle surface preparation for packing.",
@@ -467,7 +560,7 @@
         type: "image"
       },
       {
-        id: 2,
+        id: 13,
         title: "Bike Packing - Stage 2 (Handle & Mirrors)",
         category: "vehicles",
         desc: "High-density bubble cushioning for rear-view mirrors, headlamp, and handlebar.",
@@ -475,7 +568,7 @@
         type: "image"
       },
       {
-        id: 3,
+        id: 14,
         title: "Bike Packing - Stage 3 (Fuel Tank Wrap)",
         category: "vehicles",
         desc: "Heavy-duty anti-scratch foam layering around the petrol tank and meters.",
@@ -483,7 +576,7 @@
         type: "image"
       },
       {
-        id: 4,
+        id: 15,
         title: "Bike Packing - Stage 4 (Engine & Silencer)",
         category: "vehicles",
         desc: "Corrugated sheet reinforcement over silencer pipe, engine guard, and footrests.",
@@ -491,7 +584,7 @@
         type: "image"
       },
       {
-        id: 5,
+        id: 16,
         title: "Bike Packing - Stage 5 (Wheel & Body Wrap)",
         category: "vehicles",
         desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.",
@@ -499,7 +592,7 @@
         type: "image"
       },
       {
-        id: 6,
+        id: 17,
         title: "Bike Packing - Stage 6 (Final Corrugated Shield)",
         category: "vehicles",
         desc: "Full heavy carton sheet wrapping for exterior impact absorption in transit.",
@@ -507,7 +600,7 @@
         type: "image"
       },
       {
-        id: 7,
+        id: 18,
         title: "Bike Packing - Stage 7 (Lashing & Loading)",
         category: "vehicles",
         desc: "Complete consignment ready with vehicle carrier safety belt lashing.",
@@ -515,15 +608,17 @@
         type: "image"
       },
       {
-        id: 8,
+        id: 19,
         title: "Bike Packing - Live Demonstration Video",
         category: "vehicles",
         desc: "Full standard multi-layer bike packaging procedure video demonstration.",
         src: "Bike-8.mp4",
         type: "video"
       },
+
+      // --- MATERIALS & FURNITURE STANDARDS ---
       {
-        id: 9,
+        id: 20,
         title: "Heavy Duty Corrugated Carton",
         category: "boxes",
         desc: "7-Ply double wall heavy-duty carton (18x18x18 inches) for crockery and fragile kitchenware.",
@@ -531,7 +626,7 @@
         type: "image"
       },
       {
-        id: 10,
+        id: 21,
         title: "Multi-Layer Bubble & Foam Wrap",
         category: "materials",
         desc: "Shock-absorbing premium high-density air bubble wrap and foam roll for scratch protection.",
@@ -539,7 +634,7 @@
         type: "image"
       },
       {
-        id: 11,
+        id: 22,
         title: "Sofa & Upholstery Stretch Wrapping",
         category: "furniture",
         desc: "Moisture-proof stretch film wrapping with corrugated edge guard protection for fabric sofas.",
@@ -550,7 +645,7 @@
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Works on Mobile and Desktop)
+    // DIRECT BLOB DOWNLOAD HANDLER (Works reliably on all devices)
     async function forceDownloadMedia(mediaUrl, fileName) {
       try {
         const res = await fetch(mediaUrl);
@@ -636,12 +731,13 @@
       });
     }
 
-    // Path fallbacks for root and 'images/' folder
+    // Path fallbacks for root and 'images/' or 'assets/' folders
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
       const attempts = [
         "images/" + originalPath,
+        "assets/" + originalPath,
         originalPath.toLowerCase(),
         "images/" + originalPath.toLowerCase(),
         originalPath.replace('.jpg', '.jpeg'),
@@ -656,7 +752,7 @@
       } else {
         element.dataset.failed = "true";
         if (!isVideo) {
-          element.src = "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80";
+          element.src = "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80";
         }
       }
     }
