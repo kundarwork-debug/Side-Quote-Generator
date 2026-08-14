@@ -245,7 +245,6 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      text-decoration: none;
       transition: var(--transition-m3);
     }
 
@@ -355,7 +354,6 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      text-decoration: none;
       transition: var(--transition-m3);
       white-space: nowrap;
     }
@@ -422,10 +420,10 @@
           <h3 id="lightboxTitle"></h3>
           <p id="lightboxDesc"></p>
         </div>
-        <a id="lightboxDownloadBtn" href="" download class="btn-lightbox-download">
+        <button id="lightboxDownloadBtn" class="btn-lightbox-download">
           <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
           <span>Download Image</span>
-        </a>
+        </button>
       </div>
     </div>
   </div>
@@ -435,10 +433,6 @@
   <script src="common.js"></script>
 
   <script>
-    /**
-     * GALLERY DATA ITEMS LIST
-     * Bike-1.jpg is set as primary image.
-     */
     const GALLERY_ITEMS = [
       {
         id: 1,
@@ -469,6 +463,34 @@
         img: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&w=800&q=80"
       }
     ];
+
+    let currentActiveItem = null;
+
+    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to trigger download on all devices)
+    async function forceDownloadImage(imageUrl, fileName) {
+      try {
+        const res = await fetch(imageUrl);
+        const blob = await res.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = fileName.endsWith(".jpg") ? fileName : `${fileName}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        // Fallback if browser cross-origin policy prevents direct blob read
+        const a = document.createElement("a");
+        a.href = imageUrl;
+        a.target = "_blank";
+        a.download = fileName.endsWith(".jpg") ? fileName : `${fileName}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }
 
     function renderGallery(items) {
       const grid = document.getElementById("galleryGrid");
@@ -504,9 +526,9 @@
                 <span>View Fullscreen</span>
                 <span class="material-symbols-outlined" style="font-size: 16px;">zoom_in</span>
               </span>
-              <a href="${item.img}" download="${item.title}.jpg" class="btn-download-icon" onclick="event.stopPropagation()" title="Download Image">
+              <button class="btn-download-icon" onclick="event.stopPropagation(); forceDownloadImage('${item.img}', '${item.title}')" title="Download Image">
                 <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
-              </a>
+              </button>
             </div>
           </div>
         `;
@@ -533,7 +555,7 @@
         img.src = attempts[currentAttempt];
       } else {
         img.dataset.failed = "true";
-        img.src = "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80"; // Fallback placeholder
+        img.src = "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80";
       }
     }
 
@@ -550,6 +572,7 @@
     }
 
     function openLightbox(item) {
+      currentActiveItem = item;
       const lightboxImg = document.getElementById("lightboxImg");
       lightboxImg.src = item.img;
       lightboxImg.onerror = function() {
@@ -558,8 +581,13 @@
 
       document.getElementById("lightboxTitle").textContent = item.title;
       document.getElementById("lightboxDesc").textContent = item.desc;
-      document.getElementById("lightboxDownloadBtn").href = item.img;
-      document.getElementById("lightboxDownloadBtn").setAttribute("download", `${item.title}.jpg`);
+      
+      const downloadBtn = document.getElementById("lightboxDownloadBtn");
+      downloadBtn.onclick = () => {
+        const activeSrc = lightboxImg.currentSrc || lightboxImg.src || item.img;
+        forceDownloadImage(activeSrc, item.title);
+      };
+
       document.getElementById("lightboxModal").classList.add("active");
     }
 
