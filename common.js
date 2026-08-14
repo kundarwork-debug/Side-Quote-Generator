@@ -27,13 +27,13 @@ document.addEventListener("DOMContentLoaded", function () {
               <span class="material-symbols-outlined mui-icon">directions_car</span>
               <span>Car Rate Calculator</span>
             </a>
-            <a href="local-rate.html" class="menu-item-btn">
-              <span class="material-symbols-outlined mui-icon">local_shipping</span>
-              <span>APML Local Rate (Coming Soon)</span>
-            </a>
             <a href="gallery.html" class="menu-item-btn">
               <span class="material-symbols-outlined mui-icon">photo_library</span>
-              <span>Packing Gallery (Coming Soon)</span>
+              <span>Packing Gallery</span>
+            </a>
+            <a href="#" class="menu-item-btn" style="opacity: 0.6; cursor: not-allowed;">
+              <span class="material-symbols-outlined mui-icon">local_shipping</span>
+              <span>APML Local Rate (Coming Soon)</span>
             </a>
           </div>
         </div>
