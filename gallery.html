@@ -179,16 +179,16 @@
     }
 
     .media-wrapper img,
-    .media-wrapper video {
+    .media-wrapper canvas {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.35s ease;
+      transition: transform 0.35s ease, opacity 0.3s ease;
     }
 
     .gallery-card:hover .media-wrapper img,
-    .gallery-card:hover .media-wrapper video {
-      transform: scale(1.05);
+    .gallery-card:hover .media-wrapper canvas {
+      transform: scale(1.06);
     }
 
     /* Video Play Floating Badge */
@@ -414,7 +414,7 @@
         <span>Standard Packaging Guidelines</span>
       </div>
       <h1 class="gallery-title">APML <span>Packing Gallery</span></h1>
-      <p class="gallery-desc">Comprehensive reference guidelines, specialized Solid &amp; TV cartons, vehicle loading protocols, carrier lashing, and packing demonstration videos.</p>
+      <p class="gallery-desc">Optimized fast-loading guidelines, vehicle loading protocols, specialized Solid &amp; TV cartons, and packing demonstration videos.</p>
 
       <div class="filter-bar">
         <button class="filter-chip active" onclick="filterGallery('all', this)">
@@ -476,7 +476,7 @@
       { id: "bike-4", title: "Bike Packing - Stage 4 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike4.jpg", type: "image" },
       { id: "bike-5", title: "Bike Packing - Stage 5 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike5.jpg", type: "image" },
       { id: "bike-6", title: "Bike Packing - Stage 6 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike6.jpg", type: "image" },
-      { id: "bike-7", title: "Bike Packing - Demonstration Video", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike7.mp4", poster: "images/bike6.jpg", type: "video" },
+      { id: "bike-7", title: "Bike Packing - Demonstration Video", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike7.mp4", type: "video" },
 
       // ==========================================
       // 2. CAR TRANSPORTATION (images/car*.jpg / mp4)
@@ -487,12 +487,12 @@
       { id: "car-4", title: "Car Transport - Complete Body Wrap", category: "car", desc: "Moisture-proof stretch film protection against dust and highway grime.", src: "images/car4.jpg", type: "image" },
       { id: "car-5", title: "Car Transport - Ramp Loading", category: "car", desc: "Specialized hydraulic ramp loading into enclosed container carrier.", src: "images/car5.jpg", type: "image" },
       { id: "car-6", title: "Car Transport - Wheel Choke Lashing", category: "car", desc: "High-tensile wheel stopper belts fastened securely to carrier floor.", src: "images/car6.jpg", type: "image" },
-      { id: "car-7", title: "Car Transport Video - Carrier Alignment", category: "car", desc: "Live video demonstration of vehicle alignment into transport carrier.", src: "images/car7.mp4", poster: "images/car5.jpg", type: "video" },
-      { id: "car-8", title: "Car Transport Video - Multi-Layer Packaging", category: "car", desc: "Comprehensive wrapping procedure demonstration on car body.", src: "images/car8.mp4", poster: "images/car4.jpg", type: "video" },
-      { id: "car-9", title: "Car Transport Video - Wheel Belt Tie-Down", category: "car", desc: "Safety locking protocols and wheel choke fastening demonstration.", src: "images/car9.mp4", poster: "images/car6.jpg", type: "video" },
-      { id: "car-10", title: "Car Transport Video - Bay Lock & Inspection", category: "car", desc: "Final verification and container seal check prior to transit.", src: "images/car10.mp4", poster: "images/car5.jpg", type: "video" },
-      { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car11.mp4", poster: "images/car1.jpg", type: "video" },
-      { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car12.mp4", poster: "images/car6.jpg", type: "video" },
+      { id: "car-7", title: "Car Transport Video - Carrier Alignment", category: "car", desc: "Live video demonstration of vehicle alignment into transport carrier.", src: "images/car7.mp4", type: "video" },
+      { id: "car-8", title: "Car Transport Video - Multi-Layer Packaging", category: "car", desc: "Comprehensive wrapping procedure demonstration on car body.", src: "images/car8.mp4", type: "video" },
+      { id: "car-9", title: "Car Transport Video - Wheel Belt Tie-Down", category: "car", desc: "Safety locking protocols and wheel choke fastening demonstration.", src: "images/car9.mp4", type: "video" },
+      { id: "car-10", title: "Car Transport Video - Bay Lock & Inspection", category: "car", desc: "Final verification and container seal check prior to transit.", src: "images/car10.mp4", type: "video" },
+      { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car11.mp4", type: "video" },
+      { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car12.mp4", type: "video" },
 
       // ==========================================
       // 3. SOLID BOX (images/solid*.jpg / mp4)
@@ -505,8 +505,8 @@
       { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware.", src: "images/solid5.jpg", type: "image" },
       { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid6.jpg", type: "image" },
       { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid7.jpg", type: "image" },
-      { id: "sb-8", title: "Solid Box Video - Packing & Handling (Part 1)", category: "solid-box", desc: "Live video demonstration of solid box packing standards.", src: "images/solid8.mp4", poster: "images/solid7.jpg", type: "video" },
-      { id: "sb-9", title: "Solid Box Video - Strength & Transit Test (Part 2)", category: "solid-box", desc: "Live video demonstration of solid box strength verification.", src: "images/solid9.mp4", poster: "images/solid6.jpg", type: "video" },
+      { id: "sb-8", title: "Solid Box Video - Packing & Handling (Part 1)", category: "solid-box", desc: "Live video demonstration of solid box packing standards.", src: "images/solid8.mp4", type: "video" },
+      { id: "sb-9", title: "Solid Box Video - Strength & Transit Test (Part 2)", category: "solid-box", desc: "Live video demonstration of solid box strength verification.", src: "images/solid9.mp4", type: "video" },
 
       // ==========================================
       // 4. TV BOX (images/tv*.jpg)
@@ -518,7 +518,41 @@
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to download directly to local storage)
+    // IN-BROWSER FAST VIDEO THUMBNAIL EXTRACTOR
+    function captureVideoFrameThumbnail(videoUrl, targetImgElement) {
+      const tempVideo = document.createElement("video");
+      tempVideo.crossOrigin = "anonymous";
+      tempVideo.muted = true;
+      tempVideo.playsInline = true;
+      tempVideo.preload = "auto";
+      tempVideo.src = videoUrl;
+
+      tempVideo.addEventListener("loadeddata", () => {
+        tempVideo.currentTime = Math.min(1.0, (tempVideo.duration || 2) / 2);
+      });
+
+      tempVideo.addEventListener("seeked", () => {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 400;
+          canvas.height = 240;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(tempVideo, 0, 0, canvas.width, canvas.height);
+          targetImgElement.src = canvas.toDataURL("image/jpeg", 0.6);
+          targetImgElement.style.opacity = "1";
+        } catch (e) {
+          // Fallback if cross-origin canvas security blocks capture
+          targetImgElement.src = "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 240%22><rect width=%22100%%22 height=%22100%%22 fill=%22%231e293b%22/><text x=%2250%%22 y=%2255%%22 fill=%22%2394a3b8%22 font-size=%2218%22 font-family=%22sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22>VIDEO PREVIEW</text></svg>";
+          targetImgElement.style.opacity = "1";
+        }
+      });
+
+      tempVideo.addEventListener("error", () => {
+        tryAlternatePaths(targetImgElement, videoUrl, true);
+      });
+    }
+
+    // DIRECT LOCAL STORAGE BLOB DOWNLOAD HANDLER
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
@@ -569,16 +603,15 @@
 
         let mediaHtml = "";
         if (item.type === "video") {
-          const posterAttr = item.poster ? `poster="${item.poster}"` : '';
           mediaHtml = `
-            <video src="${item.src}#t=0.5" ${posterAttr} muted playsinline preload="metadata" onerror="tryAlternatePaths(this, '${item.src}', true)"></video>
+            <img class="lazy-thumb video-thumb" id="thumb-${item.id}" alt="${item.title}" style="opacity: 0.8;" src="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 240%22><rect width=%22100%%22 height=%22100%%22 fill=%22%230f172a%22/></svg>">
             <div class="video-play-indicator">
               <span class="material-symbols-outlined" style="font-size: 32px;">play_arrow</span>
             </div>
           `;
         } else {
           mediaHtml = `
-            <img src="${item.src}" alt="${item.title}" loading="lazy" onerror="tryAlternatePaths(this, '${item.src}', false)">
+            <img src="${item.src}" alt="${item.title}" loading="lazy" decoding="async" onerror="tryAlternatePaths(this, '${item.src}', false)">
           `;
         }
 
@@ -613,10 +646,18 @@
           </div>
         `;
         grid.appendChild(card);
+
+        // If it's a video, trigger frame capture for thumbnail preview
+        if (item.type === "video") {
+          setTimeout(() => {
+            const imgTarget = document.getElementById(`thumb-${item.id}`);
+            if (imgTarget) captureVideoFrameThumbnail(item.src, imgTarget);
+          }, 50);
+        }
       });
     }
 
-    // MULTI-PATH FALLBACK ENGINE
+    // MULTI-PATH FALLBACK (Guarantees finding the files on GitHub Pages)
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
@@ -625,13 +666,11 @@
       const attempts = [
         originalPath,
         `./${originalPath}`,
-        `images/${fileName}`,
         fileName,
+        `images/${fileName}`,
         originalPath.replace('.jpg', '.jpeg'),
         originalPath.replace('.jpeg', '.jpg'),
-        originalPath.replace('.jpg', '.JPG'),
-        originalPath.replace('.JPG', '.jpg'),
-        originalPath.replace('.mp4', '.MP4')
+        originalPath.replace('.jpg', '.JPG')
       ];
 
       const uniqueAttempts = [...new Set(attempts)];
@@ -639,7 +678,7 @@
       let currentAttempt = parseInt(element.dataset.attempt || "0");
       if (currentAttempt < uniqueAttempts.length) {
         element.dataset.attempt = currentAttempt + 1;
-        element.src = uniqueAttempts[currentAttempt] + (isVideo ? '#t=0.5' : '');
+        element.src = uniqueAttempts[currentAttempt];
       } else {
         element.dataset.failed = "true";
       }
