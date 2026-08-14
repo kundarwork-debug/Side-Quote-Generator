@@ -11,6 +11,9 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <style>
     /* GOOGLE MATERIAL DESIGN 3 (M3) THEME TOKENS */
     :root {
@@ -104,7 +107,7 @@
       line-height: 1.5;
     }
 
-    /* Filter Chips Bar (Without All Media) */
+    /* Filter Chips Bar */
     .filter-bar {
       display: flex;
       justify-content: center;
@@ -469,10 +472,39 @@
   <script src="common.js"></script>
 
   <script>
+    // ==========================================
+    // 1. FIREBASE REALTIME INITIALIZATION
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    // Increment Total Media Downloads (Photos + Videos) atomically in Firebase
+    function incrementMediaDownloadCount() {
+      if (typeof db !== "undefined") {
+        db.ref("analytics/totalMediaDownloads").transaction((currentCount) => {
+          return (currentCount || 0) + 1;
+        });
+      }
+    }
+
+    // ==========================================
+    // 2. GALLERY MEDIA DATA
+    // ==========================================
     const GALLERY_ITEMS = [
-      // ==========================================
       // 1. TRUCK (images/truck*.jpg / mp4)
-      // ==========================================
       { id: "truck-0", title: "APML Fleet Truck - Overview & Bay Inspection", category: "truck", desc: "Dedicated containerized logistics truck for secure nationwide cargo transit.", src: "images/truck.jpg", type: "image" },
       { id: "truck-1", title: "Truck Stage 1 - Container Ramp Setup", category: "truck", desc: "Hydraulic loading ramp alignment and safety threshold verification.", src: "images/truck1.jpg", type: "image" },
       { id: "truck-2", title: "Truck Stage 2 - Cargo Loading Demonstration", category: "truck", desc: "Live video demonstration of systematic container loading and inventory stacking.", src: "images/truck2.mp4", type: "video" },
@@ -485,9 +517,7 @@
       { id: "truck-9", title: "Truck Stage 9 - Cargo Safety Netting", category: "truck", desc: "High-strength nylon cargo containment net preventing in-transit movement.", src: "images/truck9.jpg", type: "image" },
       { id: "truck-10", title: "Truck Stage 10 - Final Dispatch Inspection", category: "truck", desc: "Supervisor seal confirmation and delivery route checklist clearance.", src: "images/truck10.jpg", type: "image" },
 
-      // ==========================================
       // 2. PACKING IMAGES (images/packing*.jpg / mp4)
-      // ==========================================
       { id: "pack-0", title: "Packing Overview - Live Demonstration", category: "packing-images", desc: "Live video demonstration of multi-layer household packing procedures.", src: "images/packing.mp4", type: "video" },
       { id: "pack-1", title: "Packing Materials & Method - Demonstration", category: "packing-images", desc: "Comprehensive step-by-step video on protective carton packing and taping standards.", src: "images/packing1.mp4", type: "video" },
       { id: "pack-2", title: "Packing Stage 2 - Furniture Cushioning", category: "packing-images", desc: "Edge protector bands and foam cushioning applied to furniture corners.", src: "images/packing2.jpg", type: "image" },
@@ -503,9 +533,7 @@
       { id: "pack-12", title: "Packing Stage 12 - Final Staging Inspection", category: "packing-images", desc: "Supervisor pre-transit verification of all packed household items.", src: "images/packing12.jpg", type: "image" },
       { id: "pack-13", title: "Packing Stage 13 - Sealed Consignment Ready", category: "packing-images", desc: "Completed packing stage ready for nationwide relocation transit.", src: "images/packing13.jpg", type: "image" },
 
-      // ==========================================
       // 3. BIKE PACKING (images/bike*.jpg / mp4)
-      // ==========================================
       { id: "bike-0", title: "Bike Packing - Stage 0 (Inspection)", category: "bike", desc: "Initial surface check, mirror safety preparation, and staging.", src: "images/bike0.jpg", type: "image" },
       { id: "bike-1", title: "Bike Packing - Stage 1 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike1.jpeg", type: "image" },
       { id: "bike-2", title: "Bike Packing - Stage 2 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike2.jpg", type: "image" },
@@ -515,9 +543,7 @@
       { id: "bike-6", title: "Bike Packing - Stage 6 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike6.jpg", type: "image" },
       { id: "bike-7", title: "Bike Packing - Demonstration Video", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike7.mp4", type: "video" },
 
-      // ==========================================
       // 4. CAR TRANSPORTATION (images/car*.jpg / mp4)
-      // ==========================================
       { id: "car-1", title: "Car Transport - Inspection & Prep", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car1.jpg", type: "image" },
       { id: "car-2", title: "Car Transport - Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car2.jpg", type: "image" },
       { id: "car-3", title: "Car Transport - Side Panel Guard", category: "car", desc: "Corrugated sheet and protective padding along vehicle doors.", src: "images/car3.jpg", type: "image" },
@@ -531,9 +557,7 @@
       { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car11.mp4", type: "video" },
       { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car12.mp4", type: "video" },
 
-      // ==========================================
       // 5. SOLID BOX (images/solid*.jpg / mp4)
-      // ==========================================
       { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid0.jpg", type: "image" },
       { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid1.jpg", type: "image" },
       { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery.", src: "images/solid2.jpg", type: "image" },
@@ -545,9 +569,7 @@
       { id: "sb-8", title: "Solid Box Video - Packing & Handling (Part 1)", category: "solid-box", desc: "Live video demonstration of solid box packing standards.", src: "images/solid8.mp4", type: "video" },
       { id: "sb-9", title: "Solid Box Video - Strength & Transit Test (Part 2)", category: "solid-box", desc: "Live video demonstration of solid box strength verification.", src: "images/solid9.mp4", type: "video" },
 
-      // ==========================================
       // 6. TV BOX (images/tv*.jpg)
-      // ==========================================
       { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv0.jpg", type: "image" },
       { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv1.jpg", type: "image" },
       { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv2.jpg", type: "image" }
@@ -555,7 +577,7 @@
 
     let currentActiveItem = null;
 
-    // IN-BROWSER FAST VIDEO THUMBNAIL EXTRACTOR
+    // IN-BROWSER VIDEO THUMBNAIL GENERATOR
     function captureVideoFrameThumbnail(videoUrl, targetImgElement) {
       const tempVideo = document.createElement("video");
       tempVideo.crossOrigin = "anonymous";
@@ -588,11 +610,14 @@
       });
     }
 
-    // DIRECT LOCAL STORAGE BLOB DOWNLOAD HANDLER
+    // DIRECT MEDIA DOWNLOAD + FIREBASE COUNTER HOOK
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
       
+      // Increment Firebase Media Counter
+      incrementMediaDownloadCount();
+
       try {
         const res = await fetch(mediaUrl);
         if (!res.ok) throw new Error("Fetch failed");
@@ -684,7 +709,6 @@
         `;
         grid.appendChild(card);
 
-        // If video, capture thumbnail
         if (item.type === "video") {
           setTimeout(() => {
             const imgTarget = document.getElementById(`thumb-${item.id}`);
@@ -694,7 +718,7 @@
       });
     }
 
-    // MULTI-PATH FALLBACK (Guarantees finding the files on GitHub Pages)
+    // MULTI-PATH FALLBACK
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
@@ -780,7 +804,6 @@
       if (e.key === "Escape") closeLightbox();
     });
 
-    // Default to the first category (truck) on page load
     document.addEventListener("DOMContentLoaded", () => {
       const defaultCategory = "truck";
       const filtered = GALLERY_ITEMS.filter(item => item.category === defaultCategory);
