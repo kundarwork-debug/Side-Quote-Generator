@@ -457,57 +457,58 @@
   <script>
     const GALLERY_ITEMS = [
       // ==========================================
-      // 1. BIKE PACKING (images/bike/)
+      // 1. BIKE PACKING (images/bike*.jpg / mp4)
       // ==========================================
-      { id: "bike-1", title: "Bike Packing - Stage 1 (Initial Inspection)", category: "bike", desc: "Initial surface inspection, mirror safety prep, and vehicle staging.", src: "images/bike/bike-1.jpg", type: "image" },
-      { id: "bike-2", title: "Bike Packing - Stage 2 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike/bike-2.jpeg", type: "image" },
-      { id: "bike-3", title: "Bike Packing - Stage 3 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike/bike-3.jpg", type: "image" },
-      { id: "bike-4", title: "Bike Packing - Stage 4 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement wrapping over silencer pipe, engine, and footpegs.", src: "images/bike/bike-4.jpg", type: "image" },
-      { id: "bike-5", title: "Bike Packing - Stage 5 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike/bike-5.jpg", type: "image" },
-      { id: "bike-6", title: "Bike Packing - Stage 6 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike/bike-6.jpg", type: "image" },
-      { id: "bike-7", title: "Bike Packing - Stage 7 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike/bike-7.jpg", type: "image" },
-      { id: "bike-vid-1", title: "Bike Packing - Full Video Demonstration", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike/bike-8.mp4", type: "video" },
+      { id: "bike-0", title: "Bike Packing - Stage 0 (Inspection)", category: "bike", desc: "Initial surface check, mirror safety preparation, and staging.", src: "images/bike0.jpg", type: "image" },
+      { id: "bike-1", title: "Bike Packing - Stage 1 (Handlebar & Mirror)", category: "bike", desc: "High-density bubble cushioning on headlamp, speedometer, and handlebars.", src: "images/bike1.jpeg", type: "image" },
+      { id: "bike-2", title: "Bike Packing - Stage 2 (Fuel Tank Wrap)", category: "bike", desc: "Anti-scratch foam sheet layering wrapped securely around petrol tank.", src: "images/bike2.jpg", type: "image" },
+      { id: "bike-3", title: "Bike Packing - Stage 3 (Engine & Silencer)", category: "bike", desc: "Corrugated reinforcement wrapping over silencer pipe, engine, and footpegs.", src: "images/bike3.jpg", type: "image" },
+      { id: "bike-4", title: "Bike Packing - Stage 4 (Body & Wheel Wrap)", category: "bike", desc: "Complete 3-layer stretch wrapping protecting body panels and mudguards.", src: "images/bike4.jpg", type: "image" },
+      { id: "bike-5", title: "Bike Packing - Stage 5 (Outer Carton Shield)", category: "bike", desc: "Full heavy corrugated sheet encasing for exterior shock absorption.", src: "images/bike5.jpg", type: "image" },
+      { id: "bike-6", title: "Bike Packing - Stage 6 (Lashing & Loading)", category: "bike", desc: "Complete consignment ready with vehicle carrier safety belt lashing.", src: "images/bike6.jpg", type: "image" },
+      { id: "bike-7", title: "Bike Packing - Demonstration Video", category: "bike", desc: "Standard multi-layer packaging procedure demonstration video.", src: "images/bike7.mp4", type: "video" },
 
       // ==========================================
-      // 2. CAR TRANSPORTATION (images/car/)
+      // 2. CAR TRANSPORTATION (images/car*.jpg / mp4)
       // ==========================================
-      { id: "car-1", title: "Car Transport - Inspection & Surface Guard", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car/car1.jpg", type: "image" },
-      { id: "car-2", title: "Car Transport - Multi-Layer Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car/car2.jpg", type: "image" },
-      { id: "car-3", title: "Car Transport - Side Panel & Door Guard", category: "car", desc: "Corrugated sheet and protective padding along vehicle doors.", src: "images/car/car3.jpg", type: "image" },
-      { id: "car-4", title: "Car Transport - Complete Body Wrap", category: "car", desc: "Moisture-proof stretch film protection against dust and highway grime.", src: "images/car/car4.jpg", type: "image" },
-      { id: "car-5", title: "Car Transport - Hydraulic Ramp Loading", category: "car", desc: "Specialized hydraulic ramp loading into enclosed container carrier.", src: "images/car/car5.jpg", type: "image" },
-      { id: "car-6", title: "Car Transport - Wheel Choke Lashing", category: "car", desc: "High-tensile wheel stopper belts fastened securely to carrier floor.", src: "images/car/car6.jpg", type: "image" },
-      { id: "car-7", title: "Car Transport Video - Carrier Alignment", category: "car", desc: "Live video demonstration of vehicle alignment into transport carrier.", src: "images/car/car7.mp4", type: "video" },
-      { id: "car-8", title: "Car Transport Video - Multi-Layer Packaging", category: "car", desc: "Comprehensive wrapping procedure demonstration on car body.", src: "images/car/car8.mp4", type: "video" },
-      { id: "car-9", title: "Car Transport Video - Wheel Belt Tie-Down", category: "car", desc: "Safety locking protocols and wheel choke fastening demonstration.", src: "images/car/car9.mp4", type: "video" },
-      { id: "car-10", title: "Car Transport Video - Bay Lock & Inspection", category: "car", desc: "Final verification and container seal check prior to transit.", src: "images/car/car10.mp4", type: "video" },
-      { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car/car11.mp4", type: "video" },
-      { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car/car12.mp4", type: "video" },
+      { id: "car-1", title: "Car Transport - Inspection & Prep", category: "car", desc: "Pre-loading scratch inspection, mirror protection, and exterior prep.", src: "images/car1.jpg", type: "image" },
+      { id: "car-2", title: "Car Transport - Bumper Protection", category: "car", desc: "Heavy-duty bubble wrap and edge protection on front/rear bumpers.", src: "images/car2.jpg", type: "image" },
+      { id: "car-3", title: "Car Transport - Side Panel Guard", category: "car", desc: "Corrugated sheet and protective padding along vehicle doors.", src: "images/car3.jpg", type: "image" },
+      { id: "car-4", title: "Car Transport - Complete Body Wrap", category: "car", desc: "Moisture-proof stretch film protection against dust and highway grime.", src: "images/car4.jpg", type: "image" },
+      { id: "car-5", title: "Car Transport - Ramp Loading", category: "car", desc: "Specialized hydraulic ramp loading into enclosed container carrier.", src: "images/car5.jpg", type: "image" },
+      { id: "car-6", title: "Car Transport - Wheel Choke Lashing", category: "car", desc: "High-tensile wheel stopper belts fastened securely to carrier floor.", src: "images/car6.jpg", type: "image" },
+      { id: "car-7", title: "Car Transport Video - Carrier Alignment", category: "car", desc: "Live video demonstration of vehicle alignment into transport carrier.", src: "images/car7.mp4", type: "video" },
+      { id: "car-8", title: "Car Transport Video - Multi-Layer Packaging", category: "car", desc: "Comprehensive wrapping procedure demonstration on car body.", src: "images/car8.mp4", type: "video" },
+      { id: "car-9", title: "Car Transport Video - Wheel Belt Tie-Down", category: "car", desc: "Safety locking protocols and wheel choke fastening demonstration.", src: "images/car9.mp4", type: "video" },
+      { id: "car-10", title: "Car Transport Video - Bay Lock & Inspection", category: "car", desc: "Final verification and container seal check prior to transit.", src: "images/car10.mp4", type: "video" },
+      { id: "car-11", title: "Car Transport Video - Fleet Loading Bay", category: "car", desc: "Fleet carrier bay operations and loading procedure standards.", src: "images/car11.mp4", type: "video" },
+      { id: "car-12", title: "Car Transport Video - Final Departure Prep", category: "car", desc: "Long-haul car carrier truck dispatch inspection for interstate transit.", src: "images/car12.mp4", type: "video" },
 
       // ==========================================
-      // 3. SOLID BOX (images/solid-box/)
+      // 3. SOLID BOX (images/solid*.jpg / mp4)
       // ==========================================
-      { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid-box/solid0.jpg", type: "image" },
-      { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid-box/solid1.jpg", type: "image" },
-      { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery and kitchenware.", src: "images/solid-box/solid2.jpg", type: "image" },
-      { id: "sb-3", title: "Solid Box - Stage 3 (Item Staging)", category: "solid-box", desc: "Standard consignment packaging with individual item separation and cushioning.", src: "images/solid-box/solid3.jpg", type: "image" },
-      { id: "sb-4", title: "Solid Box - Stage 4 (Stacking Integrity)", category: "solid-box", desc: "Stackable high-load corrugated carton designed for compact container loading.", src: "images/solid-box/solid4.jpg", type: "image" },
-      { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware and bottles.", src: "images/solid-box/solid5.jpg", type: "image" },
-      { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid-box/solid6.jpg", type: "image" },
-      { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid-box/solid7.jpg", type: "image" },
-      { id: "sb-8", title: "Solid Box Video - Packing & Handling Demonstration", category: "solid-box", desc: "Live video demonstration of solid box packing standards and strength verification.", src: "images/solid-box/solid8.mp4", type: "video" },
+      { id: "sb-0", title: "Solid Box - Stage 0 (Specification Overview)", category: "solid-box", desc: "Rigid heavy-duty container carton for high-weight and fragile consignments.", src: "images/solid0.jpg", type: "image" },
+      { id: "sb-1", title: "Solid Box - Stage 1 (Base Construction)", category: "solid-box", desc: "Reinforced 7-ply corrugated carton box with double-bottom panel strength.", src: "images/solid1.jpg", type: "image" },
+      { id: "sb-2", title: "Solid Box - Stage 2 (Internal Padding)", category: "solid-box", desc: "Moisture-resistant heavy item storage carton with foam lining for crockery.", src: "images/solid2.jpg", type: "image" },
+      { id: "sb-3", title: "Solid Box - Stage 3 (Item Staging)", category: "solid-box", desc: "Standard consignment packaging with individual item separation and cushioning.", src: "images/solid3.jpg", type: "image" },
+      { id: "sb-4", title: "Solid Box - Stage 4 (Stacking Integrity)", category: "solid-box", desc: "Stackable high-load corrugated carton designed for compact container loading.", src: "images/solid4.jpg", type: "image" },
+      { id: "sb-5", title: "Solid Box - Stage 5 (Divider System)", category: "solid-box", desc: "Internal cell divider structure inside solid carton for glassware.", src: "images/solid5.jpg", type: "image" },
+      { id: "sb-6", title: "Solid Box - Stage 6 (Strapping Band Reinforcement)", category: "solid-box", desc: "Reinforced edges with tensioned plastic strapping bands for transit impact protection.", src: "images/solid6.jpg", type: "image" },
+      { id: "sb-7", title: "Solid Box - Stage 7 (Final Sealed Consignment)", category: "solid-box", desc: "Final sealed consignment carton ready for palletization and freight dispatch.", src: "images/solid7.jpg", type: "image" },
+      { id: "sb-8", title: "Solid Box Video - Packing & Handling (Part 1)", category: "solid-box", desc: "Live video demonstration of solid box packing standards.", src: "images/solid8.mp4", type: "video" },
+      { id: "sb-9", title: "Solid Box Video - Strength & Transit Test (Part 2)", category: "solid-box", desc: "Live video demonstration of solid box strength verification.", src: "images/solid9.mp4", type: "video" },
 
       // ==========================================
-      // 4. TV BOX (images/tv/)
+      // 4. TV BOX (images/tv*.jpg)
       // ==========================================
-      { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv/tv0.jpg", type: "image" },
-      { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv/tv1.jpg", type: "image" },
-      { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv/tv2.jpg", type: "image" }
+      { id: "tv-0", title: "LED TV Packaging Box - Overview", category: "tv", desc: "Custom double-wall foam cushioned container carton designed for LED/OLED TV protection.", src: "images/tv0.jpg", type: "image" },
+      { id: "tv-1", title: "LED TV Box - Screen Edge & Corner Guard", category: "tv", desc: "Multi-layer corner guards and internal thermocol padding structure for fragile displays.", src: "images/tv1.jpg", type: "image" },
+      { id: "tv-2", title: "LED TV Box - Final Sealed Consignment", category: "tv", desc: "Double-walled outer casing sealed with reinforced heavy-duty strapping tape.", src: "images/tv2.jpg", type: "image" }
     ];
 
     let currentActiveItem = null;
 
-    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to trigger download on all devices)
+    // DIRECT BLOB DOWNLOAD HANDLER (Guaranteed to download directly to local storage)
     async function forceDownloadMedia(mediaUrl, fileName) {
       const ext = mediaUrl.endsWith(".mp4") ? ".mp4" : (mediaUrl.endsWith(".jpeg") ? ".jpeg" : ".jpg");
       const fullFileName = fileName.endsWith(ext) ? fileName : `${fileName}${ext}`;
@@ -603,27 +604,22 @@
       });
     }
 
-    // MULTI-PATH FALLBACK ENGINE (Tests both lowercase and capitalized variations for GitHub Pages)
+    // MULTI-PATH FALLBACK (Tests direct images/, ./images/, root, and extension variations)
     function tryAlternatePaths(element, originalPath, isVideo) {
       if (element.dataset.failed) return;
       
       const fileName = originalPath.split('/').pop();
-      const folder = originalPath.includes('/') ? originalPath.substring(0, originalPath.lastIndexOf('/')) : '';
-
-      // Create permutations for case variations (e.g. Bike-1 vs bike-1)
-      const capitalizedFileName = fileName.charAt(0).toUpperCase() + fileName.slice(1);
-      const lowerFileName = fileName.toLowerCase();
 
       const attempts = [
         originalPath,
         `./${originalPath}`,
-        folder ? `${folder}/${lowerFileName}` : lowerFileName,
-        folder ? `${folder}/${capitalizedFileName}` : capitalizedFileName,
-        `images/${lowerFileName}`,
-        `images/${capitalizedFileName}`,
+        `images/${fileName}`,
+        fileName,
         originalPath.replace('.jpg', '.jpeg'),
         originalPath.replace('.jpeg', '.jpg'),
-        originalPath.replace('.jpg', '.JPG')
+        originalPath.replace('.jpg', '.JPG'),
+        originalPath.replace('.JPG', '.jpg'),
+        originalPath.replace('.mp4', '.MP4')
       ];
 
       const uniqueAttempts = [...new Set(attempts)];
