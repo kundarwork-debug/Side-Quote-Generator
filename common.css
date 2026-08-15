@@ -1,5 +1,5 @@
 /* =========================================================
-   APML COMMON STYLESHEET & GOOGLE MATERIAL DESIGN 3 THEME
+   APML UNIFIED COMMON CSS (GOOGLE MATERIAL DESIGN 3)
    ========================================================= */
 :root {
   --md-sys-color-primary: #b91c1c;
@@ -20,30 +20,25 @@
   --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Base Reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+/* =========================================================
+   HEADER STYLING
+   ========================================================= */
+#header-container {
+  width: 100%;
 }
 
-/* =========================================================
-   COMMON HEADER & NAVBAR
-   ========================================================= */
 .site-header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 64px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: #ffffff;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   z-index: 1000;
   display: flex;
   align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .header-inner {
@@ -58,11 +53,12 @@
 
 /* Brand Logo */
 .site-logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
   color: var(--md-sys-color-on-surface);
+  user-select: none;
 }
 
 .logo-badge {
@@ -81,8 +77,9 @@
 }
 
 .logo-text {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 800;
+  color: var(--md-sys-color-on-surface);
   letter-spacing: -0.02em;
 }
 
@@ -104,7 +101,7 @@
   padding: 8px 14px;
   text-decoration: none;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--md-sys-color-on-surface-variant);
   border-radius: var(--md-sys-shape-corner-full);
   transition: var(--transition-m3);
@@ -132,7 +129,6 @@
   height: 42px;
   padding: 8px;
   border-radius: 50%;
-  position: relative;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -145,17 +141,16 @@
   background-color: var(--md-sys-color-primary-container);
 }
 
-/* Hamburger 3 Lines */
 .hamburger-btn .bar {
+  display: block;
   width: 22px;
   height: 2.5px;
   background-color: var(--md-sys-color-on-surface);
   border-radius: 2px;
   transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), opacity 0.25s ease, background-color 0.25s ease;
-  transform-origin: center;
 }
 
-/* Active State: Rotation + Morph into 'X' */
+/* Rotation & Morph Animation when Clicked */
 .hamburger-btn.is-active {
   transform: rotate(90deg);
 }
@@ -176,13 +171,18 @@
 }
 
 /* =========================================================
-   COMMON FOOTER
+   FOOTER STYLING
    ========================================================= */
+#footer-container {
+  width: 100%;
+  margin-top: auto;
+}
+
 .site-footer {
   background: #ffffff;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   padding: 24px 20px;
-  margin-top: auto;
+  width: 100%;
 }
 
 .footer-inner {
@@ -199,13 +199,13 @@
 
 .footer-links {
   display: flex;
-  gap: 14px;
+  gap: 16px;
 }
 
 .footer-links a {
   text-decoration: none;
   color: var(--md-sys-color-on-surface-variant);
-  font-weight: 500;
+  font-weight: 600;
   transition: color 0.2s ease;
 }
 
@@ -214,7 +214,7 @@
 }
 
 /* =========================================================
-   RESPONSIVE MOBILE DRAWER MENU
+   MOBILE RESPONSIVE DRAWER
    ========================================================= */
 @media (max-width: 860px) {
   .hamburger-btn {
