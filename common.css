@@ -77,14 +77,29 @@
   height: 36px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-primary);
-  border: 2px solid var(--md-sys-color-primary);
+  border: 1.5px solid rgba(185, 28, 28, 0.25);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  font-size: 14px;
-  letter-spacing: -0.5px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Continuously Rotating Header Logo Animation */
+.site-header .logo-badge img {
+  animation: continuousSpin 10s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes continuousSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .logo-text {
@@ -134,7 +149,6 @@
   transform-origin: center;
 }
 
-/* Active State: 90-degree Rotation + Morph into 'X' */
 .hamburger-btn.is-active {
   transform: rotate(90deg);
   background-color: var(--md-sys-color-primary-container);
@@ -246,15 +260,15 @@
   gap: 16px;
 }
 
-.footer-links a {
+.footer-about-btn {
   text-decoration: none;
-  color: var(--md-sys-color-on-surface-variant);
-  font-weight: 600;
-  transition: color 0.2s ease;
+  font-weight: 700;
+  color: var(--md-sys-color-primary);
+  transition: opacity 0.2s ease;
 }
 
-.footer-links a:hover {
-  color: var(--md-sys-color-primary);
+.footer-about-btn:hover {
+  opacity: 0.8;
 }
 
 @media (max-width: 600px) {
