@@ -2,13 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>APML - Internal Operations Portal & Utilities</title>
 
+  <!-- Common SVG Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2242%22 fill=%22none%22 stroke=%22%23b91c1c%22 stroke-width=%229%22/><text x=%2250%22 y=%2262%22 font-size=%2238%22 font-family=%22Arial, Helvetica, sans-serif%22 font-weight=%22900%22 fill=%22%23b91c1c%22 text-anchor=%22middle%22 letter-spacing=%22-1%22>KP</text></svg>">
 
+  <!-- STANDARD COMMON CSS -->
   <link rel="stylesheet" href="common.css">
 
+  <!-- Google Material Symbols Outlined Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
   <style>
@@ -26,16 +29,17 @@
       --md-sys-color-on-surface-variant: #64748b;
       --md-sys-shape-corner-small: 8px;
       --md-sys-shape-corner-medium: 14px;
-      --md-sys-shape-corner-large: 24px;
+      --md-sys-shape-corner-large: 20px;
       --md-sys-shape-corner-full: 9999px;
       --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
       --md-elevation-2: 0px 6px 16px rgba(0, 0, 0, 0.08), 0px 2px 6px rgba(0, 0, 0, 0.04);
       --md-elevation-3: 0px 16px 36px rgba(185, 28, 28, 0.14), 0px 4px 12px rgba(0, 0, 0, 0.06);
-      --transition-m3: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+      --transition-m3: all 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
 
     html {
       scroll-behavior: smooth;
+      overflow-x: hidden;
     }
 
     * {
@@ -51,6 +55,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      width: 100%;
       overflow-x: hidden;
     }
 
@@ -60,127 +65,460 @@
     }
 
     /* =========================================================
-       DIRECTIONAL SCROLL ANIMATION CLASSES (INTERSECTION OBSERVER)
+       DIRECTIONAL SCROLL ANIMATIONS (INTERSECTION OBSERVER)
        ========================================================= */
     .reveal-from-left {
       opacity: 0;
-      transform: translateX(-60px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(-40px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
     .reveal-from-right {
       opacity: 0;
-      transform: translateX(60px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateX(40px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
     .reveal-from-bottom {
       opacity: 0;
-      transform: translateY(50px);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(30px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
     .reveal-zoom-in {
       opacity: 0;
-      transform: scale(0.92);
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: scale(0.95);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
-    /* Active State when in view */
     .reveal-active {
       opacity: 1 !important;
       transform: translate(0, 0) scale(1) !important;
     }
 
-    .delay-1 { transition-delay: 0.1s; }
-    .delay-2 { transition-delay: 0.2s; }
-    .delay-3 { transition-delay: 0.3s; }
+    .delay-1 { transition-delay: 0.08s; }
+    .delay-2 { transition-delay: 0.16s; }
+    .delay-3 { transition-delay: 0.24s; }
 
     /* =========================================================
-       HERO SECTION & METRICS BAR
+       HERO SECTION
        ========================================================= */
     .hero-container {
       max-width: 960px;
       margin: 0 auto;
-      padding: 120px 20px 40px 20px;
+      padding: 100px 16px 36px 16px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     .portal-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 16px;
+      padding: 6px 14px;
       background: var(--md-sys-color-primary-container);
       border: 1px solid rgba(185, 28, 28, 0.2);
       border-radius: var(--md-sys-shape-corner-full);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--md-sys-color-primary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .hero-title {
-      font-size: 42px;
+      font-size: clamp(28px, 6vw, 42px);
       font-weight: 900;
       color: var(--md-sys-color-on-surface);
       letter-spacing: -0.025em;
       line-height: 1.2;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      word-break: break-word;
     }
 
     .hero-title span {
       color: var(--md-sys-color-primary);
-      position: relative;
       display: inline-block;
     }
 
     .hero-desc {
-      font-size: 17px;
+      font-size: clamp(14px, 3.5vw, 16px);
       font-weight: 600;
       color: var(--md-sys-color-on-surface-variant);
-      max-width: 660px;
-      line-height: 1.6;
-      margin-bottom: 20px;
+      max-width: 620px;
+      line-height: 1.5;
+      margin-bottom: 24px;
       letter-spacing: 0.2px;
+      padding: 0 8px;
     }
 
-    /* Live Analytics Counter Strip (3 Badges) */
-    .live-metrics-strip {
+    /* Main Editor Hero Card */
+    .hero-action-card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 32px);
+      box-shadow: var(--md-elevation-1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      transition: var(--transition-m3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-action-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(185, 28, 28, 0.4);
+      box-shadow: var(--md-elevation-3);
+    }
+
+    .hero-icon-box {
+      width: 68px;
+      height: 68px;
+      background: var(--md-sys-color-primary-container);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-sys-color-primary);
+      transition: var(--transition-m3);
+    }
+
+    .hero-action-card:hover .hero-icon-box {
+      transform: scale(1.08) rotate(-4deg);
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+    }
+
+    .hero-icon-box span {
+      font-size: 36px;
+    }
+
+    .btn-launch-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: var(--md-sys-color-primary);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 700;
+      border-radius: var(--md-sys-shape-corner-medium);
+      transition: var(--transition-m3);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
+      width: auto;
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .btn-launch-primary:hover {
+      background: var(--md-sys-color-on-primary-container);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(185, 28, 28, 0.4);
+    }
+
+    .feature-highlights {
       display: flex;
       justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+
+    .feature-chip {
+      display: inline-flex;
       align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--md-sys-color-surface-container-low);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-full);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--md-sys-color-on-surface);
+      transition: var(--transition-m3);
+      max-width: 100%;
+    }
+
+    .feature-chip span.icon {
+      font-size: 16px;
+      color: #16a34a;
+    }
+
+    /* =========================================================
+       PAGE CONTENT SECTIONS & MOBILE FLUID GRIDS
+       ========================================================= */
+    .content-sections {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 20px 16px 40px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      width: 100%;
+    }
+
+    .section-header-wrap {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(20px, 4.5vw, 26px);
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      letter-spacing: -0.02em;
+    }
+
+    /* Spotlight Responsive Grid */
+    .spotlight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .spotlight-card {
+      background: #ffffff;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: clamp(20px, 4vw, 32px);
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--md-elevation-1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition-m3);
+      width: 100%;
+      min-width: 0;
+    }
+
+    .spotlight-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: var(--md-elevation-2);
+    }
+
+    .spotlight-icon-wrap {
+      width: 52px;
+      height: 52px;
+      background: var(--md-sys-color-primary-container);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-sys-color-primary);
+      margin-bottom: 16px;
+      transition: var(--transition-m3);
+    }
+
+    .spotlight-icon-wrap span {
+      font-size: 28px;
+    }
+
+    .spotlight-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 6px;
+    }
+
+    .spotlight-desc {
+      font-size: 13px;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.45;
+      margin-bottom: 18px;
+    }
+
+    .spotlight-chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .spotlight-subchip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      background: var(--md-sys-color-surface-container-low);
+      border-radius: 8px;
+      color: #475569;
+    }
+
+    .spotlight-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+      margin-top: auto;
+    }
+
+    /* Tools Responsive Grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: 16px;
+      width: 100%;
+    }
+
+    .tool-card {
+      background: #ffffff;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-large);
+      padding: 22px 18px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition-m3);
+      box-shadow: var(--md-elevation-1);
+      width: 100%;
+      min-width: 0;
+    }
+
+    .tool-card:hover:not(.disabled) {
+      transform: translateY(-4px);
+      border-color: var(--md-sys-color-primary);
+      box-shadow: var(--md-elevation-2);
+    }
+
+    .tool-card.disabled {
+      cursor: not-allowed;
+      opacity: 0.8;
+      background: #f8fafc;
+    }
+
+    .tool-icon-box {
+      width: 44px;
+      height: 44px;
+      background: var(--md-sys-color-primary-container);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--md-sys-color-primary);
+      margin-bottom: 14px;
+    }
+
+    .tool-icon-box span {
+      font-size: 24px;
+    }
+
+    .tool-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tool-desc {
+      font-size: 12.5px;
+      color: var(--md-sys-color-on-surface-variant);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .tool-btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--md-sys-color-primary);
+    }
+
+    .badge-soon {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--md-sys-color-primary);
+      background: var(--md-sys-color-primary-container);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      padding: 2px 6px;
+      border-radius: 8px;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       FOOTER LIVE METRICS STATUS BAR
+       ========================================================= */
+    .footer-metrics-wrapper {
+      max-width: 1140px;
+      margin: 0 auto 24px auto;
+      padding: 0 16px;
+      width: 100%;
+    }
+
+    .footer-metrics-card {
+      background: #ffffff;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-medium);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 30px;
+      box-shadow: var(--md-elevation-1);
+      width: 100%;
+    }
+
+    .footer-metrics-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface);
+    }
+
+    .footer-metrics-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .metric-chip {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: #ffffff;
+      gap: 6px;
+      background: var(--md-sys-color-surface-container-low);
       border: 1px solid var(--md-sys-color-outline-variant);
-      padding: 7px 16px;
+      padding: 5px 12px;
       border-radius: var(--md-sys-shape-corner-full);
-      font-size: 13px;
-      box-shadow: var(--md-elevation-1);
+      font-size: 12px;
       transition: var(--transition-m3);
-    }
-
-    .metric-chip:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--md-elevation-2);
-      border-color: rgba(185, 28, 28, 0.3);
     }
 
     .metric-label {
@@ -195,8 +533,8 @@
     }
 
     .live-pulse-dot {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       background-color: #22c55e;
       border-radius: 50%;
       display: inline-block;
@@ -206,362 +544,59 @@
 
     @keyframes livePulse {
       0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-      70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
       100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
     }
 
-    /* Main Editor Hero Card */
-    .hero-action-card {
-      width: 100%;
-      background: #ffffff;
-      border: 1px solid var(--md-sys-color-outline-variant);
-      border-radius: var(--md-sys-shape-corner-large);
-      padding: 44px 32px;
-      box-shadow: var(--md-elevation-1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 22px;
-      transition: var(--transition-m3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-action-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(185, 28, 28, 0.4);
-      box-shadow: var(--md-elevation-3);
-    }
-
-    .hero-icon-box {
-      width: 76px;
-      height: 76px;
-      background: var(--md-sys-color-primary-container);
-      border-radius: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--md-sys-color-primary);
-      transition: var(--transition-m3);
-    }
-
-    .hero-action-card:hover .hero-icon-box {
-      transform: scale(1.1) rotate(-4deg);
-      background: var(--md-sys-color-primary);
-      color: #ffffff;
-    }
-
-    .hero-icon-box span {
-      font-size: 40px;
-    }
-
-    .btn-launch-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 16px 36px;
-      background: var(--md-sys-color-primary);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 700;
-      border-radius: var(--md-sys-shape-corner-medium);
-      transition: var(--transition-m3);
-      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
-    }
-
-    .btn-launch-primary:hover {
-      background: var(--md-sys-color-on-primary-container);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(185, 28, 28, 0.4);
-    }
-
-    .btn-launch-primary:hover span.arrow-icon {
-      transform: translateX(5px);
-    }
-
-    .feature-highlights {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-top: 6px;
-    }
-
-    .feature-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: var(--md-sys-color-surface-container-low);
-      border: 1px solid var(--md-sys-color-outline-variant);
-      border-radius: var(--md-sys-shape-corner-full);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--md-sys-color-on-surface);
-      transition: var(--transition-m3);
-    }
-
-    .feature-chip:hover {
-      background: #ffffff;
-      border-color: var(--md-sys-color-primary);
-      color: var(--md-sys-color-primary);
-      transform: translateY(-2px);
-    }
-
-    .feature-chip span.icon {
-      font-size: 18px;
-      color: #16a34a;
-    }
-
     /* =========================================================
-       PAGE CONTENT SECTIONS
+       PHONE SCREEN MEDIA QUERIES
        ========================================================= */
-    .content-sections {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 30px 20px 80px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 70px;
-    }
-
-    .section-header-wrap {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-
-    .section-tag {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--md-sys-color-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .section-title {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--md-sys-color-on-surface);
-      letter-spacing: -0.02em;
-    }
-
-    /* SPOTLIGHT CARDS */
-    .spotlight-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 28px;
-    }
-
-    .spotlight-card {
-      background: #ffffff;
-      border: 1px solid var(--md-sys-color-outline-variant);
-      border-radius: var(--md-sys-shape-corner-large);
-      padding: 36px 30px;
-      text-decoration: none;
-      color: inherit;
-      box-shadow: var(--md-elevation-1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: var(--transition-m3);
-      position: relative;
-    }
-
-    .spotlight-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--md-sys-color-primary);
-      box-shadow: var(--md-elevation-2);
-    }
-
-    .spotlight-icon-wrap {
-      width: 58px;
-      height: 58px;
-      background: var(--md-sys-color-primary-container);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--md-sys-color-primary);
-      margin-bottom: 20px;
-      transition: var(--transition-m3);
-    }
-
-    .spotlight-card:hover .spotlight-icon-wrap {
-      background: var(--md-sys-color-primary);
-      color: #ffffff;
-      transform: scale(1.08);
-    }
-
-    .spotlight-icon-wrap span {
-      font-size: 32px;
-    }
-
-    .spotlight-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--md-sys-color-on-surface);
-      margin-bottom: 8px;
-    }
-
-    .spotlight-desc {
-      font-size: 14px;
-      color: var(--md-sys-color-on-surface-variant);
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .spotlight-chips-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 24px;
-    }
-
-    .spotlight-subchip {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      background: var(--md-sys-color-surface-container-low);
-      border-radius: 10px;
-      color: #475569;
-    }
-
-    .spotlight-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--md-sys-color-primary);
-      margin-top: auto;
-      transition: gap 0.2s ease;
-    }
-
-    .spotlight-card:hover .spotlight-action {
-      gap: 12px;
-    }
-
-    /* UTILITIES GRID */
-    .tools-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 22px;
-    }
-
-    .tool-card {
-      background: #ffffff;
-      border: 1px solid var(--md-sys-color-outline-variant);
-      border-radius: var(--md-sys-shape-corner-large);
-      padding: 28px 24px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: var(--transition-m3);
-      box-shadow: var(--md-elevation-1);
-      position: relative;
-    }
-
-    .tool-card:hover:not(.disabled) {
-      transform: translateY(-6px);
-      border-color: var(--md-sys-color-primary);
-      box-shadow: var(--md-elevation-2);
-    }
-
-    .tool-card.disabled {
-      cursor: not-allowed;
-      opacity: 0.8;
-      background: #f8fafc;
-    }
-
-    .tool-icon-box {
-      width: 50px;
-      height: 50px;
-      background: var(--md-sys-color-primary-container);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--md-sys-color-primary);
-      margin-bottom: 16px;
-      transition: var(--transition-m3);
-    }
-
-    .tool-card:hover:not(.disabled) .tool-icon-box {
-      background: var(--md-sys-color-primary);
-      color: #ffffff;
-      transform: scale(1.06);
-    }
-
-    .tool-icon-box span {
-      font-size: 26px;
-    }
-
-    .tool-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--md-sys-color-on-surface);
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .tool-desc {
-      font-size: 13px;
-      color: var(--md-sys-color-on-surface-variant);
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .tool-btn-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--md-sys-color-primary);
-      transition: gap 0.2s ease;
-    }
-
-    .tool-card:hover:not(.disabled) .tool-btn-action {
-      gap: 10px;
-    }
-
-    .badge-soon {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--md-sys-color-primary);
-      background: var(--md-sys-color-primary-container);
-      border: 1px solid rgba(185, 28, 28, 0.2);
-      padding: 2px 8px;
-      border-radius: 10px;
-      text-transform: uppercase;
-    }
-
-    @media (max-width: 768px) {
-      .hero-container { padding-top: 90px; }
-      .hero-title { font-size: 30px; }
-      .hero-action-card { padding: 32px 20px; }
-      .btn-launch-primary { width: 100%; }
+    @media (max-width: 600px) {
+      .hero-container {
+        padding-top: 75px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .content-sections {
+        padding-left: 12px;
+        padding-right: 12px;
+        gap: 36px;
+      }
+      .footer-metrics-wrapper {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+      .btn-launch-primary {
+        width: 100%;
+      }
+      .footer-metrics-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .footer-metrics-chips {
+        width: 100%;
+        gap: 6px;
+      }
+      .metric-chip {
+        font-size: 11px;
+        padding: 4px 10px;
+      }
     }
   </style>
 </head>
 <body>
 
+  <!-- COMMON HEADER CONTAINER -->
   <div id="header-container"></div>
 
+  <!-- MAIN SCROLLABLE SECTION -->
   <main>
     
+    <!-- Hero Highlight -->
     <section class="hero-container">
       
       <div class="portal-badge reveal-from-bottom">
-        <span class="material-symbols-outlined" style="font-size: 16px;">hub</span>
+        <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
         <span>APML Internal Portal</span>
       </div>
 
@@ -573,26 +608,7 @@
         Work Smarter, Move Faster.
       </p>
 
-      <div class="live-metrics-strip reveal-from-bottom delay-2">
-        <div class="metric-chip">
-          <span class="live-pulse-dot"></span>
-          <span class="metric-label">Live Online:</span>
-          <span class="metric-val" id="liveUserCount">1</span>
-        </div>
-
-        <div class="metric-chip">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #b91c1c;">picture_as_pdf</span>
-          <span class="metric-label">PDFs Generated:</span>
-          <span class="metric-val" id="totalPdfDownloads">0</span>
-        </div>
-
-        <div class="metric-chip">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #2563eb;">photo_library</span>
-          <span class="metric-label">Media Downloaded:</span>
-          <span class="metric-val" id="totalMediaDownloads">0</span>
-        </div>
-      </div>
-
+      <!-- Primary Action Card -->
       <div class="hero-action-card reveal-zoom-in delay-3">
         <div class="hero-icon-box">
           <span class="material-symbols-outlined">edit_note</span>
@@ -600,7 +616,7 @@
 
         <a href="editor.html" class="btn-launch-primary">
           <span>Open Quotation Editor</span>
-          <span class="material-symbols-outlined arrow-icon">arrow_forward</span>
+          <span class="material-symbols-outlined" style="font-size: 18px;">arrow_forward</span>
         </a>
 
         <div class="feature-highlights">
@@ -620,8 +636,10 @@
       </div>
     </section>
 
+    <!-- Scrollable Detailed Feature Sections -->
     <section class="content-sections">
       
+      <!-- SPOTLIGHT HIGHLIGHTS -->
       <div>
         <div class="section-header-wrap reveal-from-bottom">
           <span class="section-tag">Featured Utilities</span>
@@ -630,6 +648,7 @@
 
         <div class="spotlight-grid">
           
+          <!-- Packing Gallery Spotlight -->
           <a href="gallery.html" class="spotlight-card reveal-from-left">
             <div>
               <div class="spotlight-icon-wrap">
@@ -650,10 +669,11 @@
             </div>
             <div class="spotlight-action">
               <span>Explore Gallery Standards</span>
-              <span class="material-symbols-outlined">arrow_forward</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
             </div>
           </a>
 
+          <!-- Quotation Editor Spotlight -->
           <a href="editor.html" class="spotlight-card reveal-from-right">
             <div>
               <div class="spotlight-icon-wrap">
@@ -672,13 +692,14 @@
             </div>
             <div class="spotlight-action">
               <span>Launch Document Studio</span>
-              <span class="material-symbols-outlined">arrow_forward</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
             </div>
           </a>
 
         </div>
       </div>
 
+      <!-- ADDITIONAL RATE CALCULATORS -->
       <div>
         <div class="section-header-wrap reveal-from-bottom">
           <span class="section-tag">Rate Calculators</span>
@@ -687,6 +708,7 @@
 
         <div class="tools-grid">
           
+          <!-- APML Lite Rate -->
           <a href="APML-Lite.html" class="tool-card reveal-from-left delay-1">
             <div>
               <div class="tool-icon-box">
@@ -697,10 +719,11 @@
             </div>
             <div class="tool-btn-action">
               <span>Open Lite Calculator</span>
-              <span class="material-symbols-outlined">arrow_forward</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
             </div>
           </a>
 
+          <!-- Car Rate Calculator -->
           <a href="car-rate.html" class="tool-card reveal-from-bottom delay-2">
             <div>
               <div class="tool-icon-box">
@@ -711,10 +734,11 @@
             </div>
             <div class="tool-btn-action">
               <span>Open Car Calculator</span>
-              <span class="material-symbols-outlined">arrow_forward</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
             </div>
           </a>
 
+          <!-- APML Local Rate -->
           <div class="tool-card disabled reveal-from-right delay-3">
             <div>
               <div class="tool-icon-box">
@@ -728,7 +752,7 @@
             </div>
             <div class="tool-btn-action" style="color: var(--md-sys-color-on-surface-variant);">
               <span>Coming Soon</span>
-              <span class="material-symbols-outlined">lock</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">lock</span>
             </div>
           </div>
 
@@ -737,15 +761,52 @@
 
     </section>
 
+    <!-- FOOTER LIVE METRICS STATUS BAR -->
+    <div class="footer-metrics-wrapper reveal-from-bottom">
+      <div class="footer-metrics-card">
+        <div class="footer-metrics-header">
+          <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">analytics</span>
+          <span>Portal Live Activity</span>
+        </div>
+
+        <div class="footer-metrics-chips">
+          <!-- 1. Live Online Users -->
+          <div class="metric-chip">
+            <span class="live-pulse-dot"></span>
+            <span class="metric-label">Live Online:</span>
+            <span class="metric-val" id="liveUserCount">1</span>
+          </div>
+
+          <!-- 2. Total PDF Downloads -->
+          <div class="metric-chip">
+            <span class="material-symbols-outlined" style="font-size: 14px; color: #b91c1c;">picture_as_pdf</span>
+            <span class="metric-label">PDFs Generated:</span>
+            <span class="metric-val" id="totalPdfDownloads">0</span>
+          </div>
+
+          <!-- 3. Total Media Downloads (Photos + Videos) -->
+          <div class="metric-chip">
+            <span class="material-symbols-outlined" style="font-size: 14px; color: #2563eb;">photo_library</span>
+            <span class="metric-label">Media Downloaded:</span>
+            <span class="metric-val" id="totalMediaDownloads">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
+  <!-- COMMON FOOTER CONTAINER -->
   <div id="footer-container"></div>
 
+  <!-- STANDARD COMMON SCRIPT -->
   <script src="common.js"></script>
 
+  <!-- FIREBASE REALTIME ANALYTICS LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
+  <!-- SCRIPT: INTERSECTION OBSERVER & FIREBASE REALTIME PRESENCE -->
   <script>
     // 1. DIRECTIONAL SCROLL ANIMATIONS
     document.addEventListener("DOMContentLoaded", () => {
@@ -764,8 +825,8 @@
         },
         {
           root: null,
-          threshold: 0.12,
-          rootMargin: "0px 0px -40px 0px"
+          threshold: 0.08,
+          rootMargin: "0px 0px -20px 0px"
         }
       );
 
