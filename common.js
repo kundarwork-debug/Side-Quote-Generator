@@ -25,10 +25,6 @@
 
             <!-- Navigation Links -->
             <nav class="nav-menu" id="navMenu">
-              <a href="index.html" class="nav-link ${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
-                <span>Home</span>
-              </a>
               <a href="editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined" style="font-size: 18px;">edit_note</span>
                 <span>Quotation Editor</span>
@@ -44,10 +40,6 @@
               <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined" style="font-size: 18px;">directions_car</span>
                 <span>Car Rate</span>
-              </a>
-              <a href="about.html" class="nav-link ${currentPage === 'about.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">person</span>
-                <span>About</span>
               </a>
             </nav>
           </div>
