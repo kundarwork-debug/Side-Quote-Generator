@@ -102,7 +102,7 @@
       footerContainer.innerHTML = `
         <footer class="site-footer">
           <div class="footer-inner">
-            <div>&copy; ${new Date().getFullYear()} APML Internal Logistics & Operations Suite. All rights reserved.</div>
+            <div>Designed &amp; developed by Prasad</div>
             <div class="footer-links">
               <a href="index.html">Portal Home</a>
               <a href="editor.html">Editor</a>
