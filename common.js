@@ -5,7 +5,7 @@
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. Injects Header (Permanent Rotating Hamburger on All Devices)
+    // 1. Injects Header (Universal Rotating Hamburger for Web & Mobile)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
