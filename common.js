@@ -5,14 +5,16 @@
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. Injects Header (Universal Rotating Hamburger for Web & Mobile)
+    // 1. INJECT HEADER (Rotating Hub Logo)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
         <header class="site-header">
           <div class="header-inner">
             <a href="index.html" class="site-logo">
-              <div class="logo-badge">KP</div>
+              <div class="logo-badge">
+                <img src="logo.svg" alt="APML Hub" style="width: 24px; height: 24px; display: block; object-fit: contain;">
+              </div>
               <div class="logo-text">APML <span>Portal</span></div>
             </a>
 
@@ -23,7 +25,7 @@
               <span class="bar"></span>
             </button>
 
-            <!-- Navigation Menu Dropdown (About removed) -->
+            <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
               <a href="index.html" class="nav-link ${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
                 <span class="material-symbols-outlined">home</span>
@@ -62,7 +64,6 @@
           hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
         });
 
-        // Close menu when clicking on any menu link
         navMenu.querySelectorAll(".nav-link").forEach((link) => {
           link.addEventListener("click", () => {
             hamburgerBtn.classList.remove("is-active");
@@ -71,7 +72,6 @@
           });
         });
 
-        // Close menu when clicking outside
         document.addEventListener("click", (e) => {
           if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
             hamburgerBtn.classList.remove("is-active");
@@ -80,7 +80,6 @@
           }
         });
 
-        // Close menu on Escape key
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
             hamburgerBtn.classList.remove("is-active");
@@ -91,13 +90,18 @@
       }
     }
 
-    // 2. Injects Footer (Updated with About Me button only)
+    // 2. INJECT FOOTER (Static Logo Badge + About Me Link)
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
         <footer class="site-footer">
           <div class="footer-inner">
-            <div>Designed &amp; developed by Prasad</div>
+            <div class="footer-brand" style="display: flex; align-items: center; gap: 8px;">
+              <div class="logo-badge" style="width: 28px; height: 28px;">
+                <img src="logo.svg" alt="APML Hub" style="width: 18px; height: 18px; display: block; object-fit: contain;">
+              </div>
+              <span style="font-weight: 700; color: var(--md-sys-color-on-surface);">Designed &amp; developed by Prasad</span>
+            </div>
             <div class="footer-links">
               <a href="about.html" class="footer-about-btn">About Me</a>
             </div>
