@@ -23,7 +23,7 @@
               <span class="bar"></span>
             </button>
 
-            <!-- Complete Navigation Menu Dropdown -->
+            <!-- Navigation Menu Dropdown (About removed) -->
             <nav class="nav-menu" id="navMenu">
               <a href="index.html" class="nav-link ${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
                 <span class="material-symbols-outlined">home</span>
@@ -45,10 +45,6 @@
                 <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
               </a>
-              <a href="about.html" class="nav-link ${currentPage === 'about.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">person</span>
-                <span>About</span>
-              </a>
             </nav>
           </div>
         </header>
@@ -59,7 +55,6 @@
       const navMenu = document.getElementById("navMenu");
 
       if (hamburgerBtn && navMenu) {
-        // Toggle menu and button animation
         hamburgerBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           const isOpen = hamburgerBtn.classList.toggle("is-active");
@@ -76,7 +71,7 @@
           });
         });
 
-        // Close menu when clicking outside anywhere on the document
+        // Close menu when clicking outside
         document.addEventListener("click", (e) => {
           if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
             hamburgerBtn.classList.remove("is-active");
@@ -85,7 +80,7 @@
           }
         });
 
-        // Close menu on Escape key press
+        // Close menu on Escape key
         document.addEventListener("keydown", (e) => {
           if (e.key === "Escape") {
             hamburgerBtn.classList.remove("is-active");
@@ -96,7 +91,7 @@
       }
     }
 
-    // 2. Injects Footer
+    // 2. Injects Footer (Updated with About Me button only)
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -104,10 +99,7 @@
           <div class="footer-inner">
             <div>Designed &amp; developed by Prasad</div>
             <div class="footer-links">
-              <a href="index.html">Portal Home</a>
-              <a href="editor.html">Editor</a>
-              <a href="gallery.html">Gallery</a>
-              <a href="about.html">Developer</a>
+              <a href="about.html" class="footer-about-btn">About Me</a>
             </div>
           </div>
         </footer>
