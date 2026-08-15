@@ -5,7 +5,7 @@
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. Injects Header
+    // 1. Injects Header (Permanent Rotating Hamburger on All Devices)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -23,34 +23,43 @@
               <span class="bar"></span>
             </button>
 
-            <!-- Navigation Links -->
+            <!-- Complete Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
+              <a href="index.html" class="nav-link ${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
+                <span class="material-symbols-outlined">home</span>
+                <span>Home</span>
+              </a>
               <a href="editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">edit_note</span>
+                <span class="material-symbols-outlined">edit_note</span>
                 <span>Quotation Editor</span>
               </a>
               <a href="gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">photo_library</span>
+                <span class="material-symbols-outlined">photo_library</span>
                 <span>Gallery</span>
               </a>
               <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">grid_view</span>
+                <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
               </a>
               <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined" style="font-size: 18px;">directions_car</span>
+                <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
+              </a>
+              <a href="about.html" class="nav-link ${currentPage === 'about.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">person</span>
+                <span>About</span>
               </a>
             </nav>
           </div>
         </header>
       `;
 
-      // Hamburger Click Event Listener
+      // Event Listeners for Hamburger Click & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
       const navMenu = document.getElementById("navMenu");
 
       if (hamburgerBtn && navMenu) {
+        // Toggle menu and button animation
         hamburgerBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           const isOpen = hamburgerBtn.classList.toggle("is-active");
@@ -58,7 +67,7 @@
           hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
         });
 
-        // Close dropdown when any link is clicked
+        // Close menu when clicking on any menu link
         navMenu.querySelectorAll(".nav-link").forEach((link) => {
           link.addEventListener("click", () => {
             hamburgerBtn.classList.remove("is-active");
@@ -67,9 +76,18 @@
           });
         });
 
-        // Close dropdown if user clicks outside
+        // Close menu when clicking outside anywhere on the document
         document.addEventListener("click", (e) => {
           if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        // Close menu on Escape key press
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
             hamburgerBtn.classList.remove("is-active");
             navMenu.classList.remove("open");
             hamburgerBtn.setAttribute("aria-expanded", "false");
