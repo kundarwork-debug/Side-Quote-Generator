@@ -66,7 +66,7 @@
 
         .main-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1140px;
             margin: 0 auto;
             padding: 32px 16px 48px;
             display: flex;
@@ -396,11 +396,11 @@
             font-size: 13px;
             text-align: left;
             background: #ffffff;
-            min-width: 700px;
+            min-width: 760px;
         }
 
         th, td {
-            padding: 12px 16px;
+            padding: 12px 14px;
             border-bottom: 1px solid var(--md-sys-color-outline-variant);
             vertical-align: middle;
         }
@@ -561,7 +561,7 @@
             
             <div class="lookup-box">
                 <span class="material-symbols-outlined lookup-icon">location_city</span>
-                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Enter branch name (e.g. Bangalore, Pune, Ahmedabad, Agra, Surat...)" list="branchList">
+                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Enter branch name (e.g. Bangalore, Pune, Ahmedabad, Agra, Surat, Bhiwandi...)" list="branchList">
                 <datalist id="branchList"></datalist>
             </div>
 
@@ -616,7 +616,7 @@
                 </div>
                 <div class="search-box">
                     <span class="material-symbols-outlined search-icon">search</span>
-                    <input type="text" id="tableSearchInput" placeholder="Filter table by city, HOD, phone...">
+                    <input type="text" id="tableSearchInput" placeholder="Filter table by city, HOD, phone, address...">
                 </div>
             </div>
 
@@ -715,27 +715,83 @@
         const db = firebase.database();
         const hubsRef = db.ref('hubs');
 
-        // All Data from HUB DETAILS.xlsx
+        // COMPLETE & CLEANED HUB DATA FROM EXCEL
         const initialExcelHubs = [
-            { region: "ERO", city: "AGARTALA", hod: "MONIRUL SARDAR", contact: "7086086671", address: "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura west, 799008", map: "" },
-            { region: "KRO", city: "BANGALORE", hod: "CHHATRAPA", contact: "9379619292", address: "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111", map: "https://share.google/IRWEAkJyF63Hmwreu" },
-            { region: "NRO", city: "AGRA", hod: "RAKESH KUMAR", contact: "8839694959 / 7889977856 / 9311668205", address: "Agarwal Packers and Movers Ltd. Mugliya road shastripuram, Opp Dwarka krishna royal, sikandra Near Life Line Public school-282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
-            { region: "NRO", city: "BHATINDA", hod: "PRAVIN JATTAN", contact: "9991557100 / 9354784321", address: "APML, Gali No 6, Dhobiyana Road, Model Town, Phase 2, Bhathinda, Punjab 151001", map: "https://share.google/amayfDEOowSijAbZO" },
-            { region: "SRO", city: "HYDERABAD", hod: "Manager", contact: "8130093014", address: "Agarwal Packers and Movers Ltd. Beside Reliance petrol pump, Manoharabad Survey No.: 701/U/EE/AA/E, NH44, Manoharabad Village/Mandal, District - Medak - 502336 Hyderabad TS", map: "" },
-            { region: "WCRO", city: "AHMEDABAD", hod: "RAMA ANUJ TIWARI", contact: "9220604993", address: "APML WAREHOUSE, Natraj, 36 mtr Road To 402 A, Visalpur, Ahmedabad Gujarat 382210", map: "https://share.google/c6sobHlSLMcTZoqIH" },
-            { region: "WCRO", city: "ANKLESWER", hod: "ASHOK SHARMA", contact: "9311668190", address: "Shop number 4 Pratishtha industrial park Mira nagar, rajpipla road, Ankleshwar, Gujarat 39310", map: "https://maps.app.goo.gl/9DQKrq9i3XMUodgo9" },
-            { region: "WCRO", city: "BARODA", hod: "GYANENDRA", contact: "9342124321", address: "Baroda APML Warehouse / Transport Nagar, Gujarat", map: "" },
-            { region: "WCRO", city: "BHOPAL", hod: "RAHUL AGARWAL", contact: "7217680641 / 9302529061", address: "Agarwal Packers & Movers Ltd., Vedant Enterprises, Khasra no. 45/1/1/2 Rapadiya ward no 85 Bhopal 462026", map: "" },
-            { region: "WCRO", city: "JODHPUR", hod: "CHETAN", contact: "9352240669", address: "1/A/236, Sector-1, Kudi, Bhagtasni Housing Board, Opp. Dussehra Maidan, Near Sharda Electric Mall Jodhpur Rajasthan-342005", map: "" },
-            { region: "WCRO", city: "NAGPUR", hod: "SOHAN MANDAL", contact: "8451000898", address: "Agarwal Packers and movers Ltd. Butibori National Highway no.7, Wardha bypass dist. Nagpur- 441108", map: "https://www.google.com/maps/place/Apml+Warehouse/@20.9151518,78.990446,152m/data=!3m1!1e3!4m12!1m5!3m4!2zMjDCsDU0JzU1LjEiTiA3OMKwNTknMjguOCJF!8m2!3d20.9153054!4d78.9913283!3m5!1s0x3bd499003609b3e5:0xb11a9b495f29719b!8m2!3d20.9154164!4d78.9905472!16s%2Fg%2F11ltv00msg?hl=en&entry=ttu" },
-            { region: "WCRO", city: "PUNE", hod: "BALWAN SHARMA", contact: "7709521704", address: "APML warehouse Pune, Sudhavadi, Maharashtra 410507", map: "https://maps.app.goo.gl/8TgLqzHJ4Pi9HwTM6" },
-            { region: "WCRO", city: "SAMBHAJINAGAR", hod: "PRABHAKAR KUMAR", contact: "9325904313 / 9370361910", address: "A - 8 Atharva Classic behind Nishant Park Hotel, Shiv Krupa Colony, PWD Colony, Beed bypass road, Aurangabad - 431005", map: "" },
-            { region: "WCRO", city: "SURAT", hod: "RAVI", contact: "9377527237", address: "Z2 phase 3, Rajhansh Nagar Chalthan, palsana, Surat, Gujarat 394315", map: "" },
-            { region: "WCRO", city: "NAVI MUMBAI", hod: "RAMESH PASWAN", contact: "9323963590", address: "A-86, S CENTRAL ROAD, MIDC KOPARKHAIRNE || NEAR SATKAR HOTEL | NAVI MUMBAI - 400710", map: "" },
-            { region: "WCRO", city: "CHOWK", hod: "Hub In-Charge", contact: "9323963590", address: "Agarwal Packers and Mover Ltd APML Chowk Manivali Village, Khalapur, Chowk. Near HPCL Pump on Old Mum-Pune Highway, 410206", map: "" },
-            { region: "NRO", city: "LUCKNOW", hod: "Jitendra", contact: "9389484893", address: "Agarwal Packers and Movers Limited, Plot No. 31, Sarai Sahjadi, Junabganj, (Adjacent to Prasad Medical Institute), Lucknow-Kanpur Highway, Banthra, Lucknow (Uttar Pradesh) - 226 401", map: "" },
-            { region: "NRO", city: "GORAKHPUR", hod: "Mukesh Ji", contact: "7048910397", address: "Gorakhpur HUB Agarwal Packers & Movers Limited HOUSE NO-plot no. 38, B-42, sector-22 Gida, Gorakhpur, Uttar Pradesh 273209", map: "" },
-            { region: "WCRO", city: "RAJKOT", hod: "Hub In-Charge", contact: "9220604993", address: "Front Nayra Petrol Pump BEHIND PANKAJ TRANSPORT, NAVAGAM MAIN ROAD NAVAGAM RAJKOT PIN CODE 360001", map: "" }
+            { region: "NRO", city: "AGRA", hod: "Tilakraj Ji (Delivery Incharge)", contact: "9319402885 / 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
+            { region: "WCRO", city: "ANKLESHWAR (ANK)", hod: "Manoj Ji (Delivery Incharge)", contact: "9311668190", address: "313/16/6 Near Asian Paint Chowkdi, Behind Mastercote Company, GIDC Estate, Ankleshwar - 393002", map: "https://maps.app.goo.gl/9DQKrq9i3XMUodgo9" },
+            { region: "WCRO", city: "AHMEDABAD", hod: "Ramanuj Tiwari Ji", contact: "7439854348 / 9220604993", address: "Bakrole Circle, Dholka Road, Bisalpur Village, Ahmedabad - 382210", map: "https://share.google/c6sobHlSLMcTZoqIH" },
+            { region: "WCRO", city: "AURANGABAD (SAMBHAJINAGAR)", hod: "Prabhakar Kumar", contact: "9325904313 / 9370361910", address: "A-8 Atharva Classic, Behind Nishant Park Hotel, Shiv Krupa Colony, PWD Colony, Beed Bypass Road, Aurangabad - 431005", map: "" },
+            { region: "ERO", city: "AGARTALA", hod: "Monirul Sardar", contact: "7086086671", address: "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura West - 799008", map: "" },
+            { region: "ERO", city: "BHUBANESWAR", hod: "Sumit Tyagi", contact: "9953990319", address: "Near SP Petrol Pump, CV Raman College, Jalna, Khorda - 752054", map: "" },
+            { region: "KRO", city: "BANGALORE", hod: "Satpal Sharma", contact: "8197544321 / 9379619292", address: "Tumkur Road, TSR Godown - APML Hub, Kuluvanahalli, Karnataka - 562111", map: "https://share.google/IRWEAkJyF63Hmwreu" },
+            { region: "WCRO", city: "BARODA", hod: "Satender Ji", contact: "8849365920 / 9342124321", address: "APML Transport Nagar / Godown, Baroda, Gujarat", map: "" },
+            { region: "WCRO", city: "BHIWANDI (BHND)", hod: "Ajit Pandit / Puspender", contact: "8677834114 / 7498140442", address: "House No. 299, Cadgha Road, Dhinnar Village, Near Om Sai Service Center, Nawab Baba, Bhiwandi - 421302", map: "" },
+            { region: "WCRO", city: "BHOPAL", hod: "Nilesh Mishra / Rahul Ji", contact: "9300197385 / 9302529061", address: "Vedant Enterprises, Khasra No. 45/1/1/2, Rapadiya, Ward No. 85, Bhopal - 462026", map: "" },
+            { region: "SRO", city: "CHENNAI", hod: "Ramgopal Gour", contact: "9380850606", address: "No. B-43 & 44, SIPCOT Industrial Park, Irungattukottai, Sriperumbudur, Kanchipuram, Chennai - 602105", map: "" },
+            { region: "SRO", city: "COCHIN", hod: "Vinod Ji", contact: "9349021416", address: "Metro Pillar No. 126, TMK Building, Ground Floor, Ambattukavu, Aluva, Cochin - 683106", map: "" },
+            { region: "SRO", city: "COIMBATORE", hod: "Sunil Ji", contact: "6005920471", address: "Railway Feeder Road, Muthugoundan Pudur, Sulur Road, Coimbatore - 641402", map: "" },
+            { region: "NRO", city: "DEHRADUN", hod: "Sanjay Kumar", contact: "9359495963", address: "Plot No. A-3, Transport Nagar, Saharanpur Road, Near FCI Godown, Dehradun - 248001", map: "" },
+            { region: "NRO", city: "KHAWASPUR", hod: "Surender Ji / Dilip Ji", contact: "7428473953 / 7428473679", address: "Village Khawaspur, Pataudi Road, Near Jamalpur Chowk, Tehsil Farukh Nagar, Gurugram, Haryana - 122503", map: "" },
+            { region: "NRO", city: "PALWAL", hod: "A.K. Jha Ji", contact: "8459079072", address: "Palwal Godown, Village Mitrol, Tehsil Hodal, NH-2 Delhi-Agra Highway, Dist. Palwal, Haryana", map: "" },
+            { region: "NRO", city: "GURGAON (CAR GODOWN)", hod: "Ashok Ji", contact: "9313547051", address: "Agarwal Movers Group, 40th Milestone, Opp. Bajaj Motors, NH-8, Narsinghpur, Gurgaon - 122004", map: "" },
+            { region: "NRO", city: "DELHI (NCR)", hod: "Sandeep", contact: "8030522195", address: "Ram Nagar, 7575, Gali No-1, Paharganj, New Delhi / Chattarpur Dera Mandi - 110047", map: "" },
+            { region: "NRO", city: "FARIDABAD", hod: "Kishan", contact: "9312664114", address: "Plot No. 360/P, G/F, Sector-45, Near Huda Market, Faridabad, Haryana - 121003", map: "" },
+            { region: "WCRO", city: "GANDHIDHAM", hod: "Rakesh", contact: "9377775277", address: "Plot No. 14, Ward 9BD, Near Empire Hotel, Opp. Rajasthan Namkeen Bhandar, Gandhidham - 370201", map: "" },
+            { region: "WCRO", city: "GOA", hod: "Ashish (Warehouse Incharge)", contact: "9326535163", address: "Utility Plot X-1, Verna Industrial Estate, Verna, Goa - 403722 Near Monsope Company", map: "" },
+            { region: "NRO", city: "GURGAON (HHG)", hod: "Aman", contact: "9310424321", address: "40th Milestone, Opp. Bajaj Motors, NH-8, Narsinghpur, Gurgaon, Haryana - 122001", map: "" },
+            { region: "ERO", city: "GUWAHATI", hod: "Prabhakant Shukla", contact: "8811075003", address: "Shree Shyam Industrial Park, IIT Road, Near Bajrang Agency, Joyguru, Amingaon, Guwahati, Assam - 781031", map: "" },
+            { region: "WCRO", city: "GWALIOR", hod: "Pankaj Sharma", contact: "9311668186", address: "HRI Rudra Vihar, National Highway, Near Bhind Etawah Bridge, Malanpur, Gwalior", map: "" },
+            { region: "NRO", city: "HARIDWAR", hod: "Ashish Thakur", contact: "9958982736", address: "G3/14 Transport Nagar, Sarai Road, Jwalapur, Haridwar, Uttarakhand - 249407", map: "" },
+            { region: "NRO", city: "HISAR (HISSAR)", hod: "Shyam Bansal", contact: "9053033303", address: "Ganesh Nagar Industrial Area, Gali No. 3, Opp. Tata Telmoss Showroom, Hisar - 125001", map: "" },
+            { region: "KRO", city: "HUBLI", hod: "Manoj Kumar", contact: "9341209094", address: "Bangalore-Mumbai NH-4, Kadahalli Cross, Village Shyadambi, Taluka Shiggaon, Dist. Haveri, Karnataka - 581205", map: "" },
+            { region: "SRO", city: "HYDERABAD", hod: "Kailash", contact: "8130093014", address: "Beside Reliance Petrol Pump, NH-44, Manoharabad Village, Medak District, Hyderabad, Telangana - 502336", map: "" },
+            { region: "WCRO", city: "INDORE", hod: "Dhanraj", contact: "9329570408", address: "Sector 1, Pithampur, Dist. Dhar, Madhya Pradesh - 454775", map: "" },
+            { region: "WCRO", city: "JABALPUR", hod: "Rattan Singh", contact: "9301780115", address: "H.No. 20, Kashodhan Nagar, Ground Floor, Near Golden Town, Green City Road, Jabalpur, M.P. - 482002", map: "" },
+            { region: "NRO", city: "JAMMU", hod: "Rajesh Thakur", contact: "9314101037", address: "H.No. 4, Sec-5, Near Police Station, Channi Himmat, Jammu, Pin - 181133", map: "" },
+            { region: "WCRO", city: "JAMNAGAR", hod: "Branch In-Charge", contact: "9327024402", address: "Kothi No. 3, Paswnath Park, Near Poddar International School, Ashirwad Resorts Road, Naghedi, Jamnagar - 361006", map: "" },
+            { region: "ERO", city: "JAMSHEDPUR", hod: "Ravinder Singh", contact: "9771778236", address: "Plot No. 554, Near Magadh Line Hotel, Bhilai Pahari, Simuldanga, NH-33, Jamshedpur - 831012", map: "" },
+            { region: "WCRO", city: "JODHPUR", hod: "Kunal Sharma / Jai Parkash", contact: "9351283518 / 9352240669", address: "1/A/234, Sector-1, Kudi Bhagtasni Housing Board, Opp. Dussehra Maidan, Near ISRO Campus, Jodhpur - 342005", map: "" },
+            { region: "NRO", city: "JAIPUR", hod: "Srikesh", contact: "9309440687", address: "3/363, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur - 302021", map: "" },
+            { region: "NRO", city: "DUDU (JAIPUR)", hod: "Datta Ram", contact: "9352538947", address: "Village Padasoli, Dudu, Near Laddi Hotel, NH-8 Jaipur-Kishangarh Expressway, Rajasthan - 303008", map: "" },
+            { region: "NRO", city: "KANPUR", hod: "Sandeep Kumar / Rajesh Yadav", contact: "9389494142 / 9076905321", address: "H.No. 1A/2, Awas Vikas, Hans Puram, Near Rajrani Hospital, Hamirpur Road, Kanpur - 208021", map: "" },
+            { region: "ERO", city: "KORBA", hod: "Hub In-Charge", contact: "9300013993", address: "Plot No. 56, Indra Commercial & Residential Complex, Transport Nagar, Korba, Near Satguru Dharam Kanta - 495677", map: "" },
+            { region: "WCRO", city: "KOLHAPUR", hod: "Akash", contact: "9311668184", address: "Agarwal Packers and Movers Ltd., Nagaosata, Near KMT Petrol Pump, Shiroli, Kolhapur - 416001", map: "" },
+            { region: "ERO", city: "KOLKATA", hod: "Rajan Ji", contact: "9874566007", address: "Village Mallick Bagan, Near Banstal Bus Stand, Post Gabberia, PS Panchla, Howrah, Kolkata - 711322", map: "" },
+            { region: "NRO", city: "LUDHIANA", hod: "Anil Kumar", contact: "9815700195", address: "Plot No. 2849, Gali No. 3, Near LIC Office, Near Oriental Textile, Delhi-Jalandhar Highway, Samrala Chowk, Ludhiana - 141008", map: "" },
+            { region: "NRO", city: "LUCKNOW", hod: "Jitendra Awasthi", contact: "9389484893", address: "Junabganj, Kanpur Road, Lucknow, Uttar Pradesh - 227101", map: "" },
+            { region: "SRO", city: "MADURAI", hod: "Rama Ashish", contact: "7358277999", address: "No. 1/263B, Palandiambalam Nagar, Rajakambeeram, Y. Othakadai, Madurai - 625107", map: "" },
+            { region: "KRO", city: "MANGALORE", hod: "Chandan", contact: "9342870806", address: "3-28/8A, NH-66, Malemar, Kottara Chowki, Ashok Nagar Post, Mangalore - 575006", map: "" },
+            { region: "NRO", city: "MEERUT", hod: "Pankaj Sharma", contact: "9311668207", address: "H.No. A-5, Sector-1, Shatabdi Nagar, Near Tata Showroom, Delhi Road, Meerut - 250103", map: "" },
+            { region: "WCRO", city: "CHOWK (MUMBAI CAR HUB)", hod: "Kapil Mandal (Car) / Mukti Ji (HHG)", contact: "7498639154 / 8149791912", address: "Agarwal Packers and Movers Ltd., Manivali Village, Chowk, Khalapur, Old Mumbai-Pune Highway - 410206", map: "" },
+            { region: "KRO", city: "MYSORE", hod: "Ishwar", contact: "9035251867", address: "Plot No. R-128, 8th Main Road, Hebbal Industrial Estate, Mysuru, Karnataka - 570016", map: "" },
+            { region: "WCRO", city: "NAGPUR", hod: "Rohit Kumar (Delivery Incharge)", contact: "8929566156 / 8451000898", address: "Butibori, NH-7, Wardha-Hyderabad Road, Near Wardha Bypass, Dist. Nagpur - 441108", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
+            { region: "WCRO", city: "NAVI MUMBAI (NMUM)", hod: "Mittlesh / Ramesh Paswan", contact: "7977870912 / 9323963590", address: "Plot No. PAP A-113, Khairne MIDC, Koparkhairne, Near OYO Hotel, Navi Mumbai - 400709", map: "" },
+            { region: "WCRO", city: "NASHIK (NASIK)", hod: "Ajit Sharma", contact: "6376788354", address: "Plot No. 1724/1, Near Purohit Dhaba, Opp. Truck Terminal, NH-3 Adgaon Naka, Nashik - 422003", map: "" },
+            { region: "NRO", city: "NOIDA", hod: "Mantush Ji", contact: "9312144321", address: "B-23, Sector-60, Near Shopprix Mall, Noida, Uttar Pradesh - 201301", map: "" },
+            { region: "NRO", city: "PANCHKULA", hod: "Gagan Ram / Sandeep Sharma", contact: "9915700197 / 9815906229", address: "Shahbad-Panchkula Road, NH-344, Near Peer Baba Dargah, Vill. Rajpura, PO Karasan, Naraingarh, Ambala - 134202", map: "" },
+            { region: "ERO", city: "PATNA", hod: "Mohan Kumar Mandal", contact: "7070990093", address: "Naubatpur Road, Manghupur, NH-139, Near IOCL Petrol Pump, Patna, Bihar - 801105", map: "" },
+            { region: "WCRO", city: "PUNE", hod: "Balwan Sharma", contact: "9325811152 / 7709521704", address: "Gala No. 293 & 294, Near Bhandara Dongar, Sudhavadi, Yalwadi, Talegaon-Chakan Road, Pune - 410507", map: "https://maps.app.goo.gl/8TgLqzHJ4Pi9HwTM6" },
+            { region: "NRO", city: "PANIPAT", hod: "Rinku Garg Ji", contact: "8199856840", address: "469, Sector-6, HUDA, Panipat, Haryana - 132103", map: "" },
+            { region: "ERO", city: "PORT BLAIR", hod: "Ranjeet Chakarbarty", contact: "9434291988 / 8880005990", address: "Opp. Radhakrishna Temple, Junglighat, Port Blair, Andaman - 744103", map: "" },
+            { region: "WCRO", city: "RAJKOT", hod: "Surender Ji", contact: "9327584321 / 9220604993", address: "Front Nayra Petrol Pump, Behind Pankaj Transport, Navagam Main Road, Navagam, Rajkot - 360001", map: "" },
+            { region: "ERO", city: "RAIPUR", hod: "Ramshankar Mishra", contact: "9300013993", address: "APML Raipur, Buland Talpatri Udyog, Near Mohan Marriage Place, Opp. MP Dhaba, Nagpur Highway, Tatibandh, Raipur - 492099", map: "" },
+            { region: "ERO", city: "RANCHI", hod: "Dinesh Kumar", contact: "7070992310", address: "Opposite Shalimar Nursery, Roka Dam Road, Ranchi, Jharkhand - 835217", map: "" },
+            { region: "NRO", city: "RUDRAPUR", hod: "Sandeep", contact: "9311668185", address: "Plot No. A-15, Phase-1, Preet Vihar Colony, Near Welcome Mart, Rudrapur, Uttarakhand - 263153", map: "" },
+            { region: "ERO", city: "SILIGURI", hod: "Saroj Kumar Ray", contact: "9311352771", address: "Behind TVS Showroom, Near VRL, Amaidighi, Post Fulbari Hat, Dist. Jalpaiguri, West Bengal - 734015", map: "" },
+            { region: "WCRO", city: "SURAT", hod: "Ravi Shaw", contact: "9289144944 / 9377527237", address: "Z2 Phase 3, Rajhansh Nagar, Chalthan, Palsana, Surat, Gujarat - 394305", map: "" },
+            { region: "ERO", city: "TINSUKIA", hod: "Rohan GP Kurmi", contact: "9810966980", address: "APML Office, Parvati Bhawan, Jyoti Nagar, Nau Pukhari, Tinsukia, Assam - 786125", map: "" },
+            { region: "WCRO", city: "THANE", hod: "Sanjay", contact: "8448985479", address: "A/17, Near MSEB Office, Road No. 15, Wagle Industrial Estate, Thane - 400604", map: "" },
+            { region: "SRO", city: "TRICHY", hod: "Shakti Singh", contact: "9361478547 / 7742238620", address: "Motika House, Plot No. 2, Sri Rajappa Nagar, Trichy-Thanjavur Main Road, Kattur, Trichy - 620019", map: "" },
+            { region: "SRO", city: "TRIVANDRUM", hod: "Shubham", contact: "9349102311 / 9387474321", address: "TC91/1005 at Vazhavila, Venpalavattom, Anayara P.O., Near Volkswagen Showroom, Trivandrum - 695029", map: "" },
+            { region: "NRO", city: "UDAIPUR", hod: "Pawan Sharma", contact: "9205997342", address: "Gopal Krishan Dhabai, Inside SBI Bank, NH-8, Near Balicha Bypass Circle, Balicha, Udaipur, Rajasthan - 313002", map: "" },
+            { region: "WCRO", city: "VAPI", hod: "Amitabh Rai", contact: "9616414129", address: "Godown No. 25, Ground Floor, Survey No. 373 A, Sanskruti Commercial & Industrial Park, NH-48, Opp. BIC Cello, Karambeli Bhathi, Vapi", map: "" },
+            { region: "SRO", city: "VIJAYAWADA", hod: "Mr. Rajib Kumar", contact: "9392134121", address: "62-22, Beside Model Dairy Factory, Nidamanuru, Krishna Dist., Vijayawada - 521102", map: "" },
+            { region: "SRO", city: "VISAKHAPATNAM (VIZAG)", hod: "Mukesh", contact: "8168192512", address: "Plot No. 196/5, Survey No. 39P, Opp. Rajadhani Dharam Kanta, Beside Indian Oil Petrol Pump, Block-D, Auto Nagar, Visakhapatnam - 530012", map: "" },
+            { region: "NRO", city: "VARANASI", hod: "Ashish Kumar", contact: "7524801098", address: "Gata No. 307, Aureybachhnaw, PO Bachhaw, Tehsil Sadar, Varanasi, Uttar Pradesh - 221011", map: "" },
+            { region: "NRO", city: "RENUKOOT (RNKT)", hod: "Anand Ji", contact: "9667396553", address: "Shop No. 1, 2nd Floor, Samta Bhawan, Near Bank of Baroda, Opp. Padmini Hotel, Renukoot, Dist. Sonebhadra, UP - 231217", map: "" },
+            { region: "NRO", city: "GOPIGANJ", hod: "Om Pandey (Hub Incharge)", contact: "7524801098", address: "Near Triveni HP Petrol Pump, Allahabad-Varanasi Bypass, NH-2, VPO Khandevpur, Jangiganj, Gopiganj, UP - 221310", map: "" },
+            { region: "NRO", city: "BHATINDA", hod: "Pravin Jattan", contact: "9991557100 / 9354784321", address: "APML, Gali No. 6, Dhobiyana Road, Model Town, Phase 2, Bathinda, Punjab - 151001", map: "https://share.google/amayfDEOowSijAbZO" },
+            { region: "NRO", city: "GORAKHPUR", hod: "Mukesh Ji", contact: "7048910397", address: "Plot No. 38, B-42, Sector-22 GIDA, Gorakhpur, Uttar Pradesh - 273209", map: "" }
         ];
 
         let loadedHubs = [];
@@ -757,7 +813,8 @@
             const data = snapshot.val();
             loadedHubs = [];
 
-            if (!data) {
+            if (!data || Object.keys(data).length < 20) {
+                // Seed all verified hub records to Firebase
                 initialExcelHubs.forEach(hub => {
                     hubsRef.push({ ...hub, timestamp: Date.now() });
                 });
@@ -768,6 +825,7 @@
                 loadedHubs.push({ id: key, ...data[key] });
             });
 
+            // Sort alphabetically by City
             loadedHubs.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
 
             populateLookupControls(loadedHubs);
@@ -781,7 +839,7 @@
             
             datalist.innerHTML = list.map(h => `<option value="${h.city}">`).join('');
 
-            const topCities = ["PUNE", "NAVI MUMBAI", "BANGALORE", "AHMEDABAD", "AGRA", "LUCKNOW", "SURAT", "NAGPUR", "HYDERABAD"];
+            const topCities = ["PUNE", "NAVI MUMBAI (NMUM)", "BANGALORE", "AHMEDABAD", "AGRA", "LUCKNOW", "SURAT", "NAGPUR", "HYDERABAD", "BHIWANDI (BHND)", "KOLKATA", "CHENNAI", "DELHI (NCR)"];
             chipsContainer.innerHTML = topCities.map(city => 
                 `<span class="chip" onclick="selectCityChip('${city}')">${city}</span>`
             ).join('');
@@ -807,7 +865,10 @@
             }
 
             const term = searchTerm.trim().toLowerCase();
-            const found = loadedHubs.find(h => (h.city || '').toLowerCase().includes(term));
+            const found = loadedHubs.find(h => 
+                (h.city || '').toLowerCase().includes(term) || 
+                term.includes((h.city || '').toLowerCase())
+            );
 
             if (found) {
                 document.getElementById('resCity').innerHTML = `${escapeHtml(found.city)} <span style="font-size: 13px; font-weight: normal; color: #666; margin-left: 8px;">(${escapeHtml(found.region || 'APML')})</span>`;
@@ -816,9 +877,9 @@
                 document.getElementById('resContact').innerText = found.contact || 'N/A';
                 document.getElementById('resAddress').innerText = found.address || 'Address details being updated.';
 
-                const firstPhone = (found.contact || '').split('/')[0].trim();
+                const firstPhone = (found.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
                 const callBtn = document.getElementById('btnCallHub');
-                if (firstPhone) {
+                if (firstPhone && firstPhone.length >= 10) {
                     callBtn.href = `tel:${firstPhone}`;
                     callBtn.style.display = 'inline-flex';
                 } else {
@@ -857,12 +918,12 @@
             document.getElementById('hubCount').innerText = list.length;
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found matching search.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = list.map(hub => {
-                const firstPhone = (hub.contact || '').split('/')[0].trim();
+                const firstPhone = (hub.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
                 const mapUrl = hub.map && hub.map.startsWith('http') ? hub.map : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hub.city + ' ' + (hub.address || 'APML Hub'))}`;
 
                 return `
@@ -896,9 +957,9 @@
             e.preventDefault();
 
             const newHub = {
-                region: document.getElementById('formRegion').value.trim().toUpperCase(),
+                region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                 city: document.getElementById('formCity').value.trim().toUpperCase(),
-                hod: document.getElementById('formHOD').value.trim(),
+                hod: document.getElementById('formHOD').value.trim() || "Branch Incharge",
                 contact: document.getElementById('formContact').value.trim(),
                 map: document.getElementById('formMap').value.trim(),
                 address: document.getElementById('formAddress').value.trim(),
@@ -917,7 +978,7 @@
             const enteredPassword = prompt("Enter Admin Password to delete this hub entry:");
 
             if (enteredPassword === null) {
-                return; // User cancelled
+                return;
             }
 
             if (enteredPassword.trim() === ADMIN_PASSWORD) {
@@ -934,6 +995,7 @@
             const term = e.target.value.toLowerCase();
             const filtered = loadedHubs.filter(h => 
                 (h.city || '').toLowerCase().includes(term) ||
+                (h.region || '').toLowerCase().includes(term) ||
                 (h.hod || '').toLowerCase().includes(term) ||
                 (h.contact || '').toLowerCase().includes(term) ||
                 (h.address || '').toLowerCase().includes(term)
