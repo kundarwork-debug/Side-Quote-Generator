@@ -39,6 +39,10 @@
                 <span class="material-symbols-outlined">photo_library</span>
                 <span>Gallery</span>
               </a>
+              <a href="hub-details.html" class="nav-link ${currentPage === 'hub-details.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">location_city</span>
+                <span>Hub Directory</span>
+              </a>
               <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
