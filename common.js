@@ -5,7 +5,7 @@
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. INJECT HEADER (Rotating Hub Logo)
+    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -38,10 +38,6 @@
               <a href="gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">photo_library</span>
                 <span>Gallery</span>
-              </a>
-              <a href="hub-details.html" class="nav-link ${currentPage === 'hub-details.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">location_city</span>
-                <span>Hub Directory</span>
               </a>
               <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
@@ -94,7 +90,7 @@
       }
     }
 
-    // 2. INJECT FOOTER (Static Logo Badge + About Me Link)
+    // 2. INJECT FOOTER (With WhatsApp & About Me Link)
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -104,10 +100,14 @@
               <div class="logo-badge" style="width: 28px; height: 28px;">
                 <img src="logo.svg" alt="APML Hub" style="width: 18px; height: 18px; display: block; object-fit: contain;">
               </div>
-              <span style="font-weight: 700; color: var(--md-sys-color-on-surface);">Designed &amp; developed by Prasad</span>
+              <span style="font-weight: 700; color: var(--md-sys-color-on-surface, #0f172a);">Designed &amp; developed by Prasad</span>
             </div>
-            <div class="footer-links">
-              <a href="about.html" class="footer-about-btn">About Me</a>
+            <div class="footer-links" style="display: flex; align-items: center; gap: 16px;">
+              <a href="https://wa.me/919910579530" target="_blank" rel="noopener noreferrer" class="footer-whatsapp-btn" style="text-decoration:none; font-weight:700; color:#16a34a; display:inline-flex; align-items:center; gap:5px;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
+                <span>WhatsApp (9910579530)</span>
+              </a>
+              <a href="about.html" class="footer-about-btn" style="text-decoration:none; font-weight:700; color:var(--md-sys-color-primary, #b91c1c);">About Me</a>
             </div>
           </div>
         </footer>
