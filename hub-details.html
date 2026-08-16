@@ -310,15 +310,21 @@
             border-color: var(--md-sys-color-primary);
         }
 
-        /* Instant Result Display Card */
-        .lookup-result {
+        /* Multiple Lookup Result Items Container */
+        .lookup-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             margin-top: 18px;
+        }
+
+        .lookup-result-item {
             padding: 20px;
             background: linear-gradient(135deg, #ffffff 0%, var(--md-sys-color-primary-container) 100%);
             border: 1.5px solid var(--md-sys-color-primary);
             border-radius: var(--md-sys-shape-corner-medium);
-            display: none;
             animation: fadeIn 0.3s ease;
+            box-shadow: var(--md-elevation-1);
         }
 
         @keyframes fadeIn {
@@ -417,6 +423,20 @@
             font-size: 11px;
             font-weight: 800;
             margin-left: 8px;
+        }
+
+        .results-count-banner {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-primary-container);
+            padding: 8px 14px;
+            border-radius: var(--md-sys-shape-corner-small);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 12px;
         }
 
         /* Full Directory Table */
@@ -644,55 +664,20 @@
                 Instant Branch Details Finder
             </div>
             <p style="font-size: 13px; color: var(--md-sys-color-on-surface-variant); margin-bottom: 14px;">
-                Type any city or branch name below to instantly view its contact person, direct phone, full warehouse address, and Google Maps pin[cite: 5]:
+                Type any city or branch name below to view all contact persons, direct phones, full warehouse addresses, and Google Maps pins[cite: 5]:
             </p>
             
             <div class="lookup-box">
                 <span class="material-symbols-outlined lookup-icon">location_city</span>
-                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Enter branch name (e.g. Bangalore, Pune, Ahmedabad, Agra, Surat, Bhiwandi...)" list="branchList">
+                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Enter branch name (e.g. Bangalore, Pune, Ahmedabad, Agra, Surat, Bhiwandi, Gurgaon...)" list="branchList">
                 <datalist id="branchList"></datalist>
             </div>
 
             <!-- Quick City Shortcut Chips -->
             <div class="quick-chips" id="quickChipsContainer"></div>
 
-            <!-- Instant Lookup Result Panel -->
-            <div id="lookupResultCard" class="lookup-result">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h3 id="resCity" style="font-size: 20px; font-weight: 800; color: var(--md-sys-color-primary); display: flex; align-items: center;">
-                        City Name
-                    </h3>
-                    <span id="resRegionBadge" class="region-badge">REGION</span>
-                </div>
-
-                <div class="result-grid">
-                    <div class="result-item">
-                        <label>HOD / Manager In-Charge</label>
-                        <span id="resHOD">—</span>
-                    </div>
-                    <div class="result-item">
-                        <label>Official Contact Number</label>
-                        <span id="resContact">—</span>
-                    </div>
-                </div>
-
-                <div class="result-item">
-                    <label>Full Warehouse Address</label>
-                    <div id="resAddress" class="address-box">—</div>
-                </div>
-
-                <div class="result-actions">
-                    <button id="btnCopyAddress" class="btn-action btn-secondary-action" onclick="copyAddressText()">
-                        <span class="material-symbols-outlined" style="font-size: 17px;">content_copy</span> Copy Address
-                    </button>
-                    <a id="btnCallHub" href="#" class="btn-action btn-primary-action">
-                        <span class="material-symbols-outlined" style="font-size: 17px;">call</span> Call Hub
-                    </a>
-                    <a id="btnOpenMap" href="#" target="_blank" rel="noopener noreferrer" class="btn-action btn-map-action">
-                        <span class="material-symbols-outlined" style="font-size: 17px;">near_me</span> Open in Google Maps
-                    </a>
-                </div>
-            </div>
+            <!-- Multiple Lookup Results Container -->
+            <div id="lookupResultsContainer" class="lookup-results-list" style="display: none;"></div>
         </section>
 
         <!-- 2. Full Active Hubs Table -->
@@ -912,7 +897,6 @@
             loadedHubs = [];
 
             if (!data || Object.keys(data).length < 20) {
-                // Seed all verified hub records to Firebase[cite: 5]
                 initialExcelHubs.forEach(hub => {
                     hubsRef.push({ ...hub, timestamp: Date.now() });
                 });
@@ -933,7 +917,7 @@
             hideLoadingOverlay();
         });
 
-        // Safety fallback: Hide overlay after 4 seconds even on slow network
+        // Safety fallback
         setTimeout(hideLoadingOverlay, 4000);
 
         // 2. Populate Dropdown & City Quick Chips[cite: 5]
@@ -941,17 +925,19 @@
             const datalist = document.getElementById('branchList');
             const chipsContainer = document.getElementById('quickChipsContainer');
             
-            datalist.innerHTML = list.map(h => `<option value="${h.city}">`).join('');
+            // Collect unique cities for datalist
+            const uniqueCities = [...new Set(list.map(h => h.city))];
+            datalist.innerHTML = uniqueCities.map(city => `<option value="${escapeHtml(city)}">`).join('');
 
-            const topCities = ["PUNE", "NAVI MUMBAI (NMUM)", "BANGALORE", "AHMEDABAD", "AGRA", "LUCKNOW", "SURAT", "NAGPUR", "HYDERABAD", "BHIWANDI (BHND)", "KOLKATA", "CHENNAI", "DELHI (NCR)"];
+            const topCities = ["GURGAON", "DELHI", "PUNE", "NAVI MUMBAI", "BANGALORE", "AHMEDABAD", "AGRA", "JAIPUR", "LUCKNOW", "SURAT", "NAGPUR", "HYDERABAD", "BHIWANDI", "KOLKATA", "CHENNAI"];
             chipsContainer.innerHTML = topCities.map(city => 
                 `<span class="chip" onclick="selectCityChip('${city}')">${city}</span>`
             ).join('');
         }
 
-        // 3. Quick Branch Finder Logic[cite: 5]
+        // 3. Quick Branch Finder Logic (SHOWS ALL MULTIPLE RESULTS)
         const lookupInput = document.getElementById('branchLookupInput');
-        const lookupCard = document.getElementById('lookupResultCard');
+        const lookupContainer = document.getElementById('lookupResultsContainer');
 
         lookupInput.addEventListener('input', function() {
             executeLookup(this.value);
@@ -964,54 +950,109 @@
 
         function executeLookup(searchTerm) {
             if (!searchTerm || searchTerm.trim() === '') {
-                lookupCard.style.display = 'none';
+                lookupContainer.innerHTML = '';
+                lookupContainer.style.display = 'none';
                 return;
             }
 
             const term = searchTerm.trim().toLowerCase();
-            const found = loadedHubs.find(h => 
-                (h.city || '').toLowerCase().includes(term) || 
-                term.includes((h.city || '').toLowerCase())
-            );
+            
+            // Filter all matching hubs for this branch / city
+            const matches = loadedHubs.filter(h => {
+                const city = (h.city || '').toLowerCase();
+                const region = (h.region || '').toLowerCase();
+                const address = (h.address || '').toLowerCase();
+                return city.includes(term) || term.includes(city) || region.includes(term) || address.includes(term);
+            });
 
-            if (found) {
-                document.getElementById('resCity').innerHTML = `${escapeHtml(found.city)} <span style="font-size: 13px; font-weight: normal; color: #666; margin-left: 8px;">(${escapeHtml(found.region || 'APML')})</span>`;
-                document.getElementById('resRegionBadge').innerText = found.region || 'HUB';
-                document.getElementById('resHOD').innerText = found.hod || 'Branch In-Charge';
-                document.getElementById('resContact').innerText = found.contact || 'N/A';
-                document.getElementById('resAddress').innerText = found.address || 'Address details being updated.';
-
-                const firstPhone = (found.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
-                const callBtn = document.getElementById('btnCallHub');
-                if (firstPhone && firstPhone.length >= 10) {
-                    callBtn.href = `tel:${firstPhone}`;
-                    callBtn.style.display = 'inline-flex';
-                } else {
-                    callBtn.style.display = 'none';
+            if (matches.length > 0) {
+                lookupContainer.innerHTML = '';
+                
+                // Show count banner if multiple locations exist
+                if (matches.length > 1) {
+                    const countBanner = document.createElement('div');
+                    countBanner.className = 'results-count-banner';
+                    countBanner.innerHTML = `
+                        <span class="material-symbols-outlined" style="font-size: 18px;">corporate_fare</span>
+                        <span>Found <strong>${matches.length} branch locations</strong> matching "<strong>${escapeHtml(searchTerm)}</strong>":</span>
+                    `;
+                    lookupContainer.appendChild(countBanner);
                 }
 
-                const mapBtn = document.getElementById('btnOpenMap');
-                if (found.map && found.map.startsWith('http')) {
-                    mapBtn.href = found.map;
-                    mapBtn.style.display = 'inline-flex';
-                } else {
-                    mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.city + ' ' + (found.address || 'APML Hub'))}`;
-                    mapBtn.style.display = 'inline-flex';
-                }
+                // Render each matched location card
+                matches.forEach((found, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'lookup-result-item';
 
-                lookupCard.style.display = 'block';
+                    const firstPhone = (found.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
+                    const hasValidPhone = firstPhone && firstPhone.length >= 10;
+                    const mapUrl = found.map && found.map.startsWith('http') 
+                        ? found.map 
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.city + ' ' + (found.address || 'APML Hub'))}`;
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h3 style="font-size: 19px; font-weight: 800; color: var(--md-sys-color-primary); display: flex; align-items: center;">
+                                <span>${escapeHtml(found.city)}</span>
+                                <span style="font-size: 13px; font-weight: 600; color: var(--md-sys-color-on-surface-variant); margin-left: 8px;">(${escapeHtml(found.region || 'APML')})</span>
+                            </h3>
+                            <span class="region-badge">${escapeHtml(found.region || 'HUB')}</span>
+                        </div>
+
+                        <div class="result-grid">
+                            <div class="result-item">
+                                <label>HOD / Manager In-Charge</label>
+                                <span>${escapeHtml(found.hod || 'Branch In-Charge')}</span>
+                            </div>
+                            <div class="result-item">
+                                <label>Official Contact Number</label>
+                                <span>${escapeHtml(found.contact || 'N/A')}</span>
+                            </div>
+                        </div>
+
+                        <div class="result-item">
+                            <label>Full Warehouse Address</label>
+                            <div id="resAddress-${index}" class="address-box">${escapeHtml(found.address || 'Address details being updated.')}</div>
+                        </div>
+
+                        <div class="result-actions">
+                            <button type="button" class="btn-action btn-secondary-action" onclick="copyAddressText('resAddress-${index}', this)">
+                                <span class="material-symbols-outlined" style="font-size: 17px;">content_copy</span> Copy Address
+                            </button>
+                            ${hasValidPhone ? `
+                                <a href="tel:${escapeHtml(firstPhone)}" class="btn-action btn-primary-action">
+                                    <span class="material-symbols-outlined" style="font-size: 17px;">call</span> Call Hub
+                                </a>
+                            ` : ''}
+                            <a href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map-action">
+                                <span class="material-symbols-outlined" style="font-size: 17px;">near_me</span> Open in Google Maps
+                            </a>
+                        </div>
+                    `;
+
+                    lookupContainer.appendChild(card);
+                });
+
+                lookupContainer.style.display = 'flex';
             } else {
-                lookupCard.style.display = 'none';
+                lookupContainer.innerHTML = `
+                    <div style="padding: 16px; text-align: center; color: var(--md-sys-color-on-surface-variant); font-weight: 600; font-size: 13px;">
+                        No branch locations found matching "${escapeHtml(searchTerm)}".
+                    </div>
+                `;
+                lookupContainer.style.display = 'block';
             }
         }
 
-        function copyAddressText() {
-            const addr = document.getElementById('resAddress').innerText;
+        function copyAddressText(addressId, btn) {
+            const addrEl = document.getElementById(addressId);
+            if (!addrEl) return;
+            const addr = addrEl.innerText;
             navigator.clipboard.writeText(addr).then(() => {
-                const btn = document.getElementById('btnCopyAddress');
+                const originalHtml = btn.innerHTML;
                 btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 17px;">check</span> Copied!`;
                 setTimeout(() => {
-                    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 17px;">content_copy</span> Copy Address`;
+                    btn.innerHTML = originalHtml;
                 }, 2000);
             });
         }
