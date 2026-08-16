@@ -6,7 +6,8 @@
   <title>APML - Internal Operations Portal & Utilities</title>
 
   <!-- Network/Hub SVG Favicon from root folder -->
-<link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+
   <!-- STANDARD COMMON CSS -->
   <link rel="stylesheet" href="common.css?v=2.2">
 
@@ -102,6 +103,7 @@
     .delay-1 { transition-delay: 0.08s; }
     .delay-2 { transition-delay: 0.16s; }
     .delay-3 { transition-delay: 0.24s; }
+    .delay-4 { transition-delay: 0.32s; }
 
     /* =========================================================
        HERO SECTION
@@ -382,7 +384,7 @@
     /* Tools Responsive Grid */
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
       gap: 16px;
       width: 100%;
     }
@@ -698,17 +700,32 @@
         </div>
       </div>
 
-      <!-- ADDITIONAL RATE CALCULATORS -->
+      <!-- OPERATIONAL TOOLS & CALCULATORS -->
       <div>
         <div class="section-header-wrap reveal-from-bottom">
-          <span class="section-tag">Rate Calculators</span>
-          <h2 class="section-title">Estimation &amp; Pricing Tools</h2>
+          <span class="section-tag">Operations &amp; Calculators</span>
+          <h2 class="section-title">Estimation &amp; Directory Tools</h2>
         </div>
 
         <div class="tools-grid">
           
+          <!-- Hub & Branch Directory (LAUNCHES hub-details.html) -->
+          <a href="hub-details.html" class="tool-card reveal-from-left delay-1">
+            <div>
+              <div class="tool-icon-box">
+                <span class="material-symbols-outlined">location_city</span>
+              </div>
+              <h3 class="tool-title">Hub &amp; Branch Directory</h3>
+              <p class="tool-desc">Instant lookup for nationwide warehouse hubs, branch HODs, phone numbers, and Google Map pins.</p>
+            </div>
+            <div class="tool-btn-action">
+              <span>Open Hub Directory</span>
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </a>
+
           <!-- APML Lite Rate -->
-          <a href="APML-Lite.html" class="tool-card reveal-from-left delay-1">
+          <a href="APML-Lite.html" class="tool-card reveal-from-bottom delay-2">
             <div>
               <div class="tool-icon-box">
                 <span class="material-symbols-outlined">grid_view</span>
@@ -723,7 +740,7 @@
           </a>
 
           <!-- Car Rate Calculator -->
-          <a href="car-rate.html" class="tool-card reveal-from-bottom delay-2">
+          <a href="car-rate.html" class="tool-card reveal-from-bottom delay-3">
             <div>
               <div class="tool-icon-box">
                 <span class="material-symbols-outlined">directions_car</span>
@@ -738,7 +755,7 @@
           </a>
 
           <!-- APML Local Rate -->
-          <div class="tool-card disabled reveal-from-right delay-3">
+          <div class="tool-card disabled reveal-from-right delay-4">
             <div>
               <div class="tool-icon-box">
                 <span class="material-symbols-outlined">local_shipping</span>
