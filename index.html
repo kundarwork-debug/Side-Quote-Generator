@@ -82,160 +82,18 @@
     }
 
     /* =========================================================
-       CREATIVE KINETIC ORBIT LOGO STAGE
+       HERO STAGE & TELEMETRY BEACON PULSE ANIMATION
        ========================================================= */
     .hero-stage {
       max-width: 1000px;
       margin: 0 auto;
-      padding: 95px 20px 30px;
+      padding: 95px 20px 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Multi-layered Kinetic Planetary Logo Rig */
-    .kinetic-logo-stage {
-      position: relative;
-      width: 170px;
-      height: 170px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 24px;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-
-    /* Radial Backlight Pulse */
-    .orbit-backlight {
-      position: absolute;
-      inset: -10px;
-      background: radial-gradient(circle, var(--primary-glow) 0%, rgba(185, 28, 28, 0.05) 50%, transparent 75%);
-      border-radius: 50%;
-      animation: backlightPulse 4s ease-in-out infinite alternate;
-      z-index: 1;
-    }
-
-    /* Outer Dashed Orbit Ring with Satellite Node */
-    .orbit-track-outer {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(185, 28, 28, 0.35);
-      animation: spinForward 20s linear infinite;
-      z-index: 2;
-    }
-
-    .orbit-satellite-1 {
-      position: absolute;
-      top: -5px;
-      left: calc(50% - 5px);
-      width: 10px;
-      height: 10px;
-      background: var(--primary);
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--primary);
-    }
-
-    /* Inner Solid Tilted Orbit with Second Satellite */
-    .orbit-track-inner {
-      position: absolute;
-      inset: 16px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(185, 28, 28, 0.2);
-      border-top-color: var(--primary);
-      border-bottom-color: var(--primary);
-      animation: spinBackward 12s linear infinite;
-      z-index: 2;
-    }
-
-    .orbit-satellite-2 {
-      position: absolute;
-      bottom: -4px;
-      right: 20px;
-      width: 8px;
-      height: 8px;
-      background: #e11d48;
-      border: 2px solid #ffffff;
-      border-radius: 50%;
-      box-shadow: 0 0 8px #e11d48;
-    }
-
-    /* Core Floating Logo Capsule */
-    .logo-core-disc {
-      position: relative;
-      width: 96px;
-      height: 96px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #ffffff, #fff5f5);
-      border: 1.5px solid rgba(185, 28, 28, 0.25);
-      box-shadow: 
-        0 12px 30px -6px rgba(185, 28, 28, 0.2),
-        0 4px 10px rgba(0, 0, 0, 0.04);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 3;
-      animation: gentleFloat 5s ease-in-out infinite alternate;
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
-    }
-
-    /* Rotating SVG Inside the Floating Core */
-    .main-logo-svg {
-      width: 68px;
-      height: 68px;
-      object-fit: contain;
-      animation: smoothSpin 24s linear infinite;
-      transition: transform 0.4s ease;
-    }
-
-    /* Interactive Hover Effect */
-    .kinetic-logo-stage:hover .logo-core-disc {
-      transform: scale(1.12);
-      box-shadow: 
-        0 20px 40px -8px rgba(185, 28, 28, 0.35),
-        0 6px 16px rgba(0, 0, 0, 0.08);
-      border-color: var(--primary);
-    }
-
-    .kinetic-logo-stage:hover .main-logo-svg {
-      animation-play-state: paused;
-      transform: rotate(8deg);
-    }
-
-    .kinetic-logo-stage:hover .orbit-track-outer,
-    .kinetic-logo-stage:hover .orbit-track-inner {
-      animation-play-state: paused;
-    }
-
-    @keyframes smoothSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes spinForward {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes spinBackward {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
-
-    @keyframes gentleFloat {
-      0% { transform: translateY(-3px); }
-      100% { transform: translateY(5px); }
-    }
-
-    @keyframes backlightPulse {
-      0% { transform: scale(0.88); opacity: 0.5; }
-      100% { transform: scale(1.25); opacity: 1; }
-    }
-
-    /* Tag & Headlines */
     .badge-capsule {
       display: inline-flex;
       align-items: center;
@@ -275,6 +133,117 @@
       color: var(--text-muted);
       max-width: 520px;
       line-height: 1.55;
+    }
+
+    /* TELEMETRY BEACON PULSE STAGE */
+    .telemetry-beacon-stage {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* Concentric Expanding Ripple Waves */
+    .beacon-wave {
+      position: absolute;
+      inset: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--primary);
+      opacity: 0;
+      animation: beaconRipple 3.6s cubic-bezier(0.1, 0.85, 0.25, 1) infinite;
+      pointer-events: none;
+    }
+
+    .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
+    .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
+
+    /* Orbital Dashed Ring */
+    .beacon-orbit-ring {
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(185, 28, 28, 0.35);
+      animation: orbitSpin 18s linear infinite;
+      pointer-events: none;
+    }
+
+    /* Floating Satellites */
+    .orbit-dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .dot-top { top: -4px; left: calc(50% - 4px); }
+    .dot-bottom { bottom: -4px; right: calc(50% - 4px); }
+
+    /* Core Glowing Node Emblem */
+    .beacon-core-disc {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+      border: 2px solid #ffffff;
+      box-shadow: 
+        0 12px 28px -4px rgba(185, 28, 28, 0.3),
+        0 0 0 4px rgba(185, 28, 28, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      z-index: 3;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
+      animation: floatMotion 3.8s ease-in-out infinite alternate;
+    }
+
+    .beacon-core-disc .material-symbols-outlined {
+      font-size: 34px;
+      transition: transform 0.35s ease;
+    }
+
+    /* Hover Physics */
+    .telemetry-beacon-stage:hover .beacon-core-disc {
+      transform: scale(1.18);
+      box-shadow: 
+        0 18px 36px -6px rgba(185, 28, 28, 0.45),
+        0 0 0 8px rgba(185, 28, 28, 0.14);
+    }
+
+    .telemetry-beacon-stage:hover .beacon-core-disc .material-symbols-outlined {
+      transform: rotate(45deg);
+    }
+
+    @keyframes beaconRipple {
+      0% {
+        transform: scale(0.65);
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(1.65);
+        opacity: 0;
+      }
+    }
+
+    @keyframes orbitSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes floatMotion {
+      0% { transform: translateY(-3px); }
+      100% { transform: translateY(4px); }
     }
 
     /* =========================================================
@@ -595,7 +564,7 @@
 
   <main>
     
-    <!-- CENTRAL HERO (TITLE ABOVE, ANIMATED LOGO BELOW) -->
+    <!-- CENTRAL HERO (TITLE ABOVE, ANIMATED TELEMETRY BEACON BELOW) -->
     <section class="hero-stage">
       
       <div class="badge-capsule">
@@ -611,17 +580,19 @@
         Work Smarter, Move Faster.
       </p>
 
-      <!-- Creative Multi-Orbit Rotating Rig (Positioned Below Title) -->
-      <div class="kinetic-logo-stage">
-        <div class="orbit-backlight"></div>
-        <div class="orbit-track-outer">
-          <div class="orbit-satellite-1"></div>
+      <!-- Dynamic Telemetry Beacon Animation -->
+      <div class="telemetry-beacon-stage" title="APML Systems Connected">
+        <div class="beacon-wave"></div>
+        <div class="beacon-wave"></div>
+        <div class="beacon-wave"></div>
+        
+        <div class="beacon-orbit-ring">
+          <div class="orbit-dot dot-top"></div>
+          <div class="orbit-dot dot-bottom"></div>
         </div>
-        <div class="orbit-track-inner">
-          <div class="orbit-satellite-2"></div>
-        </div>
-        <div class="logo-core-disc">
-          <img src="logo.svg" alt="APML Logo" class="main-logo-svg">
+
+        <div class="beacon-core-disc">
+          <span class="material-symbols-outlined">hub</span>
         </div>
       </div>
 
