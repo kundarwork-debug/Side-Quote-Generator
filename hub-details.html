@@ -39,6 +39,10 @@
             --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -74,6 +78,9 @@
         .directory-header-wrap {
             text-align: center;
             margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .header-badge {
@@ -103,18 +110,49 @@
             color: var(--md-sys-color-primary);
         }
 
+        .header-top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
         .status-badge {
             font-size: 12px;
             color: #2e7d32;
             background-color: #e8f5e9;
             border: 1px solid #c8e6c9;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: var(--md-sys-shape-corner-full);
             font-weight: 700;
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-top: 8px;
+        }
+
+        .btn-top-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 18px;
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
+            transition: var(--transition-m3);
+        }
+
+        .btn-top-add:hover {
+            background: var(--md-sys-color-on-primary-container);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(185, 28, 28, 0.35);
         }
 
         .card {
@@ -489,18 +527,25 @@
 
     <main class="main-container">
         
-        <!-- Header Info -->
+        <!-- Header Info & Actions -->
         <div class="directory-header-wrap">
             <div class="header-badge">
                 <span class="material-symbols-outlined" style="font-size: 15px;">location_city</span>
                 <span>Branch Operations Network</span>
             </div>
             <h1 class="page-title">APML Hub &amp; <span>Branch Directory</span></h1>
-            <div>
+            
+            <div class="header-top-actions">
                 <span class="status-badge">
                     <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
                     Real-Time Connected
                 </span>
+
+                <!-- Top Add New Details Button -->
+                <button type="button" class="btn-top-add" onclick="scrollToAddForm()">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
+                    <span>Add New Details</span>
+                </button>
             </div>
         </div>
 
@@ -600,7 +645,7 @@
         </section>
 
         <!-- 3. Add / Update Form -->
-        <section class="card">
+        <section class="card" id="addHubSection">
             <div class="card-header">
                 <span class="material-symbols-outlined">add_location_alt</span>
                 Add New Hub or Update Existing
@@ -694,6 +739,18 @@
         ];
 
         let loadedHubs = [];
+
+        // Smooth Scroll & Focus Helper
+        function scrollToAddForm() {
+            const section = document.getElementById('addHubSection');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    const firstInput = document.getElementById('formCity');
+                    if (firstInput) firstInput.focus();
+                }, 400);
+            }
+        }
 
         // 1. Check & Auto-seed Firebase if empty, then listen in real-time
         hubsRef.on('value', (snapshot) => {
