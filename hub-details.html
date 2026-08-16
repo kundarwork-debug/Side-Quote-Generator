@@ -911,10 +911,21 @@
             }).catch(err => alert("Error: " + err.message));
         });
 
-        // 6. Delete Hub
+        // 6. Delete Hub (Protected by Admin Password: 081127)
         window.deleteHubEntry = function(id) {
-            if (confirm("Are you sure you want to remove this Hub entry?")) {
-                hubsRef.child(id).remove();
+            const ADMIN_PASSWORD = "081127";
+            const enteredPassword = prompt("Enter Admin Password to delete this hub entry:");
+
+            if (enteredPassword === null) {
+                return; // User cancelled
+            }
+
+            if (enteredPassword.trim() === ADMIN_PASSWORD) {
+                hubsRef.child(id).remove().then(() => {
+                    alert("Hub entry removed successfully.");
+                }).catch(err => alert("Error: " + err.message));
+            } else {
+                alert("Incorrect password! Access denied.");
             }
         };
 
