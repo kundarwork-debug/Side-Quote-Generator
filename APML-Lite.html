@@ -216,6 +216,7 @@
       font-weight: 800;
     }
 
+    /* Informational Alerts */
     .min-alert-text {
       font-size: 11.5px;
       font-weight: 700;
@@ -227,6 +228,21 @@
       display: none;
       align-items: center;
       gap: 6px;
+    }
+
+    .error-alert-box {
+      background: #fef2f2;
+      border: 1.5px solid #f87171;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: var(--md-sys-shape-corner-medium);
+      font-size: 12.5px;
+      font-weight: 700;
+      display: none;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 14px;
+      line-height: 1.4;
     }
 
     /* Slab Rate Matrix Table */
@@ -289,7 +305,7 @@
     <div class="header-tag-wrap">
       <div class="header-badge">
         <span class="material-symbols-outlined" style="font-size: 15px;">grid_view</span>
-        <span>Volume Based Pricing</span>
+        <span>Volume Based Pricing (1 - 450 CFT)</span>
       </div>
       <h1 class="page-title">APML Lite <span>Rate Calculator</span></h1>
       <p class="origin-subtitle">
@@ -325,8 +341,8 @@
         </div>
 
         <div class="input-group" style="margin-bottom: 0;">
-          <label for="cftInput">Consignment Volume (CFT: 1 - 450)</label>
-          <input type="number" id="cftInput" value="50" min="1" max="450" placeholder="Enter CFT volume">
+          <label for="cftInput">Consignment Volume (Max 450 CFT)</label>
+          <input type="number" id="cftInput" value="50" min="1" max="450" placeholder="Enter CFT volume (1 - 450)">
         </div>
       </div>
 
@@ -361,9 +377,15 @@
             <span class="price-label" style="font-weight: 800; color: var(--md-sys-color-on-surface);">Total Lite Freight</span>
             <span class="price-val total" id="outTotal">₹6,250</span>
           </div>
+          
           <div class="min-alert-text" id="minAlert">
             <span class="material-symbols-outlined" style="font-size: 16px;">info</span>
             <span>Minimum booking charge of ₹5,000 applied</span>
+          </div>
+
+          <div class="error-alert-box" id="maxAlert">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: #b91c1c;">warning</span>
+            <div><strong>Not Eligible for APML Lite:</strong> 450 CFT is the maximum limit. For volume above 450 CFT, please use standard container / FTL booking options.</div>
           </div>
         </div>
       </div>
@@ -373,7 +395,7 @@
     <div class="table-section">
       <div class="card-title" style="margin-bottom: 14px;">
         <span>Rate Matrix from Mumbai &amp; Pune (₹ / CFT)</span>
-        <span class="origin-pill">Min. Charge ₹5,000</span>
+        <span class="origin-pill">Max 450 CFT • Min ₹5,000</span>
       </div>
       <table>
         <thead>
@@ -435,28 +457,46 @@
     };
 
     const MIN_FREIGHT_CHARGE = 5000;
+    const MAX_CFT_LIMIT = 450;
 
     const destSelect = document.getElementById('destinationSelect');
     const cftInput = document.getElementById('cftInput');
     const minAlert = document.getElementById('minAlert');
+    const maxAlert = document.getElementById('maxAlert');
 
     function calculateLiteRate() {
       const dest = destSelect.value;
-      const cft = Math.max(0, parseFloat(cftInput.value) || 0);
+      const cft = parseFloat(cftInput.value);
       const rates = LITE_RATES[dest];
 
-      let perCft = 0;
-      let tierName = "";
-
-      if (cft <= 0) {
+      // Handle empty / zero input
+      if (isNaN(cft) || cft <= 0) {
         document.getElementById('outCft').innerText = '0 CFT';
         document.getElementById('outRatePerCft').innerText = '₹0 / CFT';
         document.getElementById('outTier').innerText = 'N/A';
         document.getElementById('outCalculatedFreight').innerText = '₹0';
         document.getElementById('outTotal').innerText = '₹0';
         minAlert.style.display = 'none';
+        maxAlert.style.display = 'none';
         return;
       }
+
+      // Check max limit (strictly <= 450 CFT)
+      if (cft > MAX_CFT_LIMIT) {
+        document.getElementById('outCft').innerText = `${cft} CFT`;
+        document.getElementById('outRatePerCft').innerText = 'Exceeded';
+        document.getElementById('outTier').innerText = 'Not Eligible (> 450 CFT)';
+        document.getElementById('outCalculatedFreight').innerText = 'N/A';
+        document.getElementById('outTotal').innerText = 'Not Eligible';
+        minAlert.style.display = 'none';
+        maxAlert.style.display = 'flex';
+        return;
+      }
+
+      maxAlert.style.display = 'none';
+
+      let perCft = 0;
+      let tierName = "";
 
       if (cft <= 50) {
         perCft = rates.t1;
