@@ -277,55 +277,30 @@
   gap: 10px;
 }
 
-/* M3 Themed WhatsApp Action Button */
-.m3-wa-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: var(--md-sys-color-surface-container-low);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  color: #16a34a;
-  text-decoration: none;
-  transition: var(--transition-m3);
-  position: relative;
-}
-
-.m3-wa-btn svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-  transition: transform 0.25s ease;
-}
-
-.m3-wa-btn:hover {
-  background: #dcfce7;
-  border-color: #86efac;
-  color: #15803d;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
-}
-
-.m3-wa-btn:hover svg {
-  transform: scale(1.12);
-}
-
-/* M3 Tonal About Me Pill */
+/* M3 Tonal About Me Pill with Circular Avatar */
 .m3-about-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 6px 16px 6px 8px;
   border-radius: var(--md-sys-shape-corner-full);
   background: var(--md-sys-color-primary-container);
   border: 1px solid rgba(185, 28, 28, 0.2);
   color: var(--md-sys-color-primary);
   text-decoration: none;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   transition: var(--transition-m3);
+}
+
+.about-github-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  display: block;
 }
 
 .m3-about-btn:hover {
