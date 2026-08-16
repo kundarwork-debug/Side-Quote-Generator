@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>APML Lite Rate Calculator</title>
+  <title>APML Lite Rate Calculator - Mumbai & Pune Hub</title>
 
   <!-- Network/Hub SVG Favicon from root folder -->
   <link rel="icon" type="image/svg+xml" href="logo.svg">
@@ -93,6 +93,17 @@
       color: var(--md-sys-color-primary);
     }
 
+    .origin-subtitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--md-sys-color-on-surface-variant);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -119,6 +130,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    .origin-pill {
+      font-size: 11px;
+      background: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+      padding: 3px 10px;
+      border-radius: var(--md-sys-shape-corner-full);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      font-weight: 700;
+      text-transform: none;
     }
 
     .input-group {
@@ -151,6 +173,19 @@
       box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
     }
 
+    .static-input-val {
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      background: var(--md-sys-color-surface-container-low);
+      border: 1px solid var(--md-sys-color-outline-variant);
+      border-radius: var(--md-sys-shape-corner-medium);
+      color: var(--md-sys-color-on-surface);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     /* Price Breakdown Rows */
     .price-row {
       display: flex;
@@ -179,6 +214,19 @@
       font-size: 26px;
       color: var(--md-sys-color-primary);
       font-weight: 800;
+    }
+
+    .min-alert-text {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 6px 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+      align-items: center;
+      gap: 6px;
     }
 
     /* Slab Rate Matrix Table */
@@ -244,6 +292,10 @@
         <span>Volume Based Pricing</span>
       </div>
       <h1 class="page-title">APML Lite <span>Rate Calculator</span></h1>
+      <p class="origin-subtitle">
+        <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">trip_origin</span>
+        <span>Origin Hubs: <strong>Mumbai &amp; Pune</strong></span>
+      </p>
     </div>
 
     <div class="grid">
@@ -251,6 +303,15 @@
       <div class="card">
         <div class="card-title">
           <span>Consignment Specifications</span>
+          <span class="origin-pill">Origin: Mumbai &amp; Pune</span>
+        </div>
+
+        <div class="input-group">
+          <label>Origin</label>
+          <div class="static-input-val">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">location_on</span>
+            <span>Mumbai &amp; Pune</span>
+          </div>
         </div>
 
         <div class="input-group">
@@ -288,6 +349,11 @@
             <span class="price-label">Volume Tier Range</span>
             <span class="price-val" id="outTier">Tier 1 (1 – 50 CFT)</span>
           </div>
+
+          <div class="price-row">
+            <span class="price-label">Calculated Freight</span>
+            <span class="price-val" id="outCalculatedFreight">₹6,250</span>
+          </div>
         </div>
 
         <div style="border-top: 2px dashed var(--md-sys-color-outline-variant); padding-top: 14px; margin-top: 14px;">
@@ -295,13 +361,20 @@
             <span class="price-label" style="font-weight: 800; color: var(--md-sys-color-on-surface);">Total Lite Freight</span>
             <span class="price-val total" id="outTotal">₹6,250</span>
           </div>
+          <div class="min-alert-text" id="minAlert">
+            <span class="material-symbols-outlined" style="font-size: 16px;">info</span>
+            <span>Minimum booking charge of ₹5,000 applied</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Official Slab Matrix -->
     <div class="table-section">
-      <div class="card-title" style="margin-bottom: 14px;">Official APML Lite Rate Matrix (₹ / CFT)</div>
+      <div class="card-title" style="margin-bottom: 14px;">
+        <span>Rate Matrix from Mumbai &amp; Pune (₹ / CFT)</span>
+        <span class="origin-pill">Min. Charge ₹5,000</span>
+      </div>
       <table>
         <thead>
           <tr>
@@ -353,7 +426,7 @@
   <script src="common.js?v=2.2"></script>
 
   <script>
-    // Rate Matrix data extracted from official sheet
+    // Rate Matrix data from Mumbai & Pune
     const LITE_RATES = {
       DELHI: { name: "Delhi NCR (KWS)", t1: 125, t2: 115, t3: 100, t4: 85 },
       CHE:   { name: "Chennai (CHE)",    t1: 125, t2: 115, t3: 100, t4: 85 },
@@ -361,8 +434,11 @@
       KOL:   { name: "Kolkata (KOL)",    t1: 140, t2: 130, t3: 105, t4: 100 }
     };
 
+    const MIN_FREIGHT_CHARGE = 5000;
+
     const destSelect = document.getElementById('destinationSelect');
     const cftInput = document.getElementById('cftInput');
+    const minAlert = document.getElementById('minAlert');
 
     function calculateLiteRate() {
       const dest = destSelect.value;
@@ -376,7 +452,9 @@
         document.getElementById('outCft').innerText = '0 CFT';
         document.getElementById('outRatePerCft').innerText = '₹0 / CFT';
         document.getElementById('outTier').innerText = 'N/A';
+        document.getElementById('outCalculatedFreight').innerText = '₹0';
         document.getElementById('outTotal').innerText = '₹0';
+        minAlert.style.display = 'none';
         return;
       }
 
@@ -394,12 +472,21 @@
         tierName = "Tier 4 (251 – 450 CFT)";
       }
 
-      const total = Math.round(cft * perCft);
+      const calculated = Math.round(cft * perCft);
+      const finalTotal = Math.max(MIN_FREIGHT_CHARGE, calculated);
 
       document.getElementById('outCft').innerText = `${cft} CFT`;
       document.getElementById('outRatePerCft').innerText = `₹${perCft} / CFT`;
       document.getElementById('outTier').innerText = tierName;
-      document.getElementById('outTotal').innerText = `₹${total.toLocaleString('en-IN')}`;
+      document.getElementById('outCalculatedFreight').innerText = `₹${calculated.toLocaleString('en-IN')}`;
+      document.getElementById('outTotal').innerText = `₹${finalTotal.toLocaleString('en-IN')}`;
+
+      // Show minimum rate alert if calculated total is lower than ₹5,000
+      if (calculated < MIN_FREIGHT_CHARGE) {
+        minAlert.style.display = 'flex';
+      } else {
+        minAlert.style.display = 'none';
+      }
 
       // Highlight active destination row in the matrix
       document.querySelectorAll('tbody tr').forEach(r => r.classList.remove('active-row'));
