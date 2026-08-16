@@ -229,7 +229,7 @@
 }
 
 /* =========================================================
-   COMMON FOOTER STYLING
+   GOOGLE MATERIAL DESIGN 3 FOOTER STYLING
    ========================================================= */
 #footer-container {
   width: 100%;
@@ -237,9 +237,9 @@
 }
 
 .site-footer {
-  background: #ffffff;
+  background: var(--md-sys-color-surface-container-lowest);
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  padding: 24px 20px;
+  padding: 16px 20px;
   width: 100%;
 }
 
@@ -251,24 +251,89 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  font-size: 13px;
-  color: var(--md-sys-color-on-surface-variant);
 }
 
-.footer-links {
+.footer-brand {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  gap: 10px;
 }
 
-.footer-about-btn {
-  text-decoration: none;
+.footer-credit-text {
+  font-size: 13px;
   font-weight: 700;
-  color: var(--md-sys-color-primary);
-  transition: opacity 0.2s ease;
+  color: var(--md-sys-color-on-surface-variant);
+  letter-spacing: -0.01em;
 }
 
-.footer-about-btn:hover {
-  opacity: 0.8;
+.footer-credit-text span {
+  color: var(--md-sys-color-on-surface);
+  font-weight: 800;
+}
+
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* M3 Themed WhatsApp Action Button */
+.m3-wa-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  color: #16a34a;
+  text-decoration: none;
+  transition: var(--transition-m3);
+  position: relative;
+}
+
+.m3-wa-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  transition: transform 0.25s ease;
+}
+
+.m3-wa-btn:hover {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+}
+
+.m3-wa-btn:hover svg {
+  transform: scale(1.12);
+}
+
+/* M3 Tonal About Me Pill */
+.m3-about-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background: var(--md-sys-color-primary-container);
+  border: 1px solid rgba(185, 28, 28, 0.2);
+  color: var(--md-sys-color-primary);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 700;
+  transition: var(--transition-m3);
+}
+
+.m3-about-btn:hover {
+  background: var(--md-sys-color-primary);
+  color: #ffffff;
+  border-color: var(--md-sys-color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
 }
 
 @media (max-width: 600px) {
@@ -283,5 +348,6 @@
     flex-direction: column;
     text-align: center;
     justify-content: center;
+    gap: 12px;
   }
 }
