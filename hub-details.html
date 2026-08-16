@@ -64,6 +64,81 @@
             vertical-align: middle;
         }
 
+        /* =========================================================
+           PAGE LOADING ANIMATION OVERLAY
+           ========================================================= */
+        #pageLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s;
+        }
+
+        #pageLoadingOverlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-spinner-box {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 0;
+            border: 3.5px solid var(--md-sys-color-primary-container);
+            border-top-color: var(--md-sys-color-primary);
+            border-radius: 50%;
+            animation: spinLoader 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+        }
+
+        .loader-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            animation: pulseLogo 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spinLoader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.9); opacity: 0.85; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .loader-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .loader-subtext {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-weight: 500;
+        }
+
         .main-container {
             width: 100%;
             max-width: 1140px;
@@ -522,6 +597,19 @@
 </head>
 <body>
 
+    <!-- PAGE LOADING ANIMATION OVERLAY -->
+    <div id="pageLoadingOverlay">
+        <div class="loader-spinner-box">
+            <div class="loader-ring"></div>
+            <img src="logo.svg" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="loader-text">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">cloud_sync</span>
+            <span>Loading Hub Directory...</span>
+        </div>
+        <div class="loader-subtext">Fetching real-time branch records</div>
+    </div>
+
     <!-- COMMON HEADER CONTAINER -->
     <div id="header-container"></div>
 
@@ -696,7 +784,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Exact Firebase Configuration
+        // Exact Firebase Configuration[cite: 5]
         const firebaseConfig = {
             apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
             authDomain: "apml-hub-directory.firebaseapp.com",
@@ -708,14 +796,14 @@
             measurementId: "G-BVJY1VV84M"
         };
 
-        // Initialize Firebase
+        // Initialize Firebase[cite: 5]
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
         const hubsRef = db.ref('hubs');
 
-        // COMPLETE & CLEANED HUB DATA FROM EXCEL
+        // COMPLETE & CLEANED HUB DATA FROM EXCEL[cite: 5]
         const initialExcelHubs = [
             { region: "NRO", city: "AGRA", hod: "Tilakraj Ji (Delivery Incharge)", contact: "9319402885 / 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
             { region: "WCRO", city: "ANKLESHWAR (ANK)", hod: "Manoj Ji (Delivery Incharge)", contact: "9311668190", address: "313/16/6 Near Asian Paint Chowkdi, Behind Mastercote Company, GIDC Estate, Ankleshwar - 393002", map: "https://maps.app.goo.gl/9DQKrq9i3XMUodgo9" },
@@ -796,6 +884,16 @@
 
         let loadedHubs = [];
 
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hide');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 400);
+            }
+        }
+
         // Smooth Scroll & Focus Helper
         function scrollToAddForm() {
             const section = document.getElementById('addHubSection');
@@ -808,13 +906,13 @@
             }
         }
 
-        // 1. Check & Auto-seed Firebase if empty, then listen in real-time
+        // 1. Check & Auto-seed Firebase if empty, then listen in real-time[cite: 5]
         hubsRef.on('value', (snapshot) => {
             const data = snapshot.val();
             loadedHubs = [];
 
             if (!data || Object.keys(data).length < 20) {
-                // Seed all verified hub records to Firebase
+                // Seed all verified hub records to Firebase[cite: 5]
                 initialExcelHubs.forEach(hub => {
                     hubsRef.push({ ...hub, timestamp: Date.now() });
                 });
@@ -825,14 +923,20 @@
                 loadedHubs.push({ id: key, ...data[key] });
             });
 
-            // Sort alphabetically by City
+            // Sort alphabetically by City[cite: 5]
             loadedHubs.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
 
             populateLookupControls(loadedHubs);
             renderTable(loadedHubs);
+            
+            // Hide loading animation screen smoothly once data is ready
+            hideLoadingOverlay();
         });
 
-        // 2. Populate Dropdown & City Quick Chips
+        // Safety fallback: Hide overlay after 4 seconds even on slow network
+        setTimeout(hideLoadingOverlay, 4000);
+
+        // 2. Populate Dropdown & City Quick Chips[cite: 5]
         function populateLookupControls(list) {
             const datalist = document.getElementById('branchList');
             const chipsContainer = document.getElementById('quickChipsContainer');
@@ -845,7 +949,7 @@
             ).join('');
         }
 
-        // 3. Quick Branch Finder Logic
+        // 3. Quick Branch Finder Logic[cite: 5]
         const lookupInput = document.getElementById('branchLookupInput');
         const lookupCard = document.getElementById('lookupResultCard');
 
@@ -912,7 +1016,7 @@
             });
         }
 
-        // 4. Render Main Table
+        // 4. Render Main Table[cite: 5]
         function renderTable(list) {
             const tbody = document.getElementById('hubTableBody');
             document.getElementById('hubCount').innerText = list.length;
@@ -952,7 +1056,7 @@
             }).join('');
         }
 
-        // 5. Add / Update Submit Handler
+        // 5. Add / Update Submit Handler[cite: 5]
         document.getElementById('addHubForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -972,7 +1076,7 @@
             }).catch(err => alert("Error: " + err.message));
         });
 
-        // 6. Delete Hub (Protected by Admin Password: 081127)
+        // 6. Delete Hub (Protected by Admin Password: 081127)[cite: 5]
         window.deleteHubEntry = function(id) {
             const ADMIN_PASSWORD = "081127";
             const enteredPassword = prompt("Enter Admin Password to delete this hub entry:");
@@ -990,7 +1094,7 @@
             }
         };
 
-        // 7. Table Live Filter
+        // 7. Table Live Filter[cite: 5]
         document.getElementById('tableSearchInput').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
             const filtered = loadedHubs.filter(h => 
