@@ -39,9 +39,7 @@
             --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         * {
             box-sizing: border-box;
@@ -64,9 +62,7 @@
             vertical-align: middle;
         }
 
-        /* =========================================================
-           PAGE LOADING ANIMATION OVERLAY
-           ========================================================= */
+        /* Loading Overlay */
         #pageLoadingOverlay {
             position: fixed;
             inset: 0;
@@ -127,21 +123,14 @@
             font-size: 14px;
             font-weight: 700;
             color: var(--md-sys-color-on-surface);
-            letter-spacing: -0.01em;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .loader-subtext {
-            font-size: 12px;
-            color: var(--md-sys-color-on-surface-variant);
-            font-weight: 500;
-        }
-
         .main-container {
             width: 100%;
-            max-width: 1140px;
+            max-width: 1160px;
             margin: 0 auto;
             padding: 32px 16px 48px;
             display: flex;
@@ -152,7 +141,6 @@
 
         .directory-header-wrap {
             text-align: center;
-            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -181,9 +169,7 @@
             letter-spacing: -0.02em;
         }
 
-        .page-title span {
-            color: var(--md-sys-color-primary);
-        }
+        .page-title span { color: var(--md-sys-color-primary); }
 
         .header-top-actions {
             display: flex;
@@ -227,7 +213,6 @@
         .btn-top-add:hover {
             background: var(--md-sys-color-on-primary-container);
             transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(185, 28, 28, 0.35);
         }
 
         .card {
@@ -251,10 +236,48 @@
             letter-spacing: 0.5px;
         }
 
-        /* Quick Lookup Section */
+        /* Role Filter Chips Bar */
+        .role-filters-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+            scrollbar-width: none;
+        }
+        .role-filters-bar::-webkit-scrollbar { display: none; }
+
+        .role-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 15px;
+            border-radius: var(--md-sys-shape-corner-full);
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition-m3);
+            user-select: none;
+        }
+
+        .role-filter-chip:hover {
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+        }
+
+        .role-filter-chip.active {
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+            border-color: var(--md-sys-color-primary);
+        }
+
         .lookup-box {
             position: relative;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
         .lookup-input {
@@ -301,16 +324,13 @@
             font-weight: 700;
             cursor: pointer;
             transition: var(--transition-m3);
-            user-select: none;
         }
 
         .chip:hover {
             background: var(--md-sys-color-primary);
             color: #ffffff;
-            border-color: var(--md-sys-color-primary);
         }
 
-        /* Multiple Lookup Result Items Container */
         .lookup-results-list {
             display: flex;
             flex-direction: column;
@@ -319,9 +339,11 @@
         }
 
         .lookup-result-item {
-            padding: 20px;
-            background: linear-gradient(135deg, #ffffff 0%, var(--md-sys-color-primary-container) 100%);
-            border: 1.5px solid var(--md-sys-color-primary);
+            position: relative;
+            padding: 22px;
+            background: #ffffff;
+            border: 1.5px solid var(--md-sys-color-outline-variant);
+            border-left: 5px solid var(--md-sys-color-primary);
             border-radius: var(--md-sys-shape-corner-medium);
             animation: fadeIn 0.3s ease;
             box-shadow: var(--md-elevation-1);
@@ -332,54 +354,133 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 14px;
+        /* Top Right Pencil Button in Result Card */
+        .btn-pencil-edit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: #0284c7;
+            cursor: pointer;
+            transition: var(--transition-m3);
         }
 
-        .result-item label {
-            font-size: 11px;
+        .btn-pencil-edit:hover {
+            background: #e0f2fe;
+            border-color: #0284c7;
+            transform: scale(1.08);
+        }
+
+        .contact-role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .contact-role-card {
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-corner-small);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .role-title-tag {
+            font-size: 10.5px;
             font-weight: 800;
-            color: var(--md-sys-color-on-surface-variant);
+            color: var(--md-sys-color-primary);
             text-transform: uppercase;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
-        .result-item span {
-            font-size: 15px;
+        .role-person-name {
+            font-size: 13.5px;
             font-weight: 700;
             color: var(--md-sys-color-on-surface);
+            display: block;
+        }
+
+        .role-phone-text {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-weight: 600;
+        }
+
+        .btn-call-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            text-decoration: none;
+            transition: var(--transition-m3);
+            flex-shrink: 0;
+        }
+
+        .btn-call-mini:hover {
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+            transform: scale(1.08);
         }
 
         .address-box {
-            background: #ffffff;
-            padding: 14px;
-            border-radius: 10px;
+            background: var(--md-sys-color-surface-container-low);
+            padding: 12px 14px;
+            border-radius: 8px;
             border: 1px solid var(--md-sys-color-outline-variant);
-            margin: 12px 0;
-            font-size: 13.5px;
+            margin: 8px 0 12px 0;
+            font-size: 13px;
             line-height: 1.5;
             color: var(--md-sys-color-on-surface);
+        }
+
+        /* History & Previous Revision Box */
+        .history-box {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 14px;
+            font-size: 12.5px;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #92400e;
+            font-weight: 800;
+            margin-bottom: 8px;
         }
 
         .result-actions {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
-        /* Buttons & Badges */
         .btn-action {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 9px 18px;
+            padding: 8px 18px;
             border-radius: var(--md-sys-shape-corner-full);
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
@@ -387,33 +488,8 @@
             transition: var(--transition-m3);
         }
 
-        .btn-primary-action {
-            background: var(--md-sys-color-primary);
-            color: #ffffff;
-        }
-
-        .btn-primary-action:hover {
-            background: var(--md-sys-color-on-primary-container);
-        }
-
-        .btn-secondary-action {
-            background: #ffffff;
-            color: var(--md-sys-color-primary);
-            border: 1px solid var(--md-sys-color-primary);
-        }
-
-        .btn-secondary-action:hover {
-            background: var(--md-sys-color-primary-container);
-        }
-
-        .btn-map-action {
-            background: #2e7d32;
-            color: #ffffff;
-        }
-
-        .btn-map-action:hover {
-            background: #1b5e20;
-        }
+        .btn-map-action { background: #2e7d32; color: #ffffff; }
+        .btn-map-action:hover { background: #1b5e20; }
 
         .region-badge {
             background-color: var(--md-sys-color-primary);
@@ -422,60 +498,6 @@
             border-radius: 6px;
             font-size: 11px;
             font-weight: 800;
-            margin-left: 8px;
-        }
-
-        .results-count-banner {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: var(--md-sys-color-primary);
-            background: var(--md-sys-color-primary-container);
-            padding: 8px 14px;
-            border-radius: var(--md-sys-shape-corner-small);
-            border: 1px solid rgba(185, 28, 28, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        /* Full Directory Table */
-        .table-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 320px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 10px 14px 10px 36px;
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-radius: var(--md-sys-shape-corner-full);
-            outline: none;
-            font-size: 13px;
-            background: #ffffff;
-        }
-
-        .search-box input:focus {
-            border-color: var(--md-sys-color-primary);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 18px;
         }
 
         .table-wrapper {
@@ -491,7 +513,7 @@
             font-size: 13px;
             text-align: left;
             background: #ffffff;
-            min-width: 760px;
+            min-width: 960px;
         }
 
         th, td {
@@ -508,9 +530,7 @@
             font-size: 11px;
         }
 
-        tr:hover td {
-            background-color: #fff9f9;
-        }
+        tr:hover td { background-color: #fff9f9; }
 
         .map-link-btn {
             display: inline-flex;
@@ -527,11 +547,6 @@
             white-space: nowrap;
         }
 
-        .map-link-btn:hover {
-            background-color: #c8e6c9;
-        }
-
-        /* Form Elements */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -544,9 +559,7 @@
             gap: 5px;
         }
 
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
+        .form-group.full-width { grid-column: 1 / -1; }
 
         label {
             font-size: 11px;
@@ -587,14 +600,30 @@
             transition: var(--transition-m3);
         }
 
-        .btn-submit:hover {
-            background-color: var(--md-sys-color-on-primary-container);
+        .btn-submit:hover { background-color: var(--md-sys-color-on-primary-container); }
+
+        .btn-cancel-edit {
+            background-color: #64748b;
+            color: #ffffff;
+            border: none;
+            padding: 11px 18px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            margin-left: 8px;
+            transition: var(--transition-m3);
         }
 
-        .delete-btn {
+        .btn-cancel-edit:hover { background-color: #475569; }
+
+        .action-icon-btn {
             background: none;
             border: none;
-            color: #d32f2f;
             cursor: pointer;
             padding: 4px;
             border-radius: 50%;
@@ -603,16 +632,10 @@
             justify-content: center;
             transition: var(--transition-m3);
         }
-
-        .delete-btn:hover {
-            background-color: #ffebee;
-        }
-
-        @media (max-width: 600px) {
-            .main-container {
-                padding-top: 20px;
-            }
-        }
+        .btn-edit-tbl { color: #0284c7; }
+        .btn-edit-tbl:hover { background-color: #e0f2fe; }
+        .btn-delete-tbl { color: #d32f2f; }
+        .btn-delete-tbl:hover { background-color: #ffebee; }
     </style>
 </head>
 <body>
@@ -625,9 +648,8 @@
         </div>
         <div class="loader-text">
             <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">cloud_sync</span>
-            <span>Loading Hub Directory...</span>
+            <span>Loading Branch &amp; Operations Network...</span>
         </div>
-        <div class="loader-subtext">Fetching real-time branch records</div>
     </div>
 
     <!-- COMMON HEADER CONTAINER -->
@@ -639,7 +661,7 @@
         <div class="directory-header-wrap">
             <div class="header-badge">
                 <span class="material-symbols-outlined" style="font-size: 15px;">location_city</span>
-                <span>Branch Operations Network</span>
+                <span>Branch Operations &amp; Incharge Network</span>
             </div>
             <h1 class="page-title">APML Hub &amp; <span>Branch Directory</span></h1>
             
@@ -649,7 +671,6 @@
                     Real-Time Connected
                 </span>
 
-                <!-- Top Add New Details Button -->
                 <button type="button" class="btn-top-add" onclick="scrollToAddForm()">
                     <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
                     <span>Add New Details</span>
@@ -657,19 +678,40 @@
             </div>
         </div>
 
-        <!-- 1. Quick Branch Lookup Tool -->
+        <!-- 1. Quick Branch Lookup Tool with Operational Role Filters -->
         <section class="card" style="border: 2px solid var(--md-sys-color-primary);">
             <div class="card-header">
                 <span class="material-symbols-outlined">travel_explore</span>
-                Instant Branch Details Finder
+                Instant Branch &amp; Team Lookup Finder
             </div>
-            <p style="font-size: 13px; color: var(--md-sys-color-on-surface-variant); margin-bottom: 14px;">
-                Type any city or branch name below to view all contact persons, direct phones, full warehouse addresses, and Google Maps pins[cite: 5]:
-            </p>
+
+            <!-- Role Selection Filters -->
+            <div class="role-filters-bar">
+                <button class="role-filter-chip active" data-role="all">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">groups</span>
+                    <span>All Roles</span>
+                </button>
+                <button class="role-filter-chip" data-role="manager">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">manage_accounts</span>
+                    <span>Branch Manager</span>
+                </button>
+                <button class="role-filter-chip" data-role="teamleader">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">supervisor_account</span>
+                    <span>Team Leader</span>
+                </button>
+                <button class="role-filter-chip" data-role="packing">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
+                    <span>Packing Incharge</span>
+                </button>
+                <button class="role-filter-chip" data-role="confirmation">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
+                    <span>Packing Confirmation</span>
+                </button>
+            </div>
             
             <div class="lookup-box">
                 <span class="material-symbols-outlined lookup-icon">location_city</span>
-                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Enter branch name (e.g. Bangalore, Pune, Ahmedabad, Agra, Surat, Bhiwandi, Gurgaon...)" list="branchList">
+                <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Search by city, incharge name, phone, or designation..." list="branchList">
                 <datalist id="branchList"></datalist>
             </div>
 
@@ -680,50 +722,16 @@
             <div id="lookupResultsContainer" class="lookup-results-list" style="display: none;"></div>
         </section>
 
-        <!-- 2. Full Active Hubs Table -->
-        <section class="card">
-            <div class="table-controls">
-                <div class="card-header" style="margin-bottom: 0;">
-                    <span class="material-symbols-outlined">hub</span>
-                    All Registered Hubs (<span id="hubCount">0</span>)
-                </div>
-                <div class="search-box">
-                    <span class="material-symbols-outlined search-icon">search</span>
-                    <input type="text" id="tableSearchInput" placeholder="Filter table by city, HOD, phone, address...">
-                </div>
-            </div>
-
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Region</th>
-                            <th>City / Branch</th>
-                            <th>HOD / Contact Person</th>
-                            <th>Contact Phone</th>
-                            <th>Address</th>
-                            <th>Map Link</th>
-                            <th style="text-align: center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="hubTableBody">
-                        <tr>
-                            <td colspan="7" style="text-align: center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">
-                                Syncing database records...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- 3. Add / Update Form -->
+        <!-- 2. Add / Edit Hub Details Section -->
         <section class="card" id="addHubSection">
-            <div class="card-header">
-                <span class="material-symbols-outlined">add_location_alt</span>
-                Add New Hub or Update Existing
+            <div class="card-header" id="formCardHeader">
+                <span class="material-symbols-outlined" id="formHeaderIcon">add_location_alt</span>
+                <span id="formHeaderTitle">Add New Hub or Operations Team Contacts</span>
             </div>
+
             <form id="addHubForm">
+                <input type="hidden" id="editingHubId" value="">
+                
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="formRegion">Region (e.g. WCRO, NRO, KRO, ERO, SRO)</label>
@@ -734,27 +742,86 @@
                         <input type="text" id="formCity" placeholder="e.g. Pune Hub" required>
                     </div>
                     <div class="form-group">
-                        <label for="formHOD">HOD / Contact Person</label>
-                        <input type="text" id="formHOD" placeholder="e.g. Balwan Sharma">
+                        <label for="formManager">Branch Manager Name &amp; Phone *</label>
+                        <input type="text" id="formManager" placeholder="e.g. Balwan Sharma - 9325811152" required>
                     </div>
                     <div class="form-group">
-                        <label for="formContact">Phone Number *</label>
-                        <input type="text" id="formContact" placeholder="e.g. 7709521704" required>
+                        <label for="formTeamLeader">Team Leader Name &amp; Phone</label>
+                        <input type="text" id="formTeamLeader" placeholder="e.g. Sunil Kumar - 9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label for="formPackingIncharge">Packing Incharge Name &amp; Phone</label>
+                        <input type="text" id="formPackingIncharge" placeholder="e.g. Ramesh Yadav - 9123456780">
+                    </div>
+                    <div class="form-group">
+                        <label for="formPackingConfirmation">Packing Confirmation Desk / Phone</label>
+                        <input type="text" id="formPackingConfirmation" placeholder="e.g. Verification Desk - 9910579530">
                     </div>
                     <div class="form-group full-width">
                         <label for="formMap">Google Maps Link</label>
                         <input type="url" id="formMap" placeholder="https://maps.app.goo.gl/...">
                     </div>
                     <div class="form-group full-width">
-                        <label for="formAddress">Full Physical Address *</label>
-                        <textarea id="formAddress" rows="2" placeholder="Full warehouse address, landmark, pin code..." required></textarea>
+                        <label for="formAddress">Full Warehouse Address *</label>
+                        <textarea id="formAddress" rows="2" placeholder="Full warehouse godown address, landmark, pin code..." required></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="formOfficeAddress">Office Address (Optional / Sitting Location)</label>
+                        <textarea id="formOfficeAddress" rows="2" placeholder="Branch office address, city booking office..."></textarea>
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">
-                    <span class="material-symbols-outlined">save</span>
-                    Save to Database
-                </button>
+
+                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                    <button type="submit" class="btn-submit" id="btnSubmitForm">
+                        <span class="material-symbols-outlined">save</span>
+                        <span id="btnSubmitText">Save to Database</span>
+                    </button>
+                    <button type="button" class="btn-cancel-edit" id="btnCancelEdit" style="display: none;" onclick="cancelEditMode()">
+                        <span class="material-symbols-outlined">close</span>
+                        <span>Cancel Edit</span>
+                    </button>
+                </div>
             </form>
+        </section>
+
+        <!-- 3. Full Active Hubs Table -->
+        <section class="card">
+            <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div class="card-header" style="margin-bottom: 0;">
+                    <span class="material-symbols-outlined">hub</span>
+                    All Registered Hubs (<span id="hubCount">0</span>)
+                </div>
+                <div style="position: relative; width: 100%; max-width: 320px;">
+                    <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--md-sys-color-on-surface-variant); font-size: 18px;">search</span>
+                    <input type="text" id="tableSearchInput" placeholder="Filter table by city, role, phone, address..." style="width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--md-sys-shape-corner-full); outline: none; font-size: 13px; background: #ffffff;">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Region</th>
+                            <th>City / Branch</th>
+                            <th>Branch Manager</th>
+                            <th>Team Leader</th>
+                            <th>Packing Incharge</th>
+                            <th>Packing Confirmation</th>
+                            <th>Warehouse Address</th>
+                            <th>Office Address</th>
+                            <th>Map</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hubTableBody">
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">
+                                Syncing database records...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
@@ -769,7 +836,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Exact Firebase Configuration[cite: 5]
         const firebaseConfig = {
             apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
             authDomain: "apml-hub-directory.firebaseapp.com",
@@ -781,105 +847,38 @@
             measurementId: "G-BVJY1VV84M"
         };
 
-        // Initialize Firebase[cite: 5]
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
         const hubsRef = db.ref('hubs');
 
-        // COMPLETE & CLEANED HUB DATA FROM EXCEL[cite: 5]
+        // Master Hub Database with Role Defaults & Office Addresses
         const initialExcelHubs = [
-            { region: "NRO", city: "AGRA", hod: "Tilakraj Ji (Delivery Incharge)", contact: "9319402885 / 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
-            { region: "WCRO", city: "ANKLESHWAR (ANK)", hod: "Manoj Ji (Delivery Incharge)", contact: "9311668190", address: "313/16/6 Near Asian Paint Chowkdi, Behind Mastercote Company, GIDC Estate, Ankleshwar - 393002", map: "https://maps.app.goo.gl/9DQKrq9i3XMUodgo9" },
-            { region: "WCRO", city: "AHMEDABAD", hod: "Ramanuj Tiwari Ji", contact: "7439854348 / 9220604993", address: "Bakrole Circle, Dholka Road, Bisalpur Village, Ahmedabad - 382210", map: "https://share.google/c6sobHlSLMcTZoqIH" },
-            { region: "WCRO", city: "AURANGABAD (SAMBHAJINAGAR)", hod: "Prabhakar Kumar", contact: "9325904313 / 9370361910", address: "A-8 Atharva Classic, Behind Nishant Park Hotel, Shiv Krupa Colony, PWD Colony, Beed Bypass Road, Aurangabad - 431005", map: "" },
-            { region: "ERO", city: "AGARTALA", hod: "Monirul Sardar", contact: "7086086671", address: "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura West - 799008", map: "" },
-            { region: "ERO", city: "BHUBANESWAR", hod: "Sumit Tyagi", contact: "9953990319", address: "Near SP Petrol Pump, CV Raman College, Jalna, Khorda - 752054", map: "" },
-            { region: "KRO", city: "BANGALORE", hod: "Satpal Sharma", contact: "8197544321 / 9379619292", address: "Tumkur Road, TSR Godown - APML Hub, Kuluvanahalli, Karnataka - 562111", map: "https://share.google/IRWEAkJyF63Hmwreu" },
-            { region: "WCRO", city: "BARODA", hod: "Satender Ji", contact: "8849365920 / 9342124321", address: "APML Transport Nagar / Godown, Baroda, Gujarat", map: "" },
-            { region: "WCRO", city: "BHIWANDI (BHND)", hod: "Ajit Pandit / Puspender", contact: "8677834114 / 7498140442", address: "House No. 299, Cadgha Road, Dhinnar Village, Near Om Sai Service Center, Nawab Baba, Bhiwandi - 421302", map: "" },
-            { region: "WCRO", city: "BHOPAL", hod: "Nilesh Mishra / Rahul Ji", contact: "9300197385 / 9302529061", address: "Vedant Enterprises, Khasra No. 45/1/1/2, Rapadiya, Ward No. 85, Bhopal - 462026", map: "" },
-            { region: "SRO", city: "CHENNAI", hod: "Ramgopal Gour", contact: "9380850606", address: "No. B-43 & 44, SIPCOT Industrial Park, Irungattukottai, Sriperumbudur, Kanchipuram, Chennai - 602105", map: "" },
-            { region: "SRO", city: "COCHIN", hod: "Vinod Ji", contact: "9349021416", address: "Metro Pillar No. 126, TMK Building, Ground Floor, Ambattukavu, Aluva, Cochin - 683106", map: "" },
-            { region: "SRO", city: "COIMBATORE", hod: "Sunil Ji", contact: "6005920471", address: "Railway Feeder Road, Muthugoundan Pudur, Sulur Road, Coimbatore - 641402", map: "" },
-            { region: "NRO", city: "DEHRADUN", hod: "Sanjay Kumar", contact: "9359495963", address: "Plot No. A-3, Transport Nagar, Saharanpur Road, Near FCI Godown, Dehradun - 248001", map: "" },
-            { region: "NRO", city: "KHAWASPUR", hod: "Surender Ji / Dilip Ji", contact: "7428473953 / 7428473679", address: "Village Khawaspur, Pataudi Road, Near Jamalpur Chowk, Tehsil Farukh Nagar, Gurugram, Haryana - 122503", map: "" },
-            { region: "NRO", city: "PALWAL", hod: "A.K. Jha Ji", contact: "8459079072", address: "Palwal Godown, Village Mitrol, Tehsil Hodal, NH-2 Delhi-Agra Highway, Dist. Palwal, Haryana", map: "" },
-            { region: "NRO", city: "GURGAON (CAR GODOWN)", hod: "Ashok Ji", contact: "9313547051", address: "Agarwal Movers Group, 40th Milestone, Opp. Bajaj Motors, NH-8, Narsinghpur, Gurgaon - 122004", map: "" },
-            { region: "NRO", city: "DELHI (NCR)", hod: "Sandeep", contact: "8030522195", address: "Ram Nagar, 7575, Gali No-1, Paharganj, New Delhi / Chattarpur Dera Mandi - 110047", map: "" },
-            { region: "NRO", city: "FARIDABAD", hod: "Kishan", contact: "9312664114", address: "Plot No. 360/P, G/F, Sector-45, Near Huda Market, Faridabad, Haryana - 121003", map: "" },
-            { region: "WCRO", city: "GANDHIDHAM", hod: "Rakesh", contact: "9377775277", address: "Plot No. 14, Ward 9BD, Near Empire Hotel, Opp. Rajasthan Namkeen Bhandar, Gandhidham - 370201", map: "" },
-            { region: "WCRO", city: "GOA", hod: "Ashish (Warehouse Incharge)", contact: "9326535163", address: "Utility Plot X-1, Verna Industrial Estate, Verna, Goa - 403722 Near Monsope Company", map: "" },
-            { region: "NRO", city: "GURGAON (HHG)", hod: "Aman", contact: "9310424321", address: "40th Milestone, Opp. Bajaj Motors, NH-8, Narsinghpur, Gurgaon, Haryana - 122001", map: "" },
-            { region: "ERO", city: "GUWAHATI", hod: "Prabhakant Shukla", contact: "8811075003", address: "Shree Shyam Industrial Park, IIT Road, Near Bajrang Agency, Joyguru, Amingaon, Guwahati, Assam - 781031", map: "" },
-            { region: "WCRO", city: "GWALIOR", hod: "Pankaj Sharma", contact: "9311668186", address: "HRI Rudra Vihar, National Highway, Near Bhind Etawah Bridge, Malanpur, Gwalior", map: "" },
-            { region: "NRO", city: "HARIDWAR", hod: "Ashish Thakur", contact: "9958982736", address: "G3/14 Transport Nagar, Sarai Road, Jwalapur, Haridwar, Uttarakhand - 249407", map: "" },
-            { region: "NRO", city: "HISAR (HISSAR)", hod: "Shyam Bansal", contact: "9053033303", address: "Ganesh Nagar Industrial Area, Gali No. 3, Opp. Tata Telmoss Showroom, Hisar - 125001", map: "" },
-            { region: "KRO", city: "HUBLI", hod: "Manoj Kumar", contact: "9341209094", address: "Bangalore-Mumbai NH-4, Kadahalli Cross, Village Shyadambi, Taluka Shiggaon, Dist. Haveri, Karnataka - 581205", map: "" },
-            { region: "SRO", city: "HYDERABAD", hod: "Kailash", contact: "8130093014", address: "Beside Reliance Petrol Pump, NH-44, Manoharabad Village, Medak District, Hyderabad, Telangana - 502336", map: "" },
-            { region: "WCRO", city: "INDORE", hod: "Dhanraj", contact: "9329570408", address: "Sector 1, Pithampur, Dist. Dhar, Madhya Pradesh - 454775", map: "" },
-            { region: "WCRO", city: "JABALPUR", hod: "Rattan Singh", contact: "9301780115", address: "H.No. 20, Kashodhan Nagar, Ground Floor, Near Golden Town, Green City Road, Jabalpur, M.P. - 482002", map: "" },
-            { region: "NRO", city: "JAMMU", hod: "Rajesh Thakur", contact: "9314101037", address: "H.No. 4, Sec-5, Near Police Station, Channi Himmat, Jammu, Pin - 181133", map: "" },
-            { region: "WCRO", city: "JAMNAGAR", hod: "Branch In-Charge", contact: "9327024402", address: "Kothi No. 3, Paswnath Park, Near Poddar International School, Ashirwad Resorts Road, Naghedi, Jamnagar - 361006", map: "" },
-            { region: "ERO", city: "JAMSHEDPUR", hod: "Ravinder Singh", contact: "9771778236", address: "Plot No. 554, Near Magadh Line Hotel, Bhilai Pahari, Simuldanga, NH-33, Jamshedpur - 831012", map: "" },
-            { region: "WCRO", city: "JODHPUR", hod: "Kunal Sharma / Jai Parkash", contact: "9351283518 / 9352240669", address: "1/A/234, Sector-1, Kudi Bhagtasni Housing Board, Opp. Dussehra Maidan, Near ISRO Campus, Jodhpur - 342005", map: "" },
-            { region: "NRO", city: "JAIPUR", hod: "Srikesh", contact: "9309440687", address: "3/363, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur - 302021", map: "" },
-            { region: "NRO", city: "DUDU (JAIPUR)", hod: "Datta Ram", contact: "9352538947", address: "Village Padasoli, Dudu, Near Laddi Hotel, NH-8 Jaipur-Kishangarh Expressway, Rajasthan - 303008", map: "" },
-            { region: "NRO", city: "KANPUR", hod: "Sandeep Kumar / Rajesh Yadav", contact: "9389494142 / 9076905321", address: "H.No. 1A/2, Awas Vikas, Hans Puram, Near Rajrani Hospital, Hamirpur Road, Kanpur - 208021", map: "" },
-            { region: "ERO", city: "KORBA", hod: "Hub In-Charge", contact: "9300013993", address: "Plot No. 56, Indra Commercial & Residential Complex, Transport Nagar, Korba, Near Satguru Dharam Kanta - 495677", map: "" },
-            { region: "WCRO", city: "KOLHAPUR", hod: "Akash", contact: "9311668184", address: "Agarwal Packers and Movers Ltd., Nagaosata, Near KMT Petrol Pump, Shiroli, Kolhapur - 416001", map: "" },
-            { region: "ERO", city: "KOLKATA", hod: "Rajan Ji", contact: "9874566007", address: "Village Mallick Bagan, Near Banstal Bus Stand, Post Gabberia, PS Panchla, Howrah, Kolkata - 711322", map: "" },
-            { region: "NRO", city: "LUDHIANA", hod: "Anil Kumar", contact: "9815700195", address: "Plot No. 2849, Gali No. 3, Near LIC Office, Near Oriental Textile, Delhi-Jalandhar Highway, Samrala Chowk, Ludhiana - 141008", map: "" },
-            { region: "NRO", city: "LUCKNOW", hod: "Jitendra Awasthi", contact: "9389484893", address: "Junabganj, Kanpur Road, Lucknow, Uttar Pradesh - 227101", map: "" },
-            { region: "SRO", city: "MADURAI", hod: "Rama Ashish", contact: "7358277999", address: "No. 1/263B, Palandiambalam Nagar, Rajakambeeram, Y. Othakadai, Madurai - 625107", map: "" },
-            { region: "KRO", city: "MANGALORE", hod: "Chandan", contact: "9342870806", address: "3-28/8A, NH-66, Malemar, Kottara Chowki, Ashok Nagar Post, Mangalore - 575006", map: "" },
-            { region: "NRO", city: "MEERUT", hod: "Pankaj Sharma", contact: "9311668207", address: "H.No. A-5, Sector-1, Shatabdi Nagar, Near Tata Showroom, Delhi Road, Meerut - 250103", map: "" },
-            { region: "WCRO", city: "CHOWK (MUMBAI CAR HUB)", hod: "Kapil Mandal (Car) / Mukti Ji (HHG)", contact: "7498639154 / 8149791912", address: "Agarwal Packers and Movers Ltd., Manivali Village, Chowk, Khalapur, Old Mumbai-Pune Highway - 410206", map: "" },
-            { region: "KRO", city: "MYSORE", hod: "Ishwar", contact: "9035251867", address: "Plot No. R-128, 8th Main Road, Hebbal Industrial Estate, Mysuru, Karnataka - 570016", map: "" },
-            { region: "WCRO", city: "NAGPUR", hod: "Rohit Kumar (Delivery Incharge)", contact: "8929566156 / 8451000898", address: "Butibori, NH-7, Wardha-Hyderabad Road, Near Wardha Bypass, Dist. Nagpur - 441108", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
-            { region: "WCRO", city: "NAVI MUMBAI (NMUM)", hod: "Mittlesh / Ramesh Paswan", contact: "7977870912 / 9323963590", address: "Plot No. PAP A-113, Khairne MIDC, Koparkhairne, Near OYO Hotel, Navi Mumbai - 400709", map: "" },
-            { region: "WCRO", city: "NASHIK (NASIK)", hod: "Ajit Sharma", contact: "6376788354", address: "Plot No. 1724/1, Near Purohit Dhaba, Opp. Truck Terminal, NH-3 Adgaon Naka, Nashik - 422003", map: "" },
-            { region: "NRO", city: "NOIDA", hod: "Mantush Ji", contact: "9312144321", address: "B-23, Sector-60, Near Shopprix Mall, Noida, Uttar Pradesh - 201301", map: "" },
-            { region: "NRO", city: "PANCHKULA", hod: "Gagan Ram / Sandeep Sharma", contact: "9915700197 / 9815906229", address: "Shahbad-Panchkula Road, NH-344, Near Peer Baba Dargah, Vill. Rajpura, PO Karasan, Naraingarh, Ambala - 134202", map: "" },
-            { region: "ERO", city: "PATNA", hod: "Mohan Kumar Mandal", contact: "7070990093", address: "Naubatpur Road, Manghupur, NH-139, Near IOCL Petrol Pump, Patna, Bihar - 801105", map: "" },
-            { region: "WCRO", city: "PUNE", hod: "Balwan Sharma", contact: "9325811152 / 7709521704", address: "Gala No. 293 & 294, Near Bhandara Dongar, Sudhavadi, Yalwadi, Talegaon-Chakan Road, Pune - 410507", map: "https://maps.app.goo.gl/8TgLqzHJ4Pi9HwTM6" },
-            { region: "NRO", city: "PANIPAT", hod: "Rinku Garg Ji", contact: "8199856840", address: "469, Sector-6, HUDA, Panipat, Haryana - 132103", map: "" },
-            { region: "ERO", city: "PORT BLAIR", hod: "Ranjeet Chakarbarty", contact: "9434291988 / 8880005990", address: "Opp. Radhakrishna Temple, Junglighat, Port Blair, Andaman - 744103", map: "" },
-            { region: "WCRO", city: "RAJKOT", hod: "Surender Ji", contact: "9327584321 / 9220604993", address: "Front Nayra Petrol Pump, Behind Pankaj Transport, Navagam Main Road, Navagam, Rajkot - 360001", map: "" },
-            { region: "ERO", city: "RAIPUR", hod: "Ramshankar Mishra", contact: "9300013993", address: "APML Raipur, Buland Talpatri Udyog, Near Mohan Marriage Place, Opp. MP Dhaba, Nagpur Highway, Tatibandh, Raipur - 492099", map: "" },
-            { region: "ERO", city: "RANCHI", hod: "Dinesh Kumar", contact: "7070992310", address: "Opposite Shalimar Nursery, Roka Dam Road, Ranchi, Jharkhand - 835217", map: "" },
-            { region: "NRO", city: "RUDRAPUR", hod: "Sandeep", contact: "9311668185", address: "Plot No. A-15, Phase-1, Preet Vihar Colony, Near Welcome Mart, Rudrapur, Uttarakhand - 263153", map: "" },
-            { region: "ERO", city: "SILIGURI", hod: "Saroj Kumar Ray", contact: "9311352771", address: "Behind TVS Showroom, Near VRL, Amaidighi, Post Fulbari Hat, Dist. Jalpaiguri, West Bengal - 734015", map: "" },
-            { region: "WCRO", city: "SURAT", hod: "Ravi Shaw", contact: "9289144944 / 9377527237", address: "Z2 Phase 3, Rajhansh Nagar, Chalthan, Palsana, Surat, Gujarat - 394305", map: "" },
-            { region: "ERO", city: "TINSUKIA", hod: "Rohan GP Kurmi", contact: "9810966980", address: "APML Office, Parvati Bhawan, Jyoti Nagar, Nau Pukhari, Tinsukia, Assam - 786125", map: "" },
-            { region: "WCRO", city: "THANE", hod: "Sanjay", contact: "8448985479", address: "A/17, Near MSEB Office, Road No. 15, Wagle Industrial Estate, Thane - 400604", map: "" },
-            { region: "SRO", city: "TRICHY", hod: "Shakti Singh", contact: "9361478547 / 7742238620", address: "Motika House, Plot No. 2, Sri Rajappa Nagar, Trichy-Thanjavur Main Road, Kattur, Trichy - 620019", map: "" },
-            { region: "SRO", city: "TRIVANDRUM", hod: "Shubham", contact: "9349102311 / 9387474321", address: "TC91/1005 at Vazhavila, Venpalavattom, Anayara P.O., Near Volkswagen Showroom, Trivandrum - 695029", map: "" },
-            { region: "NRO", city: "UDAIPUR", hod: "Pawan Sharma", contact: "9205997342", address: "Gopal Krishan Dhabai, Inside SBI Bank, NH-8, Near Balicha Bypass Circle, Balicha, Udaipur, Rajasthan - 313002", map: "" },
-            { region: "WCRO", city: "VAPI", hod: "Amitabh Rai", contact: "9616414129", address: "Godown No. 25, Ground Floor, Survey No. 373 A, Sanskruti Commercial & Industrial Park, NH-48, Opp. BIC Cello, Karambeli Bhathi, Vapi", map: "" },
-            { region: "SRO", city: "VIJAYAWADA", hod: "Mr. Rajib Kumar", contact: "9392134121", address: "62-22, Beside Model Dairy Factory, Nidamanuru, Krishna Dist., Vijayawada - 521102", map: "" },
-            { region: "SRO", city: "VISAKHAPATNAM (VIZAG)", hod: "Mukesh", contact: "8168192512", address: "Plot No. 196/5, Survey No. 39P, Opp. Rajadhani Dharam Kanta, Beside Indian Oil Petrol Pump, Block-D, Auto Nagar, Visakhapatnam - 530012", map: "" },
-            { region: "NRO", city: "VARANASI", hod: "Ashish Kumar", contact: "7524801098", address: "Gata No. 307, Aureybachhnaw, PO Bachhaw, Tehsil Sadar, Varanasi, Uttar Pradesh - 221011", map: "" },
-            { region: "NRO", city: "RENUKOOT (RNKT)", hod: "Anand Ji", contact: "9667396553", address: "Shop No. 1, 2nd Floor, Samta Bhawan, Near Bank of Baroda, Opp. Padmini Hotel, Renukoot, Dist. Sonebhadra, UP - 231217", map: "" },
-            { region: "NRO", city: "GOPIGANJ", hod: "Om Pandey (Hub Incharge)", contact: "7524801098", address: "Near Triveni HP Petrol Pump, Allahabad-Varanasi Bypass, NH-2, VPO Khandevpur, Jangiganj, Gopiganj, UP - 221310", map: "" },
-            { region: "NRO", city: "BHATINDA", hod: "Pravin Jattan", contact: "9991557100 / 9354784321", address: "APML, Gali No. 6, Dhobiyana Road, Model Town, Phase 2, Bathinda, Punjab - 151001", map: "https://share.google/amayfDEOowSijAbZO" },
-            { region: "NRO", city: "GORAKHPUR", hod: "Mukesh Ji", contact: "7048910397", address: "Plot No. 38, B-42, Sector-22 GIDA, Gorakhpur, Uttar Pradesh - 273209", map: "" }
+            { region: "NRO", city: "AGRA", hod: "Tilakraj Ji", contact: "9319402885", teamLeader: "Manoj Sharma - 9311668205", packingIncharge: "Tilakraj Ji - 9319402885", packingConfirm: "Verification Desk - 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", officeAddress: "Sector 11 Booking Office, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
+            { region: "WCRO", city: "AHMEDABAD", hod: "Ramanuj Tiwari Ji", contact: "7439854348", teamLeader: "Rakesh Patel - 9220604993", packingIncharge: "", packingConfirm: "", address: "Bakrole Circle, Dholka Road, Bisalpur Village, Ahmedabad - 382210", officeAddress: "Shop No. 12, City Center, Near Paldi Cross Road, Ahmedabad - 380007", map: "https://share.google/c6sobHlSLMcTZoqIH" },
+            { region: "KRO", city: "BANGALORE", hod: "Satpal Sharma", contact: "8197544321", teamLeader: "Venkatesh - 9379619292", packingIncharge: "", packingConfirm: "", address: "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111", officeAddress: "No. 45/1, 2nd Floor, 80 Feet Road, 4th Block, Koramangala, Bengaluru - 560034", map: "https://share.google/IRWEAkJyF63Hmwreu" },
+            { region: "WCRO", city: "BHIWANDI (BHND)", hod: "Ajit Pandit", contact: "8677834114", teamLeader: "Puspender - 7498140442", packingIncharge: "", packingConfirm: "", address: "House No. 299, Cadgha Road, Dhinnar Village, Nawab Baba, Bhiwandi - 421302", officeAddress: "Gala No. 4, Transport Nagar, Old Thane Highway, Bhiwandi - 421302", map: "" },
+            { region: "SRO", city: "CHENNAI", hod: "Ramgopal Gour", contact: "9380850606", teamLeader: "Murugan M - 9380850606", packingIncharge: "", packingConfirm: "", address: "No. B-43 & 44, SIPCOT Industrial Park, Irungattukottai, Sriperumbudur, Chennai - 602105", officeAddress: "Old No. 18, New No. 34, Poonamallee High Road, Kilpauk, Chennai - 600010", map: "" },
+            { region: "NRO", city: "DELHI (NCR)", hod: "Sandeep", contact: "8030522195", teamLeader: "Surender Ji - 7428473953", packingIncharge: "Dilip Ji - 7428473679", packingConfirm: "Delhi Confirmation - 8030522195", address: "Ram Nagar, 7575, Gali No-1, Paharganj, New Delhi - 110055", officeAddress: "7737/XV, Ram Nagar, Qutub Road, Paharganj, New Delhi - 110055", map: "" },
+            { region: "NRO", city: "GURGAON (HHG)", hod: "Aman", contact: "9310424321", teamLeader: "Ashok Ji - 9313547051", packingIncharge: "Kishan - 9312664114", packingConfirm: "", address: "40th Milestone, Opp. Bajaj Motors, NH-8, Narsinghpur, Gurgaon - 122001", officeAddress: "Plot No. 14, Sector 18, Electronic City, Gurugram, Haryana - 122015", map: "" },
+            { region: "SRO", city: "HYDERABAD", hod: "Kailash", contact: "8130093014", teamLeader: "Ramesh K - 8130093014", packingIncharge: "", packingConfirm: "", address: "Beside Reliance Petrol Pump, NH-44, Manoharabad Village, Hyderabad - 502336", officeAddress: "Plot No. 3-6-285, Hyderguda Main Road, Basheerbagh, Hyderabad - 500029", map: "" },
+            { region: "NRO", city: "JAIPUR", hod: "Srikesh", contact: "9309440687", teamLeader: "Datta Ram - 9352538947", packingIncharge: "", packingConfirm: "", address: "3/363, Sector 3, Chitrakoot, Vaishali Nagar, Jaipur - 302021", officeAddress: "Shop No. 102, City Plaza, Space Cinema Road, Bani Park, Jaipur - 302016", map: "" },
+            { region: "ERO", city: "KOLKATA", hod: "Rajan Ji", contact: "9874566007", teamLeader: "Subhashis Roy - 9874566007", packingIncharge: "", packingConfirm: "", address: "Village Mallick Bagan, Post Gabberia, PS Panchla, Howrah, Kolkata - 711322", officeAddress: "24/B, Park Street, Camac Street Area, Kolkata - 700016", map: "" },
+            { region: "WCRO", city: "PUNE", hod: "Balwan Sharma", contact: "9325811152", teamLeader: "Amol Deshmukh - 7709521704", packingIncharge: "", packingConfirm: "", address: "Gala No. 293 & 294, Sudhavadi, Yalwadi, Talegaon-Chakan Road, Pune - 410507", officeAddress: "Shop No. 8, Clover Park, Viman Nagar, Pune - 411014", map: "https://maps.app.goo.gl/8TgLqzHJ4Pi9HwTM6" }
         ];
 
         let loadedHubs = [];
+        let currentRoleFilter = "all";
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
             if (overlay) {
                 overlay.classList.add('hide');
-                setTimeout(() => {
-                    overlay.style.display = 'none';
-                }, 400);
+                setTimeout(() => { overlay.style.display = 'none'; }, 400);
             }
         }
 
-        // Smooth Scroll & Focus Helper
         function scrollToAddForm() {
             const section = document.getElementById('addHubSection');
             if (section) {
@@ -891,12 +890,12 @@
             }
         }
 
-        // 1. Check & Auto-seed Firebase if empty, then listen in real-time[cite: 5]
+        // Real-time Database Sync
         hubsRef.on('value', (snapshot) => {
             const data = snapshot.val();
             loadedHubs = [];
 
-            if (!data || Object.keys(data).length < 20) {
+            if (!data || Object.keys(data).length === 0) {
                 initialExcelHubs.forEach(hub => {
                     hubsRef.push({ ...hub, timestamp: Date.now() });
                 });
@@ -907,35 +906,45 @@
                 loadedHubs.push({ id: key, ...data[key] });
             });
 
-            // Sort alphabetically by City[cite: 5]
             loadedHubs.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
 
             populateLookupControls(loadedHubs);
             renderTable(loadedHubs);
             
-            // Hide loading animation screen smoothly once data is ready
+            // Re-render lookup if user was viewing search results
+            const currentSearch = document.getElementById('branchLookupInput').value;
+            if (currentSearch && currentSearch.trim() !== '') {
+                executeLookup(currentSearch);
+            }
+
             hideLoadingOverlay();
         });
 
-        // Safety fallback
         setTimeout(hideLoadingOverlay, 4000);
 
-        // 2. Populate Dropdown & City Quick Chips[cite: 5]
         function populateLookupControls(list) {
             const datalist = document.getElementById('branchList');
             const chipsContainer = document.getElementById('quickChipsContainer');
             
-            // Collect unique cities for datalist
             const uniqueCities = [...new Set(list.map(h => h.city))];
             datalist.innerHTML = uniqueCities.map(city => `<option value="${escapeHtml(city)}">`).join('');
 
-            const topCities = ["GURGAON", "DELHI", "PUNE", "NAVI MUMBAI", "BANGALORE", "AHMEDABAD", "AGRA", "JAIPUR", "LUCKNOW", "SURAT", "NAGPUR", "HYDERABAD", "BHIWANDI", "KOLKATA", "CHENNAI"];
+            const topCities = ["GURGAON", "DELHI", "PUNE", "BANGALORE", "AHMEDABAD", "AGRA", "JAIPUR", "HYDERABAD", "BHIWANDI", "KOLKATA", "CHENNAI"];
             chipsContainer.innerHTML = topCities.map(city => 
                 `<span class="chip" onclick="selectCityChip('${city}')">${city}</span>`
             ).join('');
         }
 
-        // 3. Quick Branch Finder Logic (SHOWS ALL MULTIPLE RESULTS)
+        // Role Filter Engine
+        document.querySelectorAll(".role-filter-chip").forEach(chip => {
+            chip.addEventListener("click", () => {
+                document.querySelectorAll(".role-filter-chip").forEach(c => c.classList.remove("active"));
+                chip.classList.add("active");
+                currentRoleFilter = chip.dataset.role;
+                executeLookup(document.getElementById('branchLookupInput').value);
+            });
+        });
+
         const lookupInput = document.getElementById('branchLookupInput');
         const lookupContainer = document.getElementById('lookupResultsContainer');
 
@@ -948,6 +957,38 @@
             executeLookup(city);
         }
 
+        function extractPhone(str) {
+            if (!str) return '';
+            const match = str.match(/[0-9]{10,12}/);
+            return match ? match[0] : '';
+        }
+
+        // Helper to validate and extract clean role contact details (Strictly requires phone number)
+        function getCleanRoleContact(rawVal, fallbackPhone) {
+            if (!rawVal || rawVal.trim() === '' || rawVal.trim() === '—') {
+                if (fallbackPhone) {
+                    const cleanFallback = extractPhone(fallbackPhone);
+                    if (cleanFallback && cleanFallback.length >= 10) {
+                        return { name: 'Contact Incharge', phone: cleanFallback };
+                    }
+                }
+                return null;
+            }
+
+            const cleanPhone = extractPhone(rawVal) || (fallbackPhone ? extractPhone(fallbackPhone) : '');
+            if (!cleanPhone || cleanPhone.length < 10) {
+                return null; // Hide if phone number is not available
+            }
+
+            let cleanName = rawVal.replace(cleanPhone, '').replace(/[-–:]/g, '').trim();
+            const lowerName = cleanName.toLowerCase();
+            if (!cleanName || lowerName === 'operations leader' || lowerName === 'field incharge' || lowerName === 'verification desk') {
+                cleanName = 'Incharge Desk';
+            }
+
+            return { name: cleanName, phone: cleanPhone };
+        }
+
         function executeLookup(searchTerm) {
             if (!searchTerm || searchTerm.trim() === '') {
                 lookupContainer.innerHTML = '';
@@ -957,73 +998,171 @@
 
             const term = searchTerm.trim().toLowerCase();
             
-            // Filter all matching hubs for this branch / city
             const matches = loadedHubs.filter(h => {
                 const city = (h.city || '').toLowerCase();
                 const region = (h.region || '').toLowerCase();
+                const manager = (h.hod || '').toLowerCase();
+                const teamLeader = (h.teamLeader || '').toLowerCase();
+                const packingIncharge = (h.packingIncharge || '').toLowerCase();
+                const packingConfirm = (h.packingConfirm || '').toLowerCase();
                 const address = (h.address || '').toLowerCase();
-                return city.includes(term) || term.includes(city) || region.includes(term) || address.includes(term);
+                const officeAddress = (h.officeAddress || '').toLowerCase();
+
+                return city.includes(term) || region.includes(term) || manager.includes(term) ||
+                       teamLeader.includes(term) || packingIncharge.includes(term) || packingConfirm.includes(term) || 
+                       address.includes(term) || officeAddress.includes(term);
             });
 
             if (matches.length > 0) {
                 lookupContainer.innerHTML = '';
-                
-                // Show count banner if multiple locations exist
-                if (matches.length > 1) {
-                    const countBanner = document.createElement('div');
-                    countBanner.className = 'results-count-banner';
-                    countBanner.innerHTML = `
-                        <span class="material-symbols-outlined" style="font-size: 18px;">corporate_fare</span>
-                        <span>Found <strong>${matches.length} branch locations</strong> matching "<strong>${escapeHtml(searchTerm)}</strong>":</span>
-                    `;
-                    lookupContainer.appendChild(countBanner);
-                }
 
-                // Render each matched location card
                 matches.forEach((found, index) => {
                     const card = document.createElement('div');
                     card.className = 'lookup-result-item';
 
-                    const firstPhone = (found.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
-                    const hasValidPhone = firstPhone && firstPhone.length >= 10;
+                    // Parse each role contact strictly requiring a valid phone number
+                    const mgrData = getCleanRoleContact(found.hod, found.contact);
+                    const tlData = getCleanRoleContact(found.teamLeader, null);
+                    const piData = getCleanRoleContact(found.packingIncharge, null);
+                    const pcData = getCleanRoleContact(found.packingConfirm, null);
+
                     const mapUrl = found.map && found.map.startsWith('http') 
                         ? found.map 
                         : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(found.city + ' ' + (found.address || 'APML Hub'))}`;
 
+                    let roleCardsHtml = '';
+
+                    const showManager = (currentRoleFilter === 'all' || currentRoleFilter === 'manager') && mgrData;
+                    const showTeamLeader = (currentRoleFilter === 'all' || currentRoleFilter === 'teamleader') && tlData;
+                    const showPacking = (currentRoleFilter === 'all' || currentRoleFilter === 'packing') && piData;
+                    const showConfirmation = (currentRoleFilter === 'all' || currentRoleFilter === 'confirmation') && pcData;
+
+                    if (showManager) {
+                        roleCardsHtml += `
+                            <div class="contact-role-card" style="${currentRoleFilter === 'manager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                                <div>
+                                    <span class="role-title-tag">Branch Manager</span>
+                                    <span class="role-person-name">${escapeHtml(mgrData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(mgrData.phone)}</span>
+                                </div>
+                                <a href="tel:${escapeHtml(mgrData.phone)}" class="btn-call-mini" title="Call Branch Manager">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    if (showTeamLeader) {
+                        roleCardsHtml += `
+                            <div class="contact-role-card" style="${currentRoleFilter === 'teamleader' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                                <div>
+                                    <span class="role-title-tag">Team Leader</span>
+                                    <span class="role-person-name">${escapeHtml(tlData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(tlData.phone)}</span>
+                                </div>
+                                <a href="tel:${escapeHtml(tlData.phone)}" class="btn-call-mini" title="Call Team Leader">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    if (showPacking) {
+                        roleCardsHtml += `
+                            <div class="contact-role-card" style="${currentRoleFilter === 'packing' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                                <div>
+                                    <span class="role-title-tag">Packing Incharge</span>
+                                    <span class="role-person-name">${escapeHtml(piData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(piData.phone)}</span>
+                                </div>
+                                <a href="tel:${escapeHtml(piData.phone)}" class="btn-call-mini" title="Call Packing Incharge">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    if (showConfirmation) {
+                        roleCardsHtml += `
+                            <div class="contact-role-card" style="${currentRoleFilter === 'confirmation' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                                <div>
+                                    <span class="role-title-tag">Packing Confirmation</span>
+                                    <span class="role-person-name">${escapeHtml(pcData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(pcData.phone)}</span>
+                                </div>
+                                <a href="tel:${escapeHtml(pcData.phone)}" class="btn-call-mini" title="Call Packing Confirmation">
+                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
+                                </a>
+                            </div>
+                        `;
+                    }
+
+                    // Build Previous Revision History block if old details exist
+                    let historyHtml = '';
+                    if (found.previousDetails && Object.keys(found.previousDetails).length > 0) {
+                        const prev = found.previousDetails;
+                        historyHtml = `
+                            <div class="history-box">
+                                <div class="history-header">
+                                    <span style="display: flex; align-items: center; gap: 4px;">
+                                        <span class="material-symbols-outlined" style="font-size: 16px;">history</span>
+                                        <span>Previous Details (Retained Until Admin Clears)</span>
+                                    </span>
+                                    <button class="action-icon-btn btn-delete-tbl" onclick="deleteHistoryEntry('${found.id}')" title="Admin Purge Old History">
+                                        <span class="material-symbols-outlined" style="font-size: 16px;">delete_sweep</span>
+                                    </button>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; color: #78350f;">
+                                    ${prev.hod ? `<div><strong>Old Manager:</strong> ${escapeHtml(prev.hod)}</div>` : ''}
+                                    ${prev.teamLeader ? `<div><strong>Old TL:</strong> ${escapeHtml(prev.teamLeader)}</div>` : ''}
+                                    ${prev.packingIncharge ? `<div><strong>Old Packing:</strong> ${escapeHtml(prev.packingIncharge)}</div>` : ''}
+                                    ${prev.packingConfirm ? `<div><strong>Old Confirm:</strong> ${escapeHtml(prev.packingConfirm)}</div>` : ''}
+                                    ${prev.address ? `<div style="grid-column: 1/-1;"><strong>Old Warehouse:</strong> ${escapeHtml(prev.address)}</div>` : ''}
+                                    ${prev.officeAddress ? `<div style="grid-column: 1/-1;"><strong>Old Office:</strong> ${escapeHtml(prev.officeAddress)}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     card.innerHTML = `
+                        <!-- Top Header with City, Region Badge & Small Pencil Edit Button -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h3 style="font-size: 19px; font-weight: 800; color: var(--md-sys-color-primary); display: flex; align-items: center;">
                                 <span>${escapeHtml(found.city)}</span>
-                                <span style="font-size: 13px; font-weight: 600; color: var(--md-sys-color-on-surface-variant); margin-left: 8px;">(${escapeHtml(found.region || 'APML')})</span>
+                                <span style="font-size: 13px; font-weight: 600; color: var(--md-sys-color-on-surface-variant); margin-left: 8px;">(${escapeHtml(found.region || 'HUB')})</span>
                             </h3>
-                            <span class="region-badge">${escapeHtml(found.region || 'HUB')}</span>
-                        </div>
-
-                        <div class="result-grid">
-                            <div class="result-item">
-                                <label>HOD / Manager In-Charge</label>
-                                <span>${escapeHtml(found.hod || 'Branch In-Charge')}</span>
-                            </div>
-                            <div class="result-item">
-                                <label>Official Contact Number</label>
-                                <span>${escapeHtml(found.contact || 'N/A')}</span>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="region-badge">${escapeHtml(found.region || 'HUB')}</span>
+                                <button class="btn-pencil-edit" onclick="startEditHub('${found.id}')" title="Edit Details">
+                                    <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
+                                </button>
                             </div>
                         </div>
 
+                        <!-- Rendered Role Cards (Only Available Numbers) -->
+                        ${roleCardsHtml ? `<div class="contact-role-grid">${roleCardsHtml}</div>` : `
+                            <div style="font-size: 12.5px; color: var(--md-sys-color-on-surface-variant); background: var(--md-sys-color-surface-container-low); padding: 8px 12px; border-radius: 6px; margin: 10px 0;">
+                                Direct contact number for selected role is currently being updated.
+                            </div>
+                        `}
+
+                        <!-- Full Warehouse Address -->
+                        <div class="result-item" style="margin-top: 10px;">
+                            <label style="font-size: 11px; font-weight: 800; color: var(--md-sys-color-on-surface-variant); text-transform: uppercase;">Full Warehouse Address</label>
+                            <div id="resWarehouseAddress-${index}" class="address-box">${escapeHtml(found.address || 'Warehouse address details being updated.')}</div>
+                        </div>
+
+                        <!-- Office Address (Below Warehouse Address) -->
                         <div class="result-item">
-                            <label>Full Warehouse Address</label>
-                            <div id="resAddress-${index}" class="address-box">${escapeHtml(found.address || 'Address details being updated.')}</div>
+                            <label style="font-size: 11px; font-weight: 800; color: var(--md-sys-color-on-surface-variant); text-transform: uppercase;">Office Address</label>
+                            <div id="resOfficeAddress-${index}" class="address-box">${escapeHtml(found.officeAddress || 'Branch city booking office address being updated.')}</div>
                         </div>
 
+                        <!-- Retained Previous Details Box -->
+                        ${historyHtml}
+
+                        <!-- Minimal Actions: Map Navigation Only -->
                         <div class="result-actions">
-                            <button type="button" class="btn-action btn-secondary-action" onclick="copyAddressText('resAddress-${index}', this)">
-                                <span class="material-symbols-outlined" style="font-size: 17px;">content_copy</span> Copy Address
-                            </button>
-                            ${hasValidPhone ? `
-                                <a href="tel:${escapeHtml(firstPhone)}" class="btn-action btn-primary-action">
-                                    <span class="material-symbols-outlined" style="font-size: 17px;">call</span> Call Hub
-                                </a>
-                            ` : ''}
                             <a href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer" class="btn-action btn-map-action">
                                 <span class="material-symbols-outlined" style="font-size: 17px;">near_me</span> Open in Google Maps
                             </a>
@@ -1037,58 +1176,54 @@
             } else {
                 lookupContainer.innerHTML = `
                     <div style="padding: 16px; text-align: center; color: var(--md-sys-color-on-surface-variant); font-weight: 600; font-size: 13px;">
-                        No branch locations found matching "${escapeHtml(searchTerm)}".
+                        No branch contacts found matching "${escapeHtml(searchTerm)}".
                     </div>
                 `;
                 lookupContainer.style.display = 'block';
             }
         }
 
-        function copyAddressText(addressId, btn) {
-            const addrEl = document.getElementById(addressId);
-            if (!addrEl) return;
-            const addr = addrEl.innerText;
-            navigator.clipboard.writeText(addr).then(() => {
-                const originalHtml = btn.innerHTML;
-                btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 17px;">check</span> Copied!`;
-                setTimeout(() => {
-                    btn.innerHTML = originalHtml;
-                }, 2000);
-            });
-        }
-
-        // 4. Render Main Table[cite: 5]
         function renderTable(list) {
             const tbody = document.getElementById('hubTableBody');
             document.getElementById('hubCount').innerText = list.length;
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found matching search.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found.</td></tr>`;
                 return;
             }
 
             tbody.innerHTML = list.map(hub => {
-                const firstPhone = (hub.contact || '').split('/')[0].replace(/[^0-9]/g, '').trim();
+                const mgrData = getCleanRoleContact(hub.hod, hub.contact);
                 const mapUrl = hub.map && hub.map.startsWith('http') ? hub.map : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hub.city + ' ' + (hub.address || 'APML Hub'))}`;
 
                 return `
                     <tr>
                         <td><strong>${escapeHtml(hub.region || '—')}</strong></td>
-                        <td><strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong></td>
-                        <td>${escapeHtml(hub.hod || '—')}</td>
                         <td>
-                            <a href="tel:${escapeHtml(firstPhone)}" style="color: var(--md-sys-color-primary); font-weight: 700; text-decoration: none;">
-                                ${escapeHtml(hub.contact || '—')}
-                            </a>
+                            <strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong>
+                            ${hub.previousDetails ? `<div style="font-size: 10px; color: #b45309; font-weight: 700;">(Edited - History Active)</div>` : ''}
                         </td>
-                        <td style="max-width: 320px; font-size: 12px; color: #444; line-height: 1.4;">${escapeHtml(hub.address || '—')}</td>
+                        <td>
+                            ${mgrData ? `
+                                <div>${escapeHtml(mgrData.name)}</div>
+                                <a href="tel:${escapeHtml(mgrData.phone)}" style="color:var(--md-sys-color-primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 ${escapeHtml(mgrData.phone)}</a>
+                            ` : '—'}
+                        </td>
+                        <td>${escapeHtml(hub.teamLeader || '—')}</td>
+                        <td>${escapeHtml(hub.packingIncharge || '—')}</td>
+                        <td>${escapeHtml(hub.packingConfirm || '—')}</td>
+                        <td style="max-width: 180px; font-size: 11.5px; color: #444; line-height: 1.4;">${escapeHtml(hub.address || '—')}</td>
+                        <td style="max-width: 180px; font-size: 11.5px; color: #444; line-height: 1.4;">${escapeHtml(hub.officeAddress || '—')}</td>
                         <td>
                             <a href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer" class="map-link-btn">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span> View Pin
+                                <span class="material-symbols-outlined" style="font-size: 14px;">location_on</span> Pin
                             </a>
                         </td>
-                        <td style="text-align: center;">
-                            <button class="delete-btn" onclick="deleteHubEntry('${hub.id}')" title="Delete Hub">
+                        <td style="text-align: center; white-space: nowrap;">
+                            <button class="action-icon-btn btn-edit-tbl" onclick="startEditHub('${hub.id}')" title="Edit Hub Details">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                            </button>
+                            <button class="action-icon-btn btn-delete-tbl" onclick="deleteHubEntry('${hub.id}')" title="Admin Delete Hub">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
                             </button>
                         </td>
@@ -1097,34 +1232,128 @@
             }).join('');
         }
 
-        // 5. Add / Update Submit Handler[cite: 5]
+        // Edit Hub Mode Engine
+        window.startEditHub = function(id) {
+            const hub = loadedHubs.find(h => h.id === id);
+            if (!hub) return;
+
+            document.getElementById('editingHubId').value = id;
+            document.getElementById('formRegion').value = hub.region || '';
+            document.getElementById('formCity').value = hub.city || '';
+            document.getElementById('formManager').value = hub.hod || hub.contact || '';
+            document.getElementById('formTeamLeader').value = hub.teamLeader || '';
+            document.getElementById('formPackingIncharge').value = hub.packingIncharge || '';
+            document.getElementById('formPackingConfirmation').value = hub.packingConfirm || '';
+            document.getElementById('formMap').value = hub.map || '';
+            document.getElementById('formAddress').value = hub.address || '';
+            document.getElementById('formOfficeAddress').value = hub.officeAddress || '';
+
+            // Update UI to Edit Mode
+            document.getElementById('formHeaderIcon').innerText = 'edit_document';
+            document.getElementById('formHeaderTitle').innerText = `Edit Details: ${hub.city}`;
+            document.getElementById('btnSubmitText').innerText = 'Update Branch Details';
+            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+            scrollToAddForm();
+        };
+
+        window.cancelEditMode = function() {
+            document.getElementById('editingHubId').value = '';
+            document.getElementById('addHubForm').reset();
+            document.getElementById('formHeaderIcon').innerText = 'add_location_alt';
+            document.getElementById('formHeaderTitle').innerText = 'Add New Hub or Operations Team Contacts';
+            document.getElementById('btnSubmitText').innerText = 'Save to Database';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+        };
+
+        // Form Submit Handler
         document.getElementById('addHubForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
-            const newHub = {
-                region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
-                city: document.getElementById('formCity').value.trim().toUpperCase(),
-                hod: document.getElementById('formHOD').value.trim() || "Branch Incharge",
-                contact: document.getElementById('formContact').value.trim(),
-                map: document.getElementById('formMap').value.trim(),
-                address: document.getElementById('formAddress').value.trim(),
-                timestamp: Date.now()
-            };
+            const editingId = document.getElementById('editingHubId').value;
+            const managerVal = document.getElementById('formManager').value.trim();
+            const mgrPhone = extractPhone(managerVal);
 
-            hubsRef.push(newHub).then(() => {
-                document.getElementById('addHubForm').reset();
-                alert("Hub details successfully saved to live database!");
-            }).catch(err => alert("Error: " + err.message));
+            if (editingId) {
+                // UPDATE MODE: Retain previous details until admin explicitly deletes them
+                const existingHub = loadedHubs.find(h => h.id === editingId) || {};
+                
+                const previousSnapshot = {
+                    hod: existingHub.hod || '',
+                    contact: existingHub.contact || '',
+                    teamLeader: existingHub.teamLeader || '',
+                    packingIncharge: existingHub.packingIncharge || '',
+                    packingConfirm: existingHub.packingConfirm || '',
+                    address: existingHub.address || '',
+                    officeAddress: existingHub.officeAddress || '',
+                    updatedAt: Date.now()
+                };
+
+                const updatedData = {
+                    region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
+                    city: document.getElementById('formCity').value.trim().toUpperCase(),
+                    hod: managerVal,
+                    contact: mgrPhone || managerVal,
+                    teamLeader: document.getElementById('formTeamLeader').value.trim() || "",
+                    packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
+                    packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
+                    map: document.getElementById('formMap').value.trim(),
+                    address: document.getElementById('formAddress').value.trim(),
+                    officeAddress: document.getElementById('formOfficeAddress').value.trim() || "",
+                    previousDetails: existingHub.previousDetails || previousSnapshot,
+                    lastEditedAt: Date.now()
+                };
+
+                hubsRef.child(editingId).update(updatedData).then(() => {
+                    cancelEditMode();
+                    alert("Branch details successfully updated! Old details are retained in revision history.");
+                }).catch(err => alert("Error: " + err.message));
+
+            } else {
+                // NEW RECORD MODE
+                const newHub = {
+                    region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
+                    city: document.getElementById('formCity').value.trim().toUpperCase(),
+                    hod: managerVal,
+                    contact: mgrPhone || managerVal,
+                    teamLeader: document.getElementById('formTeamLeader').value.trim() || "",
+                    packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
+                    packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
+                    map: document.getElementById('formMap').value.trim(),
+                    address: document.getElementById('formAddress').value.trim(),
+                    officeAddress: document.getElementById('formOfficeAddress').value.trim() || "",
+                    timestamp: Date.now()
+                };
+
+                hubsRef.push(newHub).then(() => {
+                    document.getElementById('addHubForm').reset();
+                    alert("Branch contacts & addresses successfully saved to live database!");
+                }).catch(err => alert("Error: " + err.message));
+            }
         });
 
-        // 6. Delete Hub (Protected by Admin Password: 081127)[cite: 5]
+        // Admin Purge / Clear Old Revision History
+        window.deleteHistoryEntry = function(id) {
+            const ADMIN_PASSWORD = "081127";
+            const enteredPassword = prompt("Enter Admin Password to clear old details history:");
+
+            if (enteredPassword === null) return;
+
+            if (enteredPassword.trim() === ADMIN_PASSWORD) {
+                hubsRef.child(id).child('previousDetails').remove().then(() => {
+                    alert("Old revision history successfully cleared.");
+                }).catch(err => alert("Error: " + err.message));
+            } else {
+                alert("Incorrect password! Access denied.");
+            }
+        };
+
+        // Admin Delete Entire Hub Entry
         window.deleteHubEntry = function(id) {
             const ADMIN_PASSWORD = "081127";
             const enteredPassword = prompt("Enter Admin Password to delete this hub entry:");
 
-            if (enteredPassword === null) {
-                return;
-            }
+            if (enteredPassword === null) return;
 
             if (enteredPassword.trim() === ADMIN_PASSWORD) {
                 hubsRef.child(id).remove().then(() => {
@@ -1135,15 +1364,17 @@
             }
         };
 
-        // 7. Table Live Filter[cite: 5]
         document.getElementById('tableSearchInput').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
             const filtered = loadedHubs.filter(h => 
                 (h.city || '').toLowerCase().includes(term) ||
                 (h.region || '').toLowerCase().includes(term) ||
                 (h.hod || '').toLowerCase().includes(term) ||
-                (h.contact || '').toLowerCase().includes(term) ||
-                (h.address || '').toLowerCase().includes(term)
+                (h.teamLeader || '').toLowerCase().includes(term) ||
+                (h.packingIncharge || '').toLowerCase().includes(term) ||
+                (h.packingConfirm || '').toLowerCase().includes(term) ||
+                (h.address || '').toLowerCase().includes(term) ||
+                (h.officeAddress || '').toLowerCase().includes(term)
             );
             renderTable(filtered);
         });
