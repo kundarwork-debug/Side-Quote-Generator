@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>APML - Local Shifting Rate Calculator</title>
+
+  <!-- Network/Hub SVG Favicon from root folder -->
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+
+  <!-- STANDARD COMMON CSS -->
+  <link rel="stylesheet" href="common.css?v=2.2">
+
+  <!-- Google Fonts & Material Symbols -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    :root {
+      --primary: #b91c1c;
+      --primary-dark: #881337;
+      --primary-soft: rgba(185, 28, 28, 0.08);
+      --primary-glow: rgba(185, 28, 28, 0.22);
+      --bg-base: #f8fafc;
+      --surface: #ffffff;
+      --surface-glass: rgba(255, 255, 255, 0.94);
+      --surface-border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 18px;
+      --radius-xl: 24px;
+      --radius-pill: 9999px;
+      --shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 12px 30px -8px rgba(15, 23, 42, 0.08);
+      --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Background Mesh */
+    .ambient-mesh {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 12% 16%, rgba(185, 28, 28, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 88% 84%, rgba(225, 29, 72, 0.04) 0%, transparent 40%);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      flex: 1;
+      padding-top: 84px;
+      padding-bottom: 50px;
+    }
+
+    .calculator-shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Header Section */
+    .calc-header {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .sop-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: var(--primary-soft);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+
+    .calc-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(26px, 5vw, 36px);
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .calc-title span {
+      color: var(--primary);
+    }
+
+    .calc-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+
+    /* Main Grid */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+      width: 100%;
+    }
+
+    .calc-card {
+      background: var(--surface-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      transition: var(--transition-m3);
+    }
+
+    .calc-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 12px;
+    }
+
+    .card-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      background: #ffffff;
+      outline: none;
+      transition: var(--transition-m3);
+    }
+
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+    }
+
+    /* Range Slider */
+    .cft-slider {
+      width: 100%;
+      accent-color: var(--primary);
+      margin-top: 4px;
+      cursor: pointer;
+    }
+
+    /* Addon Selection Chips */
+    .addons-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .addon-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition-m3);
+      user-select: none;
+    }
+
+    .addon-item:hover {
+      border-color: var(--primary);
+    }
+
+    .addon-item.selected {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .addon-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .addon-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .addon-rate {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 12.5px;
+    }
+
+    .addon-counter-input {
+      width: 50px;
+      padding: 4px 6px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      text-align: center;
+      outline: none;
+    }
+
+    /* Output Summary Card */
+    .price-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .breakdown-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--surface-border);
+    }
+
+    .breakdown-row strong {
+      color: var(--text-main);
+    }
+
+    .total-highlight-box {
+      background: linear-gradient(135deg, #ffffff, #fef2f2);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .total-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .total-amount {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    .min-alert {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #15803d;
+      background: #dcfce7;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    /* Rate Matrix Table */
+    .matrix-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.rate-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    table.rate-matrix th {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 800;
+      padding: 10px 14px;
+      text-align: left;
+      border: 1px solid var(--surface-border);
+    }
+
+    table.rate-matrix td {
+      padding: 10px 14px;
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    tr.highlight-matrix {
+      background: #fef2f2;
+      font-weight: 700;
+    }
+
+    /* Terms Section */
+    .terms-card {
+      background: var(--surface-glass);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 26px 28px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .terms-list {
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-top: 14px;
+    }
+
+    .terms-list li {
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+      .calculator-shell {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Background Lighting -->
+  <div class="ambient-mesh"></div>
+
+  <!-- Dynamic Common Header -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="calculator-shell">
+
+      <!-- Header -->
+      <div class="calc-header">
+        <div class="sop-badge">
+          <span class="material-symbols-outlined" style="font-size: 15px;">local_shipping</span>
+          <span>SOP – Local Shifting Booking (Low-Budget)</span>
+        </div>
+        <h1 class="calc-title">APML <span>Local Rate Calculator</span></h1>
+        <p class="calc-subtitle">Official booking calculator for intra-city relocation including packing, moving, loading, and unloading charges.</p>
+      </div>
+
+      <!-- Main Calculator Grid -->
+      <div class="calc-grid">
+        
+        <!-- Controls Card -->
+        <div class="calc-card">
+          <div>
+            <div class="card-title-row">
+              <h2 class="card-heading">
+                <span class="material-symbols-outlined" style="color: var(--primary);">inventory_2</span>
+                <span>Volume &amp; Consignment Details</span>
+              </h2>
+              <span class="min-alert" id="rateAppliedBadge">₹25 / CFT (Slab 1)</span>
+            </div>
+
+            <!-- CFT Volume Input -->
+            <div class="form-group" style="margin-top: 16px;">
+              <div class="form-label">
+                <span>Consignment Volume (CFT)</span>
+                <span style="color: var(--primary); font-size: 13px;" id="cftDisplayVal">200 CFT</span>
+              </div>
+              <input type="number" id="cftInput" class="form-input" value="200" min="1" max="1500" placeholder="Enter Volume in CFT">
+              <input type="range" id="cftRange" class="cft-slider" min="50" max="1000" step="10" value="200">
+            </div>
+
+            <!-- Additional Charges / Add-ons -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Additional Services / Requirements</label>
+              
+              <div class="addons-list">
+                
+                <!-- Crossing -->
+                <div class="addon-item" id="itemCrossing">
+                  <div class="addon-left" onclick="toggleCrossing()">
+                    <input type="checkbox" id="chkCrossing" style="accent-color: var(--primary);">
+                    <span>Crossing Requirement</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">₹1,500 / trip</span>
+                    <input type="number" id="tripsCrossing" class="addon-counter-input" value="1" min="1" max="10" disabled>
+                  </div>
+                </div>
+
+                <!-- 2nd Day Manpower -->
+                <div class="addon-item" id="itemManpower">
+                  <div class="addon-left" onclick="toggleManpower()">
+                    <input type="checkbox" id="chkManpower" style="accent-color: var(--primary);">
+                    <span>Additional Manpower (2nd Day)</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">₹1,000 / person</span>
+                    <input type="number" id="countManpower" class="addon-counter-input" value="1" min="1" max="10" disabled>
+                  </div>
+                </div>
+
+                <!-- AC / Geyser / Fan Removal -->
+                <div class="addon-item" id="itemAppliance">
+                  <div class="addon-left" onclick="toggleAppliance()">
+                    <input type="checkbox" id="chkAppliance" style="accent-color: var(--primary);">
+                    <span>Removal / Uninstallation (AC, Fan, Geyser)</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">As Actuals</span>
+                    <input type="number" id="amtAppliance" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                  </div>
+                </div>
+
+                <!-- Wooden Crate -->
+                <div class="addon-item" id="itemCrate">
+                  <div class="addon-left" onclick="toggleCrate()">
+                    <input type="checkbox" id="chkCrate" style="accent-color: var(--primary);">
+                    <span>Wooden Crate</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">As Actuals</span>
+                    <input type="number" id="amtCrate" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                  </div>
+                </div>
+
+                <!-- Rope Requirement -->
+                <div class="addon-item" id="itemRope">
+                  <div class="addon-left" onclick="toggleRope()">
+                    <input type="checkbox" id="chkRope" style="accent-color: var(--primary);">
+                    <span>Rope Requirement</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">As Actuals</span>
+                    <input type="number" id="amtRope" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                  </div>
+                </div>
+
+                <!-- Mathadi Charges -->
+                <div class="addon-item" id="itemMathadi">
+                  <div class="addon-left" onclick="toggleMathadi()">
+                    <input type="checkbox" id="chkMathadi" style="accent-color: var(--primary);">
+                    <span>Mathadi Charges</span>
+                  </div>
+                  <div class="addon-right">
+                    <span class="addon-rate">As Actuals</span>
+                    <input type="number" id="amtMathadi" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Calculation Summary Card -->
+        <div class="calc-card" style="justify-content: flex-start;">
+          <div class="card-title-row">
+            <h2 class="card-heading">
+              <span class="material-symbols-outlined" style="color: var(--primary);">receipt_long</span>
+              <span>Quotation Breakdown</span>
+            </h2>
+            <span style="font-size: 11px; font-weight: 700; color: var(--text-muted);">SOP Compliant</span>
+          </div>
+
+          <div class="price-breakdown">
+            <div class="breakdown-row">
+              <span>Calculated Volume Cost:</span>
+              <strong id="outRawCost">₹5,000</strong>
+            </div>
+
+            <div class="breakdown-row">
+              <span>Applicable Rate Tier:</span>
+              <strong id="outRateTier">₹25 / CFT</strong>
+            </div>
+
+            <div class="breakdown-row">
+              <span>Minimum Base Floor Check:</span>
+              <strong id="outMinCheck">₹5,000 Applied</strong>
+            </div>
+
+            <div class="breakdown-row">
+              <span>Additional Services Total:</span>
+              <strong id="outAddonsCost">₹0</strong>
+            </div>
+
+            <div class="breakdown-row">
+              <span>Advance Payable (20%):</span>
+              <strong style="color: #16a34a;" id="outAdvanceCost">₹1,000</strong>
+            </div>
+          </div>
+
+          <!-- Total Highlight Box -->
+          <div class="total-highlight-box">
+            <div>
+              <div class="total-title">Total Local Shifting Rate</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">(Packing, Loading, Moving &amp; Unloading)</div>
+            </div>
+            <div class="total-amount" id="outGrandTotal">₹5,000</div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-top: 10px;">
+            * FOV Risk coverage &amp; GST extra as applicable.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SOP Rate Matrix -->
+      <section class="matrix-section">
+        <div class="card-heading">
+          <span class="material-symbols-outlined" style="color: var(--primary);">grid_on</span>
+          <span>Applicable Booking Rates (August to February)</span>
+        </div>
+
+        <table class="rate-matrix">
+          <thead>
+            <tr>
+              <th>Volume Category</th>
+              <th>Booking Rate (Per CFT)</th>
+              <th>Included Inclusions</th>
+              <th>Min. Chargeable Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="rowSlab1">
+              <td>Up to 500 CFT</td>
+              <td>₹25 per CFT</td>
+              <td>Packing, Moving, Loading &amp; Unloading</td>
+              <td>₹5,000</td>
+            </tr>
+            <tr id="rowSlab2">
+              <td>Above 500 CFT</td>
+              <td>₹20 per CFT</td>
+              <td>Packing, Moving, Loading &amp; Unloading</td>
+              <td>₹5,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Terms & Conditions Card -->
+      <section class="terms-card">
+        <div class="card-heading">
+          <span class="material-symbols-outlined" style="color: var(--primary);">gavel</span>
+          <span>Terms &amp; Conditions – Local Shifting</span>
+        </div>
+
+        <ol class="terms-list">
+          <li><strong>Survey Accuracy:</strong> Physical / Video Survey बिल्कुल सही और सटीक होना चाहिए। सर्वे में कोई भी सामान छूटना नहीं चाहिए। सामान बढ़ने की स्थिति में संबंधित बुकिंग Loss में जा सकती है।</li>
+          <li><strong>Month-End Exception:</strong> Month-End में इन रेट्स पर बुकिंग नहीं ली जाएगी।</li>
+          <li><strong>Advance Payment:</strong> बिना Advance Payment के Booking नहीं ली जाएगी। Booking Confirm करने से पहले न्यूनतम <strong>20% Advance Payment</strong> लेना अनिवार्य है।</li>
+          <li><strong>High-Value Articles:</strong> यदि High Value Household है, तो काम के स्वरूप और आवश्यकता के अनुसार अलग से Rate लागू होंगे।</li>
+          <li><strong>Stairs / Handling:</strong> यदि सामान की सीढ़ियों के माध्यम से चढ़ाई/उतराई करनी पड़ती है, तो आवश्यक Additional Manpower Charges अलग से लिए जाएंगे।</li>
+          <li><strong>Supervisor Responsibility:</strong> Balance Payment लोडिंग पूरी होने के बाद लेना Supervisor की पूर्ण जिम्मेदारी होगी।</li>
+          <li><strong>Damage Prevention:</strong> सामान की बेहतर सुरक्षा के लिए Packing के दौरान PP Sheet / Solid Box का अधिकतम उपयोग किया जाए, जहाँ भी संभव हो।</li>
+        </ol>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Dynamic Common Footer -->
+  <div id="footer-container"></div>
+
+  <!-- STANDARD COMMON SCRIPT -->
+  <script src="common.js?v=2.2"></script>
+
+  <!-- CALCULATOR LOGIC -->
+  <script>
+    const cftInput = document.getElementById("cftInput");
+    const cftRange = document.getElementById("cftRange");
+    const cftDisplayVal = document.getElementById("cftDisplayVal");
+    
+    // Addon Elements
+    const chkCrossing = document.getElementById("chkCrossing");
+    const tripsCrossing = document.getElementById("tripsCrossing");
+    const chkManpower = document.getElementById("chkManpower");
+    const countManpower = document.getElementById("countManpower");
+    const chkAppliance = document.getElementById("chkAppliance");
+    const amtAppliance = document.getElementById("amtAppliance");
+    const chkCrate = document.getElementById("chkCrate");
+    const amtCrate = document.getElementById("amtCrate");
+    const chkRope = document.getElementById("chkRope");
+    const amtRope = document.getElementById("amtRope");
+    const chkMathadi = document.getElementById("chkMathadi");
+    const amtMathadi = document.getElementById("amtMathadi");
+
+    // Output Elements
+    const outRawCost = document.getElementById("outRawCost");
+    const outRateTier = document.getElementById("outRateTier");
+    const outMinCheck = document.getElementById("outMinCheck");
+    const outAddonsCost = document.getElementById("outAddonsCost");
+    const outAdvanceCost = document.getElementById("outAdvanceCost");
+    const outGrandTotal = document.getElementById("outGrandTotal");
+    const rateAppliedBadge = document.getElementById("rateAppliedBadge");
+
+    function toggleCrossing() {
+      tripsCrossing.disabled = !chkCrossing.checked;
+      document.getElementById("itemCrossing").classList.toggle("selected", chkCrossing.checked);
+      calculateLocalRate();
+    }
+
+    function toggleManpower() {
+      countManpower.disabled = !chkManpower.checked;
+      document.getElementById("itemManpower").classList.toggle("selected", chkManpower.checked);
+      calculateLocalRate();
+    }
+
+    function toggleAppliance() {
+      amtAppliance.disabled = !chkAppliance.checked;
+      document.getElementById("itemAppliance").classList.toggle("selected", chkAppliance.checked);
+      calculateLocalRate();
+    }
+
+    function toggleCrate() {
+      amtCrate.disabled = !chkCrate.checked;
+      document.getElementById("itemCrate").classList.toggle("selected", chkCrate.checked);
+      calculateLocalRate();
+    }
+
+    function toggleRope() {
+      amtRope.disabled = !chkRope.checked;
+      document.getElementById("itemRope").classList.toggle("selected", chkRope.checked);
+      calculateLocalRate();
+    }
+
+    function toggleMathadi() {
+      amtMathadi.disabled = !chkMathadi.checked;
+      document.getElementById("itemMathadi").classList.toggle("selected", chkMathadi.checked);
+      calculateLocalRate();
+    }
+
+    function calculateLocalRate() {
+      const cft = Math.max(0, parseFloat(cftInput.value) || 0);
+      cftRange.value = Math.min(1000, cft);
+      cftDisplayVal.textContent = `${cft} CFT`;
+
+      let ratePerCft = 25;
+      if (cft > 500) {
+        ratePerCft = 20;
+        document.getElementById("rowSlab1").classList.remove("highlight-matrix");
+        document.getElementById("rowSlab2").classList.add("highlight-matrix");
+        rateAppliedBadge.textContent = "₹20 / CFT (Above 500 CFT)";
+      } else {
+        ratePerCft = 25;
+        document.getElementById("rowSlab1").classList.add("highlight-matrix");
+        document.getElementById("rowSlab2").classList.remove("highlight-matrix");
+        rateAppliedBadge.textContent = "₹25 / CFT (Up to 500 CFT)";
+      }
+
+      const rawVolumeCost = cft * ratePerCft;
+      const baseShiftingCost = Math.max(5000, rawVolumeCost);
+
+      // Addons Calculation
+      let addonsTotal = 0;
+      if (chkCrossing.checked) {
+        addonsTotal += (parseInt(tripsCrossing.value) || 1) * 1500;
+      }
+      if (chkManpower.checked) {
+        addonsTotal += (parseInt(countManpower.value) || 1) * 1000;
+      }
+      if (chkAppliance.checked) {
+        addonsTotal += parseFloat(amtAppliance.value) || 0;
+      }
+      if (chkCrate.checked) {
+        addonsTotal += parseFloat(amtCrate.value) || 0;
+      }
+      if (chkRope.checked) {
+        addonsTotal += parseFloat(amtRope.value) || 0;
+      }
+      if (chkMathadi.checked) {
+        addonsTotal += parseFloat(amtMathadi.value) || 0;
+      }
+
+      const grandTotal = baseShiftingCost + addonsTotal;
+      const advancePayable = Math.round(grandTotal * 0.20);
+
+      // Render Outputs
+      outRawCost.textContent = `₹${rawVolumeCost.toLocaleString('en-IN')}`;
+      outRateTier.textContent = `₹${ratePerCft} / CFT`;
+      outMinCheck.textContent = rawVolumeCost < 5000 ? "₹5,000 (Min. Floor Applied)" : "Passed (Above ₹5,000)";
+      outAddonsCost.textContent = `₹${addonsTotal.toLocaleString('en-IN')}`;
+      outAdvanceCost.textContent = `₹${advancePayable.toLocaleString('en-IN')} (20%)`;
+      outGrandTotal.textContent = `₹${grandTotal.toLocaleString('en-IN')}`;
+    }
+
+    cftInput.addEventListener("input", calculateLocalRate);
+    cftRange.addEventListener("input", () => {
+      cftInput.value = cftRange.value;
+      calculateLocalRate();
+    });
+
+    [tripsCrossing, countManpower, amtAppliance, amtCrate, amtRope, amtMathadi].forEach(input => {
+      input.addEventListener("input", calculateLocalRate);
+    });
+
+    document.addEventListener("DOMContentLoaded", calculateLocalRate);
+  </script>
+</body>
+</html>
