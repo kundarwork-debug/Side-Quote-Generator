@@ -51,6 +51,10 @@
                 <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
               </a>
+              <a href="local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span>APML Local Rate</span>
+              </a>
             </nav>
           </div>
         </header>
