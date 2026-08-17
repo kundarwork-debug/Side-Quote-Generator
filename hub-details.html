@@ -215,25 +215,25 @@
             transform: translateY(-2px);
         }
 
-        .btn-top-admin {
+        .btn-top-trash {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 7px 18px;
-            background: #0f172a;
-            color: #ffffff;
-            border: 1px solid #334155;
+            background: #ffffff;
+            color: var(--md-sys-color-primary);
+            border: 1px solid var(--md-sys-color-primary);
             border-radius: var(--md-sys-shape-corner-full);
             font-size: 13px;
             font-weight: 700;
+            text-decoration: none;
             cursor: pointer;
             transition: var(--transition-m3);
         }
 
-        .btn-top-admin:hover {
-            background: #1e293b;
+        .btn-top-trash:hover {
+            background: var(--md-sys-color-primary-container);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
         }
 
         .card {
@@ -495,6 +495,7 @@
             margin-top: 14px;
         }
 
+        /* Material Design 3 (M3) Styled Maps Tonal Button */
         .btn-m3-maps {
             display: inline-flex;
             align-items: center;
@@ -692,93 +693,7 @@
         .btn-edit-tbl { color: #0284c7; }
         .btn-edit-tbl:hover { background-color: #e0f2fe; }
         .btn-delete-tbl { color: #d32f2f; }
-        .btn-delete-tbl:hover { background-color: #ffebee; }
-
-        /* =========================================================
-           EMBEDDED ADMIN MODAL STYLES
-           ========================================================= */
-        #adminModalOverlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.82);
-            backdrop-filter: blur(8px);
-            z-index: 10000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .admin-modal-card {
-            background: #ffffff;
-            border-radius: var(--md-sys-shape-corner-large);
-            max-width: 980px;
-            width: 100%;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .admin-modal-header {
-            background: #0f172a;
-            color: #ffffff;
-            padding: 18px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .admin-modal-body {
-            padding: 24px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .log-item {
-            background: #f8fafc;
-            border: 1px solid var(--md-sys-color-outline-variant);
-            border-left: 4px solid #0284c7;
-            border-radius: 10px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .btn-restore-m3 {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #15803d;
-            padding: 6px 14px;
-            border-radius: var(--md-sys-shape-corner-full);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .btn-restore-m3:hover { background: #15803d; color: #ffffff; }
-
-        .btn-purge-m3 {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #b91c1c;
-            padding: 6px 14px;
-            border-radius: var(--md-sys-shape-corner-full);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .btn-purge-m3:hover { background: #b91c1c; color: #ffffff; }
+        .btn-delete-tbl:hover { background-color: #fee2e2; }
     </style>
 </head>
 <body>
@@ -819,11 +734,11 @@
                     <span>Add New Details</span>
                 </button>
 
-                <!-- Admin Button -->
-                <button type="button" class="btn-top-admin" onclick="openAdminConsole()">
-                    <span class="material-symbols-outlined" style="font-size: 17px;">admin_panel_settings</span>
-                    <span>Admin</span>
-                </button>
+                <!-- Trash / Recovery Archive Button -->
+                <a href="admin-trash.html" class="btn-top-trash" title="Open Trash & Recovery Archive">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">delete_sweep</span>
+                    <span>Trash / Recovery</span>
+                </a>
             </div>
         </div>
 
@@ -1033,58 +948,6 @@
         </section>
     </main>
 
-    <!-- 4. EMBEDDED ADMIN MANAGEMENT MODAL -->
-    <div id="adminModalOverlay">
-        <div class="admin-modal-card">
-            <div class="admin-modal-header">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="material-symbols-outlined" style="color: #38bdf8;">admin_panel_settings</span>
-                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800;">Admin Control &amp; Revision Log</span>
-                </div>
-                <button onclick="closeAdminConsole()" style="background: none; border: none; color: #ffffff; cursor: pointer;">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
-            </div>
-
-            <div class="admin-modal-body">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <p style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">
-                        Review change logs, restore previous versions, or delete records from the live directory.
-                    </p>
-                    <button class="btn-purge-m3" onclick="purgeAllLogs()">
-                        <span class="material-symbols-outlined" style="font-size: 16px;">delete_sweep</span>
-                        <span>Clear All Logs</span>
-                    </button>
-                </div>
-
-                <div id="modalAuditLogsContainer">
-                    <div style="text-align: center; color: var(--md-sys-color-on-surface-variant); padding: 20px;">Loading revision history...</div>
-                </div>
-
-                <!-- Admin Direct Live Deletions List -->
-                <div style="margin-top: 14px; border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 16px;">
-                    <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; margin-bottom: 10px; color: var(--md-sys-color-primary);">
-                        Permanent Branch Deletions
-                    </h4>
-                    <div style="max-height: 200px; overflow-y: auto;">
-                        <table style="min-width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th>Branch City</th>
-                                    <th>HUB Manager</th>
-                                    <th style="text-align: center;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalLiveDeleteTbody">
-                                <tr><td colspan="3" style="text-align:center; padding:10px;">Loading records...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- COMMON FOOTER CONTAINER -->
     <div id="footer-container"></div>
 
@@ -1096,8 +959,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        const ADMIN_PASSWORD = "081127";
-
         const firebaseConfig = {
             apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
             authDomain: "apml-hub-directory.firebaseapp.com",
@@ -1114,7 +975,7 @@
         }
         const db = firebase.database();
         const hubsRef = db.ref('hubs');
-        const auditRef = db.ref('audit_logs');
+        const trashRef = db.ref('deleted_hubs');
 
         // Master Hub Database with Role Defaults & Office Addresses[cite: 5]
         const initialExcelHubs = [
@@ -1358,7 +1219,7 @@
                     }
 
                     card.innerHTML = `
-                        <!-- Top Header with City, Region Badge & Edit + Protected Delete Buttons -->
+                        <!-- Top Header with City, Region Badge & Edit + Soft-Delete Buttons -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h3 style="font-size: 19px; font-weight: 800; color: var(--md-sys-color-primary); display: flex; align-items: center;">
                                 <span>${escapeHtml(found.city)}</span>
@@ -1369,7 +1230,7 @@
                                 <button class="btn-pencil-edit" onclick="startEditHub('${found.id}')" title="Edit Details">
                                     <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
                                 </button>
-                                <button class="btn-pencil-delete" onclick="promptDeleteHub('${found.id}', '${escapeHtml(found.city || '')}')" title="Delete Branch Details (Admin PIN Required)">
+                                <button class="btn-pencil-delete" onclick="promptSoftDeleteHub('${found.id}', '${escapeHtml(found.city || '')}')" title="Delete Branch Details">
                                     <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
                                 </button>
                             </div>
@@ -1433,10 +1294,7 @@
                 return `
                     <tr>
                         <td><strong>${escapeHtml(hub.region || '—')}</strong></td>
-                        <td>
-                            <strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong>
-                            ${hub.previousDetails ? `<div style="font-size: 10px; color: #b45309; font-weight: 700;">(Edited - History Active)</div>` : ''}
-                        </td>
+                        <td><strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong></td>
                         <td>
                             ${hubMgrData ? `
                                 <div>${escapeHtml(hubMgrData.name)}</div>
@@ -1457,7 +1315,7 @@
                             <button class="action-icon-btn btn-edit-tbl" onclick="startEditHub('${hub.id}')" title="Edit Hub Details">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
                             </button>
-                            <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteHub('${hub.id}', '${escapeHtml(hub.city || '')}')" title="Delete Hub (Admin PIN Required)">
+                            <button class="action-icon-btn btn-delete-tbl" onclick="promptSoftDeleteHub('${hub.id}', '${escapeHtml(hub.city || '')}')" title="Delete Branch Details">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
                             </button>
                         </td>
@@ -1555,19 +1413,6 @@
             );
 
             if (editingId) {
-                const existingHub = loadedHubs.find(h => h.id === editingId) || {};
-                
-                const previousSnapshot = {
-                    hod: existingHub.hod || '',
-                    contact: existingHub.contact || '',
-                    teamLeader: existingHub.teamLeader || '',
-                    packingIncharge: existingHub.packingIncharge || '',
-                    packingConfirm: existingHub.packingConfirm || '',
-                    address: existingHub.address || '',
-                    officeAddress: existingHub.officeAddress || '',
-                    updatedAt: Date.now()
-                };
-
                 const updatedData = {
                     region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                     city: document.getElementById('formCity').value.trim().toUpperCase(),
@@ -1582,19 +1427,9 @@
                     lastEditedAt: Date.now()
                 };
 
-                // Push revision to Admin Audit Log
-                auditRef.push({
-                    hubId: editingId,
-                    action: "UPDATE",
-                    cityName: updatedData.city,
-                    previousData: previousSnapshot,
-                    newData: updatedData,
-                    timestamp: Date.now()
-                });
-
                 hubsRef.child(editingId).update(updatedData).then(() => {
                     cancelEditMode();
-                    alert("Branch details successfully updated! Recorded in Admin revision logs.");
+                    alert("Branch details successfully updated!");
                 }).catch(err => alert("Error: " + err.message));
 
             } else {
@@ -1620,172 +1455,44 @@
         });
 
         /* =========================================================
-           PROTECTED DIRECT DELETE HELPER (PIN: 081127)[cite: 5]
+           DIRECT DELETE WITH CONFIRMATION POPUP (NO PIN REQUIRED)
            ========================================================= */
-        window.promptDeleteHub = function(id, cityName) {
-            const entered = prompt(`Enter Admin Password (PIN) to delete ${cityName || 'this branch'}:`);
-            if (entered === null) return;
+        window.promptSoftDeleteHub = function(id, cityName) {
+            const confirmed = confirm("Are you sure you want to delete this branch details?");
+            if (!confirmed) return;
 
-            if (entered.trim() === ADMIN_PASSWORD) {
-                if (confirm(`Are you sure you want to permanently delete ${cityName || 'this hub'} from the live database?`)) {
+            // 1. Fetch current record
+            hubsRef.child(id).once('value', (snap) => {
+                const hubData = snap.val();
+                if (!hubData) return;
+
+                // 2. Save backup copy to 'deleted_hubs' node in Firebase
+                trashRef.child(id).set({
+                    ...hubData,
+                    deletedAt: Date.now()
+                }).then(() => {
+                    // 3. Remove from live 'hubs' node
                     hubsRef.child(id).remove().then(() => {
-                        alert(`${cityName || 'Hub'} successfully deleted.`);
-                    }).catch(err => alert("Error: " + err.message));
-                }
-            } else {
-                alert("Incorrect Admin Password! Delete action cancelled.");
-            }
-        };
-
-        /* =========================================================
-           ADMIN PIN MODAL ENGINE (PIN: 081127)[cite: 5]
-           ========================================================= */
-        window.openAdminConsole = function() {
-            const entered = prompt("Enter Admin PIN to access management records:");
-            if (entered === null) return;
-
-            if (entered.trim() === ADMIN_PASSWORD) {
-                document.getElementById('adminModalOverlay').style.display = 'flex';
-                loadAdminAuditLogs();
-                loadAdminLiveDeletions();
-            } else {
-                alert("Incorrect PIN! Access denied.");
-            }
-        };
-
-        window.closeAdminConsole = function() {
-            document.getElementById('adminModalOverlay').style.display = 'none';
-        };
-
-        function loadAdminAuditLogs() {
-            auditRef.on('value', (snap) => {
-                const data = snap.val();
-                const container = document.getElementById('modalAuditLogsContainer');
-                container.innerHTML = '';
-
-                if (!data || Object.keys(data).length === 0) {
-                    container.innerHTML = `<div style="text-align:center; color:var(--md-sys-color-on-surface-variant); padding:16px;">No changes logged. Database is up to date.</div>`;
-                    return;
-                }
-
-                const logs = [];
-                Object.keys(data).forEach(k => logs.push({ logId: k, ...data[k] }));
-                logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-                logs.forEach(log => {
-                    const item = document.createElement('div');
-                    item.className = 'log-item';
-                    const time = new Date(log.timestamp).toLocaleString('en-IN');
-
-                    item.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700;">
-                            <span><strong>${escapeHtml(log.cityName || 'Branch')}</strong> - Revision Updated</span>
-                            <span style="font-size:11.5px; color:var(--md-sys-color-on-surface-variant);">${time}</span>
-                        </div>
-
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; background:#ffffff; padding:10px; border-radius:8px; font-size:12px;">
-                            <div>
-                                <strong style="color:#b91c1c; display:block; margin-bottom:4px;">Old Details:</strong>
-                                <div>HUB Mgr: ${escapeHtml(log.previousData?.hod || '—')}</div>
-                                <div>Branch Mgr: ${escapeHtml(log.previousData?.teamLeader || '—')}</div>
-                                <div>Packing: ${escapeHtml(log.previousData?.packingIncharge || '—')}</div>
-                                <div>Confirm: ${escapeHtml(log.previousData?.packingConfirm || '—')}</div>
-                            </div>
-                            <div>
-                                <strong style="color:#15803d; display:block; margin-bottom:4px;">New Details:</strong>
-                                <div>HUB Mgr: ${escapeHtml(log.newData?.hod || '—')}</div>
-                                <div>Branch Mgr: ${escapeHtml(log.newData?.teamLeader || '—')}</div>
-                                <div>Packing: ${escapeHtml(log.newData?.packingIncharge || '—')}</div>
-                                <div>Confirm: ${escapeHtml(log.newData?.packingConfirm || '—')}</div>
-                            </div>
-                        </div>
-
-                        <div style="display:flex; gap:8px; justify-content:flex-end;">
-                            <button class="btn-restore-m3" onclick="restoreOldVersion('${log.hubId}', '${log.logId}')">
-                                <span class="material-symbols-outlined" style="font-size:15px;">restore</span>
-                                <span>Restore Old Details</span>
-                            </button>
-                            <button class="btn-purge-m3" onclick="deleteLogEntry('${log.logId}')">
-                                <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
-                                <span>Delete Log</span>
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(item);
-                });
-            });
-        }
-
-        function loadAdminLiveDeletions() {
-            hubsRef.on('value', (snap) => {
-                const data = snap.val();
-                const tbody = document.getElementById('modalLiveDeleteTbody');
-                tbody.innerHTML = '';
-
-                if (!data) {
-                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">No records found.</td></tr>`;
-                    return;
-                }
-
-                Object.keys(data).forEach(id => {
-                    const hub = data[id];
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><strong>${escapeHtml(hub.city || '—')}</strong></td>
-                        <td>${escapeHtml(hub.hod || '—')}</td>
-                        <td style="text-align:center;">
-                            <button class="btn-purge-m3" onclick="adminDeleteHub('${id}', '${escapeHtml(hub.city || 'this branch')}')">
-                                <span class="material-symbols-outlined" style="font-size:15px;">delete_forever</span>
-                                <span>Delete</span>
-                            </button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            });
-        }
-
-        window.restoreOldVersion = function(hubId, logId) {
-            if (!confirm("Restore this old version back to the live Hub Directory?")) return;
-
-            auditRef.child(logId).once('value', (snap) => {
-                const log = snap.val();
-                if (!log || !log.previousData) return;
-
-                const restored = {
-                    hod: log.previousData.hod || '',
-                    contact: log.previousData.contact || '',
-                    teamLeader: log.previousData.teamLeader || '',
-                    packingIncharge: log.previousData.packingIncharge || '',
-                    packingConfirm: log.previousData.packingConfirm || '',
-                    address: log.previousData.address || '',
-                    officeAddress: log.previousData.officeAddress || '',
-                    lastEditedAt: Date.now()
-                };
-
-                hubsRef.child(hubId).update(restored).then(() => {
-                    auditRef.child(logId).remove();
-                    alert("Old details restored successfully!");
-                }).catch(e => alert("Error: " + e.message));
+                        alert(`${cityName || 'Branch'} details deleted successfully.`);
+                    });
+                }).catch(err => alert("Error: " + err.message));
             });
         };
 
-        window.deleteLogEntry = function(logId) {
-            if (!confirm("Permanently delete this audit log entry?")) return;
-            auditRef.child(logId).remove();
-        };
-
-        window.purgeAllLogs = function() {
-            if (!confirm("Permanently clear ALL audit logs?")) return;
-            auditRef.remove().then(() => alert("All revision logs cleared."));
-        };
-
-        window.adminDeleteHub = function(hubId, cityName) {
-            if (!confirm(`Permanently delete ${cityName} from the live Hub Directory?`)) return;
-            hubsRef.child(hubId).remove().then(() => {
-                alert(`${cityName} removed from live database.`);
-            }).catch(e => alert("Error: " + e.message));
-        };
+        document.getElementById('tableSearchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = loadedHubs.filter(h => 
+                (h.city || '').toLowerCase().includes(term) ||
+                (h.region || '').toLowerCase().includes(term) ||
+                (h.hod || '').toLowerCase().includes(term) ||
+                (h.teamLeader || '').toLowerCase().includes(term) ||
+                (h.packingIncharge || '').toLowerCase().includes(term) ||
+                (h.packingConfirm || '').toLowerCase().includes(term) ||
+                (h.address || '').toLowerCase().includes(term) ||
+                (h.officeAddress || '').toLowerCase().includes(term)
+            );
+            renderTable(filtered);
+        });
 
         function escapeHtml(str) {
             if (!str) return '';
