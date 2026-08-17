@@ -14,7 +14,7 @@
     <!-- Google Fonts & Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
     <style>
@@ -215,6 +215,27 @@
             transform: translateY(-2px);
         }
 
+        .btn-top-admin {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 18px;
+            background: #0f172a;
+            color: #ffffff;
+            border: 1px solid #334155;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-m3);
+        }
+
+        .btn-top-admin:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+        }
+
         .card {
             background: var(--md-sys-color-surface-container-lowest);
             border: 1px solid var(--md-sys-color-outline-variant);
@@ -354,7 +375,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Top Right Pencil Button in Result Card */
         .btn-pencil-edit {
             display: inline-flex;
             align-items: center;
@@ -447,26 +467,6 @@
             color: var(--md-sys-color-on-surface);
         }
 
-        /* History & Previous Revision Box */
-        .history-box {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-left: 4px solid #f59e0b;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 14px;
-            font-size: 12.5px;
-        }
-
-        .history-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #92400e;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
         .result-actions {
             display: flex;
             gap: 10px;
@@ -474,7 +474,6 @@
             margin-top: 14px;
         }
 
-        /* Material Design 3 (M3) Styled Maps Tonal Button */
         .btn-m3-maps {
             display: inline-flex;
             align-items: center;
@@ -498,15 +497,6 @@
             border-color: #15803d;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
-        }
-
-        .btn-m3-maps .material-symbols-outlined {
-            font-size: 18px;
-            transition: transform 0.2s ease;
-        }
-
-        .btn-m3-maps:hover .material-symbols-outlined {
-            transform: translateX(2px);
         }
 
         .region-badge {
@@ -572,10 +562,31 @@
             border-color: #15803d;
         }
 
+        /* Form Layout with Distinct Role Blocks */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 14px;
+        }
+
+        .form-role-block {
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-corner-medium);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-role-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--md-sys-color-primary);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .form-group {
@@ -659,8 +670,92 @@
         }
         .btn-edit-tbl { color: #0284c7; }
         .btn-edit-tbl:hover { background-color: #e0f2fe; }
-        .btn-delete-tbl { color: #d32f2f; }
-        .btn-delete-tbl:hover { background-color: #ffebee; }
+
+        /* =========================================================
+           EMBEDDED ADMIN MODAL STYLES
+           ========================================================= */
+        #adminModalOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .admin-modal-card {
+            background: #ffffff;
+            border-radius: var(--md-sys-shape-corner-large);
+            max-width: 980px;
+            width: 100%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .admin-modal-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .log-item {
+            background: #f8fafc;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-left: 4px solid #0284c7;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-restore-m3 {
+            background: #dcfce7;
+            border: 1px solid #86efac;
+            color: #15803d;
+            padding: 6px 14px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-restore-m3:hover { background: #15803d; color: #ffffff; }
+
+        .btn-purge-m3 {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #b91c1c;
+            padding: 6px 14px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-purge-m3:hover { background: #b91c1c; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -699,6 +794,12 @@
                 <button type="button" class="btn-top-add" onclick="scrollToAddForm()">
                     <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
                     <span>Add New Details</span>
+                </button>
+
+                <!-- Admin Button (Opens PIN-protected Control Console) -->
+                <button type="button" class="btn-top-admin" onclick="openAdminConsole()">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">admin_panel_settings</span>
+                    <span>Admin</span>
                 </button>
             </div>
         </div>
@@ -747,7 +848,7 @@
             <div id="lookupResultsContainer" class="lookup-results-list" style="display: none;"></div>
         </section>
 
-        <!-- 2. Add / Edit Hub Details Section -->
+        <!-- 2. Add / Edit Hub Details Section (Individual Blocks for Name & Number) -->
         <section class="card" id="addHubSection">
             <div class="card-header" id="formCardHeader">
                 <span class="material-symbols-outlined" id="formHeaderIcon">add_location_alt</span>
@@ -758,6 +859,7 @@
                 <input type="hidden" id="editingHubId" value="">
                 
                 <div class="form-grid">
+                    <!-- General Region & City -->
                     <div class="form-group">
                         <label for="formRegion">Region (e.g. WCRO, NRO, KRO, ERO, SRO)</label>
                         <input type="text" id="formRegion" placeholder="WCRO">
@@ -766,22 +868,80 @@
                         <label for="formCity">City / Branch Name *</label>
                         <input type="text" id="formCity" placeholder="e.g. Pune Hub" required>
                     </div>
-                    <div class="form-group">
-                        <label for="formHubManager">HUB Manager Name &amp; Phone</label>
-                        <input type="text" id="formHubManager" placeholder="e.g. Balwan Sharma - 9325811152">
+
+                    <!-- 1. HUB Manager Contact Block -->
+                    <div class="form-role-block form-group full-width">
+                        <div class="form-role-title">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">manage_accounts</span>
+                            <span>HUB Manager Details</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="form-group">
+                                <label for="formHubManagerName">HUB Manager Name</label>
+                                <input type="text" id="formHubManagerName" placeholder="e.g. Balwan Sharma">
+                            </div>
+                            <div class="form-group">
+                                <label for="formHubManagerPhone">HUB Manager Phone Number</label>
+                                <input type="tel" id="formHubManagerPhone" placeholder="e.g. 9325811152">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="formBranchManager">Branch Manager Name &amp; Phone</label>
-                        <input type="text" id="formBranchManager" placeholder="e.g. Sunil Kumar - 9876543210">
+
+                    <!-- 2. Branch Manager Contact Block -->
+                    <div class="form-role-block form-group full-width">
+                        <div class="form-role-title">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">supervisor_account</span>
+                            <span>Branch Manager Details</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="form-group">
+                                <label for="formBranchManagerName">Branch Manager Name</label>
+                                <input type="text" id="formBranchManagerName" placeholder="e.g. Sunil Kumar">
+                            </div>
+                            <div class="form-group">
+                                <label for="formBranchManagerPhone">Branch Manager Phone Number</label>
+                                <input type="tel" id="formBranchManagerPhone" placeholder="e.g. 9876543210">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="formPackingIncharge">Packing Incharge Name &amp; Phone</label>
-                        <input type="text" id="formPackingIncharge" placeholder="e.g. Ramesh Yadav - 9123456780">
+
+                    <!-- 3. Packing Incharge Contact Block -->
+                    <div class="form-role-block form-group full-width">
+                        <div class="form-role-title">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">inventory_2</span>
+                            <span>Packing Incharge Details</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="form-group">
+                                <label for="formPackingInchargeName">Packing Incharge Name</label>
+                                <input type="text" id="formPackingInchargeName" placeholder="e.g. Ramesh Yadav">
+                            </div>
+                            <div class="form-group">
+                                <label for="formPackingInchargePhone">Packing Incharge Phone Number</label>
+                                <input type="tel" id="formPackingInchargePhone" placeholder="e.g. 9123456780">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="formPackingConfirmation">Packing Confirmation Desk / Phone</label>
-                        <input type="text" id="formPackingConfirmation" placeholder="e.g. Verification Desk - 9910579530">
+
+                    <!-- 4. Packing Confirmation Contact Block -->
+                    <div class="form-role-block form-group full-width">
+                        <div class="form-role-title">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">verified</span>
+                            <span>Packing Confirmation Desk Details</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                            <div class="form-group">
+                                <label for="formPackingConfirmName">Desk Incharge / Person Name</label>
+                                <input type="text" id="formPackingConfirmName" placeholder="e.g. Verification Desk">
+                            </div>
+                            <div class="form-group">
+                                <label for="formPackingConfirmPhone">Confirmation Phone Number</label>
+                                <input type="tel" id="formPackingConfirmPhone" placeholder="e.g. 9910579530">
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Location & Addresses -->
                     <div class="form-group full-width">
                         <label for="formMap">Google Maps Link</label>
                         <input type="url" id="formMap" placeholder="https://maps.app.goo.gl/...">
@@ -835,7 +995,7 @@
                             <th>Warehouse Address</th>
                             <th>Office Address</th>
                             <th>Map</th>
-                            <th style="text-align: center;">Actions</th>
+                            <th style="text-align: center;">Edit</th>
                         </tr>
                     </thead>
                     <tbody id="hubTableBody">
@@ -850,6 +1010,58 @@
         </section>
     </main>
 
+    <!-- 4. EMBEDDED ADMIN MANAGEMENT MODAL -->
+    <div id="adminModalOverlay">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #38bdf8;">admin_panel_settings</span>
+                    <span style="font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 800;">Admin Control &amp; Revision Log</span>
+                </div>
+                <button onclick="closeAdminConsole()" style="background: none; border: none; color: #ffffff; cursor: pointer;">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="admin-modal-body">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <p style="font-size: 13px; color: var(--md-sys-color-on-surface-variant);">
+                        Review change logs, restore previous versions, or delete records from the live directory.
+                    </p>
+                    <button class="btn-purge-m3" onclick="purgeAllLogs()">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">delete_sweep</span>
+                        <span>Clear All Logs</span>
+                    </button>
+                </div>
+
+                <div id="modalAuditLogsContainer">
+                    <div style="text-align: center; color: var(--md-sys-color-on-surface-variant); padding: 20px;">Loading revision history...</div>
+                </div>
+
+                <!-- Admin Direct Live Deletions List -->
+                <div style="margin-top: 14px; border-top: 1px solid var(--md-sys-color-outline-variant); padding-top: 16px;">
+                    <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; margin-bottom: 10px; color: var(--md-sys-color-primary);">
+                        Permanent Branch Deletions
+                    </h4>
+                    <div style="max-height: 200px; overflow-y: auto;">
+                        <table style="min-width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Branch City</th>
+                                    <th>HUB Manager</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modalLiveDeleteTbody">
+                                <tr><td colspan="3" style="text-align:center; padding:10px;">Loading records...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- COMMON FOOTER CONTAINER -->
     <div id="footer-container"></div>
 
@@ -861,6 +1073,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
+        const ADMIN_PASSWORD = "081127";
+
         const firebaseConfig = {
             apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
             authDomain: "apml-hub-directory.firebaseapp.com",
@@ -877,8 +1091,9 @@
         }
         const db = firebase.database();
         const hubsRef = db.ref('hubs');
+        const auditRef = db.ref('audit_logs');
 
-        // Master Hub Database with Role Defaults & Office Addresses
+        // Master Hub Database with Role Defaults & Office Addresses[cite: 5]
         const initialExcelHubs = [
             { region: "NRO", city: "AGRA", hod: "Tilakraj Ji", contact: "9319402885", teamLeader: "Manoj Sharma - 9311668205", packingIncharge: "Tilakraj Ji - 9319402885", packingConfirm: "Verification Desk - 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", officeAddress: "Sector 11 Booking Office, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
             { region: "WCRO", city: "AHMEDABAD", hod: "Ramanuj Tiwari Ji", contact: "7439854348", teamLeader: "Rakesh Patel - 9220604993", packingIncharge: "", packingConfirm: "", address: "Bakrole Circle, Dholka Road, Bisalpur Village, Ahmedabad - 382210", officeAddress: "Shop No. 12, City Center, Near Paldi Cross Road, Ahmedabad - 380007", map: "https://share.google/c6sobHlSLMcTZoqIH" },
@@ -915,7 +1130,7 @@
             }
         }
 
-        // Real-time Database Sync
+        // Real-time Database Sync[cite: 5]
         hubsRef.on('value', (snapshot) => {
             const data = snapshot.val();
             loadedHubs = [];
@@ -936,7 +1151,6 @@
             populateLookupControls(loadedHubs);
             renderTable(loadedHubs);
             
-            // Re-render lookup if user was viewing search results
             const currentSearch = document.getElementById('branchLookupInput').value;
             if (currentSearch && currentSearch.trim() !== '') {
                 executeLookup(currentSearch);
@@ -988,7 +1202,6 @@
             return match ? match[0] : '';
         }
 
-        // Helper to validate and extract clean role contact details (Strictly requires phone number)
         function getCleanRoleContact(rawVal, fallbackPhone) {
             if (!rawVal || rawVal.trim() === '' || rawVal.trim() === '—') {
                 if (fallbackPhone) {
@@ -1002,7 +1215,7 @@
 
             const cleanPhone = extractPhone(rawVal) || (fallbackPhone ? extractPhone(fallbackPhone) : '');
             if (!cleanPhone || cleanPhone.length < 10) {
-                return null; // Hide if phone number is not available
+                return null;
             }
 
             let cleanName = rawVal.replace(cleanPhone, '').replace(/[-–:]/g, '').trim();
@@ -1045,7 +1258,6 @@
                     const card = document.createElement('div');
                     card.className = 'lookup-result-item';
 
-                    // Parse each role contact strictly requiring a valid phone number
                     const hubMgrData = getCleanRoleContact(found.hod, found.contact);
                     const branchMgrData = getCleanRoleContact(found.teamLeader, null);
                     const piData = getCleanRoleContact(found.packingIncharge, null);
@@ -1122,33 +1334,6 @@
                         `;
                     }
 
-                    // Build Previous Revision History block if old details exist
-                    let historyHtml = '';
-                    if (found.previousDetails && Object.keys(found.previousDetails).length > 0) {
-                        const prev = found.previousDetails;
-                        historyHtml = `
-                            <div class="history-box">
-                                <div class="history-header">
-                                    <span style="display: flex; align-items: center; gap: 4px;">
-                                        <span class="material-symbols-outlined" style="font-size: 16px;">history</span>
-                                        <span>Previous Details (Retained Until Admin Clears)</span>
-                                    </span>
-                                    <button class="action-icon-btn btn-delete-tbl" onclick="deleteHistoryEntry('${found.id}')" title="Admin Purge Old History">
-                                        <span class="material-symbols-outlined" style="font-size: 16px;">delete_sweep</span>
-                                    </button>
-                                </div>
-                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; color: #78350f;">
-                                    ${prev.hod ? `<div><strong>Old HUB Manager:</strong> ${escapeHtml(prev.hod)}</div>` : ''}
-                                    ${prev.teamLeader ? `<div><strong>Old Branch Manager:</strong> ${escapeHtml(prev.teamLeader)}</div>` : ''}
-                                    ${prev.packingIncharge ? `<div><strong>Old Packing:</strong> ${escapeHtml(prev.packingIncharge)}</div>` : ''}
-                                    ${prev.packingConfirm ? `<div><strong>Old Confirm:</strong> ${escapeHtml(prev.packingConfirm)}</div>` : ''}
-                                    ${prev.address ? `<div style="grid-column: 1/-1;"><strong>Old Warehouse:</strong> ${escapeHtml(prev.address)}</div>` : ''}
-                                    ${prev.officeAddress ? `<div style="grid-column: 1/-1;"><strong>Old Office:</strong> ${escapeHtml(prev.officeAddress)}</div>` : ''}
-                                </div>
-                            </div>
-                        `;
-                    }
-
                     card.innerHTML = `
                         <!-- Top Header with City, Region Badge & Small Pencil Edit Button -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
@@ -1164,7 +1349,7 @@
                             </div>
                         </div>
 
-                        <!-- Rendered Role Cards (Only Available Numbers) -->
+                        <!-- Rendered Role Cards -->
                         ${roleCardsHtml ? `<div class="contact-role-grid">${roleCardsHtml}</div>` : `
                             <div style="font-size: 12.5px; color: var(--md-sys-color-on-surface-variant); background: var(--md-sys-color-surface-container-low); padding: 8px 12px; border-radius: 6px; margin: 10px 0;">
                                 Direct contact number for selected role is currently being updated.
@@ -1182,9 +1367,6 @@
                             <label style="font-size: 11px; font-weight: 800; color: var(--md-sys-color-on-surface-variant); text-transform: uppercase;">Office Address</label>
                             <div id="resOfficeAddress-${index}" class="address-box">${escapeHtml(found.officeAddress || 'Branch city booking office address being updated.')}</div>
                         </div>
-
-                        <!-- Retained Previous Details Box -->
-                        ${historyHtml}
 
                         <!-- Google Material Design 3 Maps Action Button -->
                         <div class="result-actions">
@@ -1225,10 +1407,7 @@
                 return `
                     <tr>
                         <td><strong>${escapeHtml(hub.region || '—')}</strong></td>
-                        <td>
-                            <strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong>
-                            ${hub.previousDetails ? `<div style="font-size: 10px; color: #b45309; font-weight: 700;">(Edited - History Active)</div>` : ''}
-                        </td>
+                        <td><strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong></td>
                         <td>
                             ${hubMgrData ? `
                                 <div>${escapeHtml(hubMgrData.name)}</div>
@@ -1249,9 +1428,6 @@
                             <button class="action-icon-btn btn-edit-tbl" onclick="startEditHub('${hub.id}')" title="Edit Hub Details">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
                             </button>
-                            <button class="action-icon-btn btn-delete-tbl" onclick="deleteHubEntry('${hub.id}')" title="Admin Delete Hub">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
-                            </button>
                         </td>
                     </tr>
                 `;
@@ -1266,10 +1442,28 @@
             document.getElementById('editingHubId').value = id;
             document.getElementById('formRegion').value = hub.region || '';
             document.getElementById('formCity').value = hub.city || '';
-            document.getElementById('formHubManager').value = hub.hod || hub.contact || '';
-            document.getElementById('formBranchManager').value = hub.teamLeader || '';
-            document.getElementById('formPackingIncharge').value = hub.packingIncharge || '';
-            document.getElementById('formPackingConfirmation').value = hub.packingConfirm || '';
+
+            // Split into separate name & phone values
+            const hubPhone = extractPhone(hub.contact || hub.hod);
+            const hubName = (hub.hod || '').replace(hubPhone, '').replace(/[-–:]/g, '').trim();
+            document.getElementById('formHubManagerName').value = hubName;
+            document.getElementById('formHubManagerPhone').value = hubPhone;
+
+            const bmPhone = extractPhone(hub.teamLeader);
+            const bmName = (hub.teamLeader || '').replace(bmPhone, '').replace(/[-–:]/g, '').trim();
+            document.getElementById('formBranchManagerName').value = bmName;
+            document.getElementById('formBranchManagerPhone').value = bmPhone;
+
+            const piPhone = extractPhone(hub.packingIncharge);
+            const piName = (hub.packingIncharge || '').replace(piPhone, '').replace(/[-–:]/g, '').trim();
+            document.getElementById('formPackingInchargeName').value = piName;
+            document.getElementById('formPackingInchargePhone').value = piPhone;
+
+            const pcPhone = extractPhone(hub.packingConfirm);
+            const pcName = (hub.packingConfirm || '').replace(pcPhone, '').replace(/[-–:]/g, '').trim();
+            document.getElementById('formPackingConfirmName').value = pcName;
+            document.getElementById('formPackingConfirmPhone').value = pcPhone;
+
             document.getElementById('formMap').value = hub.map || '';
             document.getElementById('formAddress').value = hub.address || '';
             document.getElementById('formOfficeAddress').value = hub.officeAddress || '';
@@ -1292,16 +1486,43 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
         };
 
+        function combineNamePhone(name, phone) {
+            const cleanName = (name || '').trim();
+            const cleanPhone = (phone || '').trim();
+            if (cleanName && cleanPhone) return `${cleanName} - ${cleanPhone}`;
+            if (cleanPhone) return cleanPhone;
+            if (cleanName) return cleanName;
+            return '';
+        }
+
         // Form Submit Handler
         document.getElementById('addHubForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const editingId = document.getElementById('editingHubId').value;
-            const hubManagerVal = document.getElementById('formHubManager').value.trim();
-            const hubMgrPhone = extractPhone(hubManagerVal);
+            
+            const hubMgrCombined = combineNamePhone(
+                document.getElementById('formHubManagerName').value,
+                document.getElementById('formHubManagerPhone').value
+            );
+            const hubMgrPhone = extractPhone(document.getElementById('formHubManagerPhone').value || hubMgrCombined);
+
+            const branchMgrCombined = combineNamePhone(
+                document.getElementById('formBranchManagerName').value,
+                document.getElementById('formBranchManagerPhone').value
+            );
+
+            const packingInchargeCombined = combineNamePhone(
+                document.getElementById('formPackingInchargeName').value,
+                document.getElementById('formPackingInchargePhone').value
+            );
+
+            const packingConfirmCombined = combineNamePhone(
+                document.getElementById('formPackingConfirmName').value,
+                document.getElementById('formPackingConfirmPhone').value
+            );
 
             if (editingId) {
-                // UPDATE MODE: Retain previous details until admin explicitly deletes them
                 const existingHub = loadedHubs.find(h => h.id === editingId) || {};
                 
                 const previousSnapshot = {
@@ -1318,33 +1539,41 @@
                 const updatedData = {
                     region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                     city: document.getElementById('formCity').value.trim().toUpperCase(),
-                    hod: hubManagerVal,
-                    contact: hubMgrPhone || hubManagerVal,
-                    teamLeader: document.getElementById('formBranchManager').value.trim() || "",
-                    packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
-                    packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
+                    hod: hubMgrCombined,
+                    contact: hubMgrPhone || hubMgrCombined,
+                    teamLeader: branchMgrCombined,
+                    packingIncharge: packingInchargeCombined,
+                    packingConfirm: packingConfirmCombined,
                     map: document.getElementById('formMap').value.trim(),
                     address: document.getElementById('formAddress').value.trim(),
                     officeAddress: document.getElementById('formOfficeAddress').value.trim() || "",
-                    previousDetails: existingHub.previousDetails || previousSnapshot,
                     lastEditedAt: Date.now()
                 };
 
+                // Push revision to Admin Audit Log
+                auditRef.push({
+                    hubId: editingId,
+                    action: "UPDATE",
+                    cityName: updatedData.city,
+                    previousData: previousSnapshot,
+                    newData: updatedData,
+                    timestamp: Date.now()
+                });
+
                 hubsRef.child(editingId).update(updatedData).then(() => {
                     cancelEditMode();
-                    alert("Branch details successfully updated! Old details are retained in revision history.");
+                    alert("Branch details successfully updated! Recorded in Admin revision logs.");
                 }).catch(err => alert("Error: " + err.message));
 
             } else {
-                // NEW RECORD MODE
                 const newHub = {
                     region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                     city: document.getElementById('formCity').value.trim().toUpperCase(),
-                    hod: hubManagerVal,
-                    contact: hubMgrPhone || hubManagerVal,
-                    teamLeader: document.getElementById('formBranchManager').value.trim() || "",
-                    packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
-                    packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
+                    hod: hubMgrCombined,
+                    contact: hubMgrPhone || hubMgrCombined,
+                    teamLeader: branchMgrCombined,
+                    packingIncharge: packingInchargeCombined,
+                    packingConfirm: packingConfirmCombined,
                     map: document.getElementById('formMap').value.trim(),
                     address: document.getElementById('formAddress').value.trim(),
                     officeAddress: document.getElementById('formOfficeAddress').value.trim() || "",
@@ -1358,52 +1587,155 @@
             }
         });
 
-        // Admin Purge / Clear Old Revision History
-        window.deleteHistoryEntry = function(id) {
-            const ADMIN_PASSWORD = "081127";
-            const enteredPassword = prompt("Enter Admin Password to clear old details history:");
+        /* =========================================================
+           ADMIN PIN MODAL ENGINE (PIN: 081127)
+           ========================================================= */
+        window.openAdminConsole = function() {
+            const entered = prompt("Enter Admin PIN to access management records:");
+            if (entered === null) return;
 
-            if (enteredPassword === null) return;
-
-            if (enteredPassword.trim() === ADMIN_PASSWORD) {
-                hubsRef.child(id).child('previousDetails').remove().then(() => {
-                    alert("Old revision history successfully cleared.");
-                }).catch(err => alert("Error: " + err.message));
+            if (entered.trim() === ADMIN_PASSWORD) {
+                document.getElementById('adminModalOverlay').style.display = 'flex';
+                loadAdminAuditLogs();
+                loadAdminLiveDeletions();
             } else {
-                alert("Incorrect password! Access denied.");
+                alert("Incorrect PIN! Access denied.");
             }
         };
 
-        // Admin Delete Entire Hub Entry
-        window.deleteHubEntry = function(id) {
-            const ADMIN_PASSWORD = "081127";
-            const enteredPassword = prompt("Enter Admin Password to delete this hub entry:");
-
-            if (enteredPassword === null) return;
-
-            if (enteredPassword.trim() === ADMIN_PASSWORD) {
-                hubsRef.child(id).remove().then(() => {
-                    alert("Hub entry removed successfully.");
-                }).catch(err => alert("Error: " + err.message));
-            } else {
-                alert("Incorrect password! Access denied.");
-            }
+        window.closeAdminConsole = function() {
+            document.getElementById('adminModalOverlay').style.display = 'none';
         };
 
-        document.getElementById('tableSearchInput').addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            const filtered = loadedHubs.filter(h => 
-                (h.city || '').toLowerCase().includes(term) ||
-                (h.region || '').toLowerCase().includes(term) ||
-                (h.hod || '').toLowerCase().includes(term) ||
-                (h.teamLeader || '').toLowerCase().includes(term) ||
-                (h.packingIncharge || '').toLowerCase().includes(term) ||
-                (h.packingConfirm || '').toLowerCase().includes(term) ||
-                (h.address || '').toLowerCase().includes(term) ||
-                (h.officeAddress || '').toLowerCase().includes(term)
-            );
-            renderTable(filtered);
-        });
+        function loadAdminAuditLogs() {
+            auditRef.on('value', (snap) => {
+                const data = snap.val();
+                const container = document.getElementById('modalAuditLogsContainer');
+                container.innerHTML = '';
+
+                if (!data || Object.keys(data).length === 0) {
+                    container.innerHTML = `<div style="text-align:center; color:var(--md-sys-color-on-surface-variant); padding:16px;">No changes logged. Database is up to date.</div>`;
+                    return;
+                }
+
+                const logs = [];
+                Object.keys(data).forEach(k => logs.push({ logId: k, ...data[k] }));
+                logs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+                logs.forEach(log => {
+                    const item = document.createElement('div');
+                    item.className = 'log-item';
+                    const time = new Date(log.timestamp).toLocaleString('en-IN');
+
+                    item.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; font-weight:700;">
+                            <span><strong>${escapeHtml(log.cityName || 'Branch')}</strong> - Revision Updated</span>
+                            <span style="font-size:11.5px; color:var(--md-sys-color-on-surface-variant);">${time}</span>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; background:#ffffff; padding:10px; border-radius:8px; font-size:12px;">
+                            <div>
+                                <strong style="color:#b91c1c; display:block; margin-bottom:4px;">Old Details:</strong>
+                                <div>HUB Mgr: ${escapeHtml(log.previousData?.hod || '—')}</div>
+                                <div>Branch Mgr: ${escapeHtml(log.previousData?.teamLeader || '—')}</div>
+                                <div>Packing: ${escapeHtml(log.previousData?.packingIncharge || '—')}</div>
+                                <div>Confirm: ${escapeHtml(log.previousData?.packingConfirm || '—')}</div>
+                            </div>
+                            <div>
+                                <strong style="color:#15803d; display:block; margin-bottom:4px;">New Details:</strong>
+                                <div>HUB Mgr: ${escapeHtml(log.newData?.hod || '—')}</div>
+                                <div>Branch Mgr: ${escapeHtml(log.newData?.teamLeader || '—')}</div>
+                                <div>Packing: ${escapeHtml(log.newData?.packingIncharge || '—')}</div>
+                                <div>Confirm: ${escapeHtml(log.newData?.packingConfirm || '—')}</div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; gap:8px; justify-content:flex-end;">
+                            <button class="btn-restore-m3" onclick="restoreOldVersion('${log.hubId}', '${log.logId}')">
+                                <span class="material-symbols-outlined" style="font-size:15px;">restore</span>
+                                <span>Restore Old Details</span>
+                            </button>
+                            <button class="btn-purge-m3" onclick="deleteLogEntry('${log.logId}')">
+                                <span class="material-symbols-outlined" style="font-size:15px;">delete</span>
+                                <span>Delete Log</span>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+            });
+        }
+
+        function loadAdminLiveDeletions() {
+            hubsRef.on('value', (snap) => {
+                const data = snap.val();
+                const tbody = document.getElementById('modalLiveDeleteTbody');
+                tbody.innerHTML = '';
+
+                if (!data) {
+                    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:10px;">No records found.</td></tr>`;
+                    return;
+                }
+
+                Object.keys(data).forEach(id => {
+                    const hub = data[id];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${escapeHtml(hub.city || '—')}</strong></td>
+                        <td>${escapeHtml(hub.hod || '—')}</td>
+                        <td style="text-align:center;">
+                            <button class="btn-purge-m3" onclick="adminDeleteHub('${id}', '${escapeHtml(hub.city || 'this branch')}')">
+                                <span class="material-symbols-outlined" style="font-size:15px;">delete_forever</span>
+                                <span>Delete</span>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        window.restoreOldVersion = function(hubId, logId) {
+            if (!confirm("Restore this old version back to the live Hub Directory?")) return;
+
+            auditRef.child(logId).once('value', (snap) => {
+                const log = snap.val();
+                if (!log || !log.previousData) return;
+
+                const restored = {
+                    hod: log.previousData.hod || '',
+                    contact: log.previousData.contact || '',
+                    teamLeader: log.previousData.teamLeader || '',
+                    packingIncharge: log.previousData.packingIncharge || '',
+                    packingConfirm: log.previousData.packingConfirm || '',
+                    address: log.previousData.address || '',
+                    officeAddress: log.previousData.officeAddress || '',
+                    lastEditedAt: Date.now()
+                };
+
+                hubsRef.child(hubId).update(restored).then(() => {
+                    auditRef.child(logId).remove();
+                    alert("Old details restored successfully!");
+                }).catch(e => alert("Error: " + e.message));
+            });
+        };
+
+        window.deleteLogEntry = function(logId) {
+            if (!confirm("Permanently delete this audit log entry?")) return;
+            auditRef.child(logId).remove();
+        };
+
+        window.purgeAllLogs = function() {
+            if (!confirm("Permanently clear ALL audit logs?")) return;
+            auditRef.remove().then(() => alert("All revision logs cleared."));
+        };
+
+        window.adminDeleteHub = function(hubId, cityName) {
+            if (!confirm(`Permanently delete ${cityName} from the live Hub Directory?`)) return;
+            hubsRef.child(hubId).remove().then(() => {
+                alert(`${cityName} removed from live database.`);
+            }).catch(e => alert("Error: " + e.message));
+        };
 
         function escapeHtml(str) {
             if (!str) return '';
