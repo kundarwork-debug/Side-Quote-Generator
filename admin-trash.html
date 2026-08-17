@@ -47,12 +47,12 @@
 </head>
 <body>
 
-  <!-- AUTH GATE (PIN: 081127) -->
+  <!-- AUTH GATE -->
   <div id="authGate">
     <div class="auth-card">
       <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">delete_sweep</span>
       <h2 style="font-family: 'Space Grotesk', sans-serif; margin-top: 8px;">Trash &amp; Data Recovery</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Enter PIN (081127) to review and restore deleted records.</p>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Enter administrator PIN to continue.</p>
       <input type="password" id="pinInput" class="auth-input" placeholder="••••••" maxlength="10">
       <button type="button" class="btn-auth" onclick="unlockTrash()">Unlock Trash</button>
     </div>
@@ -151,6 +151,9 @@
             <div class="trash-grid">
               <div><strong>HUB Manager:</strong> ${escapeHtml(item.hod || '—')}</div>
               <div><strong>Branch Manager:</strong> ${escapeHtml(item.teamLeader || '—')}</div>
+              <div><strong>Team Leader:</strong> ${escapeHtml(item.fieldOfficer || '—')}</div>
+              <div><strong>BDO:</strong> ${escapeHtml(item.bdo || '—')}</div>
+              <div><strong>BFO:</strong> ${escapeHtml(item.bfo || '—')}</div>
               <div><strong>Packing Incharge:</strong> ${escapeHtml(item.packingIncharge || '—')}</div>
               <div><strong>Packing Confirm:</strong> ${escapeHtml(item.packingConfirm || '—')}</div>
               <div style="grid-column: 1/-1;"><strong>Warehouse Address:</strong> ${escapeHtml(item.address || '—')}</div>
