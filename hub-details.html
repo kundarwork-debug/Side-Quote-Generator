@@ -13,7 +13,7 @@
 
     <!-- Google Fonts & Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
@@ -375,6 +375,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Top Right Action Icons */
         .btn-pencil-edit {
             display: inline-flex;
             align-items: center;
@@ -392,6 +393,26 @@
         .btn-pencil-edit:hover {
             background: #e0f2fe;
             border-color: #0284c7;
+            transform: scale(1.08);
+        }
+
+        .btn-pencil-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: #d32f2f;
+            cursor: pointer;
+            transition: var(--transition-m3);
+        }
+
+        .btn-pencil-delete:hover {
+            background: #fee2e2;
+            border-color: #ef4444;
             transform: scale(1.08);
         }
 
@@ -670,6 +691,8 @@
         }
         .btn-edit-tbl { color: #0284c7; }
         .btn-edit-tbl:hover { background-color: #e0f2fe; }
+        .btn-delete-tbl { color: #d32f2f; }
+        .btn-delete-tbl:hover { background-color: #ffebee; }
 
         /* =========================================================
            EMBEDDED ADMIN MODAL STYLES
@@ -796,7 +819,7 @@
                     <span>Add New Details</span>
                 </button>
 
-                <!-- Admin Button (Opens PIN-protected Control Console) -->
+                <!-- Admin Button -->
                 <button type="button" class="btn-top-admin" onclick="openAdminConsole()">
                     <span class="material-symbols-outlined" style="font-size: 17px;">admin_panel_settings</span>
                     <span>Admin</span>
@@ -995,7 +1018,7 @@
                             <th>Warehouse Address</th>
                             <th>Office Address</th>
                             <th>Map</th>
-                            <th style="text-align: center;">Edit</th>
+                            <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="hubTableBody">
@@ -1049,7 +1072,7 @@
                                 <tr>
                                     <th>Branch City</th>
                                     <th>HUB Manager</th>
-                                    <th>Action</th>
+                                    <th style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="modalLiveDeleteTbody">
@@ -1335,7 +1358,7 @@
                     }
 
                     card.innerHTML = `
-                        <!-- Top Header with City, Region Badge & Small Pencil Edit Button -->
+                        <!-- Top Header with City, Region Badge & Edit + Protected Delete Buttons -->
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                             <h3 style="font-size: 19px; font-weight: 800; color: var(--md-sys-color-primary); display: flex; align-items: center;">
                                 <span>${escapeHtml(found.city)}</span>
@@ -1345,6 +1368,9 @@
                                 <span class="region-badge">${escapeHtml(found.region || 'HUB')}</span>
                                 <button class="btn-pencil-edit" onclick="startEditHub('${found.id}')" title="Edit Details">
                                     <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
+                                </button>
+                                <button class="btn-pencil-delete" onclick="promptDeleteHub('${found.id}', '${escapeHtml(found.city || '')}')" title="Delete Branch Details (Admin PIN Required)">
+                                    <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
                                 </button>
                             </div>
                         </div>
@@ -1407,7 +1433,10 @@
                 return `
                     <tr>
                         <td><strong>${escapeHtml(hub.region || '—')}</strong></td>
-                        <td><strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong></td>
+                        <td>
+                            <strong style="color: var(--md-sys-color-primary);">${escapeHtml(hub.city)}</strong>
+                            ${hub.previousDetails ? `<div style="font-size: 10px; color: #b45309; font-weight: 700;">(Edited - History Active)</div>` : ''}
+                        </td>
                         <td>
                             ${hubMgrData ? `
                                 <div>${escapeHtml(hubMgrData.name)}</div>
@@ -1427,6 +1456,9 @@
                         <td style="text-align: center; white-space: nowrap;">
                             <button class="action-icon-btn btn-edit-tbl" onclick="startEditHub('${hub.id}')" title="Edit Hub Details">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                            </button>
+                            <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteHub('${hub.id}', '${escapeHtml(hub.city || '')}')" title="Delete Hub (Admin PIN Required)">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
                             </button>
                         </td>
                     </tr>
@@ -1588,7 +1620,25 @@
         });
 
         /* =========================================================
-           ADMIN PIN MODAL ENGINE (PIN: 081127)
+           PROTECTED DIRECT DELETE HELPER (PIN: 081127)[cite: 5]
+           ========================================================= */
+        window.promptDeleteHub = function(id, cityName) {
+            const entered = prompt(`Enter Admin Password (PIN) to delete ${cityName || 'this branch'}:`);
+            if (entered === null) return;
+
+            if (entered.trim() === ADMIN_PASSWORD) {
+                if (confirm(`Are you sure you want to permanently delete ${cityName || 'this hub'} from the live database?`)) {
+                    hubsRef.child(id).remove().then(() => {
+                        alert(`${cityName || 'Hub'} successfully deleted.`);
+                    }).catch(err => alert("Error: " + err.message));
+                }
+            } else {
+                alert("Incorrect Admin Password! Delete action cancelled.");
+            }
+        };
+
+        /* =========================================================
+           ADMIN PIN MODAL ENGINE (PIN: 081127)[cite: 5]
            ========================================================= */
         window.openAdminConsole = function() {
             const entered = prompt("Enter Admin PIN to access management records:");
