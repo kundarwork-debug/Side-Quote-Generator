@@ -82,7 +82,7 @@
     }
 
     /* =========================================================
-       HERO STAGE & TELEMETRY BEACON PULSE ANIMATION
+       HERO STAGE & MULTI-ORBITAL LOGISTICS RIG
        ========================================================= */
     .hero-stage {
       max-width: 1000px;
@@ -135,61 +135,145 @@
       line-height: 1.55;
     }
 
-    /* TELEMETRY BEACON PULSE STAGE */
-    .telemetry-beacon-stage {
+    /* MULTI-ORBITAL LOGISTICS RIG */
+    .multi-orbit-stage {
       position: relative;
-      width: 180px;
-      height: 180px;
+      width: 250px;
+      height: 250px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 24px;
+      margin-top: 20px;
       cursor: pointer;
       user-select: none;
     }
 
-    /* Concentric Expanding Ripple Waves */
+    /* Radial Background Ripple Waves */
     .beacon-wave {
       position: absolute;
-      inset: 20px;
+      inset: 40px;
       border-radius: 50%;
       border: 1.5px solid var(--primary);
       opacity: 0;
       animation: beaconRipple 3.6s cubic-bezier(0.1, 0.85, 0.25, 1) infinite;
       pointer-events: none;
     }
-
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Orbital Dashed Ring */
-    .beacon-orbit-ring {
+    /* Orbital Rings */
+    .orbit-ring {
       position: absolute;
-      inset: 8px;
       border-radius: 50%;
-      border: 1.5px dashed rgba(185, 28, 28, 0.35);
-      animation: orbitSpin 18s linear infinite;
       pointer-events: none;
+      transform-origin: center center;
     }
 
-    /* Floating Satellites */
-    .orbit-dot {
+    .orbit-ring-inner {
+      width: 120px;
+      height: 120px;
+      border: 1.5px dashed rgba(185, 28, 28, 0.35);
+      animation: orbitRotate 10s linear infinite;
+    }
+
+    .orbit-ring-middle {
+      width: 175px;
+      height: 175px;
+      border: 1.5px dashed rgba(225, 29, 72, 0.3);
+      animation: orbitRotateRev 16s linear infinite;
+    }
+
+    .orbit-ring-outer {
+      width: 230px;
+      height: 230px;
+      border: 1.5px dashed rgba(185, 28, 28, 0.25);
+      animation: orbitRotate 22s linear infinite;
+    }
+
+    /* Orbiting Items */
+    .orbit-node {
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: var(--primary);
-      box-shadow: 0 0 10px var(--primary);
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+      transition: transform 0.25s ease;
     }
 
-    .dot-top { top: -4px; left: calc(50% - 4px); }
-    .dot-bottom { bottom: -4px; right: calc(50% - 4px); }
+    .orbit-node .material-symbols-outlined {
+      font-size: 16px;
+    }
 
-    /* Core Glowing Node Emblem */
+    /* Node Positioning */
+    .node-top {
+      top: -14px;
+      left: calc(50% - 14px);
+    }
+
+    .node-bottom {
+      bottom: -14px;
+      left: calc(50% - 14px);
+    }
+
+    .node-right {
+      right: -14px;
+      top: calc(50% - 14px);
+    }
+
+    .node-left {
+      left: -14px;
+      top: calc(50% - 14px);
+    }
+
+    /* Node Themes */
+    .node-truck {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .node-car {
+      color: #e11d48;
+      border-color: #e11d48;
+      box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
+    }
+
+    .node-carton {
+      color: #d97706;
+      border-color: #d97706;
+      box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+    }
+
+    .node-hub {
+      color: #0284c7;
+      border-color: #0284c7;
+      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
+    }
+
+    /* Counter-rotation to keep icons oriented */
+    .orbit-ring-inner .orbit-node {
+      animation: counterOrbit 10s linear infinite;
+    }
+
+    .orbit-ring-middle .orbit-node {
+      animation: counterOrbitRev 16s linear infinite;
+    }
+
+    .orbit-ring-outer .orbit-node {
+      animation: counterOrbit 22s linear infinite;
+    }
+
+    /* Central Hub Emblem */
     .beacon-core-disc {
       position: relative;
-      width: 72px;
-      height: 72px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
       border: 2px solid #ffffff;
@@ -200,45 +284,58 @@
       align-items: center;
       justify-content: center;
       color: var(--primary);
-      z-index: 3;
+      z-index: 5;
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
       animation: floatMotion 3.8s ease-in-out infinite alternate;
     }
 
     .beacon-core-disc .material-symbols-outlined {
-      font-size: 34px;
+      font-size: 32px;
       transition: transform 0.35s ease;
     }
 
     /* Hover Physics */
-    .telemetry-beacon-stage:hover .beacon-core-disc {
+    .multi-orbit-stage:hover .beacon-core-disc {
       transform: scale(1.18);
       box-shadow: 
         0 18px 36px -6px rgba(185, 28, 28, 0.45),
         0 0 0 8px rgba(185, 28, 28, 0.14);
     }
 
-    .telemetry-beacon-stage:hover .beacon-core-disc .material-symbols-outlined {
+    .multi-orbit-stage:hover .beacon-core-disc .material-symbols-outlined {
       transform: rotate(45deg);
     }
 
-    @keyframes beaconRipple {
-      0% {
-        transform: scale(0.65);
-        opacity: 0.8;
-      }
-      50% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: scale(1.65);
-        opacity: 0;
-      }
+    .multi-orbit-stage:hover .orbit-ring,
+    .multi-orbit-stage:hover .orbit-node {
+      animation-play-state: paused;
     }
 
-    @keyframes orbitSpin {
+    /* Keyframes */
+    @keyframes orbitRotate {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes orbitRotateRev {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    @keyframes counterOrbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    @keyframes counterOrbitRev {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes beaconRipple {
+      0% { transform: scale(0.65); opacity: 0.8; }
+      50% { opacity: 0.4; }
+      100% { transform: scale(1.7); opacity: 0; }
     }
 
     @keyframes floatMotion {
@@ -515,7 +612,6 @@
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* Mobile Adaptations */
     @media (max-width: 650px) {
       .hero-stage {
         padding-top: 80px;
@@ -548,7 +644,7 @@
 
   <main>
     
-    <!-- CENTRAL HERO (TITLE ABOVE, ANIMATED TELEMETRY BEACON BELOW) -->
+    <!-- CENTRAL HERO (TITLE ABOVE, MULTI-ORBITAL TRUCK, CAR, CARTON & HUB BELOW) -->
     <section class="hero-stage">
       
       <div class="badge-capsule">
@@ -564,18 +660,42 @@
         Work Smarter, Move Faster.
       </p>
 
-      <!-- Dynamic Telemetry Beacon Animation -->
-      <div class="telemetry-beacon-stage" title="APML Systems Connected">
+      <!-- Multi-Orbital Animation Stage -->
+      <div class="multi-orbit-stage" title="APML Logistics Hub Active">
+        <!-- Ambient Waves -->
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
-        
-        <div class="beacon-orbit-ring">
-          <div class="orbit-dot dot-top"></div>
-          <div class="orbit-dot dot-bottom"></div>
+
+        <!-- 1. Inner Orbit (Carton / Box) -->
+        <div class="orbit-ring orbit-ring-inner">
+          <div class="orbit-node node-carton node-top" title="Packaged Box">
+            <span class="material-symbols-outlined">package_2</span>
+          </div>
         </div>
 
-        <div class="beacon-core-disc">
+        <!-- 2. Middle Orbit (Truck & Warehouse Hub) -->
+        <div class="orbit-ring orbit-ring-middle">
+          <div class="orbit-node node-truck node-left" title="Fleet Logistics Truck">
+            <span class="material-symbols-outlined">local_shipping</span>
+          </div>
+          <div class="orbit-node node-hub node-right" title="Logistics Warehouse Hub">
+            <span class="material-symbols-outlined">location_city</span>
+          </div>
+        </div>
+
+        <!-- 3. Outer Orbit (Car Carrier & Solid Box) -->
+        <div class="orbit-ring orbit-ring-outer">
+          <div class="orbit-node node-car node-top" title="Car Carrier Transport">
+            <span class="material-symbols-outlined">directions_car</span>
+          </div>
+          <div class="orbit-node node-carton node-bottom" title="Consignment Carton">
+            <span class="material-symbols-outlined">inventory_2</span>
+          </div>
+        </div>
+
+        <!-- Center Hub Core -->
+        <div class="beacon-core-disc" title="Central Hub">
           <span class="material-symbols-outlined">hub</span>
         </div>
       </div>
