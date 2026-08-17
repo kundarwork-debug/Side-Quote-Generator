@@ -474,22 +474,40 @@
             margin-top: 14px;
         }
 
-        .btn-action {
+        /* Material Design 3 (M3) Styled Maps Tonal Button */
+        .btn-m3-maps {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
+            gap: 8px;
+            padding: 9px 20px;
             border-radius: var(--md-sys-shape-corner-full);
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 700;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
+            text-decoration: none !important;
+            border: 1px solid #86efac;
+            background-color: #dcfce7;
+            color: #15803d;
+            box-shadow: 0 1px 2px rgba(22, 163, 74, 0.08);
             transition: var(--transition-m3);
+            user-select: none;
         }
 
-        .btn-map-action { background: #2e7d32; color: #ffffff; }
-        .btn-map-action:hover { background: #1b5e20; }
+        .btn-m3-maps:hover {
+            background-color: #15803d;
+            color: #ffffff;
+            border-color: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.28);
+        }
+
+        .btn-m3-maps .material-symbols-outlined {
+            font-size: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .btn-m3-maps:hover .material-symbols-outlined {
+            transform: translateX(2px);
+        }
 
         .region-badge {
             background-color: var(--md-sys-color-primary);
@@ -536,15 +554,22 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 5px 10px;
+            background-color: #dcfce7;
+            color: #15803d;
+            padding: 5px 12px;
             border-radius: var(--md-sys-shape-corner-full);
             font-weight: 700;
             font-size: 11px;
-            text-decoration: none;
-            border: 1px solid #c8e6c9;
+            text-decoration: none !important;
+            border: 1px solid #86efac;
             white-space: nowrap;
+            transition: var(--transition-m3);
+        }
+
+        .map-link-btn:hover {
+            background-color: #15803d;
+            color: #ffffff;
+            border-color: #15803d;
         }
 
         .form-grid {
@@ -691,13 +716,13 @@
                     <span class="material-symbols-outlined" style="font-size: 16px;">groups</span>
                     <span>All Roles</span>
                 </button>
-                <button class="role-filter-chip" data-role="manager">
+                <button class="role-filter-chip" data-role="hubmanager">
                     <span class="material-symbols-outlined" style="font-size: 16px;">manage_accounts</span>
-                    <span>Branch Manager</span>
+                    <span>HUB Manager</span>
                 </button>
-                <button class="role-filter-chip" data-role="teamleader">
+                <button class="role-filter-chip" data-role="branchmanager">
                     <span class="material-symbols-outlined" style="font-size: 16px;">supervisor_account</span>
-                    <span>Team Leader</span>
+                    <span>Branch Manager</span>
                 </button>
                 <button class="role-filter-chip" data-role="packing">
                     <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
@@ -742,12 +767,12 @@
                         <input type="text" id="formCity" placeholder="e.g. Pune Hub" required>
                     </div>
                     <div class="form-group">
-                        <label for="formManager">Branch Manager Name &amp; Phone</label>
-                        <input type="text" id="formManager" placeholder="e.g. Balwan Sharma - 9325811152">
+                        <label for="formHubManager">HUB Manager Name &amp; Phone</label>
+                        <input type="text" id="formHubManager" placeholder="e.g. Balwan Sharma - 9325811152">
                     </div>
                     <div class="form-group">
-                        <label for="formTeamLeader">Team Leader Name &amp; Phone</label>
-                        <input type="text" id="formTeamLeader" placeholder="e.g. Sunil Kumar - 9876543210">
+                        <label for="formBranchManager">Branch Manager Name &amp; Phone</label>
+                        <input type="text" id="formBranchManager" placeholder="e.g. Sunil Kumar - 9876543210">
                     </div>
                     <div class="form-group">
                         <label for="formPackingIncharge">Packing Incharge Name &amp; Phone</label>
@@ -803,8 +828,8 @@
                         <tr>
                             <th>Region</th>
                             <th>City / Branch</th>
+                            <th>HUB Manager</th>
                             <th>Branch Manager</th>
-                            <th>Team Leader</th>
                             <th>Packing Incharge</th>
                             <th>Packing Confirmation</th>
                             <th>Warehouse Address</th>
@@ -1001,15 +1026,15 @@
             const matches = loadedHubs.filter(h => {
                 const city = (h.city || '').toLowerCase();
                 const region = (h.region || '').toLowerCase();
-                const manager = (h.hod || '').toLowerCase();
-                const teamLeader = (h.teamLeader || '').toLowerCase();
+                const hubManager = (h.hod || '').toLowerCase();
+                const branchManager = (h.teamLeader || '').toLowerCase();
                 const packingIncharge = (h.packingIncharge || '').toLowerCase();
                 const packingConfirm = (h.packingConfirm || '').toLowerCase();
                 const address = (h.address || '').toLowerCase();
                 const officeAddress = (h.officeAddress || '').toLowerCase();
 
-                return city.includes(term) || region.includes(term) || manager.includes(term) ||
-                       teamLeader.includes(term) || packingIncharge.includes(term) || packingConfirm.includes(term) || 
+                return city.includes(term) || region.includes(term) || hubManager.includes(term) ||
+                       branchManager.includes(term) || packingIncharge.includes(term) || packingConfirm.includes(term) || 
                        address.includes(term) || officeAddress.includes(term);
             });
 
@@ -1021,8 +1046,8 @@
                     card.className = 'lookup-result-item';
 
                     // Parse each role contact strictly requiring a valid phone number
-                    const mgrData = getCleanRoleContact(found.hod, found.contact);
-                    const tlData = getCleanRoleContact(found.teamLeader, null);
+                    const hubMgrData = getCleanRoleContact(found.hod, found.contact);
+                    const branchMgrData = getCleanRoleContact(found.teamLeader, null);
                     const piData = getCleanRoleContact(found.packingIncharge, null);
                     const pcData = getCleanRoleContact(found.packingConfirm, null);
 
@@ -1032,35 +1057,35 @@
 
                     let roleCardsHtml = '';
 
-                    const showManager = (currentRoleFilter === 'all' || currentRoleFilter === 'manager') && mgrData;
-                    const showTeamLeader = (currentRoleFilter === 'all' || currentRoleFilter === 'teamleader') && tlData;
+                    const showHubManager = (currentRoleFilter === 'all' || currentRoleFilter === 'hubmanager') && hubMgrData;
+                    const showBranchManager = (currentRoleFilter === 'all' || currentRoleFilter === 'branchmanager') && branchMgrData;
                     const showPacking = (currentRoleFilter === 'all' || currentRoleFilter === 'packing') && piData;
                     const showConfirmation = (currentRoleFilter === 'all' || currentRoleFilter === 'confirmation') && pcData;
 
-                    if (showManager) {
+                    if (showHubManager) {
                         roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'manager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                            <div class="contact-role-card" style="${currentRoleFilter === 'hubmanager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
                                 <div>
-                                    <span class="role-title-tag">Branch Manager</span>
-                                    <span class="role-person-name">${escapeHtml(mgrData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(mgrData.phone)}</span>
+                                    <span class="role-title-tag">HUB Manager</span>
+                                    <span class="role-person-name">${escapeHtml(hubMgrData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(hubMgrData.phone)}</span>
                                 </div>
-                                <a href="tel:${escapeHtml(mgrData.phone)}" class="btn-call-mini" title="Call Branch Manager">
+                                <a href="tel:${escapeHtml(hubMgrData.phone)}" class="btn-call-mini" title="Call HUB Manager">
                                     <span class="material-symbols-outlined" style="font-size:18px;">call</span>
                                 </a>
                             </div>
                         `;
                     }
 
-                    if (showTeamLeader) {
+                    if (showBranchManager) {
                         roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'teamleader' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
+                            <div class="contact-role-card" style="${currentRoleFilter === 'branchmanager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
                                 <div>
-                                    <span class="role-title-tag">Team Leader</span>
-                                    <span class="role-person-name">${escapeHtml(tlData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(tlData.phone)}</span>
+                                    <span class="role-title-tag">Branch Manager</span>
+                                    <span class="role-person-name">${escapeHtml(branchMgrData.name)}</span>
+                                    <span class="role-phone-text">${escapeHtml(branchMgrData.phone)}</span>
                                 </div>
-                                <a href="tel:${escapeHtml(tlData.phone)}" class="btn-call-mini" title="Call Team Leader">
+                                <a href="tel:${escapeHtml(branchMgrData.phone)}" class="btn-call-mini" title="Call Branch Manager">
                                     <span class="material-symbols-outlined" style="font-size:18px;">call</span>
                                 </a>
                             </div>
@@ -1113,8 +1138,8 @@
                                     </button>
                                 </div>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; color: #78350f;">
-                                    ${prev.hod ? `<div><strong>Old Manager:</strong> ${escapeHtml(prev.hod)}</div>` : ''}
-                                    ${prev.teamLeader ? `<div><strong>Old TL:</strong> ${escapeHtml(prev.teamLeader)}</div>` : ''}
+                                    ${prev.hod ? `<div><strong>Old HUB Manager:</strong> ${escapeHtml(prev.hod)}</div>` : ''}
+                                    ${prev.teamLeader ? `<div><strong>Old Branch Manager:</strong> ${escapeHtml(prev.teamLeader)}</div>` : ''}
                                     ${prev.packingIncharge ? `<div><strong>Old Packing:</strong> ${escapeHtml(prev.packingIncharge)}</div>` : ''}
                                     ${prev.packingConfirm ? `<div><strong>Old Confirm:</strong> ${escapeHtml(prev.packingConfirm)}</div>` : ''}
                                     ${prev.address ? `<div style="grid-column: 1/-1;"><strong>Old Warehouse:</strong> ${escapeHtml(prev.address)}</div>` : ''}
@@ -1161,10 +1186,11 @@
                         <!-- Retained Previous Details Box -->
                         ${historyHtml}
 
-                        <!-- Minimal Actions: Map Navigation Only -->
+                        <!-- Google Material Design 3 Maps Action Button -->
                         <div class="result-actions">
-                            <a href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer" class="btn-map-action">
-                                <span class="material-symbols-outlined" style="font-size: 17px;">near_me</span> Open in Google Maps
+                            <a href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener noreferrer" class="btn-m3-maps">
+                                <span class="material-symbols-outlined">near_me</span>
+                                <span>Open in Google Maps</span>
                             </a>
                         </div>
                     `;
@@ -1193,7 +1219,7 @@
             }
 
             tbody.innerHTML = list.map(hub => {
-                const mgrData = getCleanRoleContact(hub.hod, hub.contact);
+                const hubMgrData = getCleanRoleContact(hub.hod, hub.contact);
                 const mapUrl = hub.map && hub.map.startsWith('http') ? hub.map : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hub.city + ' ' + (hub.address || 'APML Hub'))}`;
 
                 return `
@@ -1204,9 +1230,9 @@
                             ${hub.previousDetails ? `<div style="font-size: 10px; color: #b45309; font-weight: 700;">(Edited - History Active)</div>` : ''}
                         </td>
                         <td>
-                            ${mgrData ? `
-                                <div>${escapeHtml(mgrData.name)}</div>
-                                <a href="tel:${escapeHtml(mgrData.phone)}" style="color:var(--md-sys-color-primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 ${escapeHtml(mgrData.phone)}</a>
+                            ${hubMgrData ? `
+                                <div>${escapeHtml(hubMgrData.name)}</div>
+                                <a href="tel:${escapeHtml(hubMgrData.phone)}" style="color:var(--md-sys-color-primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 ${escapeHtml(hubMgrData.phone)}</a>
                             ` : '—'}
                         </td>
                         <td>${escapeHtml(hub.teamLeader || '—')}</td>
@@ -1240,8 +1266,8 @@
             document.getElementById('editingHubId').value = id;
             document.getElementById('formRegion').value = hub.region || '';
             document.getElementById('formCity').value = hub.city || '';
-            document.getElementById('formManager').value = hub.hod || hub.contact || '';
-            document.getElementById('formTeamLeader').value = hub.teamLeader || '';
+            document.getElementById('formHubManager').value = hub.hod || hub.contact || '';
+            document.getElementById('formBranchManager').value = hub.teamLeader || '';
             document.getElementById('formPackingIncharge').value = hub.packingIncharge || '';
             document.getElementById('formPackingConfirmation').value = hub.packingConfirm || '';
             document.getElementById('formMap').value = hub.map || '';
@@ -1271,8 +1297,8 @@
             e.preventDefault();
 
             const editingId = document.getElementById('editingHubId').value;
-            const managerVal = document.getElementById('formManager').value.trim();
-            const mgrPhone = extractPhone(managerVal);
+            const hubManagerVal = document.getElementById('formHubManager').value.trim();
+            const hubMgrPhone = extractPhone(hubManagerVal);
 
             if (editingId) {
                 // UPDATE MODE: Retain previous details until admin explicitly deletes them
@@ -1292,9 +1318,9 @@
                 const updatedData = {
                     region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                     city: document.getElementById('formCity').value.trim().toUpperCase(),
-                    hod: managerVal,
-                    contact: mgrPhone || managerVal,
-                    teamLeader: document.getElementById('formTeamLeader').value.trim() || "",
+                    hod: hubManagerVal,
+                    contact: hubMgrPhone || hubManagerVal,
+                    teamLeader: document.getElementById('formBranchManager').value.trim() || "",
                     packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
                     packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
                     map: document.getElementById('formMap').value.trim(),
@@ -1314,9 +1340,9 @@
                 const newHub = {
                     region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
                     city: document.getElementById('formCity').value.trim().toUpperCase(),
-                    hod: managerVal,
-                    contact: mgrPhone || managerVal,
-                    teamLeader: document.getElementById('formTeamLeader').value.trim() || "",
+                    hod: hubManagerVal,
+                    contact: hubMgrPhone || hubManagerVal,
+                    teamLeader: document.getElementById('formBranchManager').value.trim() || "",
                     packingIncharge: document.getElementById('formPackingIncharge').value.trim() || "",
                     packingConfirm: document.getElementById('formPackingConfirmation').value.trim() || "",
                     map: document.getElementById('formMap').value.trim(),
