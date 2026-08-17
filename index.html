@@ -323,20 +323,14 @@
       transition: opacity 0.3s ease;
     }
 
-    .module-card:hover:not(.disabled) {
+    .module-card:hover {
       transform: translateY(-6px);
       border-color: rgba(185, 28, 28, 0.3);
       box-shadow: var(--shadow-hover);
     }
 
-    .module-card:hover:not(.disabled)::before {
+    .module-card:hover::before {
       opacity: 1;
-    }
-
-    .module-card.disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      background: #f1f5f9;
     }
 
     /* Card Elements */
@@ -361,7 +355,7 @@
       transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
     }
 
-    .module-card:hover:not(.disabled) .card-icon-pill {
+    .module-card:hover .card-icon-pill {
       transform: scale(1.08) rotate(-4deg);
       background: var(--primary);
       color: #ffffff;
@@ -439,20 +433,10 @@
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
     }
 
-    .module-card:hover:not(.disabled) .cta-arrow {
+    .module-card:hover .cta-arrow {
       transform: translateX(4px);
       background: var(--primary);
       color: #ffffff;
-    }
-
-    .badge-locked {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--primary);
-      background: var(--primary-soft);
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      text-transform: uppercase;
     }
 
     /* =========================================================
@@ -606,7 +590,7 @@
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">grid_view</span>
           <span>Operations Modules</span>
         </div>
-        <span class="section-counter">5 Active Tools</span>
+        <span class="section-counter">6 Active Tools</span>
       </div>
 
       <div class="modules-grid">
@@ -736,27 +720,30 @@
           </div>
         </a>
 
-        <!-- 6. APML Local Rate (Upcoming) -->
-        <div class="module-card disabled">
+        <!-- 6. APML Local Rate (Active & Linked) -->
+        <a href="local-rate.html" class="module-card">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
                 <span class="material-symbols-outlined">local_shipping</span>
               </div>
-              <span class="badge-locked">Coming Soon</span>
+              <span class="status-tag">Local Shifting</span>
             </div>
             <h2 class="card-title">APML Local Rate</h2>
-            <p class="card-description">Intra-city relocation rate calculation engine and vehicle shifting estimation tools for local movement.</p>
+            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.</p>
             <div class="tags-flow">
               <span class="micro-tag">🚛 Intra-City</span>
-              <span class="micro-tag">⏱️ Under Development</span>
+              <span class="micro-tag">📦 ₹25 / ₹20 CFT</span>
+              <span class="micro-tag">₹5,000 Minimum</span>
             </div>
           </div>
-          <div class="card-footer-cta" style="color: var(--text-muted);">
-            <span>In Pipeline</span>
-            <span class="material-symbols-outlined" style="font-size: 18px;">lock</span>
+          <div class="card-footer-cta">
+            <span>Calculate Shifting</span>
+            <div class="cta-arrow">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
           </div>
-        </div>
+        </a>
 
       </div>
     </section>
