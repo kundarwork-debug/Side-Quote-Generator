@@ -1,328 +1,124 @@
 /* =========================================================
-   APML UNIFIED COMMON CSS (GOOGLE MATERIAL DESIGN 3)
+   DARK GREY THEME VARIABLES & OVERRIDES
    ========================================================= */
-:root {
-  --md-sys-color-primary: #b91c1c;
-  --md-sys-color-primary-container: #fef2f2;
-  --md-sys-color-on-primary-container: #991b1b;
-  --md-sys-color-surface: #f8fafc;
-  --md-sys-color-surface-container-lowest: #ffffff;
-  --md-sys-color-surface-container-low: #f1f5f9;
-  --md-sys-color-surface-container: #e2e8f0;
-  --md-sys-color-outline-variant: #e2e8f0;
-  --md-sys-color-on-surface: #0f172a;
-  --md-sys-color-on-surface-variant: #64748b;
-  --md-sys-shape-corner-small: 8px;
-  --md-sys-shape-corner-medium: 14px;
-  --md-sys-shape-corner-full: 9999px;
-  --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
-  --md-elevation-2: 0px 6px 16px rgba(0, 0, 0, 0.1), 0px 2px 6px rgba(0, 0, 0, 0.05);
-  --md-elevation-3: 0px 12px 32px rgba(0, 0, 0, 0.15);
-  --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+body.dark-theme {
+  /* Dark Grey Background & Surface tokens */
+  --md-sys-color-surface: #121417;
+  --md-sys-color-surface-container-lowest: #1a1d21;
+  --md-sys-color-surface-container-low: #22262b;
+  --md-sys-color-surface-container: #2b3036;
+  --md-sys-color-outline-variant: #343a42;
+  --md-sys-color-outline: #4b535d;
+  --md-sys-color-on-surface: #e5e7eb;
+  --md-sys-color-on-surface-variant: #9ca3af;
+  --md-sys-color-primary-container: rgba(185, 28, 28, 0.22);
+  --md-sys-color-on-primary-container: #fca5a5;
+
+  /* Custom Page Overrides */
+  --bg-base: #121417 !important;
+  --surface-card: rgba(26, 29, 33, 0.95) !important;
+  --surface: #1a1d21 !important;
+  --surface-glass: rgba(26, 29, 33, 0.94) !important;
+  --surface-border: #343a42 !important;
+  --text-main: #e5e7eb !important;
+  --text-muted: #9ca3af !important;
+
+  background-color: #121417 !important;
+  color: #e5e7eb !important;
 }
 
-/* Base Reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-/* =========================================================
-   COMMON HEADER STYLING
-   ========================================================= */
-#header-container {
-  width: 100%;
-}
-
-.site-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
-  z-index: 1000;
+/* Header Right Actions Wrapper */
+.header-actions-right {
   display: flex;
-  align-items: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-}
-
-.header-inner {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Brand Logo */
-.site-logo {
-  display: inline-flex;
   align-items: center;
   gap: 10px;
-  text-decoration: none;
-  color: var(--md-sys-color-on-surface);
-  user-select: none;
 }
 
-.logo-badge {
-  width: 36px;
-  height: 36px;
-  background: var(--md-sys-color-primary-container);
-  color: var(--md-sys-color-primary);
-  border: 1.5px solid rgba(185, 28, 28, 0.25);
-  border-radius: 50%;
+/* Theme Toggle Button */
+.theme-toggle-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-/* Continuously Rotating Header Logo Animation */
-.site-header .logo-badge img {
-  animation: continuousSpin 10s linear infinite;
-  transform-origin: center center;
-  will-change: transform;
-}
-
-@keyframes continuousSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--md-sys-color-on-surface);
-  letter-spacing: -0.02em;
-}
-
-.logo-text span {
-  color: var(--md-sys-color-primary);
-}
-
-/* =========================================================
-   ANIMATED ROTATING HAMBURGER BUTTON (WEB & MOBILE)
-   ========================================================= */
-.hamburger-btn {
-  display: flex;
   background: var(--md-sys-color-surface-container-low);
   border: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface);
   cursor: pointer;
   width: 42px;
   height: 42px;
-  padding: 8px;
   border-radius: 50%;
-  position: relative;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 4.5px;
-  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease, border-color 0.2s ease;
-  z-index: 1002;
+  transition: var(--transition-m3);
 }
 
-.hamburger-btn:hover {
+.theme-toggle-btn:hover {
   background-color: var(--md-sys-color-primary-container);
   border-color: rgba(185, 28, 28, 0.3);
-}
-
-.hamburger-btn .bar {
-  display: block;
-  width: 20px;
-  height: 2.5px;
-  background-color: var(--md-sys-color-on-surface);
-  border-radius: 2px;
-  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), opacity 0.25s ease, background-color 0.25s ease;
-  transform-origin: center;
-}
-
-.hamburger-btn.is-active {
-  transform: rotate(90deg);
-  background-color: var(--md-sys-color-primary-container);
-  border-color: var(--md-sys-color-primary);
-}
-
-.hamburger-btn.is-active .bar:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-  background-color: var(--md-sys-color-primary);
-}
-
-.hamburger-btn.is-active .bar:nth-child(2) {
-  opacity: 0;
-  transform: scaleX(0);
-}
-
-.hamburger-btn.is-active .bar:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-  background-color: var(--md-sys-color-primary);
-}
-
-/* =========================================================
-   UNIVERSAL DROPDOWN MENU (WEB & MOBILE)
-   ========================================================= */
-.nav-menu {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  width: 260px;
-  max-width: calc(100vw - 32px);
-  background: #ffffff;
-  border: 1px solid var(--md-sys-color-outline-variant);
-  border-radius: var(--md-sys-shape-corner-medium);
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  box-shadow: var(--md-elevation-3);
-  transform: translateY(-10px) scale(0.95);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-  z-index: 1001;
-}
-
-.nav-menu.open {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  text-decoration: none;
-  font-size: 13.5px;
-  font-weight: 700;
-  color: var(--md-sys-color-on-surface);
-  border-radius: var(--md-sys-shape-corner-small);
-  transition: var(--transition-m3);
-}
-
-.nav-link:hover {
-  background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-primary);
-  transform: translateX(3px);
 }
 
-.nav-link.active {
-  background: var(--md-sys-color-primary);
-  color: #ffffff;
+.theme-icon-light { display: none; }
+.theme-icon-dark { display: block; }
+
+body.dark-theme .theme-icon-light { display: block; }
+body.dark-theme .theme-icon-dark { display: none; }
+
+/* Dark Mode Navigation & Header Glassmorphism */
+body.dark-theme .site-header {
+  background: rgba(18, 20, 23, 0.95);
 }
 
-.nav-link .material-symbols-outlined {
-  font-size: 20px;
+body.dark-theme .nav-menu {
+  background: #1a1d21;
+  border-color: #343a42;
 }
 
-/* =========================================================
-   GOOGLE MATERIAL DESIGN 3 FOOTER STYLING
-   ========================================================= */
-#footer-container {
-  width: 100%;
-  margin-top: auto;
+/* Dark Mode Inputs, Dropdowns & Cards */
+body.dark-theme input,
+body.dark-theme select,
+body.dark-theme textarea {
+  background-color: #22262b !important;
+  color: #f3f4f6 !important;
+  border-color: #343a42 !important;
 }
 
-.site-footer {
-  background: var(--md-sys-color-surface-container-lowest);
-  border-top: 1px solid var(--md-sys-color-outline-variant);
-  padding: 16px 20px;
-  width: 100%;
+body.dark-theme .card,
+body.dark-theme .calc-card,
+body.dark-theme .matrix-section,
+body.dark-theme .terms-card,
+body.dark-theme .table-section,
+body.dark-theme .gallery-card,
+body.dark-theme .lookup-result-item,
+body.dark-theme .metrics-dock,
+body.dark-theme .badge-capsule,
+body.dark-theme .card-icon-pill {
+  background: #1a1d21 !important;
+  border-color: #343a42 !important;
+  color: #e5e7eb !important;
 }
 
-.footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
+body.dark-theme table {
+  background: #1a1d21 !important;
 }
 
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+body.dark-theme th {
+  background-color: #22262b !important;
+  border-color: #343a42 !important;
 }
 
-.footer-credit-text {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--md-sys-color-on-surface-variant);
-  letter-spacing: -0.01em;
+body.dark-theme td {
+  border-color: #343a42 !important;
+  color: #d1d5db !important;
 }
 
-.footer-credit-text span {
-  color: var(--md-sys-color-on-surface);
-  font-weight: 800;
+body.dark-theme tr:hover td {
+  background-color: #252a30 !important;
 }
 
-.footer-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+body.dark-theme .addon-item,
+body.dark-theme .static-input-val,
+body.dark-theme .address-box,
+body.dark-theme .contact-role-card {
+  background: #22262b !important;
+  border-color: #343a42 !important;
 }
 
-/* M3 Tonal About Me Pill with Circular Avatar */
-.m3-about-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px 6px 8px;
-  border-radius: var(--md-sys-shape-corner-full);
-  background: var(--md-sys-color-primary-container);
-  border: 1px solid rgba(185, 28, 28, 0.2);
-  color: var(--md-sys-color-primary);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  transition: var(--transition-m3);
-}
-
-.about-github-avatar {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1.5px solid #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-  display: block;
-}
-
-.m3-about-btn:hover {
-  background: var(--md-sys-color-primary);
-  color: #ffffff;
-  border-color: var(--md-sys-color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
-}
-
-@media (max-width: 600px) {
-  .header-inner {
-    padding: 0 14px;
-  }
-  .nav-menu {
-    right: 14px;
-    width: calc(100vw - 28px);
-  }
-  .footer-inner {
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    gap: 12px;
-  }
-}
+/* Note: Quotation A4 Sheet will stay clean white paper as per quotation standards */
