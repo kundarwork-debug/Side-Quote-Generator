@@ -1,11 +1,17 @@
 // =========================================================
-// APML COMMON HEADER, FOOTER & ROTATING HAMBURGER SCRIPT
+// APML COMMON HEADER, FOOTER & THEME TOGGLE SCRIPT
 // =========================================================
 (function initCommonLayout() {
+  // Apply saved theme immediately to prevent flashing on page navigation
+  const savedTheme = localStorage.getItem("apml_theme");
+  if (savedTheme === "dark") {
+    document.body.classList.add("dark-theme");
+  }
+
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
+    // 1. INJECT HEADER (Logo + Theme Toggle + Rotating Hamburger + Nav)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -18,12 +24,20 @@
               <div class="logo-text">APML <span>Portal</span></div>
             </a>
 
-            <!-- Animated Rotating Hamburger Button -->
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span class="bar"></span>
-              <span class="bar"></span>
-              <span class="bar"></span>
-            </button>
+            <div class="header-actions-right">
+              <!-- Dark / Light Theme Toggle Button -->
+              <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle Theme">
+                <span class="material-symbols-outlined theme-icon-dark">dark_mode</span>
+                <span class="material-symbols-outlined theme-icon-light">light_mode</span>
+              </button>
+
+              <!-- Animated Rotating Hamburger Button -->
+              <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </button>
+            </div>
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
@@ -60,7 +74,16 @@
         </header>
       `;
 
-      // Event Listeners for Hamburger Click & Outside Clicks
+      // Event Listener for Theme Toggle
+      const themeToggleBtn = document.getElementById("themeToggleBtn");
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+          const isDark = document.body.classList.toggle("dark-theme");
+          localStorage.setItem("apml_theme", isDark ? "dark" : "light");
+        });
+      }
+
+      // Event Listeners for Hamburger Click & Navigation
       const hamburgerBtn = document.getElementById("hamburgerBtn");
       const navMenu = document.getElementById("navMenu");
 
@@ -98,7 +121,7 @@
       }
     }
 
-    // 2. INJECT FOOTER (With GitHub Profile Avatar on About Me Button)
+    // 2. INJECT FOOTER
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -112,7 +135,6 @@
             </div>
 
             <div class="footer-actions">
-              <!-- M3 Themed About Me Button with GitHub Avatar -->
               <a href="about.html" class="m3-about-btn" title="About Developer">
                 <img src="https://github.com/github.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
                 <span>About Me</span>
