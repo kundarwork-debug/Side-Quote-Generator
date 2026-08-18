@@ -2,13 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Quotation Editor - APML Support Page</title>
+<meta name="description" content="APML Quotation Editor lets you draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers estimates as ready-to-share PDF documents.">
+<meta name="keywords" content="APML Quotation Editor, APML Estimate Generator, Exact Container Logistics Quotation, Maxcare Packers Movers Estimate, APML PDF Quote">
+<link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
+
+<!-- Open Graph / social preview -->
+<meta property="og:title" content="Quotation Editor - APML Support Page">
+<meta property="og:description" content="Draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers quotations as ready-to-share PDF documents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
 <!-- Network/Hub SVG Favicon from root folder -->
 <link rel="icon" type="image/svg+xml" href="logo.svg">
 
-<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="common.css?v=2.2">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
@@ -455,6 +464,7 @@
   .doc-exact .meta-block { font-size: 10pt; line-height: 1.55; margin-bottom: 8px; }
   .doc-exact .quotation-label {
     text-decoration: underline; font-weight: 700; font-size: 14pt; margin: 6px 0 10px;
+    text-align: center;
   }
   .doc-exact .salut { font-weight: 700; font-size: 10pt; margin-bottom: 6px; }
   .doc-exact .intro { font-size: 10pt; line-height: 1.4; margin-bottom: 12px; text-align: justify; }
@@ -567,11 +577,6 @@
 
 <div class="app" id="appView">
   <div class="panel">
-    <a href="index.html" class="back-btn">
-      <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-      <span>Back to Main Page</span>
-    </a>
-
     <div class="brand-row">
       <h1>Quotation Editor</h1>
       <span id="dateStamp"></span>
@@ -1202,6 +1207,6 @@ document.getElementById('dateStamp').textContent = new Date().toLocaleDateString
 renderAll();
 </script>
 
-<script src="common.js"></script>
+<script src="common.js?v=2.2"></script>
 </body>
 </html>
