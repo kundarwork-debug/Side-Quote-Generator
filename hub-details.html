@@ -289,45 +289,6 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         }
 
-        /* Role Filter Chips Bar */
-        .role-filters-bar {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 14px;
-            scrollbar-width: none;
-        }
-        .role-filters-bar::-webkit-scrollbar { display: none; }
-
-        .role-filter-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 15px;
-            border-radius: var(--md-sys-shape-corner-full);
-            background: var(--md-sys-color-surface-container-low);
-            border: 1px solid var(--md-sys-color-outline-variant);
-            color: var(--md-sys-color-on-surface-variant);
-            font-size: 12.5px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: var(--transition-m3);
-            user-select: none;
-        }
-
-        .role-filter-chip:hover {
-            background: var(--md-sys-color-primary-container);
-            color: var(--md-sys-color-primary);
-        }
-
-        .role-filter-chip.active {
-            background: var(--md-sys-color-primary);
-            color: #ffffff;
-            border-color: var(--md-sys-color-primary);
-        }
-
         .lookup-box {
             position: relative;
             margin-bottom: 14px;
@@ -527,6 +488,7 @@
             margin-top: 14px;
         }
 
+        /* Material Design 3 (M3) Styled Maps Tonal Button */
         .btn-m3-maps {
             display: inline-flex;
             align-items: center;
@@ -773,47 +735,11 @@
             </div>
         </div>
 
-        <!-- 1. Quick Branch Lookup Tool with Operational Role Filters -->
+        <!-- 1. Quick Branch Lookup Tool -->
         <section class="card" style="border: 2px solid var(--md-sys-color-primary);">
             <div class="card-header">
                 <span class="material-symbols-outlined">travel_explore</span>
                 Instant Branch &amp; Team Lookup Finder
-            </div>
-
-            <!-- Role Selection Filters -->
-            <div class="role-filters-bar">
-                <button class="role-filter-chip active" data-role="all">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">groups</span>
-                    <span>All Roles</span>
-                </button>
-                <button class="role-filter-chip" data-role="hubmanager">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">manage_accounts</span>
-                    <span>HUB Manager</span>
-                </button>
-                <button class="role-filter-chip" data-role="branchmanager">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">supervisor_account</span>
-                    <span>Branch Manager</span>
-                </button>
-                <button class="role-filter-chip" data-role="teamleader">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">groups_2</span>
-                    <span>Team Leader</span>
-                </button>
-                <button class="role-filter-chip" data-role="bdo">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span>
-                    <span>BDO</span>
-                </button>
-                <button class="role-filter-chip" data-role="bfo">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">account_balance</span>
-                    <span>BFO</span>
-                </button>
-                <button class="role-filter-chip" data-role="packing">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">inventory_2</span>
-                    <span>Packing Incharge</span>
-                </button>
-                <button class="role-filter-chip" data-role="confirmation">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">verified</span>
-                    <span>Packing Confirmation</span>
-                </button>
             </div>
             
             <div class="lookup-box">
@@ -1146,7 +1072,6 @@
         ];
 
         let loadedHubs = [];
-        let currentRoleFilter = "all";
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -1161,9 +1086,9 @@
             if (section) {
                 section.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 setTimeout(() => {
-                    const firstInput = document.getElementById('currentFormMode').value === 'quick' 
-                        ? document.getElementById('quickContactName') 
-                        : document.getElementById('formCity');
+                    const firstInput = document.getElementById('currentFormMode').value === 'full' 
+                        ? document.getElementById('formCity')
+                        : document.getElementById('quickContactName');
                     if (firstInput) firstInput.focus();
                 }, 400);
             }
@@ -1190,7 +1115,7 @@
             }
         };
 
-        // Real-time Database Sync
+        // Real-time Database Sync[cite: 5]
         hubsRef.on('value', (snapshot) => {
             const data = snapshot.val();
             loadedHubs = [];
@@ -1233,16 +1158,6 @@
                 `<span class="chip" onclick="selectCityChip('${city}')">${city}</span>`
             ).join('');
         }
-
-        // Role Filter Engine
-        document.querySelectorAll(".role-filter-chip").forEach(chip => {
-            chip.addEventListener("click", () => {
-                document.querySelectorAll(".role-filter-chip").forEach(c => c.classList.remove("active"));
-                chip.classList.add("active");
-                currentRoleFilter = chip.dataset.role;
-                executeLookup(document.getElementById('branchLookupInput').value);
-            });
-        });
 
         const lookupInput = document.getElementById('branchLookupInput');
         const lookupContainer = document.getElementById('lookupResultsContainer');
@@ -1287,6 +1202,21 @@
             return { name: cleanName, phone: cleanPhone };
         }
 
+        function createRoleCardHtml(roleTitle, roleData) {
+            return `
+                <div class="contact-role-card">
+                    <div>
+                        <span class="role-title-tag">${escapeHtml(roleTitle)}</span>
+                        <span class="role-person-name">${escapeHtml(roleData.name)}</span>
+                        <span class="role-phone-text">${escapeHtml(roleData.phone)}</span>
+                    </div>
+                    <a href="tel:${escapeHtml(roleData.phone)}" class="btn-call-mini" title="Call ${escapeHtml(roleTitle)}">
+                        <span class="material-symbols-outlined" style="font-size:18px;">call</span>
+                    </a>
+                </div>
+            `;
+        }
+
         function executeLookup(searchTerm) {
             if (!searchTerm || searchTerm.trim() === '') {
                 lookupContainer.innerHTML = '';
@@ -1295,24 +1225,69 @@
             }
 
             const term = searchTerm.trim().toLowerCase();
-            
+
+            // 1. Direct Name Match: Show ONLY Name + Phone + Quick Call icon
+            let matchedPersons = [];
+
+            loadedHubs.forEach(hub => {
+                const roles = [
+                    getCleanRoleContact(hub.hod, hub.contact),
+                    getCleanRoleContact(hub.teamLeader, null),
+                    getCleanRoleContact(hub.fieldOfficer, null),
+                    getCleanRoleContact(hub.bdo, null),
+                    getCleanRoleContact(hub.bfo, null),
+                    getCleanRoleContact(hub.packingIncharge, null),
+                    getCleanRoleContact(hub.packingConfirm, null)
+                ].filter(Boolean);
+
+                roles.forEach(person => {
+                    if (person.name && person.name.toLowerCase().includes(term)) {
+                        const exists = matchedPersons.some(p => p.name.toLowerCase() === person.name.toLowerCase() && p.phone === person.phone);
+                        if (!exists) {
+                            matchedPersons.push(person);
+                        }
+                    }
+                });
+            });
+
+            if (matchedPersons.length > 0) {
+                lookupContainer.innerHTML = '';
+
+                matchedPersons.forEach(person => {
+                    const card = document.createElement('div');
+                    card.className = 'lookup-result-item';
+                    card.style.padding = '14px 18px';
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                            <div>
+                                <div style="font-size: 16px; font-weight: 800; color: var(--md-sys-color-on-surface); margin-bottom: 2px;">
+                                    ${escapeHtml(person.name)}
+                                </div>
+                                <div style="font-size: 14px; font-weight: 700; color: var(--md-sys-color-primary);">
+                                    📞 ${escapeHtml(person.phone)}
+                                </div>
+                            </div>
+                            <a href="tel:${escapeHtml(person.phone)}" class="btn-call-mini" title="Call ${escapeHtml(person.name)}">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
+                            </a>
+                        </div>
+                    `;
+                    lookupContainer.appendChild(card);
+                });
+
+                lookupContainer.style.display = 'flex';
+                return;
+            }
+
+            // 2. City / Location Search: Show full Branch Cards
             const matches = loadedHubs.filter(h => {
                 const city = (h.city || '').toLowerCase();
                 const region = (h.region || '').toLowerCase();
-                const hubManager = (h.hod || '').toLowerCase();
-                const branchManager = (h.teamLeader || '').toLowerCase();
-                const fieldOfficer = (h.fieldOfficer || '').toLowerCase();
-                const bdo = (h.bdo || '').toLowerCase();
-                const bfo = (h.bfo || '').toLowerCase();
-                const packingIncharge = (h.packingIncharge || '').toLowerCase();
-                const packingConfirm = (h.packingConfirm || '').toLowerCase();
                 const address = (h.address || '').toLowerCase();
                 const officeAddress = (h.officeAddress || '').toLowerCase();
 
-                return city.includes(term) || region.includes(term) || hubManager.includes(term) ||
-                       branchManager.includes(term) || fieldOfficer.includes(term) || bdo.includes(term) || bfo.includes(term) ||
-                       packingIncharge.includes(term) || packingConfirm.includes(term) || 
-                       address.includes(term) || officeAddress.includes(term);
+                return city.includes(term) || region.includes(term) || address.includes(term) || officeAddress.includes(term);
             });
 
             if (matches.length > 0) {
@@ -1335,119 +1310,13 @@
                         : (found.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((found.city || '') + ' ' + found.address)}` : '');
 
                     let roleCardsHtml = '';
-
-                    const showHubManager = (currentRoleFilter === 'all' || currentRoleFilter === 'hubmanager') && hubMgrData;
-                    const showBranchManager = (currentRoleFilter === 'all' || currentRoleFilter === 'branchmanager') && branchMgrData;
-                    const showTeamLeader = (currentRoleFilter === 'all' || currentRoleFilter === 'teamleader') && teamLeaderData;
-                    const showBdo = (currentRoleFilter === 'all' || currentRoleFilter === 'bdo') && bdoData;
-                    const showBfo = (currentRoleFilter === 'all' || currentRoleFilter === 'bfo') && bfoData;
-                    const showPacking = (currentRoleFilter === 'all' || currentRoleFilter === 'packing') && piData;
-                    const showConfirmation = (currentRoleFilter === 'all' || currentRoleFilter === 'confirmation') && pcData;
-
-                    if (showHubManager) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'hubmanager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">HUB Manager</span>
-                                    <span class="role-person-name">${escapeHtml(hubMgrData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(hubMgrData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(hubMgrData.phone)}" class="btn-call-mini" title="Call HUB Manager">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showBranchManager) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'branchmanager' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">Branch Manager</span>
-                                    <span class="role-person-name">${escapeHtml(branchMgrData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(branchMgrData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(branchMgrData.phone)}" class="btn-call-mini" title="Call Branch Manager">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showTeamLeader) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'teamleader' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">Team Leader</span>
-                                    <span class="role-person-name">${escapeHtml(teamLeaderData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(teamLeaderData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(teamLeaderData.phone)}" class="btn-call-mini" title="Call Team Leader">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showBdo) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'bdo' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">BDO</span>
-                                    <span class="role-person-name">${escapeHtml(bdoData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(bdoData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(bdoData.phone)}" class="btn-call-mini" title="Call BDO">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showBfo) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'bfo' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">BFO</span>
-                                    <span class="role-person-name">${escapeHtml(bfoData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(bfoData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(bfoData.phone)}" class="btn-call-mini" title="Call BFO">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showPacking) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'packing' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">Packing Incharge</span>
-                                    <span class="role-person-name">${escapeHtml(piData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(piData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(piData.phone)}" class="btn-call-mini" title="Call Packing Incharge">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
-
-                    if (showConfirmation) {
-                        roleCardsHtml += `
-                            <div class="contact-role-card" style="${currentRoleFilter === 'confirmation' ? 'border: 1.5px solid var(--md-sys-color-primary); background: #fef2f2;' : ''}">
-                                <div>
-                                    <span class="role-title-tag">Packing Confirmation</span>
-                                    <span class="role-person-name">${escapeHtml(pcData.name)}</span>
-                                    <span class="role-phone-text">${escapeHtml(pcData.phone)}</span>
-                                </div>
-                                <a href="tel:${escapeHtml(pcData.phone)}" class="btn-call-mini" title="Call Packing Confirmation">
-                                    <span class="material-symbols-outlined" style="font-size:18px;">call</span>
-                                </a>
-                            </div>
-                        `;
-                    }
+                    if (hubMgrData) roleCardsHtml += createRoleCardHtml('HUB Manager', hubMgrData);
+                    if (branchMgrData) roleCardsHtml += createRoleCardHtml('Branch Manager', branchMgrData);
+                    if (teamLeaderData) roleCardsHtml += createRoleCardHtml('Team Leader', teamLeaderData);
+                    if (bdoData) roleCardsHtml += createRoleCardHtml('BDO', bdoData);
+                    if (bfoData) roleCardsHtml += createRoleCardHtml('BFO', bfoData);
+                    if (piData) roleCardsHtml += createRoleCardHtml('Packing Incharge', piData);
+                    if (pcData) roleCardsHtml += createRoleCardHtml('Packing Confirmation', pcData);
 
                     card.innerHTML = `
                         <!-- Top Header with City/Name, Region Badge & Edit + Soft-Delete Buttons -->
@@ -1505,7 +1374,7 @@
             } else {
                 lookupContainer.innerHTML = `
                     <div style="padding: 16px; text-align: center; color: var(--md-sys-color-on-surface-variant); font-weight: 600; font-size: 13px;">
-                        No branch contacts found matching "${escapeHtml(searchTerm)}".
+                        No contacts or branches found matching "${escapeHtml(searchTerm)}".
                     </div>
                 `;
                 lookupContainer.style.display = 'block';
@@ -1650,7 +1519,6 @@
             let hubData = {};
 
             if (mode === 'quick' && !editingId) {
-                // Quick Contact Mode: Just Name + Phone + Role
                 const name = document.getElementById('quickContactName').value.trim();
                 const phone = document.getElementById('quickContactPhone').value.trim();
                 const role = document.getElementById('quickContactRole').value;
@@ -1681,7 +1549,6 @@
                     timestamp: Date.now()
                 };
 
-                // Fallback manager field if non-manager selected
                 if (!hubData.hod && combined) {
                     hubData.hod = `${name} (${role}) - ${cleanPhone}`;
                     hubData.contact = cleanPhone;
@@ -1695,7 +1562,6 @@
                 return;
             }
 
-            // Full Mode or Update Mode
             const hubMgrCombined = combineNamePhone(
                 document.getElementById('formHubManagerName').value,
                 document.getElementById('formHubManagerPhone').value
