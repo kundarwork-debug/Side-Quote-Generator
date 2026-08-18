@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -785,6 +786,9 @@
                             <label for="formCity">City / Branch Name</label>
                             <input type="text" id="formCity" placeholder="e.g. Pune Hub">
                         </div>
+                        <div class="form-group full-width" style="background:#fff7e6; border:1px solid #f0d999; border-radius:8px; padding:10px 14px; font-size:12px; color:#6b5416;">
+                            Team Leader, BDO and BFO contacts aren't tied to a single hub (they cover multiple hubs), so they're no longer added here. Use <strong>Quick Contact (Name &amp; Number Only)</strong> mode above and pick the matching role instead.
+                        </div>
 
                         <!-- 1. HUB Manager Contact Block -->
                         <div class="form-role-block form-group full-width">
@@ -818,60 +822,6 @@
                                 <div class="form-group">
                                     <label for="formBranchManagerPhone">Branch Manager Phone Number</label>
                                     <input type="tel" id="formBranchManagerPhone" placeholder="e.g. 9876543210">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 3. Team Leader Contact Block -->
-                        <div class="form-role-block form-group full-width">
-                            <div class="form-role-title">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">groups_2</span>
-                                <span>Team Leader Details</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                <div class="form-group">
-                                    <label for="formTeamLeaderName">Team Leader Name</label>
-                                    <input type="text" id="formTeamLeaderName" placeholder="e.g. Amit Verma">
-                                </div>
-                                <div class="form-group">
-                                    <label for="formTeamLeaderPhone">Team Leader Phone Number</label>
-                                    <input type="tel" id="formTeamLeaderPhone" placeholder="e.g. 9876543211">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 4. BDO (Business Desk Officer) Block -->
-                        <div class="form-role-block form-group full-width">
-                            <div class="form-role-title">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">trending_up</span>
-                                <span>BDO (Business Desk Officer) Details</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                <div class="form-group">
-                                    <label for="formBdoName">BDO Name</label>
-                                    <input type="text" id="formBdoName" placeholder="e.g. Vikas Sharma">
-                                </div>
-                                <div class="form-group">
-                                    <label for="formBdoPhone">BDO Phone Number</label>
-                                    <input type="tel" id="formBdoPhone" placeholder="e.g. 9876543212">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 5. BFO (Business Field Officer) Block -->
-                        <div class="form-role-block form-group full-width">
-                            <div class="form-role-title">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">account_balance</span>
-                                <span>BFO (Business Field Officer) Details</span>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                <div class="form-group">
-                                    <label for="formBfoName">BFO Name</label>
-                                    <input type="text" id="formBfoName" placeholder="e.g. Rakesh Gupta">
-                                </div>
-                                <div class="form-group">
-                                    <label for="formBfoPhone">BFO Phone Number</label>
-                                    <input type="tel" id="formBfoPhone" placeholder="e.g. 9876543213">
                                 </div>
                             </div>
                         </div>
@@ -999,6 +949,7 @@
                             <th>Region</th>
                             <th>City / Branch</th>
                             <th>HUB Manager</th>
+                            <th>Other Contact</th>
                             <th>Branch Manager</th>
                             <th>Team Leader</th>
                             <th>BDO (Business Desk Officer)</th>
@@ -1235,20 +1186,33 @@
 
             loadedHubs.forEach(hub => {
                 const roles = [
-                    getCleanRoleContact(hub.hod, hub.contact),
-                    getCleanRoleContact(hub.teamLeader, null),
-                    getCleanRoleContact(hub.fieldOfficer, null),
-                    getCleanRoleContact(hub.bdo, null),
-                    getCleanRoleContact(hub.bfo, null),
-                    getCleanRoleContact(hub.packingIncharge, null),
-                    getCleanRoleContact(hub.packingConfirm, null)
-                ].filter(Boolean);
+                    { role: 'HUB Manager', field: 'hod', data: getCleanRoleContact(hub.hod, hub.contact) },
+                    { role: 'Other Contact', field: 'otherContact', data: getCleanRoleContact(hub.otherContact, null) },
+                    { role: 'Branch Manager', field: 'teamLeader', data: getCleanRoleContact(hub.teamLeader, null) },
+                    { role: 'Team Leader', field: 'fieldOfficer', data: getCleanRoleContact(hub.fieldOfficer, null) },
+                    { role: 'BDO', field: 'bdo', data: getCleanRoleContact(hub.bdo, null) },
+                    { role: 'BFO', field: 'bfo', data: getCleanRoleContact(hub.bfo, null) },
+                    { role: 'Packing Incharge', field: 'packingIncharge', data: getCleanRoleContact(hub.packingIncharge, null) },
+                    { role: 'Packing Confirmation', field: 'packingConfirm', data: getCleanRoleContact(hub.packingConfirm, null) }
+                ].filter(r => r.data);
 
-                roles.forEach(person => {
-                    if (person.name && person.name.toLowerCase().includes(term)) {
-                        const exists = matchedPersons.some(p => p.name.toLowerCase() === person.name.toLowerCase() && p.phone === person.phone);
+                roles.forEach(({ role, field, data }) => {
+                    if (data.name && data.name.toLowerCase().includes(term)) {
+                        const exists = matchedPersons.some(p =>
+                            p.name.toLowerCase() === data.name.toLowerCase() &&
+                            p.phone === data.phone &&
+                            p.hubId === hub.id &&
+                            p.role === role
+                        );
                         if (!exists) {
-                            matchedPersons.push(person);
+                            matchedPersons.push({
+                                name: data.name,
+                                phone: data.phone,
+                                role: role,
+                                field: field,
+                                city: hub.city || 'Direct Contact',
+                                hubId: hub.id
+                            });
                         }
                     }
                 });
@@ -1268,13 +1232,24 @@
                                 <div style="font-size: 16px; font-weight: 800; color: var(--md-sys-color-on-surface); margin-bottom: 2px;">
                                     ${escapeHtml(person.name)}
                                 </div>
+                                <div style="font-size: 12px; font-weight: 600; color: var(--md-sys-color-on-surface-variant); margin-bottom: 4px;">
+                                    ${escapeHtml(person.city)} • ${escapeHtml(person.role)}
+                                </div>
                                 <div style="font-size: 14px; font-weight: 700; color: var(--md-sys-color-primary);">
                                     📞 ${escapeHtml(person.phone)}
                                 </div>
                             </div>
-                            <a href="tel:${escapeHtml(person.phone)}" class="btn-call-mini" title="Call ${escapeHtml(person.name)}">
-                                <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
-                            </a>
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <a href="tel:${escapeHtml(person.phone)}" class="btn-call-mini" title="Call ${escapeHtml(person.name)}">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
+                                </a>
+                                <button class="btn-pencil-edit" onclick="startEditHub('${person.hubId}', '${person.field}')" title="Edit ${escapeHtml(person.name)}">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                                </button>
+                                <button class="btn-pencil-delete" onclick="promptSoftDeleteHub('${person.hubId}', '${escapeHtml(person.city)}')" title="Delete ${escapeHtml(person.city)} branch record">
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                                </button>
+                            </div>
                         </div>
                     `;
                     lookupContainer.appendChild(card);
@@ -1308,13 +1283,16 @@
                     const bfoData = getCleanRoleContact(found.bfo, null);
                     const piData = getCleanRoleContact(found.packingIncharge, null);
                     const pcData = getCleanRoleContact(found.packingConfirm, null);
+                    const ocData = getCleanRoleContact(found.otherContact, null);
 
                     const mapUrl = found.map && found.map.startsWith('http') 
                         ? found.map 
                         : (found.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((found.city || '') + ' ' + found.address)}` : '');
 
                     let roleCardsHtml = '';
+                    // Priority order: Hub / Operations details first, then Leaders, then the rest.
                     if (hubMgrData) roleCardsHtml += createRoleCardHtml('HUB Manager', hubMgrData);
+                    if (ocData) roleCardsHtml += createRoleCardHtml('Other Contact', ocData);
                     if (branchMgrData) roleCardsHtml += createRoleCardHtml('Branch Manager', branchMgrData);
                     if (teamLeaderData) roleCardsHtml += createRoleCardHtml('Team Leader', teamLeaderData);
                     if (bdoData) roleCardsHtml += createRoleCardHtml('BDO (Business Desk Officer)', bdoData);
@@ -1390,7 +1368,7 @@
             document.getElementById('hubCount').innerText = list.length;
 
             if (list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No hub records found.</td></tr>`;
                 return;
             }
 
@@ -1410,6 +1388,7 @@
                                 <a href="tel:${escapeHtml(hubMgrData.phone)}" style="color:var(--md-sys-color-primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 ${escapeHtml(hubMgrData.phone)}</a>
                             ` : '—'}
                         </td>
+                        <td>${escapeHtml(hub.otherContact || '—')}</td>
                         <td>${escapeHtml(hub.teamLeader || '—')}</td>
                         <td>${escapeHtml(hub.fieldOfficer || '—')}</td>
                         <td>${escapeHtml(hub.bdo || '—')}</td>
@@ -1438,13 +1417,54 @@
         }
 
         // Edit Hub Mode Engine
-        window.startEditHub = function(id) {
+        window.startEditHub = function(id, preferredField) {
             const hub = loadedHubs.find(h => h.id === id);
             if (!hub) return;
 
+            document.getElementById('editingHubId').value = id;
+
+            // Direct/Quick contacts (region "DIRECT") aren't tied to a branch —
+            // edit them through the Quick Contact mini-form instead of the full hub form.
+            if (hub.region === 'DIRECT') {
+                switchFormMode('quick');
+
+                const ROLE_FIELD_MAP = [
+                    { field: 'hod', fallbackPhoneField: 'contact', role: 'HUB Manager' },
+                    { field: 'teamLeader', role: 'Branch Manager' },
+                    { field: 'fieldOfficer', role: 'Team Leader' },
+                    { field: 'bdo', role: 'BDO' },
+                    { field: 'bfo', role: 'BFO' },
+                    { field: 'packingIncharge', role: 'Packing Incharge' },
+                    { field: 'packingConfirm', role: 'Packing Confirmation' },
+                    { field: 'otherContact', role: 'General Contact' }
+                ];
+
+                let matched = preferredField
+                    ? ROLE_FIELD_MAP.find(r => r.field === preferredField)
+                    : ROLE_FIELD_MAP.find(r => (hub[r.field] || '').trim());
+
+                if (!matched) matched = ROLE_FIELD_MAP[0];
+
+                const rawVal = hub[matched.field] || '';
+                const phone = extractPhone(rawVal) || (matched.fallbackPhoneField ? extractPhone(hub[matched.fallbackPhoneField]) : '');
+                const name = rawVal.replace(phone, '').replace(/[-–:]/g, '').trim();
+
+                document.getElementById('quickContactName').value = name;
+                document.getElementById('quickContactPhone').value = phone;
+                document.getElementById('quickContactRole').value = matched.role;
+                document.getElementById('quickContactCity').value = (hub.city && hub.city !== 'Direct Contact') ? hub.city : '';
+
+                document.getElementById('formHeaderIcon').innerText = 'edit_document';
+                document.getElementById('formHeaderTitle').innerText = `Edit Contact: ${name || 'Direct Contact'}`;
+                document.getElementById('btnSubmitText').innerText = 'Update Contact';
+                document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+                scrollToAddForm();
+                return;
+            }
+
             switchFormMode('full');
 
-            document.getElementById('editingHubId').value = id;
             document.getElementById('formRegion').value = hub.region || '';
             document.getElementById('formCity').value = hub.city || '';
 
@@ -1457,21 +1477,6 @@
             const bmName = (hub.teamLeader || '').replace(bmPhone, '').replace(/[-–:]/g, '').trim();
             document.getElementById('formBranchManagerName').value = bmName;
             document.getElementById('formBranchManagerPhone').value = bmPhone;
-
-            const tlPhone = extractPhone(hub.fieldOfficer);
-            const tlName = (hub.fieldOfficer || '').replace(tlPhone, '').replace(/[-–:]/g, '').trim();
-            document.getElementById('formTeamLeaderName').value = tlName;
-            document.getElementById('formTeamLeaderPhone').value = tlPhone;
-
-            const bdoPhone = extractPhone(hub.bdo);
-            const bdoName = (hub.bdo || '').replace(bdoPhone, '').replace(/[-–:]/g, '').trim();
-            document.getElementById('formBdoName').value = bdoName;
-            document.getElementById('formBdoPhone').value = bdoPhone;
-
-            const bfoPhone = extractPhone(hub.bfo);
-            const bfoName = (hub.bfo || '').replace(bfoPhone, '').replace(/[-–:]/g, '').trim();
-            document.getElementById('formBfoName').value = bfoName;
-            document.getElementById('formBfoPhone').value = bfoPhone;
 
             const piPhone = extractPhone(hub.packingIncharge);
             const piName = (hub.packingIncharge || '').replace(piPhone, '').replace(/[-–:]/g, '').trim();
@@ -1498,6 +1503,7 @@
         window.cancelEditMode = function() {
             document.getElementById('editingHubId').value = '';
             document.getElementById('addHubForm').reset();
+            switchFormMode('full');
             document.getElementById('formHeaderIcon').innerText = 'add_location_alt';
             document.getElementById('formHeaderTitle').innerText = 'Add New Hub or Operations Team Contacts';
             document.getElementById('btnSubmitText').innerText = 'Save to Database';
@@ -1522,7 +1528,7 @@
 
             let hubData = {};
 
-            if (mode === 'quick' && !editingId) {
+            if (mode === 'quick') {
                 const name = document.getElementById('quickContactName').value.trim();
                 const phone = document.getElementById('quickContactPhone').value.trim();
                 const role = document.getElementById('quickContactRole').value;
@@ -1546,22 +1552,34 @@
                     bdo: role.startsWith("BDO") ? combined : "",
                     bfo: role.startsWith("BFO") ? combined : "",
                     packingIncharge: role === "Packing Incharge" ? combined : "",
-                    packingConfirm: role === "Packing Confirmation" ? combined : (role === "Operations Leader" || role === "General Contact" ? combined : ""),
+                    packingConfirm: role === "Packing Confirmation" ? combined : "",
+                    otherContact: (role === "Operations Leader" || role === "General Contact") ? combined : "",
                     map: "",
                     address: "",
-                    officeAddress: "",
-                    timestamp: Date.now()
+                    officeAddress: ""
                 };
 
-                if (!hubData.hod && combined) {
+                if (!hubData.hod && !hubData.teamLeader && !hubData.fieldOfficer &&
+                    !hubData.bdo && !hubData.bfo && !hubData.packingIncharge &&
+                    !hubData.packingConfirm && !hubData.otherContact && combined) {
+                    // Fallback only for a role that doesn't map to any known field above.
                     hubData.hod = `${name} (${role}) - ${cleanPhone}`;
                     hubData.contact = cleanPhone;
                 }
 
-                hubsRef.push(hubData).then(() => {
-                    document.getElementById('addHubForm').reset();
-                    alert("Contact saved successfully!");
-                }).catch(err => alert("Error: " + err.message));
+                if (editingId) {
+                    hubData.lastEditedAt = Date.now();
+                    hubsRef.child(editingId).set(hubData).then(() => {
+                        cancelEditMode();
+                        alert("Contact updated successfully!");
+                    }).catch(err => alert("Error: " + err.message));
+                } else {
+                    hubData.timestamp = Date.now();
+                    hubsRef.push(hubData).then(() => {
+                        document.getElementById('addHubForm').reset();
+                        alert("Contact saved successfully!");
+                    }).catch(err => alert("Error: " + err.message));
+                }
 
                 return;
             }
@@ -1575,21 +1593,6 @@
             const branchMgrCombined = combineNamePhone(
                 document.getElementById('formBranchManagerName').value,
                 document.getElementById('formBranchManagerPhone').value
-            );
-
-            const teamLeaderCombined = combineNamePhone(
-                document.getElementById('formTeamLeaderName').value,
-                document.getElementById('formTeamLeaderPhone').value
-            );
-
-            const bdoCombined = combineNamePhone(
-                document.getElementById('formBdoName').value,
-                document.getElementById('formBdoPhone').value
-            );
-
-            const bfoCombined = combineNamePhone(
-                document.getElementById('formBfoName').value,
-                document.getElementById('formBfoPhone').value
             );
 
             const packingInchargeCombined = combineNamePhone(
@@ -1614,9 +1617,6 @@
                     hod: hubMgrCombined,
                     contact: hubMgrPhone || hubMgrCombined,
                     teamLeader: branchMgrCombined,
-                    fieldOfficer: teamLeaderCombined,
-                    bdo: bdoCombined,
-                    bfo: bfoCombined,
                     packingIncharge: packingInchargeCombined,
                     packingConfirm: packingConfirmCombined,
                     map: document.getElementById('formMap').value.trim(),
@@ -1637,9 +1637,6 @@
                     hod: hubMgrCombined,
                     contact: hubMgrPhone || hubMgrCombined,
                     teamLeader: branchMgrCombined,
-                    fieldOfficer: teamLeaderCombined,
-                    bdo: bdoCombined,
-                    bfo: bfoCombined,
                     packingIncharge: packingInchargeCombined,
                     packingConfirm: packingConfirmCombined,
                     map: document.getElementById('formMap').value.trim(),
@@ -1689,6 +1686,7 @@
                 (h.bfo || '').toLowerCase().includes(term) ||
                 (h.packingIncharge || '').toLowerCase().includes(term) ||
                 (h.packingConfirm || '').toLowerCase().includes(term) ||
+                (h.otherContact || '').toLowerCase().includes(term) ||
                 (h.address || '').toLowerCase().includes(term) ||
                 (h.officeAddress || '').toLowerCase().includes(term)
             );
