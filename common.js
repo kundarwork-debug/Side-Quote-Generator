@@ -1,17 +1,47 @@
 // =========================================================
-// APML COMMON HEADER, FOOTER & THEME TOGGLE SCRIPT
+// APML COMMON HEADER, FOOTER & ROTATING HAMBURGER SCRIPT
 // =========================================================
 (function initCommonLayout() {
-  // Apply saved theme immediately to prevent flashing on page navigation
-  const savedTheme = localStorage.getItem("apml_theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark-theme");
+  const THEME_KEY = "apml-theme";
+
+  function getSystemTheme() {
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem(THEME_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.style.colorScheme = theme;
+  }
+
+  // Apply theme immediately (before header/footer render) to avoid a flash
+  // of the wrong theme. Uses the user's saved choice if set, otherwise
+  // follows the system's light/dark preference.
+  applyTheme(getStoredTheme() || getSystemTheme());
+
+  // If the user hasn't manually chosen a theme, keep following the system
+  // preference live (e.g. if they switch their OS theme mid-session).
+  if (!getStoredTheme() && window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+      if (!getStoredTheme()) {
+        applyTheme(e.matches ? "dark" : "light");
+      }
+    });
   }
 
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // 1. INJECT HEADER (Logo + Theme Toggle + Rotating Hamburger + Nav)
+    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -24,11 +54,11 @@
               <div class="logo-text">APML <span>Portal</span></div>
             </a>
 
-            <div class="header-actions-right">
-              <!-- Dark / Light Theme Toggle Button -->
-              <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle Theme">
-                <span class="material-symbols-outlined theme-icon-dark">dark_mode</span>
+            <div class="header-actions">
+              <!-- Sun/Moon Dark Mode Toggle -->
+              <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark mode" title="Toggle dark mode">
                 <span class="material-symbols-outlined theme-icon-light">light_mode</span>
+                <span class="material-symbols-outlined theme-icon-dark">dark_mode</span>
               </button>
 
               <!-- Animated Rotating Hamburger Button -->
@@ -74,16 +104,22 @@
         </header>
       `;
 
-      // Event Listener for Theme Toggle
+      // Event Listener for Dark/Light Theme Toggle
       const themeToggleBtn = document.getElementById("themeToggleBtn");
       if (themeToggleBtn) {
         themeToggleBtn.addEventListener("click", () => {
-          const isDark = document.body.classList.toggle("dark-theme");
-          localStorage.setItem("apml_theme", isDark ? "dark" : "light");
+          const current = document.documentElement.getAttribute("data-theme") || getSystemTheme();
+          const next = current === "dark" ? "light" : "dark";
+          applyTheme(next);
+          try {
+            localStorage.setItem(THEME_KEY, next);
+          } catch (e) {
+            /* localStorage unavailable — theme still applies for this session */
+          }
         });
       }
 
-      // Event Listeners for Hamburger Click & Navigation
+      // Event Listeners for Hamburger Click & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
       const navMenu = document.getElementById("navMenu");
 
@@ -121,7 +157,7 @@
       }
     }
 
-    // 2. INJECT FOOTER
+    // 2. INJECT FOOTER (With GitHub Profile Avatar on About Me Button)
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -135,6 +171,7 @@
             </div>
 
             <div class="footer-actions">
+              <!-- M3 Themed About Me Button with GitHub Avatar -->
               <a href="about.html" class="m3-about-btn" title="About Developer">
                 <img src="https://github.com/github.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
                 <span>About Me</span>
