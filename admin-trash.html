@@ -30,8 +30,6 @@
     /* Passcode Gate */
     #authGate { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .auth-card { background: #fff; border-radius: var(--radius-xl); padding: 32px; max-width: 380px; width: 100%; text-align: center; }
-    .auth-input { width: 100%; padding: 12px; margin: 16px 0; border: 2px solid var(--surface-border); border-radius: var(--radius-pill); text-align: center; font-size: 16px; outline: none; }
-    .btn-auth { width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-pill); font-weight: 700; cursor: pointer; }
 
     /* Trash Cards */
     .trash-card { background: #ffffff; border: 1px solid var(--surface-border); border-radius: var(--radius-xl); padding: 24px; }
@@ -52,9 +50,19 @@
     <div class="auth-card">
       <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">delete_sweep</span>
       <h2 style="font-family: 'Space Grotesk', sans-serif; margin-top: 8px;">Trash &amp; Data Recovery</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Enter administrator PIN to continue.</p>
-      <input type="password" id="pinInput" class="auth-input" placeholder="••••••" maxlength="10" autofocus>
-      <button type="button" class="btn-auth" onclick="unlockTrash()">Unlock Trash</button>
+      <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px; margin-bottom: 20px;">Sign in with an authorized Google account to continue.</p>
+
+      <button type="button" class="btn-google" onclick="signInWithGoogle()" style="width:100%; padding:10px; background:#fff; color:var(--text-main); border:2px solid var(--surface-border); border-radius:var(--radius-pill); font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/>
+          <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+          <path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A9.001 9.001 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/>
+          <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.167 6.656 3.58 9 3.58z"/>
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+      <p id="googleAuthError" style="font-size:12px; color:var(--primary); margin-top:8px; display:none;"></p>
+
       <button type="button" class="btn-back" onclick="goBack()" style="width:100%; padding:12px; margin-top:10px; background:#fff; color:var(--text-main); border:2px solid var(--surface-border); border-radius:var(--radius-pill); font-weight:700; cursor:pointer;">← Go Back</button>
     </div>
   </div>
@@ -69,6 +77,10 @@
         <p style="font-size: 13px; color: var(--text-muted);">Review deleted branches, restore them to the live directory, or permanently purge them.</p>
       </div>
       <div style="display: flex; gap: 8px;">
+        <button class="btn-back" onclick="signOutAdmin()" style="padding: 8px 16px; background: #fff; border: 1px solid var(--surface-border); border-radius: var(--radius-pill); font-size: 13px; font-weight: 700; color: var(--text-main); display: inline-flex; align-items: center; gap: 4px; cursor:pointer;">
+          <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
+          <span>Sign Out</span>
+        </button>
         <button class="btn-delete-perm" onclick="emptyEntireTrash()">
           <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
           <span>Empty Entire Trash</span>
@@ -92,9 +104,9 @@
   <script src="common.js?v=2.2"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <script>
-    const ADMIN_PIN = "081127";
     const firebaseConfig = {
       apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
       authDomain: "apml-hub-directory.firebaseapp.com",
@@ -108,14 +120,53 @@
 
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
     const hubsRef = db.ref('hubs');
     const trashRef = db.ref('deleted_hubs');
 
-    // Auto-focus the PIN field as soon as the page loads
-    window.addEventListener('DOMContentLoaded', () => {
-      const pinField = document.getElementById('pinInput');
-      if (pinField) pinField.focus();
+    // Only these Google accounts are allowed to unlock the trash via Google Sign-In.
+    // Add/remove admin emails here.
+    const ALLOWED_ADMIN_EMAILS = [
+      "your-admin-email@gmail.com"
+    ];
+
+    function showGoogleAuthError(msg) {
+      const el = document.getElementById('googleAuthError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function signInWithGoogle() {
+      const errEl = document.getElementById('googleAuthError');
+      if (errEl) errEl.style.display = 'none';
+      auth.signInWithPopup(googleProvider)
+        .then((result) => {
+          const email = result.user && result.user.email;
+          if (!email || !ALLOWED_ADMIN_EMAILS.includes(email.toLowerCase())) {
+            auth.signOut();
+            showGoogleAuthError("This Google account is not authorized for admin access.");
+            return;
+          }
+          unlockTrashUI();
+        })
+        .catch((err) => {
+          showGoogleAuthError("Sign-in failed: " + err.message);
+        });
+    }
+
+    // If the user is already signed in (e.g. page refresh) and is an authorized admin, unlock automatically.
+    auth.onAuthStateChanged((user) => {
+      if (user && user.email && ALLOWED_ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+        unlockTrashUI();
+      }
     });
+
+    function unlockTrashUI() {
+      document.getElementById('authGate').style.display = 'none';
+      document.getElementById('trashMain').style.display = 'flex';
+      loadTrash();
+    }
 
     // Return to the previous page without unlocking
     function goBack() {
@@ -125,20 +176,6 @@
         window.location.href = 'hub-details.html';
       }
     }
-
-    function unlockTrash() {
-      if (document.getElementById('pinInput').value.trim() === ADMIN_PIN) {
-        document.getElementById('authGate').style.display = 'none';
-        document.getElementById('trashMain').style.display = 'flex';
-        loadTrash();
-      } else {
-        alert("Incorrect PIN!");
-      }
-    }
-
-    document.getElementById('pinInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') unlockTrash();
-    });
 
     function loadTrash() {
       trashRef.on('value', (snap) => {
@@ -224,6 +261,14 @@
       if (!confirm("Empty all records from the Trash? This action CANNOT be undone.")) return;
       trashRef.remove().then(() => {
         alert("Trash emptied successfully.");
+      });
+    };
+
+    // Sign out and return to the locked state
+    window.signOutAdmin = function() {
+      auth.signOut().finally(() => {
+        document.getElementById('trashMain').style.display = 'none';
+        document.getElementById('authGate').style.display = 'flex';
       });
     };
 
