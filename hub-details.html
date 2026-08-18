@@ -215,25 +215,27 @@
             transform: translateY(-2px);
         }
 
-        .btn-top-trash {
+        .btn-bottom-trash {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 7px 18px;
+            gap: 8px;
+            padding: 10px 24px;
             background: #ffffff;
             color: var(--md-sys-color-primary);
-            border: 1px solid var(--md-sys-color-primary);
+            border: 1.5px solid var(--md-sys-color-primary);
             border-radius: var(--md-sys-shape-corner-full);
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
+            box-shadow: var(--md-elevation-1);
             transition: var(--transition-m3);
         }
 
-        .btn-top-trash:hover {
+        .btn-bottom-trash:hover {
             background: var(--md-sys-color-primary-container);
             transform: translateY(-2px);
+            box-shadow: var(--md-elevation-2);
         }
 
         .card {
@@ -726,12 +728,6 @@
                     <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
                     <span>Add New Details</span>
                 </button>
-
-                <!-- Trash / Recovery Archive Button -->
-                <a href="admin-trash.html" class="btn-top-trash" title="Open Trash & Recovery Archive">
-                    <span class="material-symbols-outlined" style="font-size: 17px;">delete_sweep</span>
-                    <span>Trash / Recovery</span>
-                </a>
             </div>
         </div>
 
@@ -844,11 +840,11 @@
                             </div>
                         </div>
 
-                        <!-- 4. BDO (Business Development Officer) Block -->
+                        <!-- 4. BDO (Business Desk Officer) Block -->
                         <div class="form-role-block form-group full-width">
                             <div class="form-role-title">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">trending_up</span>
-                                <span>BDO (Business Development Officer) Details</span>
+                                <span>BDO (Business Desk Officer) Details</span>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                                 <div class="form-group">
@@ -862,11 +858,11 @@
                             </div>
                         </div>
 
-                        <!-- 5. BFO (Branch Finance Officer) Block -->
+                        <!-- 5. BFO (Business Field Officer) Block -->
                         <div class="form-role-block form-group full-width">
                             <div class="form-role-title">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">account_balance</span>
-                                <span>BFO (Branch Finance Officer) Details</span>
+                                <span>BFO (Business Field Officer) Details</span>
                             </div>
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
                                 <div class="form-group">
@@ -954,8 +950,8 @@
                                     <option value="HUB Manager">HUB Manager</option>
                                     <option value="Branch Manager">Branch Manager</option>
                                     <option value="Team Leader">Team Leader</option>
-                                    <option value="BDO">BDO</option>
-                                    <option value="BFO">BFO</option>
+                                    <option value="BDO">BDO (Business Desk Officer)</option>
+                                    <option value="BFO">BFO (Business Field Officer)</option>
                                     <option value="Packing Incharge">Packing Incharge</option>
                                     <option value="Packing Confirmation">Packing Confirmation</option>
                                     <option value="Operations Leader">Operations Leader</option>
@@ -1005,8 +1001,8 @@
                             <th>HUB Manager</th>
                             <th>Branch Manager</th>
                             <th>Team Leader</th>
-                            <th>BDO</th>
-                            <th>BFO</th>
+                            <th>BDO (Business Desk Officer)</th>
+                            <th>BFO (Business Field Officer)</th>
                             <th>Packing Incharge</th>
                             <th>Packing Confirmation</th>
                             <th>Warehouse Address</th>
@@ -1025,6 +1021,14 @@
                 </table>
             </div>
         </section>
+
+        <!-- Bottom Action Bar / Trash Recovery Link -->
+        <div style="display: flex; justify-content: center; align-items: center; margin: 16px 0 32px;">
+            <a href="admin-trash.html" class="btn-bottom-trash" title="Open Trash &amp; Recovery Archive">
+                <span class="material-symbols-outlined" style="font-size: 20px;">delete_sweep</span>
+                <span>Trash / Recovery Archive</span>
+            </a>
+        </div>
     </main>
 
     <!-- COMMON FOOTER CONTAINER -->
@@ -1056,7 +1060,7 @@
         const hubsRef = db.ref('hubs');
         const trashRef = db.ref('deleted_hubs');
 
-        // Master Hub Database with Role Defaults & Office Addresses[cite: 5]
+        // Master Hub Database with Role Defaults & Office Addresses
         const initialExcelHubs = [
             { region: "NRO", city: "AGRA", hod: "Tilakraj Ji", contact: "9319402885", teamLeader: "Manoj Sharma - 9311668205", fieldOfficer: "", bdo: "", bfo: "", packingIncharge: "Tilakraj Ji - 9319402885", packingConfirm: "Verification Desk - 9311668205", address: "H.No.117, Avas Vikas Colony Sector 11, Sikandra, Agra - 282007", officeAddress: "Sector 11 Booking Office, Sikandra, Agra - 282007", map: "https://maps.app.goo.gl/at9CoshrhUhtdRwa7" },
             { region: "WCRO", city: "AHMEDABAD", hod: "Ramanuj Tiwari Ji", contact: "7439854348", teamLeader: "Rakesh Patel - 9220604993", fieldOfficer: "", bdo: "", bfo: "", packingIncharge: "", packingConfirm: "", address: "Bakrole Circle, Dholka Road, Bisalpur Village, Ahmedabad - 382210", officeAddress: "Shop No. 12, City Center, Near Paldi Cross Road, Ahmedabad - 380007", map: "https://share.google/c6sobHlSLMcTZoqIH" },
@@ -1115,7 +1119,7 @@
             }
         };
 
-        // Real-time Database Sync[cite: 5]
+        // Real-time Database Sync
         hubsRef.on('value', (snapshot) => {
             const data = snapshot.val();
             loadedHubs = [];
@@ -1313,8 +1317,8 @@
                     if (hubMgrData) roleCardsHtml += createRoleCardHtml('HUB Manager', hubMgrData);
                     if (branchMgrData) roleCardsHtml += createRoleCardHtml('Branch Manager', branchMgrData);
                     if (teamLeaderData) roleCardsHtml += createRoleCardHtml('Team Leader', teamLeaderData);
-                    if (bdoData) roleCardsHtml += createRoleCardHtml('BDO', bdoData);
-                    if (bfoData) roleCardsHtml += createRoleCardHtml('BFO', bfoData);
+                    if (bdoData) roleCardsHtml += createRoleCardHtml('BDO (Business Desk Officer)', bdoData);
+                    if (bfoData) roleCardsHtml += createRoleCardHtml('BFO (Business Field Officer)', bfoData);
                     if (piData) roleCardsHtml += createRoleCardHtml('Packing Incharge', piData);
                     if (pcData) roleCardsHtml += createRoleCardHtml('Packing Confirmation', pcData);
 
@@ -1539,8 +1543,8 @@
                     contact: role === "HUB Manager" ? (cleanPhone || combined) : "",
                     teamLeader: role === "Branch Manager" ? combined : "",
                     fieldOfficer: role === "Team Leader" ? combined : "",
-                    bdo: role === "BDO" ? combined : "",
-                    bfo: role === "BFO" ? combined : "",
+                    bdo: role.startsWith("BDO") ? combined : "",
+                    bfo: role.startsWith("BFO") ? combined : "",
                     packingIncharge: role === "Packing Incharge" ? combined : "",
                     packingConfirm: role === "Packing Confirmation" ? combined : (role === "Operations Leader" || role === "General Contact" ? combined : ""),
                     map: "",
