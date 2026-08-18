@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin-trash.html
+Disallow: /admin-trash*.html
+
+Sitemap: https://kundarwork-debug.github.io/Side-Quote-Generator/sitemap.xml
