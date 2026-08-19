@@ -2,7 +2,7 @@
   <img src="smile.gif" alt="Smile" width="80"/>
 </div>
 
-# Hi there 👋 I am Prasad Veerappa Kundar ([Kundar.work@gmail.com](mailto:Kundar.work@gmail.com))
+# Hi there 👋 I am Prasad Kundar ([Kundar.work@gmail.com](mailto:Kundar.work@gmail.com))
 
 <p>Operations Desk Officer & Web Tools Developer focused on building streamlined logistics utilities, automated pricing engines, and real-time operational workflows[cite: 1].</p>
 
