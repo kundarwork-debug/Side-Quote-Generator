@@ -30,7 +30,7 @@
 }
 
 /* =========================================================
-   COMMON HEADER STYLING
+   COMMON HEADER STYLING (FULL-WIDTH BALANCED)
    ========================================================= */
 #header-container {
   width: 100%;
@@ -41,6 +41,7 @@
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
   height: 64px;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(12px);
@@ -53,10 +54,10 @@
 }
 
 .header-inner {
-  max-width: 1200px;
+  max-width: 1440px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,7 +87,6 @@
   overflow: hidden;
 }
 
-/* Continuously Rotating Header Logo Animation */
 .site-header .logo-badge img {
   animation: continuousSpin 10s linear infinite;
   transform-origin: center center;
@@ -94,12 +94,8 @@
 }
 
 @keyframes continuousSpin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .logo-text {
@@ -114,7 +110,7 @@
 }
 
 /* =========================================================
-   ANIMATED ROTATING HAMBURGER BUTTON (WEB & MOBILE)
+   ANIMATED ROTATING HAMBURGER BUTTON
    ========================================================= */
 .hamburger-btn {
   display: flex;
@@ -171,12 +167,12 @@
 }
 
 /* =========================================================
-   UNIVERSAL DROPDOWN MENU (WEB & MOBILE)
+   UNIVERSAL DROPDOWN MENU
    ========================================================= */
 .nav-menu {
   position: fixed;
   top: 70px;
-  right: 20px;
+  right: 32px;
   width: 260px;
   max-width: calc(100vw - 32px);
   background: #ffffff;
@@ -229,7 +225,7 @@
 }
 
 /* =========================================================
-   GOOGLE MATERIAL DESIGN 3 FOOTER STYLING
+   COMMON FOOTER STYLING (FULL-WIDTH BALANCED)
    ========================================================= */
 #footer-container {
   width: 100%;
@@ -239,13 +235,15 @@
 .site-footer {
   background: var(--md-sys-color-surface-container-lowest);
   border-top: 1px solid var(--md-sys-color-outline-variant);
-  padding: 16px 20px;
+  padding: 18px 0;
   width: 100%;
 }
 
 .footer-inner {
-  max-width: 1200px;
+  max-width: 1440px;
+  width: 100%;
   margin: 0 auto;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -277,7 +275,6 @@
   gap: 10px;
 }
 
-/* M3 Tonal About Me Pill with Circular Avatar */
 .m3-about-btn {
   display: inline-flex;
   align-items: center;
@@ -311,13 +308,14 @@
   box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
 }
 
-@media (max-width: 600px) {
-  .header-inner {
-    padding: 0 14px;
+@media (max-width: 768px) {
+  .header-inner,
+  .footer-inner {
+    padding: 0 16px;
   }
   .nav-menu {
-    right: 14px;
-    width: calc(100vw - 28px);
+    right: 16px;
+    width: calc(100vw - 32px);
   }
   .footer-inner {
     flex-direction: column;
