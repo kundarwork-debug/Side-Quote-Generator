@@ -87,12 +87,12 @@
     }
 
     /* =========================================================
-       HERO STAGE & MULTI-ORBITAL LOGISTICS RIG (WIDER LAYOUT)
+       HERO STAGE & INTERACTIVE RIG ZONE (CONFINED AREA)
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 95px 32px 20px;
+      padding: 95px 32px 10px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -140,23 +140,25 @@
       line-height: 1.55;
     }
 
-    /* MULTI-ORBITAL LOGISTICS RIG */
-    .multi-orbit-stage {
+    /* SPECIFIC ACTIVE INTERACTION BOUNDARY AREA */
+    .interactive-hero-zone {
       position: relative;
-      width: 250px;
-      height: 250px;
+      width: min(94vw, 1100px);
+      height: 380px;
+      margin: 10px auto 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 20px;
-      cursor: pointer;
       user-select: none;
+      /* Custom Logo SVG Cursor when inside this region */
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fef2f2' stroke='%23b91c1c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23b91c1c'/%3E%3Ccircle cx='10' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='22' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='16' cy='23' r='2' fill='%23b91c1c'/%3E%3Cline x1='16' y1='16' x2='10' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='22' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='16' y2='23' stroke='%23b91c1c' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, crosshair;
     }
 
-    /* Radial Background Ripple Waves */
+    /* Ambient Pulsing Hub Waves */
     .beacon-wave {
       position: absolute;
-      inset: 40px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       border: 1.5px solid var(--primary);
       opacity: 0;
@@ -166,115 +168,28 @@
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Orbital Rings */
-    .orbit-ring {
+    /* Static Dashed Orbital Ring Tracks */
+    .orbit-tracks-wrap {
       position: absolute;
-      border-radius: 50%;
-      pointer-events: none;
-      transform-origin: center center;
-    }
-
-    .orbit-ring-inner {
-      width: 120px;
-      height: 120px;
-      border: 1.5px dashed rgba(185, 28, 28, 0.35);
-      animation: orbitRotate 10s linear infinite;
-    }
-
-    .orbit-ring-middle {
-      width: 175px;
-      height: 175px;
-      border: 1.5px dashed rgba(225, 29, 72, 0.3);
-      animation: orbitRotateRev 16s linear infinite;
-    }
-
-    .orbit-ring-outer {
-      width: 230px;
-      height: 230px;
-      border: 1.5px dashed rgba(185, 28, 28, 0.25);
-      animation: orbitRotate 22s linear infinite;
-    }
-
-    /* Orbiting Items */
-    .orbit-node {
-      position: absolute;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 1.5px solid var(--primary);
-      color: var(--primary);
-      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.25);
+      inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: auto;
-      transition: transform 0.25s ease;
+      pointer-events: none;
     }
 
-    .orbit-node .material-symbols-outlined {
-      font-size: 16px;
+    .orbit-ring-track {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(185, 28, 28, 0.25);
+      transition: opacity 0.3s ease;
     }
 
-    /* Node Positioning */
-    .node-top {
-      top: -14px;
-      left: calc(50% - 14px);
-    }
+    .track-inner { width: 120px; height: 120px; }
+    .track-middle { width: 175px; height: 175px; border-color: rgba(225, 29, 72, 0.25); }
+    .track-outer { width: 230px; height: 230px; }
 
-    .node-bottom {
-      bottom: -14px;
-      left: calc(50% - 14px);
-    }
-
-    .node-right {
-      right: -14px;
-      top: calc(50% - 14px);
-    }
-
-    .node-left {
-      left: -14px;
-      top: calc(50% - 14px);
-    }
-
-    /* Node Themes */
-    .node-truck {
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .node-car {
-      color: #e11d48;
-      border-color: #e11d48;
-      box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
-    }
-
-    .node-carton {
-      color: #d97706;
-      border-color: #d97706;
-      box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
-    }
-
-    .node-hub {
-      color: #0284c7;
-      border-color: #0284c7;
-      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
-    }
-
-    /* Counter-rotation to keep icons oriented */
-    .orbit-ring-inner .orbit-node {
-      animation: counterOrbit 10s linear infinite;
-    }
-
-    .orbit-ring-middle .orbit-node {
-      animation: counterOrbitRev 16s linear infinite;
-    }
-
-    .orbit-ring-outer .orbit-node {
-      animation: counterOrbit 22s linear infinite;
-    }
-
-    /* Central Hub Emblem */
+    /* Center Hub Core Disc */
     .beacon-core-disc {
       position: relative;
       width: 68px;
@@ -290,8 +205,8 @@
       justify-content: center;
       color: var(--primary);
       z-index: 5;
-      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
-      animation: floatMotion 3.8s ease-in-out infinite alternate;
+      pointer-events: none;
+      transition: transform 0.1s ease-out, box-shadow 0.3s ease;
     }
 
     .beacon-core-disc .material-symbols-outlined {
@@ -299,53 +214,48 @@
       transition: transform 0.35s ease;
     }
 
-    /* Hover Physics */
-    .multi-orbit-stage:hover .beacon-core-disc {
-      transform: scale(1.18);
-      box-shadow: 
-        0 18px 36px -6px rgba(185, 28, 28, 0.45),
-        0 0 0 8px rgba(185, 28, 28, 0.14);
+    /* Free-floating tail nodes layer */
+    .free-nodes-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
 
-    .multi-orbit-stage:hover .beacon-core-disc .material-symbols-outlined {
-      transform: rotate(45deg);
+    .free-node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 32px;
+      height: 32px;
+      margin-top: -16px;
+      margin-left: -16px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform;
+      z-index: 10;
+      transition: box-shadow 0.2s ease;
     }
 
-    .multi-orbit-stage:hover .orbit-ring,
-    .multi-orbit-stage:hover .orbit-node {
-      animation-play-state: paused;
+    .free-node .material-symbols-outlined {
+      font-size: 17px;
     }
 
-    /* Keyframes */
-    @keyframes orbitRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes orbitRotateRev {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
-
-    @keyframes counterOrbit {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(-360deg); }
-    }
-
-    @keyframes counterOrbitRev {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    /* Node color schemes */
+    .node-truck { color: var(--primary); border-color: var(--primary); }
+    .node-car { color: #e11d48; border-color: #e11d48; box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25); }
+    .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25); }
+    .node-hub { color: #0284c7; border-color: #0284c7; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25); }
 
     @keyframes beaconRipple {
       0% { transform: scale(0.65); opacity: 0.8; }
       50% { opacity: 0.4; }
       100% { transform: scale(1.7); opacity: 0; }
-    }
-
-    @keyframes floatMotion {
-      0% { transform: translateY(-3px); }
-      100% { transform: translateY(4px); }
     }
 
     /* =========================================================
@@ -387,7 +297,6 @@
       border-radius: var(--radius-pill);
     }
 
-    /* Card Grid (Dynamically auto-fits columns to fill wide desktop space) */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
@@ -435,7 +344,6 @@
       opacity: 1;
     }
 
-    /* Card Elements */
     .card-head {
       display: flex;
       align-items: flex-start;
@@ -542,7 +450,7 @@
     }
 
     /* =========================================================
-       PORTAL HIGHLIGHT REEL (EXPANDED TO 1440PX)
+       PORTAL HIGHLIGHT REEL
        ========================================================= */
     .reel-section {
       max-width: 1440px;
@@ -644,7 +552,7 @@
       margin-top: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--primary);
       font-weight: 700; background: var(--primary-soft); padding: 7px 14px; border-radius: var(--radius-pill);
     }
-    .reel-closing .reel-credit { margin-top: 20px; font-size: 10.5px; color: var(--text-muted); }
+    .reel-credit { margin-top: 20px; font-size: 10.5px; color: var(--text-muted); }
     .reel-controls { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 0 16px 0; }
     .reel-ctl-btn {
       width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--surface-border); background: #fff;
@@ -738,7 +646,10 @@
     /* Mobile Adaptations */
     @media (max-width: 768px) {
       .hero-stage {
-        padding: 80px 16px 16px;
+        padding: 80px 16px 10px;
+      }
+      .interactive-hero-zone {
+        height: 320px;
       }
       .reel-section,
       .workspace-section,
@@ -899,41 +810,154 @@
         Work Smarter, Move Faster.
       </p>
 
-      <div class="multi-orbit-stage" title="APML Logistics Hub Active">
+      <div class="interactive-hero-zone" id="heroInteractiveZone" title="Move your mouse in this area to form a trailing snake tail!">
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
 
-        <div class="orbit-ring orbit-ring-inner">
-          <div class="orbit-node node-carton node-top" title="Packaged Box">
+        <div class="orbit-tracks-wrap">
+          <div class="orbit-ring-track track-inner"></div>
+          <div class="orbit-ring-track track-middle"></div>
+          <div class="orbit-ring-track track-outer"></div>
+        </div>
+
+        <div class="beacon-core-disc" id="hubCore" title="Central Hub">
+          <span class="material-symbols-outlined">hub</span>
+        </div>
+
+        <div class="free-nodes-layer" id="nodesLayer">
+          <div class="free-node node-carton-1" id="node1" title="Packaged Box">
             <span class="material-symbols-outlined">package_2</span>
           </div>
-        </div>
 
-        <div class="orbit-ring orbit-ring-middle">
-          <div class="orbit-node node-truck node-left" title="Fleet Logistics Truck">
+          <div class="free-node node-truck" id="node2" title="Fleet Logistics Truck">
             <span class="material-symbols-outlined">local_shipping</span>
           </div>
-          <div class="orbit-node node-hub node-right" title="Logistics Warehouse Hub">
+
+          <div class="free-node node-hub" id="node3" title="Logistics Warehouse Hub">
             <span class="material-symbols-outlined">location_city</span>
           </div>
-        </div>
 
-        <div class="orbit-ring orbit-ring-outer">
-          <div class="orbit-node node-car node-top" title="Car Carrier Transport">
+          <div class="free-node node-car" id="node4" title="Car Carrier Transport">
             <span class="material-symbols-outlined">directions_car</span>
           </div>
-          <div class="orbit-node node-carton node-bottom" title="Consignment Carton">
+
+          <div class="free-node node-carton-2" id="node5" title="Consignment Carton">
             <span class="material-symbols-outlined">inventory_2</span>
           </div>
         </div>
 
-        <div class="beacon-core-disc" title="Central Hub">
-          <span class="material-symbols-outlined">hub</span>
-        </div>
       </div>
 
     </section>
+
+    <script>
+      (function initSnakeTailOrbitPhysics() {
+        const zone = document.getElementById('heroInteractiveZone');
+        const core = document.getElementById('hubCore');
+        if (!zone || !core) return;
+
+        // Configuration of the 5 icons for orbital base & follow chain
+        const nodes = [
+          { el: document.getElementById('node1'), radius: 60,   speed:  0.016, angle: 0,                   x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node2'), radius: 87.5, speed: -0.011, angle: Math.PI,            x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node3'), radius: 87.5, speed: -0.011, angle: 0,                  x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node4'), radius: 115,  speed:  0.007, angle: -Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node5'), radius: 115,  speed:  0.007, angle:  Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 }
+        ];
+
+        let isInsideZone = false;
+        let mouseX = 0;
+        let mouseY = 0;
+        let coreX = 0, coreY = 0;
+
+        // Check if mouse is strictly inside the interactive zone
+        zone.addEventListener('mousemove', (e) => {
+          const rect = zone.getBoundingClientRect();
+          mouseX = e.clientX - (rect.left + rect.width / 2);
+          mouseY = e.clientY - (rect.top + rect.height / 2);
+          isInsideZone = true;
+        });
+
+        zone.addEventListener('mouseleave', () => {
+          isInsideZone = false;
+        });
+
+        // Touch support for tablets/mobile
+        zone.addEventListener('touchmove', (e) => {
+          if (!e.touches[0]) return;
+          const rect = zone.getBoundingClientRect();
+          mouseX = e.touches[0].clientX - (rect.left + rect.width / 2);
+          mouseY = e.touches[0].clientY - (rect.top + rect.height / 2);
+          isInsideZone = true;
+        }, { passive: true });
+
+        zone.addEventListener('touchend', () => {
+          isInsideZone = false;
+        });
+
+        function render() {
+          // Central Core Subtle Magnetic Pull
+          if (isInsideZone) {
+            coreX += (mouseX * 0.08 - coreX) * 0.1;
+            coreY += (mouseY * 0.08 - coreY) * 0.1;
+          } else {
+            coreX += (0 - coreX) * 0.08;
+            coreY += (0 - coreY) * 0.08;
+          }
+          core.style.transform = `translate(${coreX}px, ${coreY}px)`;
+
+          // Physics for each node
+          for (let i = 0; i < nodes.length; i++) {
+            const item = nodes[i];
+            item.angle += item.speed;
+
+            let targetX, targetY;
+
+            if (isInsideZone) {
+              // FOLLOW-THE-LEADER SNAKE TAIL MANNER
+              if (i === 0) {
+                // First icon trails directly behind mouse
+                targetX = mouseX;
+                targetY = mouseY;
+              } else {
+                // Subsequent icons trail smoothly behind the previous icon in the chain
+                const leader = nodes[i - 1];
+                const dx = item.x - leader.x;
+                const dy = item.y - leader.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const spacing = 36; // Distance between trailing tail items
+
+                targetX = leader.x + (dx / dist) * spacing;
+                targetY = leader.y + (dy / dist) * spacing;
+              }
+
+              // Smooth responsive spring physics
+              item.vx = (item.vx + (targetX - item.x) * 0.22) * 0.68;
+              item.vy = (item.vy + (targetY - item.y) * 0.22) * 0.68;
+            } else {
+              // ELASTIC RETURN TO CIRCULAR ORBIT
+              targetX = Math.cos(item.angle) * item.radius;
+              targetY = Math.sin(item.angle) * item.radius;
+
+              item.vx = (item.vx + (targetX - item.x) * 0.08) * 0.82;
+              item.vy = (item.vy + (targetY - item.y) * 0.08) * 0.82;
+            }
+
+            item.x += item.vx;
+            item.y += item.vy;
+
+            if (item.el) {
+              item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+            }
+          }
+
+          requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+      })();
+    </script>
 
     <section class="reel-section">
       <div class="section-bar">
