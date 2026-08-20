@@ -8,19 +8,15 @@
   <meta name="keywords" content="APML Portal, APML Operations Hub, APML Hub Directory, APML Quotation Studio, APML Rate Calculator">
   <link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <!-- Open Graph / social preview -->
   <meta property="og:title" content="APML Portal - Operations Hub & Workspace">
   <meta property="og:description" content="One portal for quotation drafting, hub directory lookup, freight rate calculators, and packing standards.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <!-- Network/Hub SVG Favicon -->
   <link rel="icon" type="image/svg+xml" href="logo.svg">
 
-  <!-- STANDARD COMMON CSS -->
   <link rel="stylesheet" href="common.css?v=2.2">
 
-  <!-- Google Fonts & Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
@@ -91,12 +87,12 @@
     }
 
     /* =========================================================
-       HERO STAGE & MULTI-ORBITAL LOGISTICS RIG
+       HERO STAGE & MULTI-ORBITAL LOGISTICS RIG (WIDER LAYOUT)
        ========================================================= */
     .hero-stage {
-      max-width: 1000px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 95px 20px 20px;
+      padding: 95px 32px 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -353,12 +349,12 @@
     }
 
     /* =========================================================
-       MODERN EQUAL GRID & GLASSMORPHIC CARDS
+       MODERN EQUAL GRID & GLASSMORPHIC CARDS (1440PX WIDE)
        ========================================================= */
     .workspace-section {
-      max-width: 1180px;
+      max-width: 1440px;
       margin: 20px auto 40px;
-      padding: 0 20px;
+      padding: 0 32px;
       width: 100%;
     }
 
@@ -391,10 +387,10 @@
       border-radius: var(--radius-pill);
     }
 
-    /* Card Grid */
+    /* Card Grid (Dynamically auto-fits columns to fill wide desktop space) */
     .modules-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
       gap: 24px;
       width: 100%;
     }
@@ -546,12 +542,130 @@
     }
 
     /* =========================================================
-       FLOATING METRICS STATUS BAR
+       PORTAL HIGHLIGHT REEL (EXPANDED TO 1440PX)
+       ========================================================= */
+    .reel-section {
+      max-width: 1440px;
+      margin: 8px auto 36px;
+      padding: 0 32px;
+      width: 100%;
+    }
+
+    .reel-player {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      aspect-ratio: 16/9;
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-hover);
+    }
+    .reel-progress { display: flex; gap: 6px; padding: 14px 18px 0 18px; z-index: 5; }
+    .reel-seg { flex: 1; height: 3px; background: var(--primary-soft); border-radius: 3px; overflow: hidden; }
+    .reel-seg > i { display: block; height: 100%; width: 0%; background: var(--primary); border-radius: 3px; }
+    .reel-seg.done > i { width: 100%; }
+    .reel-stage { position: relative; flex: 1; overflow: hidden; }
+    .reel-scene {
+      position: absolute; inset: 0; padding: 32px 40px;
+      display: none; flex-direction: column; justify-content: center; opacity: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .reel-scene.active { display: flex; animation: reelSceneIn 0.6s ease forwards; }
+    @keyframes reelSceneIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    .reel-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+      font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary);
+      background: var(--primary-soft); padding: 6px 12px; border-radius: var(--radius-pill); margin-bottom: 16px;
+    }
+    .reel-eyebrow .reel-num {
+      background: var(--primary); color: #fff; width: 16px; height: 16px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
+    }
+    .reel-scene h3 {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(22px, 3.6vw, 32px);
+      color: var(--text-main); line-height: 1.12; letter-spacing: -0.01em; max-width: 460px; margin: 0;
+    }
+    .reel-scene h3 span { color: var(--primary); }
+    .reel-scene p { margin-top: 10px; font-size: 13.5px; color: var(--text-muted); max-width: 400px; line-height: 1.5; font-weight: 500; }
+    .reel-pills { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 440px; }
+    .reel-pill {
+      font-size: 11.5px; font-weight: 600; color: var(--text-main); background: #fff;
+      border: 1px solid var(--surface-border); padding: 6px 11px; border-radius: var(--radius-pill);
+    }
+    .reel-row { display: flex; align-items: center; gap: 32px; height: 100%; }
+    .reel-text { flex: 1; min-width: 0; }
+    .reel-visual { flex: 0 0 240px; display: flex; align-items: center; justify-content: center; }
+    .reel-mock {
+      width: 220px; background: #fff; border: 1px solid var(--surface-border); border-radius: 14px;
+      padding: 14px; box-shadow: var(--shadow-subtle);
+    }
+    .reel-mock-bar { height: 7px; width: 60%; background: var(--primary-soft); border-radius: 4px; margin-bottom: 12px; }
+    .reel-mock-row {
+      display: flex; justify-content: space-between; align-items: center; padding: 8px 0;
+      border-bottom: 1px dashed var(--surface-border); font-size: 10.5px; color: var(--text-muted); font-weight: 500;
+    }
+    .reel-mock-row b { color: var(--text-main); font-size: 11px; }
+    .reel-mock-row:last-child { border-bottom: none; }
+    .reel-mock-btn { margin-top: 12px; background: var(--primary); color: #fff; font-size: 10.5px; font-weight: 700; text-align: center; padding: 8px; border-radius: 8px; }
+    .reel-mock-search { display: flex; align-items: center; gap: 6px; border: 1px solid var(--surface-border); border-radius: var(--radius-pill); padding: 8px 11px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
+    .reel-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+    .reel-chip { font-size: 8.5px; background: var(--primary-soft); color: var(--primary); padding: 4px 8px; border-radius: var(--radius-pill); font-weight: 700; }
+    .reel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+    .reel-card { background: var(--bg-base); border: 1px solid var(--surface-border); border-radius: 8px; height: 38px; position: relative; overflow: hidden; }
+    .reel-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, #e8a33d, var(--primary)); opacity: 0.85; }
+    .reel-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px dashed var(--surface-border); }
+    .reel-stat:last-child { border: none; }
+    .reel-stat b { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--primary); }
+    .reel-stat span { font-size: 10px; color: var(--text-muted); font-weight: 500; }
+    .reel-orbit-wrap { width: 170px; height: 170px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .reel-ring { position: absolute; border: 1.5px dashed var(--primary-glow); border-radius: 50%; }
+    .reel-ring.r1 { width: 100%; height: 100%; animation: reelSpin 30s linear infinite; }
+    .reel-ring.r2 { width: 70%; height: 70%; animation: reelSpin 22s linear infinite reverse; }
+    @keyframes reelSpin { to { transform: rotate(360deg); } }
+    .reel-core {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, var(--primary), var(--primary-dark));
+      box-shadow: 0 0 0 7px var(--primary-soft); z-index: 2; display: flex; align-items: center; justify-content: center;
+    }
+    .reel-core::after { content: ""; width: 8px; height: 8px; background: #fff; border-radius: 50%; opacity: 0.85; }
+    .reel-hero { align-items: center; text-align: center; }
+    .reel-hero h3 { max-width: none; }
+    .reel-hero p { max-width: 380px; margin-left: auto; margin-right: auto; }
+    .reel-closing { align-items: center; text-align: center; justify-content: center; }
+    .reel-closing .reel-url {
+      margin-top: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--primary);
+      font-weight: 700; background: var(--primary-soft); padding: 7px 14px; border-radius: var(--radius-pill);
+    }
+    .reel-closing .reel-credit { margin-top: 20px; font-size: 10.5px; color: var(--text-muted); }
+    .reel-controls { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 0 16px 0; }
+    .reel-ctl-btn {
+      width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--surface-border); background: #fff;
+      display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main);
+      font-size: 12px; transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .reel-ctl-btn:hover { background: var(--primary-soft); }
+    .reel-ctl-btn:active { transform: scale(0.92); }
+    #reelPlayPause { width: 36px; height: 36px; background: var(--primary); color: #fff; border: none; }
+    #reelPlayPause:hover { background: var(--primary-dark); }
+    .reel-dots { display: flex; gap: 6px; margin-left: 6px; }
+    .reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-border); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+    .reel-dot.active { background: var(--primary); transform: scale(1.3); }
+
+    /* =========================================================
+       FLOATING METRICS STATUS BAR (EXPANDED TO 1440PX)
        ========================================================= */
     .metrics-bar-wrap {
-      max-width: 1180px;
+      max-width: 1440px;
       margin: 10px auto 30px;
-      padding: 0 20px;
+      padding: 0 32px;
       width: 100%;
     }
 
@@ -621,12 +735,28 @@
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    @media (max-width: 650px) {
+    /* Mobile Adaptations */
+    @media (max-width: 768px) {
       .hero-stage {
-        padding-top: 80px;
+        padding: 80px 16px 16px;
+      }
+      .reel-section,
+      .workspace-section,
+      .metrics-bar-wrap {
+        padding: 0 16px;
       }
       .modules-grid {
         grid-template-columns: 1fr;
+      }
+      .reel-row {
+        flex-direction: column-reverse;
+        gap: 16px;
+      }
+      .reel-visual {
+        flex: 0 0 auto;
+      }
+      .reel-scene {
+        padding: 22px 22px;
       }
       .metrics-dock {
         flex-direction: column;
@@ -645,7 +775,6 @@
 </head>
 <body class="splash-lock">
 
-  <!-- ================= INTRO SPLASH SCREEN ================= -->
   <style>
     html.splash-lock, body.splash-lock { overflow: hidden; height: 100%; }
 
@@ -732,8 +861,8 @@
         title.appendChild(span);
       });
 
-      var buildTime = reduceMotion ? 0 : (text.length - 1) * 35 + 400; // time until last letter settles
-      var holdTime = 850; // whole word shown together
+      var buildTime = reduceMotion ? 0 : (text.length - 1) * 35 + 400;
+      var holdTime = 850;
       var fadeTime = 400;
 
       var barFill = document.getElementById('splashBarFill');
@@ -749,17 +878,12 @@
       }, buildTime + holdTime);
     })();
   </script>
-  <!-- ================= END INTRO SPLASH SCREEN ================= -->
-
-  <!-- Ambient Light Accents -->
   <div class="ambient-bg"></div>
 
-  <!-- COMMON HEADER CONTAINER -->
   <div id="header-container"></div>
 
   <main>
     
-    <!-- CENTRAL HERO (TITLE ABOVE, MULTI-ORBITAL TRUCK, CAR, CARTON & HUB BELOW) -->
     <section class="hero-stage">
       
       <div class="badge-capsule">
@@ -775,21 +899,17 @@
         Work Smarter, Move Faster.
       </p>
 
-      <!-- Multi-Orbital Animation Stage -->
       <div class="multi-orbit-stage" title="APML Logistics Hub Active">
-        <!-- Ambient Waves -->
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
 
-        <!-- 1. Inner Orbit (Carton / Box) -->
         <div class="orbit-ring orbit-ring-inner">
           <div class="orbit-node node-carton node-top" title="Packaged Box">
             <span class="material-symbols-outlined">package_2</span>
           </div>
         </div>
 
-        <!-- 2. Middle Orbit (Truck & Warehouse Hub) -->
         <div class="orbit-ring orbit-ring-middle">
           <div class="orbit-node node-truck node-left" title="Fleet Logistics Truck">
             <span class="material-symbols-outlined">local_shipping</span>
@@ -799,7 +919,6 @@
           </div>
         </div>
 
-        <!-- 3. Outer Orbit (Car Carrier & Solid Box) -->
         <div class="orbit-ring orbit-ring-outer">
           <div class="orbit-node node-car node-top" title="Car Carrier Transport">
             <span class="material-symbols-outlined">directions_car</span>
@@ -809,130 +928,12 @@
           </div>
         </div>
 
-        <!-- Center Hub Core -->
         <div class="beacon-core-disc" title="Central Hub">
           <span class="material-symbols-outlined">hub</span>
         </div>
       </div>
 
     </section>
-
-    <!-- ================= PORTAL HIGHLIGHT REEL ================= -->
-    <style>
-      .reel-section { max-width: 1180px; margin: 8px auto 36px; padding: 0 20px; width: 100%; }
-      .reel-player {
-        width: 100%;
-        max-width: 820px;
-        margin: 0 auto;
-        aspect-ratio: 16/9;
-        background: var(--surface-card);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--surface-border);
-        border-radius: var(--radius-xl);
-        overflow: hidden;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        box-shadow: var(--shadow-hover);
-      }
-      .reel-progress { display: flex; gap: 6px; padding: 14px 18px 0 18px; z-index: 5; }
-      .reel-seg { flex: 1; height: 3px; background: var(--primary-soft); border-radius: 3px; overflow: hidden; }
-      .reel-seg > i { display: block; height: 100%; width: 0%; background: var(--primary); border-radius: 3px; }
-      .reel-seg.done > i { width: 100%; }
-      .reel-stage { position: relative; flex: 1; overflow: hidden; }
-      .reel-scene {
-        position: absolute; inset: 0; padding: 32px 40px;
-        display: none; flex-direction: column; justify-content: center; opacity: 0;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-      }
-      .reel-scene.active { display: flex; animation: reelSceneIn 0.6s ease forwards; }
-      @keyframes reelSceneIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-      .reel-eyebrow {
-        display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
-        font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
-        letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary);
-        background: var(--primary-soft); padding: 6px 12px; border-radius: var(--radius-pill); margin-bottom: 16px;
-      }
-      .reel-eyebrow .reel-num {
-        background: var(--primary); color: #fff; width: 16px; height: 16px; border-radius: 50%;
-        display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
-      }
-      .reel-scene h3 {
-        font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(22px, 3.6vw, 32px);
-        color: var(--text-main); line-height: 1.12; letter-spacing: -0.01em; max-width: 460px; margin: 0;
-      }
-      .reel-scene h3 span { color: var(--primary); }
-      .reel-scene p { margin-top: 10px; font-size: 13.5px; color: var(--text-muted); max-width: 400px; line-height: 1.5; font-weight: 500; }
-      .reel-pills { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 440px; }
-      .reel-pill {
-        font-size: 11.5px; font-weight: 600; color: var(--text-main); background: #fff;
-        border: 1px solid var(--surface-border); padding: 6px 11px; border-radius: var(--radius-pill);
-      }
-      .reel-row { display: flex; align-items: center; gap: 32px; height: 100%; }
-      .reel-text { flex: 1; min-width: 0; }
-      .reel-visual { flex: 0 0 240px; display: flex; align-items: center; justify-content: center; }
-      .reel-mock {
-        width: 220px; background: #fff; border: 1px solid var(--surface-border); border-radius: 14px;
-        padding: 14px; box-shadow: var(--shadow-subtle);
-      }
-      .reel-mock-bar { height: 7px; width: 60%; background: var(--primary-soft); border-radius: 4px; margin-bottom: 12px; }
-      .reel-mock-row {
-        display: flex; justify-content: space-between; align-items: center; padding: 8px 0;
-        border-bottom: 1px dashed var(--surface-border); font-size: 10.5px; color: var(--text-muted); font-weight: 500;
-      }
-      .reel-mock-row b { color: var(--text-main); font-size: 11px; }
-      .reel-mock-row:last-child { border-bottom: none; }
-      .reel-mock-btn { margin-top: 12px; background: var(--primary); color: #fff; font-size: 10.5px; font-weight: 700; text-align: center; padding: 8px; border-radius: 8px; }
-      .reel-mock-search { display: flex; align-items: center; gap: 6px; border: 1px solid var(--surface-border); border-radius: var(--radius-pill); padding: 8px 11px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; font-weight: 500; }
-      .reel-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
-      .reel-chip { font-size: 8.5px; background: var(--primary-soft); color: var(--primary); padding: 4px 8px; border-radius: var(--radius-pill); font-weight: 700; }
-      .reel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-      .reel-card { background: var(--bg-base); border: 1px solid var(--surface-border); border-radius: 8px; height: 38px; position: relative; overflow: hidden; }
-      .reel-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, #e8a33d, var(--primary)); opacity: 0.85; }
-      .reel-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px dashed var(--surface-border); }
-      .reel-stat:last-child { border: none; }
-      .reel-stat b { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--primary); }
-      .reel-stat span { font-size: 10px; color: var(--text-muted); font-weight: 500; }
-      .reel-orbit-wrap { width: 170px; height: 170px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-      .reel-ring { position: absolute; border: 1.5px dashed var(--primary-glow); border-radius: 50%; }
-      .reel-ring.r1 { width: 100%; height: 100%; animation: reelSpin 30s linear infinite; }
-      .reel-ring.r2 { width: 70%; height: 70%; animation: reelSpin 22s linear infinite reverse; }
-      @keyframes reelSpin { to { transform: rotate(360deg); } }
-      .reel-core {
-        width: 44px; height: 44px; border-radius: 50%;
-        background: radial-gradient(circle at 35% 30%, var(--primary), var(--primary-dark));
-        box-shadow: 0 0 0 7px var(--primary-soft); z-index: 2; display: flex; align-items: center; justify-content: center;
-      }
-      .reel-core::after { content: ""; width: 8px; height: 8px; background: #fff; border-radius: 50%; opacity: 0.85; }
-      .reel-hero { align-items: center; text-align: center; }
-      .reel-hero h3 { max-width: none; }
-      .reel-hero p { max-width: 380px; margin-left: auto; margin-right: auto; }
-      .reel-closing { align-items: center; text-align: center; justify-content: center; }
-      .reel-closing .reel-url {
-        margin-top: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--primary);
-        font-weight: 700; background: var(--primary-soft); padding: 7px 14px; border-radius: var(--radius-pill);
-      }
-      .reel-closing .reel-credit { margin-top: 20px; font-size: 10.5px; color: var(--text-muted); }
-      .reel-controls { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 0 16px 0; }
-      .reel-ctl-btn {
-        width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--surface-border); background: #fff;
-        display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main);
-        font-size: 12px; transition: transform 0.15s ease, background 0.15s ease;
-      }
-      .reel-ctl-btn:hover { background: var(--primary-soft); }
-      .reel-ctl-btn:active { transform: scale(0.92); }
-      #reelPlayPause { width: 36px; height: 36px; background: var(--primary); color: #fff; border: none; }
-      #reelPlayPause:hover { background: var(--primary-dark); }
-      .reel-dots { display: flex; gap: 6px; margin-left: 6px; }
-      .reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-border); cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
-      .reel-dot.active { background: var(--primary); transform: scale(1.3); }
-      @media (max-width: 650px) {
-        .reel-row { flex-direction: column-reverse; gap: 16px; }
-        .reel-visual { flex: 0 0 auto; }
-        .reel-scene { padding: 22px 22px; }
-      }
-    </style>
 
     <section class="reel-section">
       <div class="section-bar">
@@ -948,7 +949,6 @@
 
         <div class="reel-stage">
 
-          <!-- Scene 1: Hero -->
           <section class="reel-scene reel-hero active">
             <div class="reel-eyebrow"><span class="reel-num">1</span> UNIFIED WORKSPACE</div>
             <div class="reel-orbit-wrap">
@@ -959,7 +959,6 @@
             <p>Quotations, hub directories, packing standards and rate calculators, in a single real-time workspace.</p>
           </section>
 
-          <!-- Scene 2: Quotation Editor -->
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
@@ -984,7 +983,6 @@
             </div>
           </section>
 
-          <!-- Scene 3: Hub & Branch Directory -->
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
@@ -1014,7 +1012,6 @@
             </div>
           </section>
 
-          <!-- Scene 4: Packing Standards Gallery -->
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
@@ -1039,7 +1036,6 @@
             </div>
           </section>
 
-          <!-- Scene 5: Portal Activity -->
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
@@ -1057,7 +1053,6 @@
             </div>
           </section>
 
-          <!-- Scene 6: Closing -->
           <section class="reel-scene reel-closing">
             <div class="reel-eyebrow"><span class="reel-num">6</span> APML PORTAL</div>
             <h3>Work smarter. <span>Move faster.</span></h3>
@@ -1163,9 +1158,6 @@
         rafId = requestAnimationFrame((ts) => { segStart = ts; tick(ts); });
       })();
     </script>
-    <!-- ================= END PORTAL HIGHLIGHT REEL ================= -->
-
-    <!-- EQUAL-WEIGHT OPERATIONS UTILITIES -->
     <section class="workspace-section">
       
       <div class="section-bar">
@@ -1178,7 +1170,6 @@
 
       <div class="modules-grid">
         
-        <!-- 1. Quotation Drafting Studio -->
         <a href="editor.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1203,7 +1194,6 @@
           </div>
         </a>
 
-        <!-- 2. Packing Standards Gallery -->
         <a href="gallery.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1228,7 +1218,6 @@
           </div>
         </a>
 
-        <!-- 3. Hub & Branch Directory -->
         <a href="hub-details.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1253,7 +1242,6 @@
           </div>
         </a>
 
-        <!-- 4. APML Lite Rate Calculator -->
         <a href="APML-Lite.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1278,7 +1266,6 @@
           </div>
         </a>
 
-        <!-- 5. Car Rate Calculator -->
         <a href="car-rate.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1303,7 +1290,6 @@
           </div>
         </a>
 
-        <!-- 6. APML Local Rate (Active & Linked) -->
         <a href="local-rate.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1331,7 +1317,6 @@
       </div>
     </section>
 
-    <!-- LIVE METRICS BAR -->
     <div class="metrics-bar-wrap">
       <div class="metrics-dock">
         <div class="metrics-lead">
@@ -1363,17 +1348,13 @@
 
   </main>
 
-  <!-- COMMON FOOTER CONTAINER -->
   <div id="footer-container"></div>
 
-  <!-- STANDARD COMMON SCRIPT -->
   <script src="common.js?v=2.2"></script>
 
-  <!-- FIREBASE REALTIME ANALYTICS LIBRARIES -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <!-- FIREBASE INTEGRATION SCRIPT -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
