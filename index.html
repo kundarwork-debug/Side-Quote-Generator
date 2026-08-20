@@ -337,7 +337,6 @@
       opacity: 1;
     }
 
-    /* Disabled / Coming Soon Card Style */
     .module-card.disabled {
       cursor: default;
       opacity: 0.88;
@@ -675,19 +674,104 @@
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    /* =========================================================
+       FLOATING SUPPORT ACTION BUTTON & SPEECH BUBBLE
+       ========================================================= */
+    .support-fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+      text-decoration: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .support-fab-link {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 14px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .support-msg-bubble {
+      background-color: #ffffff;
+      color: #0f172a;
+      border: 2px solid #0f172a;
+      box-shadow: 4px 4px 0px #0f172a;
+      padding: 14px 20px;
+      border-radius: 20px 20px 0 20px;
+      font-size: 14px;
+      font-weight: 600;
+      max-width: 270px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+      line-height: 1.45;
+      user-select: none;
+    }
+
+    .support-msg-bubble.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .support-fab-link:hover .support-msg-bubble {
+      transform: translateY(-2px) scale(1);
+      box-shadow: 6px 6px 0px #0f172a;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      background-color: #0f172a;
+      margin-left: 2px;
+      animation: cursorBlink 1s step-end infinite;
+    }
+    @keyframes cursorBlink { 50% { opacity: 0; } }
+
+    .support-btn {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      border: 3px solid #0f172a;
+      box-shadow: 4px 4px 0px #0f172a;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .support-avatar {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .support-fab-link:hover .support-btn {
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0px #0f172a;
+    }
+
     /* Mobile Adaptations */
     @media (max-width: 768px) {
-      /* Hide Highlight Reel */
       .reel-section {
         display: none !important;
       }
 
-      /* Hide interactive hero animation rig */
       .interactive-hero-zone {
         display: none !important;
       }
 
-      /* Hide splash screen instantly on mobile */
       .splash-screen {
         display: none !important;
       }
@@ -714,6 +798,19 @@
         font-size: 11px;
         padding: 4px 10px;
       }
+      .support-fab {
+        bottom: 20px;
+        right: 20px;
+      }
+      .support-msg-bubble {
+        max-width: 220px;
+        font-size: 12.5px;
+        padding: 10px 14px;
+      }
+      .support-btn {
+        width: 54px;
+        height: 54px;
+      }
     }
   </style>
 </head>
@@ -722,7 +819,6 @@
   <style>
     html.splash-lock, body.splash-lock { overflow: hidden; height: 100%; }
 
-    /* Unlock scroll on mobile immediately */
     @media (max-width: 768px) {
       html.splash-lock, body.splash-lock { overflow: auto !important; height: auto !important; }
     }
@@ -798,7 +894,6 @@
 
   <script>
     (function () {
-      // Skip splash on mobile screens
       if (window.innerWidth <= 768) {
         document.documentElement.classList.remove('splash-lock');
         document.body.classList.remove('splash-lock');
@@ -901,11 +996,9 @@
     <script>
       (function initSnakeTailOrbitPhysics() {
         if (window.innerWidth <= 768) return;
-
         const zone = document.getElementById('heroInteractiveZone');
         const core = document.getElementById('hubCore');
         if (!zone || !core) return;
-
         const nodes = [
           { el: document.getElementById('node1'), radius: 60,   speed:  0.016, angle: 0,                   x: 0, y: 0, vx: 0, vy: 0 },
           { el: document.getElementById('node2'), radius: 87.5, speed: -0.011, angle: Math.PI,            x: 0, y: 0, vx: 0, vy: 0 },
@@ -913,23 +1006,19 @@
           { el: document.getElementById('node4'), radius: 115,  speed:  0.007, angle: -Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 },
           { el: document.getElementById('node5'), radius: 115,  speed:  0.007, angle:  Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 }
         ];
-
         let isInsideZone = false;
         let mouseX = 0;
         let mouseY = 0;
         let coreX = 0, coreY = 0;
-
         zone.addEventListener('mousemove', (e) => {
           const rect = zone.getBoundingClientRect();
           mouseX = e.clientX - (rect.left + rect.width / 2);
           mouseY = e.clientY - (rect.top + rect.height / 2);
           isInsideZone = true;
         });
-
         zone.addEventListener('mouseleave', () => {
           isInsideZone = false;
         });
-
         zone.addEventListener('touchmove', (e) => {
           if (!e.touches[0]) return;
           const rect = zone.getBoundingClientRect();
@@ -937,11 +1026,9 @@
           mouseY = e.touches[0].clientY - (rect.top + rect.height / 2);
           isInsideZone = true;
         }, { passive: true });
-
         zone.addEventListener('touchend', () => {
           isInsideZone = false;
         });
-
         function render() {
           if (isInsideZone) {
             coreX += (mouseX * 0.08 - coreX) * 0.1;
@@ -951,7 +1038,6 @@
             coreY += (0 - coreY) * 0.08;
           }
           core.style.transform = `translate(${coreX}px, ${coreY}px)`;
-
           for (let i = 0; i < nodes.length; i++) {
             const item = nodes[i];
             item.angle += item.speed;
@@ -985,7 +1071,6 @@
 
             item.x += item.vx;
             item.y += item.vy;
-
             if (item.el) {
               item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
             }
@@ -1161,13 +1246,11 @@
 
         const segs = document.querySelectorAll('.reel-seg');
         const dots = document.querySelectorAll('.reel-dot');
-
         function setScene(i) {
           scenes[current].classList.remove('active');
           dots[current].classList.remove('active');
           segs[current].classList.remove('done');
           segs[current].querySelector('i').style.width = '0%';
-
           current = (i + scenes.length) % scenes.length;
 
           scenes[current].classList.add('active');
@@ -1192,7 +1275,6 @@
           const elapsed = ts - segStart;
           const pct = Math.min(100, (elapsed / DURATION) * 100);
           segs[current].querySelector('i').style.width = pct + '%';
-
           if (elapsed >= DURATION) {
             pausedElapsed = 0;
             segStart = null;
@@ -1219,7 +1301,6 @@
         playPauseBtn.addEventListener('click', () => playing ? pause() : play());
         document.getElementById('reelNext').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current + 1); });
         document.getElementById('reelPrev').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current - 1); });
-
         rafId = requestAnimationFrame((ts) => { segStart = ts; tick(ts); });
       })();
     </script>
@@ -1438,6 +1519,17 @@
 
   </main>
 
+  <div class="support-fab" id="support-fab">
+    <a href="about.html" class="support-fab-link" title="Learn more about the developer">
+      <div class="support-msg-bubble">
+        <span id="typewriter-text"></span><span class="cursor">|</span>
+      </div>
+      <div class="support-btn">
+        <img src="Gemini_Generated_Image_am0uxnam0uxnam0u.png" alt="Developer Avatar" class="support-avatar" onerror="this.src='logo.svg'">
+      </div>
+    </a>
+  </div>
+
   <div id="footer-container"></div>
 
   <script src="common.js?v=2.2"></script>
@@ -1446,6 +1538,57 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
+    // --- Typewriter & Floating FAB Scroll Trigger ---
+    const typeText = document.getElementById('typewriter-text');
+    const msg = "Hi! If you love APML Portal, consider exploring my work! ☕";
+    let typeIndex = 0;
+    let hasTyped = false;
+
+    function typeWriter() {
+      if (typeIndex < msg.length) {
+        typeText.innerHTML += msg.charAt(typeIndex);
+        typeIndex++;
+        setTimeout(typeWriter, 40);
+      } else {
+        setTimeout(() => {
+          const cursor = document.querySelector('.cursor');
+          if (cursor) cursor.style.display = 'none';
+        }, 2000);
+      }
+    }
+
+    function startTypeWriter() {
+      if (!hasTyped) {
+        hasTyped = true;
+        setTimeout(typeWriter, 300);
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const fabBubble = document.querySelector('.support-msg-bubble');
+      const supportFab = document.getElementById('support-fab');
+
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const bodyHeight = document.body.offsetHeight;
+      const footer = document.getElementById('footer-container');
+      const footerHeight = footer ? footer.offsetHeight : 0;
+      const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
+
+      if (supportFab) {
+        supportFab.style.opacity = isNearBottom ? '0' : '1';
+        supportFab.style.pointerEvents = isNearBottom ? 'none' : 'auto';
+      }
+
+      if (currentScrollY > 80 && !isNearBottom) {
+        if (fabBubble) fabBubble.classList.add('show');
+        startTypeWriter();
+      } else {
+        if (fabBubble) fabBubble.classList.remove('show');
+      }
+    }, { passive: true });
+
+    // --- Firebase Configurations ---
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
