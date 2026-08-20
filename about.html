@@ -5,13 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Prasad Kundar - Developer Profile</title>
 
-  <!-- Network/Hub SVG Favicon -->
   <link rel="icon" type="image/svg+xml" href="logo.svg">
 
-  <!-- STANDARD COMMON CSS -->
   <link rel="stylesheet" href="common.css?v=2.2">
 
-  <!-- Google Fonts & Material Symbols -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
@@ -65,7 +62,7 @@
       height: 100vh;
       pointer-events: none;
       z-index: 0;
-      background:
+      background: 
         radial-gradient(circle at 18% 18%, rgba(185, 28, 28, 0.06) 0%, transparent 40%),
         radial-gradient(circle at 82% 80%, rgba(225, 29, 72, 0.05) 0%, transparent 45%);
     }
@@ -82,12 +79,12 @@
     }
 
     /* =========================================================
-       PROFILE HERO STAGE & ORBITAL RIG
+       HERO PROFILE STAGE & INTERACTIVE RIG ZONE (CONFINED AREA)
        ========================================================= */
     .hero-stage {
-      max-width: 1000px;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 95px 20px 20px;
+      padding: 95px 32px 10px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -118,7 +115,7 @@
       color: var(--text-main);
       letter-spacing: -0.03em;
       line-height: 1.15;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .hero-title span {
@@ -127,40 +124,33 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .hero-handle {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
     .hero-sub {
       font-size: clamp(14px, 3.5vw, 16px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 520px;
+      max-width: 540px;
       line-height: 1.55;
     }
 
-    /* =========================================================
-       MULTI-ORBITAL GITHUB AVATAR RIG
-       ========================================================= */
-    .multi-orbit-stage {
+    /* SPECIFIC ACTIVE INTERACTION BOUNDARY AREA */
+    .interactive-hero-zone {
       position: relative;
-      width: 270px;
-      height: 270px;
+      width: min(94vw, 1100px);
+      height: 380px;
+      margin: 10px auto 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 24px;
-      cursor: pointer;
       user-select: none;
+      /* Custom Logo SVG Cursor when inside this region */
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fef2f2' stroke='%23b91c1c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23b91c1c'/%3E%3Ccircle cx='10' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='22' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='16' cy='23' r='2' fill='%23b91c1c'/%3E%3Cline x1='16' y1='16' x2='10' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='22' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='16' y2='23' stroke='%23b91c1c' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, crosshair;
     }
 
-    /* Ambient Ripple Waves */
+    /* Ambient Pulsing Profile Waves */
     .beacon-wave {
       position: absolute;
-      inset: 60px;
+      width: 140px;
+      height: 140px;
       border-radius: 50%;
       border: 1.5px solid var(--primary);
       opacity: 0;
@@ -170,40 +160,70 @@
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Orbital Rings */
-    .orbit-ring {
+    /* Static Dashed Orbital Ring Tracks */
+    .orbit-tracks-wrap {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .orbit-ring-track {
       position: absolute;
       border-radius: 50%;
-      pointer-events: none;
-      transform-origin: center center;
-    }
-
-    .orbit-ring-inner {
-      width: 155px;
-      height: 155px;
-      border: 1.5px dashed rgba(185, 28, 28, 0.35);
-      animation: orbitRotate 10s linear infinite;
-    }
-
-    .orbit-ring-middle {
-      width: 210px;
-      height: 210px;
-      border: 1.5px dashed rgba(225, 29, 72, 0.3);
-      animation: orbitRotateRev 16s linear infinite;
-    }
-
-    .orbit-ring-outer {
-      width: 265px;
-      height: 265px;
       border: 1.5px dashed rgba(185, 28, 28, 0.25);
-      animation: orbitRotate 22s linear infinite;
+      transition: opacity 0.3s ease;
     }
 
-    /* Orbiting Nodes */
-    .orbit-node {
+    .track-inner { width: 130px; height: 130px; }
+    .track-middle { width: 190px; height: 190px; border-color: rgba(225, 29, 72, 0.25); }
+    .track-outer { width: 250px; height: 250px; }
+
+    /* Central Profile Avatar Disc */
+    .profile-core-disc {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+      border: 2.5px solid #ffffff;
+      box-shadow: 
+        0 12px 28px -4px rgba(185, 28, 28, 0.3),
+        0 0 0 4px rgba(185, 28, 28, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      overflow: hidden;
+      pointer-events: none;
+      transition: transform 0.1s ease-out, box-shadow 0.3s ease;
+    }
+
+    .profile-core-disc img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Free-floating tail nodes layer */
+    .free-nodes-layer {
       position: absolute;
-      width: 28px;
-      height: 28px;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .free-node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 32px;
+      height: 32px;
+      margin-top: -16px;
+      margin-left: -16px;
       border-radius: 50%;
       background: #ffffff;
       border: 1.5px solid var(--primary);
@@ -212,146 +232,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: auto;
-      transition: transform 0.25s ease;
+      will-change: transform;
+      z-index: 10;
+      transition: box-shadow 0.2s ease;
     }
 
-    .orbit-node .material-symbols-outlined {
-      font-size: 16px;
+    .free-node .material-symbols-outlined {
+      font-size: 17px;
     }
 
-    /* Node Positioning */
-    .node-top {
-      top: -14px;
-      left: calc(50% - 14px);
-    }
-
-    .node-bottom {
-      bottom: -14px;
-      left: calc(50% - 14px);
-    }
-
-    .node-right {
-      right: -14px;
-      top: calc(50% - 14px);
-    }
-
-    .node-left {
-      left: -14px;
-      top: calc(50% - 14px);
-    }
-
-    /* Node Colors */
-    .node-code {
-      color: var(--primary);
-      border-color: var(--primary);
-    }
-
-    .node-terminal {
-      color: #e11d48;
-      border-color: #e11d48;
-      box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25);
-    }
-
-    .node-database {
-      color: #0284c7;
-      border-color: #0284c7;
-      box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25);
-    }
-
-    .node-tools {
-      color: #d97706;
-      border-color: #d97706;
-      box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
-    }
-
-    /* Counter-rotation */
-    .orbit-ring-inner .orbit-node {
-      animation: counterOrbit 10s linear infinite;
-    }
-
-    .orbit-ring-middle .orbit-node {
-      animation: counterOrbitRev 16s linear infinite;
-    }
-
-    .orbit-ring-outer .orbit-node {
-      animation: counterOrbit 22s linear infinite;
-    }
-
-    /* Center Avatar Core */
-    .beacon-core-disc {
-      position: relative;
-      width: 104px;
-      height: 104px;
-      border-radius: 50%;
-      padding: 4px;
-      background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
-      border: 2px solid #ffffff;
-      box-shadow: 
-        0 12px 28px -4px rgba(185, 28, 28, 0.3),
-        0 0 0 4px rgba(185, 28, 28, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease;
-      animation: floatMotion 3.8s ease-in-out infinite alternate;
-    }
-
-    .avatar-img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .status-dot {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      width: 16px;
-      height: 16px;
-      background-color: #10b981;
-      border: 2.5px solid #ffffff;
-      border-radius: 50%;
-      animation: liveGlow 1.8s infinite;
-      z-index: 6;
-    }
-
-    /* Hover Physics */
-    .multi-orbit-stage:hover .beacon-core-disc {
-      transform: scale(1.08);
-      box-shadow: 
-        0 18px 36px -6px rgba(185, 28, 28, 0.45),
-        0 0 0 8px rgba(185, 28, 28, 0.14);
-    }
-
-    .multi-orbit-stage:hover .orbit-ring,
-    .multi-orbit-stage:hover .orbit-node {
-      animation-play-state: paused;
-    }
-
-    /* Keyframe Animations */
-    @keyframes orbitRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes orbitRotateRev {
-      from { transform: rotate(360deg); }
-      to { transform: rotate(0deg); }
-    }
-
-    @keyframes counterOrbit {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(-360deg); }
-    }
-
-    @keyframes counterOrbitRev {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    /* Node color schemes */
+    .node-code { color: var(--primary); border-color: var(--primary); }
+    .node-web { color: #0284c7; border-color: #0284c7; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25); }
+    .node-database { color: #d97706; border-color: #d97706; box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25); }
+    .node-mobile { color: #e11d48; border-color: #e11d48; box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25); }
+    .node-terminal { color: #7c3aed; border-color: #7c3aed; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.25); }
 
     @keyframes beaconRipple {
       0% { transform: scale(0.65); opacity: 0.8; }
@@ -359,73 +254,58 @@
       100% { transform: scale(1.7); opacity: 0; }
     }
 
-    @keyframes floatMotion {
-      0% { transform: translateY(-3px); }
-      100% { transform: translateY(4px); }
-    }
-
-    @keyframes liveGlow {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    .hero-btn-group {
+    /* Quick Social Actions Row */
+    .profile-action-row {
       display: flex;
-      gap: 12px;
-      margin-top: 28px;
-      flex-wrap: wrap;
+      align-items: center;
       justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
     }
 
-    .btn-filled {
+    .profile-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 11px 22px;
-      background: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 700;
+      padding: 9px 18px;
       border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-hover);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
     }
 
-    .btn-filled:hover {
+    .profile-btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+    }
+    .profile-btn-primary:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
     }
 
-    .btn-outlined {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 11px 22px;
+    .profile-btn-outline {
       background: #ffffff;
       color: var(--text-main);
-      border: 1px solid var(--surface-border);
-      text-decoration: none;
-      font-size: 13.5px;
-      font-weight: 700;
-      border-radius: var(--radius-pill);
+      border-color: var(--surface-border);
       box-shadow: var(--shadow-subtle);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    .btn-outlined:hover {
+    .profile-btn-outline:hover {
       border-color: rgba(185, 28, 28, 0.3);
+      color: var(--primary);
       transform: translateY(-2px);
     }
 
     /* =========================================================
-       CONTENT SECTIONS
+       CONTENT SECTIONS & FEATURE MODULES (1440PX WIDE)
        ========================================================= */
     .content-section {
-      max-width: 1180px;
+      max-width: 1440px;
       margin: 20px auto 40px;
-      padding: 0 20px;
+      padding: 0 32px;
       width: 100%;
     }
 
@@ -449,71 +329,46 @@
       gap: 8px;
     }
 
-    .section-counter {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-    }
-
-    /* Module Grid */
-    .modules-grid {
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
-      gap: 22px;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+      gap: 24px;
       width: 100%;
     }
 
-    .info-card {
+    .feature-card {
       background: var(--surface-card);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
-      padding: 26px 24px;
+      padding: 28px 24px;
       box-shadow: var(--shadow-subtle);
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       overflow: hidden;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .info-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .info-card:hover {
+    .feature-card:hover {
       transform: translateY(-6px);
       border-color: rgba(185, 28, 28, 0.3);
       box-shadow: var(--shadow-hover);
-    }
-
-    .info-card:hover::before {
-      opacity: 1;
     }
 
     .card-head {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .card-icon-pill {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       background: #ffffff;
       border: 1px solid var(--surface-border);
       display: flex;
@@ -524,20 +379,16 @@
       transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
     }
 
-    .info-card:hover .card-icon-pill {
+    .feature-card:hover .card-icon-pill {
       transform: scale(1.08) rotate(-4deg);
       background: var(--primary);
       color: #ffffff;
       border-color: var(--primary);
     }
 
-    .card-icon-pill span {
-      font-size: 26px;
-    }
-
     .card-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 17px;
+      font-size: 19px;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
@@ -550,26 +401,27 @@
       line-height: 1.55;
     }
 
-    /* Tech Chip Row */
+    /* Core Technologies Chips */
     .chip-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
+      margin-top: 16px;
     }
 
     .tech-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 16px;
       background: #ffffff;
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-pill);
-      font-size: 13px;
+      padding: 8px 16px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--text-main);
-      box-shadow: var(--shadow-subtle);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
     .tech-chip:hover {
@@ -586,136 +438,237 @@
     }
 
     /* Mobile Adaptations */
-    @media (max-width: 650px) {
-      .hero-stage { padding-top: 80px; }
-      .modules-grid { grid-template-columns: 1fr; }
-      .hero-btn-group { flex-direction: column; width: 100%; }
-      .btn-filled, .btn-outlined { justify-content: center; }
+    @media (max-width: 768px) {
+      .hero-stage {
+        padding: 80px 16px 10px;
+      }
+      .interactive-hero-zone {
+        height: 320px;
+      }
+      .content-section {
+        padding: 0 16px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Light Accents -->
   <div class="ambient-bg"></div>
 
-  <!-- COMMON HEADER CONTAINER -->
   <div id="header-container"></div>
 
   <main>
-
-    <!-- PROFILE HERO -->
+    
     <section class="hero-stage">
-
+      
       <div class="badge-capsule">
         <span class="material-symbols-outlined" style="font-size: 15px;">terminal</span>
-        <span>Developer Profile</span>
+        <span>Developer &amp; Architecture</span>
       </div>
 
-      <h1 class="hero-title">Prasad <span>Kundar</span></h1>
-      <p class="hero-handle">@kundarwork-debug</p>
+      <h1 class="hero-title">
+        Prasad <span>Kundar</span>
+      </h1>
 
       <p class="hero-sub">
-        Building the utility suites and workflow automation systems behind APML's internal logistics operations.
+        Lead Architect &amp; Developer of APML Operations Hub &amp; Quotation Workspace.
       </p>
 
-      <!-- MULTI-ORBITAL GITHUB AVATAR STAGE -->
-      <div class="multi-orbit-stage" title="Active Developer Profile">
-        <!-- Ambient Waves -->
+      <div class="interactive-hero-zone" id="profileInteractiveZone" title="Move your cursor in this area to form a trailing snake tail!">
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
 
-        <!-- 1. Inner Orbit (Code Node) -->
-        <div class="orbit-ring orbit-ring-inner">
-          <div class="orbit-node node-code node-top" title="Code Engine">
+        <div class="orbit-tracks-wrap">
+          <div class="orbit-ring-track track-inner"></div>
+          <div class="orbit-ring-track track-middle"></div>
+          <div class="orbit-ring-track track-outer"></div>
+        </div>
+
+        <div class="profile-core-disc" id="profileCore" title="Prasad Kundar">
+          <img src="https://github.com/kundarwork-debug.png" alt="Prasad Kundar" onerror="this.src='logo.svg'">
+        </div>
+
+        <div class="free-nodes-layer" id="nodesLayer">
+          <div class="free-node node-code" id="node1" title="Core Architecture">
             <span class="material-symbols-outlined">code</span>
           </div>
-        </div>
 
-        <!-- 2. Middle Orbit (Terminal & Database Nodes) -->
-        <div class="orbit-ring orbit-ring-middle">
-          <div class="orbit-node node-terminal node-left" title="Developer Terminal">
-            <span class="material-symbols-outlined">terminal</span>
+          <div class="free-node node-web" id="node2" title="Web App Engine">
+            <span class="material-symbols-outlined">language</span>
           </div>
-          <div class="orbit-node node-database node-right" title="Realtime Database">
+
+          <div class="free-node node-database" id="node3" title="Realtime Database">
             <span class="material-symbols-outlined">database</span>
           </div>
-        </div>
 
-        <!-- 3. Outer Orbit (Architecture & Build Tools) -->
-        <div class="orbit-ring orbit-ring-outer">
-          <div class="orbit-node node-tools node-top" title="Workflow Automation">
-            <span class="material-symbols-outlined">build</span>
+          <div class="free-node node-mobile" id="node4" title="Responsive Layout">
+            <span class="material-symbols-outlined">devices</span>
           </div>
-          <div class="orbit-node node-code node-bottom" title="Logistics Platform">
-            <span class="material-symbols-outlined">hub</span>
+
+          <div class="free-node node-terminal" id="node5" title="Deployment &amp; Tools">
+            <span class="material-symbols-outlined">terminal</span>
           </div>
         </div>
 
-        <!-- Center GitHub Avatar Core -->
-        <div class="beacon-core-disc">
-          <img src="https://github.com/kundarwork-debug.png" alt="Prasad Kundar Profile Avatar" class="avatar-img">
-          <div class="status-dot" title="Active Developer"></div>
-        </div>
       </div>
 
-      <div class="hero-btn-group">
-        <a href="https://github.com/kundarwork-debug/Side-Quote-Generator" target="_blank" class="btn-filled">
+      <div class="profile-action-row">
+        <a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-primary">
           <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
-          <span>View GitHub Repository</span>
+          <span>GitHub Profile</span>
         </a>
-        <a href="https://wa.me/919599588135" target="_blank" class="btn-outlined">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0;">
-            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.26.86 5.82 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.23-8.24 8.23a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.25-4.37c0-4.54 3.7-8.24 8.24-8.24m-4.53 4.28c-.15 0-.4.06-.61.3-.21.24-.8.79-.8 1.92s.82 2.22.94 2.38c.11.15 1.6 2.52 3.97 3.44 1.97.76 2.37.61 2.8.57.43-.04 1.38-.56 1.58-1.11.19-.54.19-1 .13-1.1-.06-.1-.21-.16-.43-.28-.23-.12-1.38-.68-1.59-.76-.21-.08-.37-.11-.53.11-.15.23-.6.76-.74.92-.13.15-.27.17-.5.06-.23-.12-.96-.36-1.84-1.14-.68-.6-1.14-1.35-1.27-1.58-.13-.23-.01-.35.1-.47.11-.11.23-.27.35-.4.11-.14.15-.24.23-.4.08-.15.04-.29-.02-.4-.06-.12-.53-1.29-.74-1.76-.19-.46-.39-.4-.53-.4z"/>
-          </svg>
-          <span>WhatsApp Me</span>
-        </a>
-        <a href="index.html" class="btn-outlined">
-          <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
-          <span>Back to Portal</span>
+        <a href="index.html" class="profile-btn profile-btn-outline">
+          <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+          <span>Portal Home</span>
         </a>
       </div>
 
     </section>
 
-    <!-- ENGINEERED MODULES -->
+    <script>
+      (function initProfileSnakeTailPhysics() {
+        const zone = document.getElementById('profileInteractiveZone');
+        const core = document.getElementById('profileCore');
+        if (!zone || !core) return;
+
+        // Configuration of the 5 icons for orbital base & follow chain
+        const nodes = [
+          { el: document.getElementById('node1'), radius: 65,   speed:  0.016, angle: 0,                   x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node2'), radius: 95,   speed: -0.011, angle: Math.PI,            x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node3'), radius: 95,   speed: -0.011, angle: 0,                  x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node4'), radius: 125,  speed:  0.007, angle: -Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 },
+          { el: document.getElementById('node5'), radius: 125,  speed:  0.007, angle:  Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 }
+        ];
+
+        let isInsideZone = false;
+        let mouseX = 0;
+        let mouseY = 0;
+        let coreX = 0, coreY = 0;
+
+        // Check if mouse is strictly inside the interactive zone
+        zone.addEventListener('mousemove', (e) => {
+          const rect = zone.getBoundingClientRect();
+          mouseX = e.clientX - (rect.left + rect.width / 2);
+          mouseY = e.clientY - (rect.top + rect.height / 2);
+          isInsideZone = true;
+        });
+
+        zone.addEventListener('mouseleave', () => {
+          isInsideZone = false;
+        });
+
+        // Touch support for tablets/mobile
+        zone.addEventListener('touchmove', (e) => {
+          if (!e.touches[0]) return;
+          const rect = zone.getBoundingClientRect();
+          mouseX = e.touches[0].clientX - (rect.left + rect.width / 2);
+          mouseY = e.touches[0].clientY - (rect.top + rect.height / 2);
+          isInsideZone = true;
+        }, { passive: true });
+
+        zone.addEventListener('touchend', () => {
+          isInsideZone = false;
+        });
+
+        function render() {
+          // Central Avatar Subtle Magnetic Pull
+          if (isInsideZone) {
+            coreX += (mouseX * 0.08 - coreX) * 0.1;
+            coreY += (mouseY * 0.08 - coreY) * 0.1;
+          } else {
+            coreX += (0 - coreX) * 0.08;
+            coreY += (0 - coreY) * 0.08;
+          }
+          core.style.transform = `translate(${coreX}px, ${coreY}px)`;
+
+          // Physics for each trailing node
+          for (let i = 0; i < nodes.length; i++) {
+            const item = nodes[i];
+            item.angle += item.speed;
+
+            let targetX, targetY;
+
+            if (isInsideZone) {
+              // FOLLOW-THE-LEADER SNAKE TAIL MANNER
+              if (i === 0) {
+                targetX = mouseX;
+                targetY = mouseY;
+              } else {
+                const leader = nodes[i - 1];
+                const dx = item.x - leader.x;
+                const dy = item.y - leader.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const spacing = 36; // Distance between trailing tail items
+
+                targetX = leader.x + (dx / dist) * spacing;
+                targetY = leader.y + (dy / dist) * spacing;
+              }
+
+              item.vx = (item.vx + (targetX - item.x) * 0.22) * 0.68;
+              item.vy = (item.vy + (targetY - item.y) * 0.22) * 0.68;
+            } else {
+              // ELASTIC RETURN TO CIRCULAR ORBIT
+              targetX = Math.cos(item.angle) * item.radius;
+              targetY = Math.sin(item.angle) * item.radius;
+
+              item.vx = (item.vx + (targetX - item.x) * 0.08) * 0.82;
+              item.vy = (item.vy + (targetY - item.y) * 0.08) * 0.82;
+            }
+
+            item.x += item.vx;
+            item.y += item.vy;
+
+            if (item.el) {
+              item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+            }
+          }
+
+          requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+      })();
+    </script>
+
     <section class="content-section">
       <div class="section-bar">
         <div class="section-heading">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">rocket_launch</span>
-          <span>Engineered Portal Modules</span>
+          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">engineering</span>
+          <span>Core Portal Modules Built</span>
         </div>
-        <span class="section-counter">3 Built</span>
       </div>
 
-      <div class="modules-grid">
-
-        <div class="info-card">
+      <div class="features-grid">
+        
+        <div class="feature-card">
           <div class="card-head">
             <div class="card-icon-pill">
               <span class="material-symbols-outlined">edit_note</span>
             </div>
           </div>
-          <h3 class="card-title">Quotation Editor Studio</h3>
+          <h3 class="card-title">Quotation Drafting Studio</h3>
           <p class="card-description">
-            Client-side real-time quotation drafting engine with automated tax slabs, insurance formulas, and print-perfect A4 document rendering.
+            Dual-branded A4 PDF quotation generator with automated GST, freight matrices, and local draft persistence.
           </p>
         </div>
 
-        <div class="info-card">
+        <div class="feature-card">
           <div class="card-head">
             <div class="card-icon-pill">
-              <span class="material-symbols-outlined">photo_library</span>
+              <span class="material-symbols-outlined">location_city</span>
             </div>
           </div>
-          <h3 class="card-title">Packing Gallery Engine</h3>
+          <h3 class="card-title">Hub &amp; Branch Directory</h3>
           <p class="card-description">
-            Multi-media repository with background video frame thumbnail extraction, category routing, and binary blob direct-to-device local downloads.
+            Nationwide operations lookup engine with live Firebase search, direct incharge contacts, and one-tap Google Maps.
           </p>
         </div>
 
-        <div class="info-card">
+        <div class="feature-card">
           <div class="card-head">
             <div class="card-icon-pill">
               <span class="material-symbols-outlined">calculate</span>
@@ -730,7 +683,6 @@
       </div>
     </section>
 
-    <!-- CORE TECHNOLOGIES -->
     <section class="content-section">
       <div class="section-bar">
         <div class="section-heading">
@@ -751,10 +703,8 @@
 
   </main>
 
-  <!-- COMMON FOOTER CONTAINER -->
   <div id="footer-container"></div>
 
-  <!-- STANDARD COMMON SCRIPT -->
   <script src="common.js?v=2.2"></script>
 
 </body>
