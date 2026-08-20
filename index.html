@@ -689,7 +689,7 @@
       display: inline-block;
       opacity: 0;
       transform: translateY(16px) scale(0.85);
-      animation: splashLetterIn 550ms cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
+      animation: splashLetterIn 400ms cubic-bezier(0.2, 0.9, 0.25, 1) forwards;
     }
     .splash-letter.accent { color: var(--primary); }
     @keyframes splashLetterIn { to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -728,13 +728,13 @@
         var span = document.createElement('span');
         span.className = 'splash-letter' + (i >= 5 ? ' accent' : '');
         span.textContent = ch === ' ' ? '\u00A0' : ch;
-        if (!reduceMotion) span.style.animationDelay = (i * 55) + 'ms';
+        if (!reduceMotion) span.style.animationDelay = (i * 35) + 'ms';
         title.appendChild(span);
       });
 
-      var buildTime = reduceMotion ? 0 : (text.length - 1) * 55 + 550; // time until last letter settles
-      var holdTime = 1500; // whole word shown together
-      var fadeTime = 500;
+      var buildTime = reduceMotion ? 0 : (text.length - 1) * 35 + 400; // time until last letter settles
+      var holdTime = 850; // whole word shown together
+      var fadeTime = 400;
 
       var barFill = document.getElementById('splashBarFill');
       barFill.style.transition = 'width ' + (buildTime + holdTime) + 'ms linear';
