@@ -677,29 +677,30 @@
 
     /* Mobile Adaptations */
     @media (max-width: 768px) {
-      .hero-stage {
-        padding: 80px 16px 10px;
+      /* Hide Highlight Reel */
+      .reel-section {
+        display: none !important;
       }
+
+      /* Hide interactive hero animation rig */
       .interactive-hero-zone {
-        height: 320px;
+        display: none !important;
       }
-      .reel-section,
+
+      /* Hide splash screen instantly on mobile */
+      .splash-screen {
+        display: none !important;
+      }
+
+      .hero-stage {
+        padding: 80px 16px 24px;
+      }
       .workspace-section,
       .metrics-bar-wrap {
         padding: 0 16px;
       }
       .modules-grid {
         grid-template-columns: 1fr;
-      }
-      .reel-row {
-        flex-direction: column-reverse;
-        gap: 16px;
-      }
-      .reel-visual {
-        flex: 0 0 auto;
-      }
-      .reel-scene {
-        padding: 22px 22px;
       }
       .metrics-dock {
         flex-direction: column;
@@ -720,6 +721,11 @@
 
   <style>
     html.splash-lock, body.splash-lock { overflow: hidden; height: 100%; }
+
+    /* Unlock scroll on mobile immediately */
+    @media (max-width: 768px) {
+      html.splash-lock, body.splash-lock { overflow: auto !important; height: auto !important; }
+    }
 
     .splash-screen {
       position: fixed;
@@ -792,6 +798,15 @@
 
   <script>
     (function () {
+      // Skip splash on mobile screens
+      if (window.innerWidth <= 768) {
+        document.documentElement.classList.remove('splash-lock');
+        document.body.classList.remove('splash-lock');
+        const splash = document.getElementById('splashScreen');
+        if (splash) splash.style.display = 'none';
+        return;
+      }
+
       var title = document.getElementById('splashTitle');
       var text = 'APML PORTAL';
       var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -814,10 +829,10 @@
 
       setTimeout(function () {
         var splash = document.getElementById('splashScreen');
-        splash.classList.add('hide');
+        if (splash) splash.classList.add('hide');
         document.documentElement.classList.remove('splash-lock');
         document.body.classList.remove('splash-lock');
-        setTimeout(function () { splash.style.display = 'none'; }, fadeTime);
+        setTimeout(function () { if (splash) splash.style.display = 'none'; }, fadeTime);
       }, buildTime + holdTime);
     })();
   </script>
@@ -885,6 +900,8 @@
 
     <script>
       (function initSnakeTailOrbitPhysics() {
+        if (window.innerWidth <= 768) return;
+
         const zone = document.getElementById('heroInteractiveZone');
         const core = document.getElementById('hubCore');
         if (!zone || !core) return;
@@ -1002,7 +1019,7 @@
               <div class="reel-core"></div>
             </div>
             <h3>One Portal. <span>Six Tools.</span> Zero Chaos.</h3>
-            <p>Quotations, hub directories, packing standards and rate calculators, in a single real-time workspace.[cite: 2]</p>
+            <p>Quotations, hub directories, packing standards and rate calculators, in a single real-time workspace.</p>
           </section>
 
           <section class="reel-scene">
@@ -1010,7 +1027,7 @@
               <div class="reel-text">
                 <div class="reel-eyebrow"><span class="reel-num">2</span> DOCUMENTATION</div>
                 <h3>Dual-branded quotes, <span>built in seconds.</span></h3>
-                <p>One editor generates client-ready quotations for both Exact Container Logistics and Maxcare Packers &amp; Movers.[cite: 2]</p>
+                <p>One editor generates client-ready quotations for both Exact Container Logistics and Maxcare Packers &amp; Movers.</p>
                 <div class="reel-pills">
                   <span class="reel-pill">📄 A4 PDF Export</span>
                   <span class="reel-pill">⚙️ Freight Matrix</span>
@@ -1034,7 +1051,7 @@
               <div class="reel-text">
                 <div class="reel-eyebrow"><span class="reel-num">3</span> DIRECTORY</div>
                 <h3>Every branch, <span>one search away.</span></h3>
-                <p>Instant, Firebase-backed lookup for nationwide hubs — search by city, incharge name, phone, or designation.[cite: 2]</p>
+                <p>Instant, Firebase-backed lookup for nationwide hubs — search by city, incharge name, phone, or designation.</p>
                 <div class="reel-pills">
                   <span class="reel-pill">📍 Pan-India Hubs</span>
                   <span class="reel-pill">☎️ Direct Contacts</span>
@@ -1063,7 +1080,7 @@
               <div class="reel-text">
                 <div class="reel-eyebrow"><span class="reel-num">4</span> MEDIA LIBRARY</div>
                 <h3>See the standard, <span>not just read it.</span></h3>
-                <p>A visual reference library of fleet operations and vehicle loading, with dedicated categories for bikes, cars, and cartons.[cite: 2]</p>
+                <p>A visual reference library of fleet operations and vehicle loading, with dedicated categories for bikes, cars, and cartons.</p>
                 <div class="reel-pills">
                   <span class="reel-pill">🚚 Fleet Logistics</span>
                   <span class="reel-pill">🏍️ Bike Packaging</span>
@@ -1087,7 +1104,7 @@
               <div class="reel-text">
                 <div class="reel-eyebrow"><span class="reel-num">5</span> PORTAL ACTIVITY</div>
                 <h3>Built for the <span>field team.</span></h3>
-                <p>Six active operations modules working together — with live usage tracked across the portal.[cite: 2]</p>
+                <p>Six active operations modules working together — with live usage tracked across the portal.</p>
               </div>
               <div class="reel-visual">
                 <div class="reel-mock">
@@ -1102,9 +1119,9 @@
           <section class="reel-scene reel-closing">
             <div class="reel-eyebrow"><span class="reel-num">6</span> APML PORTAL</div>
             <h3>Work smarter. <span>Move faster.</span></h3>
-            <p>Everything your operations team needs, in one place.[cite: 2]</p>
+            <p>Everything your operations team needs, in one place.</p>
             <div class="reel-url">kundarwork-debug.github.io/Side-Quote-Generator</div>
-            <div class="reel-credit">Designed &amp; developed by Prasad[cite: 2]</div>
+            <div class="reel-credit">Designed &amp; developed by Prasad</div>
           </section>
 
         </div>
@@ -1120,6 +1137,8 @@
 
     <script>
       (function () {
+        if (window.innerWidth <= 768) return;
+
         const scenes = document.querySelectorAll('.reel-scene');
         const progressWrap = document.getElementById('reelProgress');
         const dotsWrap = document.getElementById('reelDots');
@@ -1205,7 +1224,6 @@
       })();
     </script>
 
-    <!-- EQUAL-WEIGHT OPERATIONS UTILITIES -->
     <section class="workspace-section">
       
       <div class="section-bar">
@@ -1218,7 +1236,6 @@
 
       <div class="modules-grid">
         
-        <!-- 1. Quotation Drafting Studio -->
         <a href="editor.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1228,7 +1245,7 @@
               <span class="status-tag">Documentation</span>
             </div>
             <h2 class="card-title">Quotation Drafting Studio</h2>
-            <p class="card-description">Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.[cite: 2]</p>
+            <p class="card-description">Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.</p>
             <div class="tags-flow">
               <span class="micro-tag">📄 A4 PDF Export</span>
               <span class="micro-tag">⚙️ Freight Matrix</span>
@@ -1243,7 +1260,6 @@
           </div>
         </a>
 
-        <!-- 2. Packing Standards Gallery -->
         <a href="gallery.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1253,7 +1269,7 @@
               <span class="status-tag">Media Library</span>
             </div>
             <h2 class="card-title">Packing Standards Gallery</h2>
-            <p class="card-description">High-definition media library with video demonstrations and official packaging standards for nationwide consignments.[cite: 2]</p>
+            <p class="card-description">High-definition media library with video demonstrations and official packaging standards for nationwide consignments.</p>
             <div class="tags-flow">
               <span class="micro-tag">🚚 Fleet Logistics</span>
               <span class="micro-tag">🏍️ Bike Packaging</span>
@@ -1268,7 +1284,6 @@
           </div>
         </a>
 
-        <!-- 3. Hub & Branch Directory -->
         <a href="hub-details.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1278,7 +1293,7 @@
               <span class="status-tag">Directory</span>
             </div>
             <h2 class="card-title">Hub &amp; Branch Directory</h2>
-            <p class="card-description">Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.[cite: 2]</p>
+            <p class="card-description">Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.</p>
             <div class="tags-flow">
               <span class="micro-tag">📍 Pan-India Hubs</span>
               <span class="micro-tag">📞 HOD Contacts</span>
@@ -1293,7 +1308,6 @@
           </div>
         </a>
 
-        <!-- 4. Field Officer Directory WCRO (Coming Soon) -->
         <div class="module-card disabled">
           <div>
             <div class="card-head">
@@ -1318,7 +1332,6 @@
           </div>
         </div>
 
-        <!-- 5. APML Lite Rate Calculator -->
         <a href="APML-Lite.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1328,7 +1341,7 @@
               <span class="status-tag">Volume Pricing</span>
             </div>
             <h2 class="card-title">APML Lite Rate Calculator</h2>
-            <p class="card-description">Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.[cite: 2]</p>
+            <p class="card-description">Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.</p>
             <div class="tags-flow">
               <span class="micro-tag">📦 450 CFT Limit</span>
               <span class="micro-tag">🏙️ 4 Major Hubs</span>
@@ -1343,7 +1356,6 @@
           </div>
         </a>
 
-        <!-- 6. Car Rate Calculator -->
         <a href="car-rate.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1353,7 +1365,7 @@
               <span class="status-tag">Vehicle Freight</span>
             </div>
             <h2 class="card-title">Car Rate Calculator</h2>
-            <p class="card-description">Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.[cite: 2]</p>
+            <p class="card-description">Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.</p>
             <div class="tags-flow">
               <span class="micro-tag">🚗 Model Detection</span>
               <span class="micro-tag">📏 600 KM Base</span>
@@ -1368,7 +1380,6 @@
           </div>
         </a>
 
-        <!-- 7. APML Local Rate -->
         <a href="local-rate.html" class="module-card">
           <div>
             <div class="card-head">
@@ -1378,7 +1389,7 @@
               <span class="status-tag">Local Shifting</span>
             </div>
             <h2 class="card-title">APML Local Rate</h2>
-            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.[cite: 2]</p>
+            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.</p>
             <div class="tags-flow">
               <span class="micro-tag">🚛 Intra-City</span>
               <span class="micro-tag">📦 ₹25 / ₹20 CFT</span>
