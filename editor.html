@@ -609,23 +609,32 @@
 
     <div class="field-group" id="costItemsGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 16px;">payments</span> Cost items</h2>
-      <div class="field" style="margin-bottom:14px;">
+      
+      <!-- Auto-split & Quick Inputs Section (Total, Car Freight & GST) -->
+      <div class="field" style="margin-bottom:12px;">
         <label>Total amount (auto-fills below using standard %)</label>
         <div style="display:flex; gap:8px;">
           <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1;">
           <button id="applyTotalBtn" style="flex:none; padding:0 18px; border-radius:var(--md-sys-shape-corner-medium); border:1px solid var(--md-sys-color-outline-variant); background:var(--md-sys-color-surface-container-low); color:var(--md-sys-color-on-surface); font-size:13px; font-weight:700; cursor:pointer; transition: var(--transition-m3);">Apply</button>
         </div>
       </div>
+
+      <div class="row2" style="margin-bottom:14px;">
+        <div class="field" style="margin-bottom:0;">
+          <label>Car Freight (₹)</label>
+          <input id="f_carFreight" placeholder="0" type="number">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>GST %</label>
+          <input id="f_gstPercent" placeholder="0" type="number">
+        </div>
+      </div>
+
       <div id="costRows"></div>
       <button class="add-btn" id="addCostRow">
         <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
         <span>Add cost item</span>
       </button>
-
-      <div class="field" style="margin-top:14px;">
-        <label>GST %</label>
-        <input id="f_gstPercent" style="max-width:100px;">
-      </div>
 
       <div class="totals-box" id="totalsBox"></div>
     </div>
@@ -828,6 +837,11 @@ function computeTotals(data){
   return { subtotal, gstAmount, grand };
 }
 
+function getCarFreightItemIndex() {
+  const d = state[active];
+  return d.costItems.findIndex(i => normalizeLabel(i.label).includes('car'));
+}
+
 function applyTotalAmount(){
   const total = parseFloat(document.getElementById('f_totalAmount').value) || 0;
   const d = state[active];
@@ -835,7 +849,7 @@ function applyTotalAmount(){
 
   const matchedIdx = d.costItems
     .map((item, idx) => ({ idx, pct: splits[normalizeLabel(item.label)] }))
-    .filter(m => m.pct !== undefined);
+    .filter(m => m.pct !== undefined && m.pct > 0);
 
   if (matchedIdx.length === 0 || total <= 0) return;
 
@@ -864,7 +878,14 @@ function renderForm(){
   document.getElementById('f_custGst').value = shared.custGst;
   document.getElementById('f_fromCity').value = shared.fromCity;
   document.getElementById('f_toCity').value = shared.toCity;
+  
+  // Sync quick Car Freight input
+  const carIdx = getCarFreightItemIndex();
+  document.getElementById('f_carFreight').value = carIdx !== -1 ? (d.costItems[carIdx].amount || '') : '';
+  
+  // Sync quick GST % input
   document.getElementById('f_gstPercent').value = d.gstPercent;
+
   document.getElementById('lblAddr').textContent = d.addrLabel;
   document.getElementById('f_addr').value = d.addr;
   document.getElementById('f_phone').value = d.phone;
@@ -1035,6 +1056,36 @@ document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
   }
 });
 
+// Quick Car Freight Input Listener
+document.getElementById('f_carFreight').addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value) || 0;
+  const d = state[active];
+  let carIdx = getCarFreightItemIndex();
+  
+  if (carIdx !== -1) {
+    d.costItems[carIdx].amount = val;
+  } else {
+    const label = active === 'exact' ? 'Car Freight' : 'Car Transportation (if any)';
+    d.costItems.splice(1, 0, { label, amount: val });
+  }
+  
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+  
+  // Keep the list input in sync
+  const costInputs = document.querySelectorAll('#costRows .cost-row');
+  carIdx = getCarFreightItemIndex();
+  if (carIdx !== -1 && costInputs[carIdx]) {
+    const amtInput = costInputs[carIdx].querySelector('.amt-in');
+    if (amtInput) amtInput.value = val;
+  }
+});
+
 const simpleFields = {
   f_docNo: 'docNo', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
   f_addr: 'addr', f_phone: 'phone', f_email: 'email'
@@ -1043,7 +1094,14 @@ Object.keys(simpleFields).forEach(id => {
   document.getElementById(id).addEventListener('input', (e) => {
     state[active][simpleFields[id]] = e.target.value;
     renderPreview();
-    if (id === 'f_gstPercent') renderForm();
+    if (id === 'f_gstPercent') {
+      const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+      document.getElementById('totalsBox').innerHTML = `
+        <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+        <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+        <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+      `;
+    }
   });
 });
 
@@ -1065,11 +1123,18 @@ document.getElementById('costRows').addEventListener('input', (e) => {
   const item = state[active].costItems[idx];
   if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
   else item.label = e.target.value;
+  
+  // If editing car freight line, keep the top quick input in sync
+  const carIdx = getCarFreightItemIndex();
+  if (Number(idx) === carIdx) {
+    document.getElementById('f_carFreight').value = item.amount || '';
+  }
+
   renderPreview();
   const { subtotal, gstAmount, grand } = computeTotals(state[active]);
   document.getElementById('totalsBox').innerHTML = `
     <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
-    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(grand - subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
     <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
   `;
 });
