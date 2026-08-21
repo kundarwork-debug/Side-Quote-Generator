@@ -60,6 +60,42 @@
       position: relative;
     }
 
+    /* =========================================================
+       CUSTOM ROCKET CURSOR & SMOKE TRAIL (ONLY IN HERO ZONE)
+       ========================================================= */
+    #rocket-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 32px;
+      height: 32px;
+      margin-top: -16px;
+      margin-left: -16px;
+      pointer-events: none;
+      z-index: 100000;
+      will-change: transform, opacity;
+      transform: translate3d(-100px, -100px, 0);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+    }
+
+    #smoke-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99999;
+    }
+
+    /* Hide standard pointer ONLY inside the target hero section */
+    @media (hover: hover) and (pointer: fine) {
+      .hero-target-zone,
+      .hero-target-zone * {
+        cursor: none !important;
+      }
+    }
+
     /* Ambient Background Mesh */
     .ambient-bg {
       position: fixed;
@@ -74,9 +110,7 @@
         radial-gradient(circle at 82% 80%, rgba(225, 29, 72, 0.04) 0%, transparent 45%);
     }
 
-    /* =========================================================
-       DYNAMIC 3D PERSPECTIVE MATRIX & MATERIAL ELEMENTS
-       ========================================================= */
+    /* DYNAMIC 3D PERSPECTIVE MATRIX & MATERIAL ELEMENTS */
     .perspective-grid-layer {
       position: fixed;
       inset: 0;
@@ -104,7 +138,6 @@
       will-change: transform;
     }
 
-    /* Radar sweep beacon */
     .radar-sweep-disc {
       position: absolute;
       width: 420px;
@@ -191,7 +224,7 @@
     .matrix-left { top: 32%; left: 4%; }
     .matrix-right { bottom: 30%; right: 6%; }
 
-    /* FLYING TINY ROCKETS */
+    /* FLYING TINY ROCKETS (BACKGROUND) */
     .tiny-rocket {
       position: absolute;
       pointer-events: none;
@@ -323,7 +356,15 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* SMOOTH PRECISION ORBIT RIG ZONE */
+    /* Target Zone: Scopes the interactive zone */
+    .hero-target-zone {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
     .interactive-hero-zone {
       position: relative;
       width: min(94vw, 1100px);
@@ -333,7 +374,6 @@
       align-items: center;
       justify-content: center;
       user-select: none;
-      cursor: default;
     }
 
     .beacon-wave {
@@ -670,7 +710,15 @@
       gap: 14px;
       text-decoration: none;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .support-fab.hide-bottom {
+      opacity: 0 !important;
+      transform: translateY(28px) scale(0.92) !important;
+      pointer-events: none !important;
     }
 
     .support-msg-bubble {
@@ -754,10 +802,31 @@
       .support-msg-bubble { max-width: 220px; font-size: 12.5px; padding: 10px 14px; }
       .perspective-grid-layer { opacity: 0.45; }
       .tiny-rocket { display: none !important; }
+      #rocket-cursor, #smoke-canvas { display: none !important; }
     }
   </style>
 </head>
 <body>
+
+  <!-- FULL-PAGE SMOKE TRAIL CANVAS (FADES SMOKE ACROSS WHOLE VIEWPORT) -->
+  <canvas id="smoke-canvas"></canvas>
+
+  <!-- CUSTOM ROTATING MINI ROCKET CURSOR -->
+  <div id="rocket-cursor">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.35));">
+      <!-- Main Rocket Body (Tip points directly UP along 0deg axis) -->
+      <path d="M16 2.5C16 2.5 22.5 8 22.5 19L19 21.5L16 20L13 21.5L9.5 19C9.5 8 16 2.5 16 2.5Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.2"/>
+      <!-- Window Porthole -->
+      <circle cx="16" cy="9.5" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="0.8"/>
+      <!-- Left Fin -->
+      <path d="M9.5 15L4.5 19.5V22.5L9.5 21V15Z" fill="#0f172a"/>
+      <!-- Right Fin -->
+      <path d="M22.5 15L27.5 19.5V22.5L22.5 21V15Z" fill="#0f172a"/>
+      <!-- Thrust Fire Flame -->
+      <path d="M13.5 21.5L16 28L18.5 21.5H13.5Z" fill="#f59e0b"/>
+      <path d="M14.5 21.5L16 25L17.5 21.5H14.5Z" fill="#fef08a"/>
+    </svg>
+  </div>
 
   <!-- Ambient Light Mesh Background -->
   <div class="ambient-bg"></div>
@@ -817,64 +886,66 @@
 
   <main>
     
-    <!-- CENTRAL HERO (SLOWER FADE-IN BANNER) -->
+    <!-- CENTRAL HERO (CUSTOM ROCKET POINTER TARGET ZONE) -->
     <section class="hero-stage">
-      
-      <div class="badge-capsule fade-banner-item">
-        <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
-        <span>Unified Workspace</span>
+      <div class="hero-target-zone" id="heroTargetZone">
+        
+        <div class="badge-capsule fade-banner-item">
+          <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
+          <span>Unified Workspace</span>
+        </div>
+
+        <h1 class="hero-title fade-banner-item">
+          One Portal for <span>All Solutions</span>
+        </h1>
+
+        <p class="hero-sub fade-banner-item">
+          Work Smarter, Move Faster.
+        </p>
+
+        <div class="interactive-hero-zone" id="heroInteractiveZone" title="APML Logistics Hub Orbit">
+          <div class="beacon-wave"></div>
+          <div class="beacon-wave"></div>
+          <div class="beacon-wave"></div>
+
+          <div class="orbit-tracks-wrap">
+            <div class="orbit-ring-track track-inner"></div>
+            <div class="orbit-ring-track track-middle"></div>
+            <div class="orbit-ring-track track-outer"></div>
+          </div>
+
+          <div class="beacon-core-disc" id="hubCore" title="Central Hub">
+            <span class="material-symbols-outlined">hub</span>
+          </div>
+
+          <div class="free-nodes-layer" id="nodesLayer">
+            <div class="free-node node-carton-1" id="node1" title="Packaged Box">
+              <span class="material-symbols-outlined">package_2</span>
+            </div>
+
+            <div class="free-node node-truck" id="node2" title="Fleet Logistics Truck">
+              <span class="material-symbols-outlined">local_shipping</span>
+            </div>
+
+            <div class="free-node node-hub" id="node3" title="Logistics Warehouse Hub">
+              <span class="material-symbols-outlined">location_city</span>
+            </div>
+
+            <div class="free-node node-car" id="node4" title="Car Carrier Transport">
+              <span class="material-symbols-outlined">directions_car</span>
+            </div>
+
+            <div class="free-node node-carton-2" id="node5" title="Consignment Carton">
+              <span class="material-symbols-outlined">inventory_2</span>
+            </div>
+          </div>
+
+        </div>
+
       </div>
-
-      <h1 class="hero-title fade-banner-item">
-        One Portal for <span>All Solutions</span>
-      </h1>
-
-      <p class="hero-sub fade-banner-item">
-        Work Smarter, Move Faster.
-      </p>
-
-      <div class="interactive-hero-zone" id="heroInteractiveZone" title="APML Logistics Hub Orbit">
-        <div class="beacon-wave"></div>
-        <div class="beacon-wave"></div>
-        <div class="beacon-wave"></div>
-
-        <div class="orbit-tracks-wrap">
-          <div class="orbit-ring-track track-inner"></div>
-          <div class="orbit-ring-track track-middle"></div>
-          <div class="orbit-ring-track track-outer"></div>
-        </div>
-
-        <div class="beacon-core-disc" id="hubCore" title="Central Hub">
-          <span class="material-symbols-outlined">hub</span>
-        </div>
-
-        <div class="free-nodes-layer" id="nodesLayer">
-          <div class="free-node node-carton-1" id="node1" title="Packaged Box">
-            <span class="material-symbols-outlined">package_2</span>
-          </div>
-
-          <div class="free-node node-truck" id="node2" title="Fleet Logistics Truck">
-            <span class="material-symbols-outlined">local_shipping</span>
-          </div>
-
-          <div class="free-node node-hub" id="node3" title="Logistics Warehouse Hub">
-            <span class="material-symbols-outlined">location_city</span>
-          </div>
-
-          <div class="free-node node-car" id="node4" title="Car Carrier Transport">
-            <span class="material-symbols-outlined">directions_car</span>
-          </div>
-
-          <div class="free-node node-carton-2" id="node5" title="Consignment Carton">
-            <span class="material-symbols-outlined">inventory_2</span>
-          </div>
-        </div>
-
-      </div>
-
     </section>
 
-    <!-- SMOOTH CONTINUOUS ORBIT RIG PHYSICS (NO JITTER / NO EXCESS SPRING) -->
+    <!-- SMOOTH CONTINUOUS ORBIT RIG PHYSICS -->
     <script>
       (function initSmoothOrbitRig() {
         if (window.innerWidth <= 768) return;
@@ -891,31 +962,26 @@
         ];
 
         let mouseX = 0, mouseY = 0;
-        let isHovered = false;
 
-        zone.addEventListener('mouseenter', () => { isHovered = true; });
-        zone.addEventListener('mouseleave', () => { isHovered = false; mouseX = 0; mouseY = 0; });
+        zone.addEventListener('mouseleave', () => { mouseX = 0; mouseY = 0; });
         zone.addEventListener('mousemove', (e) => {
           const rect = zone.getBoundingClientRect();
-          mouseX = (e.clientX - (rect.left + rect.width / 2)) * 0.08;
-          mouseY = (e.clientY - (rect.top + rect.height / 2)) * 0.08;
+          mouseX = (e.clientX - (rect.left + rect.width / 2)) * 0.06;
+          mouseY = (e.clientY - (rect.top + rect.height / 2)) * 0.06;
         });
 
         function render() {
-          // Smooth subtle hub core displacement on hover
           if (core) {
             core.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
           }
 
-          // Clean, predictable circular orbits without spring oscillation
           for (let i = 0; i < nodes.length; i++) {
             const item = nodes[i];
             item.angle += item.speed;
 
-            const targetX = Math.cos(item.angle) * item.radius + mouseX * 0.4;
-            const targetY = Math.sin(item.angle) * item.radius + mouseY * 0.4;
+            const targetX = Math.cos(item.angle) * item.radius + mouseX * 0.35;
+            const targetY = Math.sin(item.angle) * item.radius + mouseY * 0.35;
 
-            // Direct smooth linear interpolation
             item.x += (targetX - item.x) * 0.15;
             item.y += (targetY - item.y) * 0.15;
 
@@ -1412,9 +1478,10 @@
       }
     })();
 
-    // Typewriter message logic for floating FAB
+    // Typewriter message logic for floating FAB & Bottom Disappear Tracker
     (function initFABTypewriter() {
       const bubble = document.querySelector('.support-msg-bubble');
+      const supportFab = document.getElementById('support-fab');
       const textEl = document.getElementById('typewriter-text');
       const msg = "Hi! If you love APML Portal, consider exploring my work! ☕";
       let charIdx = 0;
@@ -1433,13 +1500,31 @@
         }
       }
 
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 80 && !hasStarted) {
+      function checkBottomScroll() {
+        const currentScrollY = window.scrollY;
+        const scrollPosition = window.scrollY + window.innerHeight;
+        const bodyHeight = document.documentElement.scrollHeight || document.body.offsetHeight;
+        
+        // Vanish completely as soon as user approaches the bottom/footer
+        const isNearBottom = scrollPosition >= (bodyHeight - 120);
+
+        if (supportFab) {
+          if (isNearBottom) {
+            supportFab.classList.add('hide-bottom');
+          } else {
+            supportFab.classList.remove('hide-bottom');
+          }
+        }
+
+        if (currentScrollY > 80 && !hasStarted && !isNearBottom) {
           hasStarted = true;
           if (bubble) bubble.classList.add('show');
           setTimeout(typeWriter, 200);
         }
-      }, { passive: true });
+      }
+
+      window.addEventListener('scroll', checkBottomScroll, { passive: true });
+      window.addEventListener('resize', checkBottomScroll, { passive: true });
 
       setTimeout(() => {
         if (!hasStarted) {
@@ -1448,6 +1533,126 @@
           setTimeout(typeWriter, 200);
         }
       }, 3000);
+    })();
+  </script>
+
+  <!-- =====================================================================
+       ROTATING ROCKET POINTER & SMOKE TRAIL (ONLY IN HERO ZONE)
+       ===================================================================== -->
+  <script>
+    (function initHeroScopedRocket() {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      const targetZone = document.getElementById('heroTargetZone');
+      const rocket = document.getElementById('rocket-cursor');
+      const canvas = document.getElementById('smoke-canvas');
+      if (!targetZone || !rocket || !canvas) return;
+
+      const ctx = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      let currentX = window.innerWidth / 2;
+      let currentY = window.innerHeight / 2;
+      let targetX = currentX;
+      let targetY = currentY;
+      let currentAngle = 0;
+      let isInside = false;
+      let lastSmokeTime = 0;
+
+      const particles = [];
+
+      targetZone.addEventListener('mouseenter', (e) => {
+        isInside = true;
+        currentX = targetX = e.clientX;
+        currentY = targetY = e.clientY;
+        rocket.style.display = 'block';
+        rocket.style.opacity = '1';
+      });
+
+      targetZone.addEventListener('mouseleave', () => {
+        isInside = false;
+        rocket.style.opacity = '0';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+      });
+
+      function createSmokeParticle(x, y, angleDeg) {
+        const exhaustDist = 14;
+        const rad = (angleDeg - 90) * (Math.PI / 180);
+        const spawnX = x - Math.cos(rad) * exhaustDist;
+        const spawnY = y - Math.sin(rad) * exhaustDist;
+
+        particles.push({
+          x: spawnX + (Math.random() - 0.5) * 3,
+          y: spawnY + (Math.random() - 0.5) * 3,
+          vx: -Math.cos(rad) * (Math.random() * 1.2 + 0.6) + (Math.random() - 0.5) * 0.6,
+          vy: -Math.sin(rad) * (Math.random() * 1.2 + 0.6) + (Math.random() - 0.5) * 0.6,
+          radius: Math.random() * 2.8 + 2.2,
+          alpha: 0.48,
+          color: Math.random() > 0.35 ? '#cbd5e1' : '#f59e0b'
+        });
+      }
+
+      function updateAndDraw() {
+        const dx = targetX - currentX;
+        const dy = targetY - currentY;
+        const dist = Math.hypot(dx, dy);
+
+        currentX += dx * 0.55;
+        currentY += dy * 0.55;
+
+        if (dist > 1.8) {
+          const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+          let diff = (targetAngle - currentAngle) % 360;
+          if (diff > 180) diff -= 360;
+          if (diff < -180) diff += 360;
+          currentAngle += diff * 0.28;
+
+          const now = performance.now();
+          if (now - lastSmokeTime > 22 && isInside) {
+            createSmokeParticle(currentX, currentY, currentAngle);
+            lastSmokeTime = now;
+          }
+        }
+
+        rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.radius += 0.24;
+          p.alpha -= 0.022;
+
+          if (p.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        requestAnimationFrame(updateAndDraw);
+      }
+
+      requestAnimationFrame(updateAndDraw);
     })();
   </script>
 
