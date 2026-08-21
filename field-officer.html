@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Field Officer Directory WCRO - APML Portal</title>
+    
+    <!-- Network/Hub SVG Favicon from root folder -->
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
+
+    <!-- STANDARD COMMON CSS -->
+    <link rel="stylesheet" href="common.css?v=2.2">
+
+    <!-- Google Fonts & Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <style>
+        :root {
+            --md-sys-color-primary: #b91c1c;
+            --md-sys-color-primary-container: #fef2f2;
+            --md-sys-color-on-primary-container: #991b1b;
+            --md-sys-color-surface: #f8fafc;
+            --md-sys-color-surface-container-lowest: #ffffff;
+            --md-sys-color-surface-container-low: #f1f5f9;
+            --md-sys-color-surface-container: #e2e8f0;
+            --md-sys-color-outline-variant: #e2e8f0;
+            --md-sys-color-on-surface: #0f172a;
+            --md-sys-color-on-surface-variant: #64748b;
+            --md-sys-shape-corner-small: 8px;
+            --md-sys-shape-corner-medium: 12px;
+            --md-sys-shape-corner-large: 20px;
+            --md-sys-shape-corner-full: 9999px;
+            --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
+            --md-elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
+            --md-elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
+            --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 64px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* Loading Overlay */
+        #pageLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1), visibility 0.35s;
+        }
+
+        #pageLoadingOverlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-spinner-box {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 0;
+            border: 3.5px solid var(--md-sys-color-primary-container);
+            border-top-color: var(--md-sys-color-primary);
+            border-radius: 50%;
+            animation: spinLoader 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+        }
+
+        .loader-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            animation: pulseLogo 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spinLoader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.9); opacity: 0.85; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .loader-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .directory-header-wrap {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 800;
+            color: var(--md-sys-color-on-surface);
+            letter-spacing: -0.02em;
+        }
+
+        .page-title span { color: var(--md-sys-color-primary); }
+
+        .header-top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: #2e7d32;
+            background-color: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 6px 14px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-top-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 18px;
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(185, 28, 28, 0.25);
+            transition: var(--transition-m3);
+        }
+
+        .btn-top-add:hover {
+            background: var(--md-sys-color-on-primary-container);
+            transform: translateY(-2px);
+        }
+
+        .btn-top-sync {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 18px;
+            background: #ffffff;
+            color: var(--md-sys-color-primary);
+            border: 1.5px solid var(--md-sys-color-primary);
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition-m3);
+        }
+
+        .btn-top-sync:hover {
+            background: var(--md-sys-color-primary-container);
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: var(--md-sys-color-surface-container-lowest);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-corner-large);
+            padding: 26px;
+            box-shadow: var(--md-elevation-1);
+            transition: var(--transition-m3);
+        }
+
+        .card-header {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--md-sys-color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lookup-box {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .lookup-input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-corner-full);
+            outline: none;
+            background: #ffffff;
+            color: var(--md-sys-color-on-surface);
+            transition: var(--transition-m3);
+        }
+
+        .lookup-input:focus {
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12);
+        }
+
+        .lookup-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--md-sys-color-primary);
+            font-size: 22px;
+        }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .chip {
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-primary);
+            padding: 6px 14px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-m3);
+        }
+
+        .chip:hover {
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+        }
+
+        .lookup-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .lookup-result-item {
+            position: relative;
+            padding: 20px;
+            background: #ffffff;
+            border: 1.5px solid var(--md-sys-color-outline-variant);
+            border-left: 5px solid var(--md-sys-color-primary);
+            border-radius: var(--md-sys-shape-corner-medium);
+            animation: fadeIn 0.3s ease;
+            box-shadow: var(--md-elevation-1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .contact-role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .contact-role-card {
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-sys-shape-corner-small);
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .role-title-tag {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--md-sys-color-primary);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .role-person-name {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface);
+            display: block;
+        }
+
+        .role-phone-text {
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            font-weight: 600;
+        }
+
+        .btn-call-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            border: 1px solid rgba(185, 28, 28, 0.2);
+            text-decoration: none;
+            transition: var(--transition-m3);
+            flex-shrink: 0;
+        }
+
+        .btn-call-mini:hover {
+            background: var(--md-sys-color-primary);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        .btn-wa-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            text-decoration: none;
+            transition: var(--transition-m3);
+            flex-shrink: 0;
+        }
+
+        .btn-wa-mini:hover {
+            background: #15803d;
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        .btn-pencil-edit, .btn-pencil-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--md-sys-color-surface-container-low);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            cursor: pointer;
+            transition: var(--transition-m3);
+        }
+
+        .btn-pencil-edit { color: #0284c7; }
+        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
+        .btn-pencil-delete { color: #d32f2f; }
+        .btn-pencil-delete:hover { background: #fee2e2; border-color: #ef4444; transform: scale(1.08); }
+
+        .region-badge {
+            background-color: var(--md-sys-color-primary);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .state-badge {
+            padding: 3px 8px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .state-badge.active { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+        .state-badge.assco { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .state-badge.leave { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .state-badge.left { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+            background: #ffffff;
+            min-width: 860px;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        tr:hover td { background-color: #fff9f9; }
+
+        /* Form Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group.full-width { grid-column: 1 / -1; }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--md-sys-color-on-surface-variant);
+            text-transform: uppercase;
+        }
+
+        input, textarea, select {
+            padding: 10px 12px;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            background-color: #fffafa;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            color: var(--md-sys-color-on-surface);
+            transition: var(--transition-m3);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--md-sys-color-primary);
+            background-color: #ffffff;
+        }
+
+        .btn-submit {
+            background-color: var(--md-sys-color-primary);
+            color: #ffffff;
+            border: none;
+            padding: 11px 22px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            transition: var(--transition-m3);
+        }
+
+        .btn-submit:hover { background-color: var(--md-sys-color-on-primary-container); }
+
+        .btn-cancel-edit {
+            background-color: #64748b;
+            color: #ffffff;
+            border: none;
+            padding: 11px 18px;
+            border-radius: var(--md-sys-shape-corner-full);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            margin-left: 8px;
+            transition: var(--transition-m3);
+        }
+
+        .btn-cancel-edit:hover { background-color: #475569; }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-m3);
+        }
+        .btn-edit-tbl { color: #0284c7; }
+        .btn-edit-tbl:hover { background-color: #e0f2fe; }
+        .btn-delete-tbl { color: #d32f2f; }
+        .btn-delete-tbl:hover { background-color: #fee2e2; }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE LOADING ANIMATION OVERLAY -->
+    <div id="pageLoadingOverlay">
+        <div class="loader-spinner-box">
+            <div class="loader-ring"></div>
+            <img src="logo.svg" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="loader-text">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--md-sys-color-primary);">cloud_sync</span>
+            <span>Loading Field Officer Network Directory...</span>
+        </div>
+    </div>
+
+    <!-- COMMON HEADER CONTAINER -->
+    <div id="header-container"></div>
+
+    <main class="main-container">
+        
+        <!-- Header Info & Actions -->
+        <div class="directory-header-wrap">
+            <div class="header-badge">
+                <span class="material-symbols-outlined" style="font-size: 15px;">badge</span>
+                <span>Western Central Regional Office Contacts</span>
+            </div>
+            <h1 class="page-title">Field Officer <span>Live Directory</span></h1>
+            
+            <div class="header-top-actions">
+                <span class="status-badge">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
+                    Real-Time Connected
+                </span>
+
+                <button type="button" class="btn-top-add" onclick="scrollToAddForm()">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
+                    <span>Add New Officer</span>
+                </button>
+
+                <button type="button" class="btn-top-sync" onclick="syncMasterDataset()" title="Sync deduplicated master records">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">cleaning_services</span>
+                    <span>Clean &amp; Re-Sync Firebase</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 1. Quick Field Officer Lookup Tool -->
+        <section class="card" style="border: 2px solid var(--md-sys-color-primary);">
+            <div class="card-header">
+                <span class="material-symbols-outlined">travel_explore</span>
+                Instant Field Officer Lookup Finder
+            </div>
+            
+            <div class="lookup-box">
+                <span class="material-symbols-outlined lookup-icon">search</span>
+                <input type="text" id="officerLookupInput" class="lookup-input" placeholder="Search by name, branch (MUM, PUN, AHMD), APM code, designation, or phone...">
+            </div>
+
+            <!-- Quick Branch Shortcut Chips -->
+            <div class="quick-chips" id="quickChipsContainer"></div>
+
+            <!-- Multiple Lookup Results Container -->
+            <div id="lookupResultsContainer" class="lookup-results-list" style="display: none;"></div>
+        </section>
+
+        <!-- 2. Add / Edit Field Officer Section -->
+        <section class="card" id="addOfficerSection">
+            <div class="card-header" id="formCardHeader">
+                <span class="material-symbols-outlined" id="formHeaderIcon">person_add</span>
+                <span id="formHeaderTitle">Add New Field Officer Contact</span>
+            </div>
+
+            <form id="officerForm">
+                <input type="hidden" id="editingOfficerId" value="">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="formName">Officer Name *</label>
+                        <input type="text" id="formName" placeholder="e.g. JAIPAL SINGH" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="formBranch">Branch Code *</label>
+                        <input type="text" id="formBranch" placeholder="e.g. MUM, PUN, AHMD, BHND" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="formApmCode">APM Code</label>
+                        <input type="text" id="formApmCode" placeholder="e.g. APM9990">
+                    </div>
+                    <div class="form-group">
+                        <label for="formDesignation">Designation *</label>
+                        <select id="formDesignation">
+                            <option value="Marketing Executive">Marketing Executive</option>
+                            <option value="Branch Incharge">Branch Incharge</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="formRole">Role</label>
+                        <input type="text" id="formRole" value="BFO">
+                    </div>
+                    <div class="form-group">
+                        <label for="formMobile">Mobile Number *</label>
+                        <input type="tel" id="formMobile" placeholder="e.g. 9289620037" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="formStatus">Status *</label>
+                        <select id="formStatus">
+                            <option value="Active">Active</option>
+                            <option value="Assco">Assco</option>
+                            <option value="Leave">Leave</option>
+                            <option value="Left">Left</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px;">
+                    <button type="submit" class="btn-submit" id="btnSubmitForm">
+                        <span class="material-symbols-outlined">save</span>
+                        <span id="btnSubmitText">Save to Database</span>
+                    </button>
+                    <button type="button" class="btn-cancel-edit" id="btnCancelEdit" style="display: none;" onclick="cancelEditMode()">
+                        <span class="material-symbols-outlined">close</span>
+                        <span>Cancel Edit</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 3. Full Active Field Officers Table -->
+        <section class="card">
+            <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                <div class="card-header" style="margin-bottom: 0;">
+                    <span class="material-symbols-outlined">groups</span>
+                    All Registered Officers (<span id="officerCount">0</span>)
+                </div>
+                <div style="position: relative; width: 100%; max-width: 320px;">
+                    <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--md-sys-color-on-surface-variant); font-size: 18px;">search</span>
+                    <input type="text" id="tableSearchInput" placeholder="Filter table by name, branch, phone..." style="width: 100%; padding: 10px 14px 10px 36px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: var(--md-sys-shape-corner-full); outline: none; font-size: 13px; background: #ffffff;">
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sr.</th>
+                            <th>Officer Name</th>
+                            <th>Branch</th>
+                            <th>APM Code</th>
+                            <th>Designation</th>
+                            <th>Role</th>
+                            <th>Mobile No.</th>
+                            <th>Status</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="officerTableBody">
+                        <tr>
+                            <td colspan="9" style="text-align: center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">
+                                Syncing database records...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- COMMON FOOTER CONTAINER -->
+    <div id="footer-container"></div>
+
+    <!-- STANDARD COMMON SCRIPT -->
+    <script src="common.js?v=2.2"></script>
+
+    <!-- Firebase Compatibility SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
+            authDomain: "apml-hub-directory.firebaseapp.com",
+            databaseURL: "https://apml-hub-directory-default-rtdb.firebaseio.com",
+            projectId: "apml-hub-directory",
+            storageBucket: "apml-hub-directory.firebasestorage.app",
+            messagingSenderId: "1042315421228",
+            appId: "1:1042315421228:web:677ccc4eca1803cd8b1389",
+            measurementId: "G-BVJY1VV84M"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const officersRef = db.ref('field_officers');
+
+        // Master Field Officer Clean Unique Dataset (Deduplicated)
+        const initialExcelOfficers = [
+            { id: 1, branch: "AHMD", apmCode: "APM9990", name: "JAIPAL SINGH", role: "BFO", mobile: "9289620037", designation: "Marketing Executive", status: "Active" },
+            { id: 2, branch: "AHMD", apmCode: "APM11767", name: "DHARMENDRA KUMAR", role: "BFO", mobile: "9377787518", designation: "Marketing Executive", status: "Active" },
+            { id: 3, branch: "AHMD", apmCode: "APM14941", name: "Pankajkumar Bechan Zha", role: "BFO", mobile: "93119 46278", designation: "Marketing Executive", status: "Active" },
+            { id: 4, branch: "AHMD", apmCode: "APM15425", name: "Gautam Ray", role: "BFO", mobile: "93270 93171", designation: "Marketing Executive", status: "Active" },
+            { id: 5, branch: "ANK", apmCode: "N/A", name: "MANOJ SHARMA", role: "BFO", mobile: "93116 68190", designation: "Branch Incharge", status: "Assco" },
+            { id: 6, branch: "AUGD", apmCode: "APM8911", name: "JAYPAL KUMAR MANDAL", role: "BFO", mobile: "7777098396", designation: "Marketing Executive", status: "Active" },
+            { id: 7, branch: "BHND", apmCode: "APM9152", name: "SUNIL SHUKRU SAHU", role: "BFO", mobile: "7428471925", designation: "Marketing Executive", status: "Active" },
+            { id: 8, branch: "BHND", apmCode: "APM11205", name: "AVIKANT ATMARAM PARAB", role: "BFO", mobile: "9289697409", designation: "Marketing Executive", status: "Active" },
+            { id: 9, branch: "BHND", apmCode: "APM8242", name: "DEEPAK BACHCHA UPADHYAY", role: "BFO", mobile: "9326731923", designation: "Marketing Executive", status: "Active" },
+            { id: 10, branch: "BHND", apmCode: "APM9605", name: "BHAKT BAHADUR KALU SINGH VISHWAKARMA", role: "BFO", mobile: "7428132521", designation: "Marketing Executive", status: "Active" },
+            { id: 11, branch: "BHPL", apmCode: "APM6936", name: "TARACHAND NORIYA", role: "BFO", mobile: "7303097123", designation: "Marketing Executive", status: "Active" },
+            { id: 12, branch: "BHPL", apmCode: "APM13078", name: "RAHUL GUPTA", role: "BFO", mobile: "7428 132 368", designation: "Marketing Executive", status: "Active" },
+            { id: 13, branch: "BRD", apmCode: "APM6129", name: "YASHPAL SINGH", role: "BFO", mobile: "93776 60887", designation: "Marketing Executive", status: "Active" },
+            { id: 14, branch: "BRD", apmCode: "APM15272", name: "GUDDU KUMAR", role: "BFO", mobile: "92666 20922", designation: "Marketing Executive", status: "Active" },
+            { id: 15, branch: "CWK", apmCode: "APM10172", name: "ABHIJIT Kumar", role: "BFO", mobile: "7428 132 454", designation: "Marketing Executive", status: "Active" },
+            { id: 16, branch: "GDHM", apmCode: "N/A", name: "RAKESH SHARMA", role: "BFO", mobile: "93777 35277", designation: "Marketing Executive", status: "Assco" },
+            { id: 17, branch: "GOA", apmCode: "APM10834", name: "VIKASH SHEKHAWAT", role: "BFO", mobile: "99580 37009", designation: "Marketing Executive", status: "Active" },
+            { id: 18, branch: "GOA", apmCode: "APM14910", name: "Sunil Odian", role: "BFO", mobile: "93251 01131", designation: "Marketing Executive", status: "Active" },
+            { id: 19, branch: "GRGN", apmCode: "APM8181", name: "RAHUL KUMAR JHA", role: "BFO", mobile: "93112 34329", designation: "Marketing Executive", status: "Active" },
+            { id: 20, branch: "GRGN", apmCode: "APM8638", name: "AMAN KUMAR KESHAV JHA", role: "BFO", mobile: "89297 63309", designation: "Marketing Executive", status: "Active" },
+            { id: 21, branch: "GRGN", apmCode: "APMPRO0305", name: "DEEPAK PANDEY", role: "BFO", mobile: "7428 131 165", designation: "Marketing Executive", status: "Active" },
+            { id: 22, branch: "GRGN", apmCode: "APM14660", name: "ANKESH KUMAR DUBEY", role: "BFO", mobile: "96677 25134", designation: "Marketing Executive", status: "Active" },
+            { id: 23, branch: "GRGN", apmCode: "APM11806", name: "VIKASH S PANDEY", role: "BFO", mobile: "92891 34879", designation: "Marketing Executive", status: "Active" },
+            { id: 24, branch: "GRGN", apmCode: "APM8233", name: "AJAY KUMAR CHAUDHARY", role: "BFO", mobile: "93112 34328", designation: "Marketing Executive", status: "Active" },
+            { id: 25, branch: "GRGN", apmCode: "APM11619", name: "Ajay Kumar Rajbhar", role: "BFO", mobile: "92173 76173", designation: "Marketing Executive", status: "Active" },
+            { id: 26, branch: "GRGN", apmCode: "APM12914", name: "Arvind Jaiswal", role: "BFO", mobile: "9217376175", designation: "Marketing Executive", status: "Active" },
+            { id: 27, branch: "IND", apmCode: "APM13110", name: "SANJAY PAL", role: "BFO", mobile: "92897 67436", designation: "Marketing Executive", status: "Active" },
+            { id: 28, branch: "IND", apmCode: "APM11659", name: "ABHISHEK ROY", role: "BFO", mobile: "97550 47404", designation: "Marketing Executive", status: "Active" },
+            { id: 29, branch: "JAM", apmCode: "APM9901", name: "ANIL KUMAR", role: "BFO", mobile: "93193 33694", designation: "Branch Incharge", status: "Active" },
+            { id: 30, branch: "JAM", apmCode: "APM14583", name: "Prakash Kumar", role: "BFO", mobile: "93270 24402", designation: "Marketing Executive", status: "Active" },
+            { id: 31, branch: "JBPR", apmCode: "APM10978", name: "Saurabh Lodhi", role: "BFO", mobile: "93017 80115", designation: "Marketing Executive", status: "Active" },
+            { id: 32, branch: "JDP", apmCode: "APM15630", name: "Ratan Singh Nirwan", role: "BFO", mobile: "93522 25553", designation: "Marketing Executive", status: "Active" },
+            { id: 33, branch: "JLGC", apmCode: "APM11870", name: "SURENDRA KUMAR JOKANLAN SAROJ", role: "BFO", mobile: "96677 25034", designation: "Marketing Executive", status: "Leave" },
+            { id: 34, branch: "KLH", apmCode: "N/A", name: "BADRINATH SHINDE", role: "BFO", mobile: "93116 68184", designation: "Branch Incharge", status: "Assco" },
+            { id: 35, branch: "KRB", apmCode: "APM8306", name: "Rajan Kumar", role: "BFO", mobile: "7428132038", designation: "Branch Incharge", status: "Active" },
+            { id: 36, branch: "MUM", apmCode: "APM9355", name: "SHAIKH MOHD MUZAMMIL MOHD FAROOQUE", role: "BFO", mobile: "92891 34878", designation: "Marketing Executive", status: "Active" },
+            { id: 37, branch: "MUM", apmCode: "APM9923", name: "ROBERT ANTHONY DSOUZA", role: "BFO", mobile: "93112 21864", designation: "Marketing Executive", status: "Active" },
+            { id: 38, branch: "MUM", apmCode: "APM12620", name: "SUBHASH KUMAR MANDAL", role: "BFO", mobile: "96670 74909", designation: "Marketing Executive", status: "Active" },
+            { id: 39, branch: "MUM", apmCode: "APM11240", name: "PANKAJ KUMAR", role: "BFO", mobile: "7428 132 719", designation: "Marketing Executive", status: "Active" },
+            { id: 40, branch: "MUM", apmCode: "APM9391", name: "RIHAN AHMED FAIYAZ AHMED SHAIKH", role: "BFO", mobile: "92891 44934", designation: "Marketing Executive", status: "Active" },
+            { id: 41, branch: "MUM", apmCode: "APM12714", name: "BRIJMOHAN YOGENDRA MANDAL", role: "BFO", mobile: "92897 67426", designation: "Marketing Executive", status: "Active" },
+            { id: 42, branch: "MUM", apmCode: "APM15228", name: "Pramod Kumar Mandal", role: "BFO", mobile: "92173 37223", designation: "Marketing Executive", status: "Active" },
+            { id: 43, branch: "MUM", apmCode: "APM15428", name: "Narayan Ray", role: "BFO", mobile: "92173 37246", designation: "Marketing Executive", status: "Active" },
+            { id: 44, branch: "NGP", apmCode: "APM12954", name: "KAMAL KUMAR", role: "BFO", mobile: "93251 62372", designation: "Marketing Executive", status: "Leave" },
+            { id: 45, branch: "NGP", apmCode: "APM11043", name: "DHIRAJ DILIP NARNAWARE", role: "BFO", mobile: "93256 68615", designation: "Branch Incharge", status: "Active" },
+            { id: 46, branch: "NMUM", apmCode: "APM11495", name: "PARMESH PASWAN", role: "BFO", mobile: "92890 52849", designation: "Marketing Executive", status: "Active" },
+            { id: 47, branch: "NMUM", apmCode: "APM8323", name: "GOPAL PANDIT", role: "BFO", mobile: "92892 78248", designation: "Marketing Executive", status: "Active" },
+            { id: 48, branch: "NMUM", apmCode: "APM10740", name: "ROHAN BHAGWAN DHANKE", role: "BFO", mobile: "92896 62710", designation: "Marketing Executive", status: "Active" },
+            { id: 49, branch: "NMUM", apmCode: "APM11340", name: "SURAJ SHIVAJI DHULUGADE", role: "BFO", mobile: "98212 15268", designation: "Marketing Executive", status: "Active" },
+            { id: 50, branch: "NSK", apmCode: "N/A", name: "Ajit Sharma", role: "BFO", mobile: "93116 68206", designation: "Branch Incharge", status: "Assco" },
+            { id: 51, branch: "PUN", apmCode: "APM14758", name: "RAJESH KUMAR UPADHYAY", role: "BFO", mobile: "93727 34321", designation: "Marketing Executive", status: "Active" },
+            { id: 52, branch: "PUN", apmCode: "APM13550", name: "RAVI SHARMA", role: "BFO", mobile: "93722 44129", designation: "Marketing Executive", status: "Active" },
+            { id: 53, branch: "PUN", apmCode: "APM11636", name: "LALIT KUMAR", role: "BFO", mobile: "7428 469 233", designation: "Marketing Executive", status: "Active" },
+            { id: 54, branch: "PUN", apmCode: "APM9986", name: "DURGESH KUMAR PASWAN", role: "BFO", mobile: "92891 44946", designation: "Marketing Executive", status: "Active" },
+            { id: 55, branch: "PUN", apmCode: "APM9868", name: "JAVED AKHTAR", role: "BFO", mobile: "92892 78237", designation: "Marketing Executive", status: "Active" },
+            { id: 56, branch: "PUN", apmCode: "APM1215", name: "KUSHESHWAR KUMAR", role: "BFO", mobile: "93253 54321", designation: "Marketing Executive", status: "Active" },
+            { id: 57, branch: "PUN", apmCode: "APM11411", name: "SOURAV PRADHAN", role: "BFO", mobile: "99587 62165", designation: "Marketing Executive", status: "Active" },
+            { id: 58, branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
+            { id: 59, branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
+            { id: 60, branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
+            { id: 61, branch: "PUN", apmCode: "APM13913", name: "SANDEEP KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
+            { id: 62, branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
+            { id: 63, branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
+            { id: 64, branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
+            { id: 65, branch: "RKT", apmCode: "APM12959", name: "SHYALU KUMAR SAINI", role: "BFO", mobile: "93768 81185", designation: "Marketing Executive", status: "Active" },
+            { id: 66, branch: "RKT", apmCode: "APM8398", name: "SURENDER SINGH", role: "BFO", mobile: "9537797122/9327584321", designation: "Branch Incharge", status: "Active" },
+            { id: 67, branch: "SRT", apmCode: "APM14147", name: "ASHOK SHARMA", role: "BFO", mobile: "98210 02628", designation: "Marketing Executive", status: "Leave" },
+            { id: 68, branch: "SRT", apmCode: "APM12040", name: "LAXMICHAND", role: "BFO", mobile: "93276 59101", designation: "Marketing Executive", status: "Active" },
+            { id: 69, branch: "STNA", apmCode: "APM9998", name: "Brij Kishor Mishra", role: "BFO", mobile: "9311775197", designation: "Branch Incharge", status: "Active" },
+            { id: 70, branch: "UDPC", apmCode: "APM11973", name: "Pawan Sharma", role: "BFO", mobile: "9205997342", designation: "Branch Incharge", status: "Active" },
+            { id: 71, branch: "UDPC", apmCode: "APM15578", name: "Anish Kumar", role: "BFO", mobile: "7428 819 361", designation: "Marketing Executive", status: "Active" },
+            { id: 72, branch: "VPI", apmCode: "APM10886", name: "RAJPOOT SHUBHAM", role: "BFO", mobile: "7428131405", designation: "Marketing Executive", status: "Active" }
+        ];
+
+        let loadedOfficers = [];
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hide');
+                setTimeout(() => { overlay.style.display = 'none'; }, 400);
+            }
+        }
+
+        function scrollToAddForm() {
+            const section = document.getElementById('addOfficerSection');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    const firstInput = document.getElementById('formName');
+                    if (firstInput) firstInput.focus();
+                }, 400);
+            }
+        }
+
+        function extractPhone(str) {
+            if (!str) return '';
+            const match = str.replace(/[^0-9]/g, '');
+            return match.length >= 10 ? match.substring(match.length - 10) : match;
+        }
+
+        // Automatic Client-Side Deduplicator by Normalized Phone & Name
+        function deduplicateList(list) {
+            const seenPhones = new Set();
+            const seenNames = new Set();
+            const unique = [];
+
+            for (const item of list) {
+                if (!item) continue;
+                const phoneKey = extractPhone(item.mobile);
+                const nameKey = (item.name || '').trim().toLowerCase();
+
+                // If mobile number already seen, skip duplicate
+                if (phoneKey && phoneKey.length >= 10) {
+                    if (seenPhones.has(phoneKey)) continue;
+                    seenPhones.add(phoneKey);
+                } else if (nameKey) {
+                    if (seenNames.has(nameKey)) continue;
+                    seenNames.add(nameKey);
+                }
+                unique.push(item);
+            }
+            return unique;
+        }
+
+        // Real-time Database Sync
+        officersRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            let rawList = [];
+
+            if (!data || Object.keys(data).length === 0) {
+                officersRef.set(initialExcelOfficers);
+                rawList = [...initialExcelOfficers];
+            } else {
+                if (Array.isArray(data)) {
+                    rawList = data.filter(Boolean);
+                } else {
+                    rawList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                }
+            }
+
+            // Always enforce strict deduplication on load
+            loadedOfficers = deduplicateList(rawList);
+            loadedOfficers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            populateLookupControls(loadedOfficers);
+            renderTable(loadedOfficers);
+            
+            const currentSearch = document.getElementById('officerLookupInput').value;
+            if (currentSearch && currentSearch.trim() !== '') {
+                executeLookup(currentSearch);
+            }
+
+            hideLoadingOverlay();
+        });
+
+        setTimeout(hideLoadingOverlay, 4000);
+
+        function populateLookupControls(list) {
+            const chipsContainer = document.getElementById('quickChipsContainer');
+            const topBranches = ["MUM", "PUN", "GRGN", "AHMD", "NMUM", "BHND", "BHPL", "BRD", "IND", "GOA", "RKT", "SRT"];
+            chipsContainer.innerHTML = topBranches.map(br => 
+                `<span class="chip" onclick="selectBranchChip('${br}')">${br} Branch</span>`
+            ).join('');
+        }
+
+        const lookupInput = document.getElementById('officerLookupInput');
+        const lookupContainer = document.getElementById('lookupResultsContainer');
+
+        lookupInput.addEventListener('input', function() {
+            executeLookup(this.value);
+        });
+
+        function selectBranchChip(branch) {
+            lookupInput.value = branch;
+            executeLookup(branch);
+        }
+
+        function executeLookup(searchTerm) {
+            if (!searchTerm || searchTerm.trim() === '') {
+                lookupContainer.innerHTML = '';
+                lookupContainer.style.display = 'none';
+                return;
+            }
+
+            const term = searchTerm.trim().toLowerCase();
+            const matches = loadedOfficers.filter(o => {
+                const name = (o.name || '').toLowerCase();
+                const branch = (o.branch || '').toLowerCase();
+                const apmCode = (o.apmCode || '').toLowerCase();
+                const designation = (o.designation || '').toLowerCase();
+                const mobile = (o.mobile || '').replace(/\s+/g, '').toLowerCase();
+
+                return name.includes(term) || branch.includes(term) || apmCode.includes(term) || designation.includes(term) || mobile.includes(term);
+            });
+
+            if (matches.length > 0) {
+                lookupContainer.innerHTML = '';
+
+                matches.forEach(officer => {
+                    const card = document.createElement('div');
+                    card.className = 'lookup-result-item';
+
+                    const cleanPhone = extractPhone(officer.mobile);
+                    const statusClass = (officer.status || 'active').toLowerCase();
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                            <div>
+                                <div style="font-size: 17px; font-weight: 800; color: var(--md-sys-color-primary); margin-bottom: 2px;">
+                                    ${escapeHtml(officer.name)}
+                                </div>
+                                <div style="font-size: 12px; font-weight: 600; color: var(--md-sys-color-on-surface-variant);">
+                                    ${escapeHtml(officer.designation)} (${escapeHtml(officer.role || 'BFO')})
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span class="region-badge">${escapeHtml(officer.branch)}</span>
+                                <span class="state-badge ${statusClass}">${escapeHtml(officer.status || 'Active')}</span>
+                                <button class="btn-pencil-edit" onclick="startEditOfficer('${officer.id}')" title="Edit Details">
+                                    <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
+                                </button>
+                                <button class="btn-pencil-delete" onclick="promptDeleteOfficer('${officer.id}', '${escapeHtml(officer.name)}')" title="Delete Officer">
+                                    <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="contact-role-grid">
+                            <div class="contact-role-card">
+                                <div>
+                                    <span class="role-title-tag">APM Code: ${escapeHtml(officer.apmCode || 'N/A')}</span>
+                                    <span class="role-person-name">📞 ${escapeHtml(officer.mobile)}</span>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <a href="tel:${escapeHtml(cleanPhone)}" class="btn-call-mini" title="Call ${escapeHtml(officer.name)}">
+                                        <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
+                                    </a>
+                                    <a href="https://wa.me/91${escapeHtml(cleanPhone)}?text=Hi%20${encodeURIComponent(officer.name)},%20regarding%20APML%20consignment..." target="_blank" rel="noopener noreferrer" class="btn-wa-mini" title="WhatsApp ${escapeHtml(officer.name)}">
+                                        <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    lookupContainer.appendChild(card);
+                });
+
+                lookupContainer.style.display = 'flex';
+            } else {
+                lookupContainer.innerHTML = `
+                    <div style="padding: 16px; text-align: center; color: var(--md-sys-color-on-surface-variant); font-weight: 600; font-size: 13px;">
+                        No field officers found matching "${escapeHtml(searchTerm)}".
+                    </div>
+                `;
+                lookupContainer.style.display = 'block';
+            }
+        }
+
+        function renderTable(list) {
+            const tbody = document.getElementById('officerTableBody');
+            document.getElementById('officerCount').innerText = list.length;
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color: var(--md-sys-color-on-surface-variant); padding: 30px;">No records found.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = list.map((o, idx) => {
+                const cleanPhone = extractPhone(o.mobile);
+                const statusClass = (o.status || 'active').toLowerCase();
+
+                return `
+                    <tr>
+                        <td><strong>${idx + 1}</strong></td>
+                        <td><strong style="color: var(--md-sys-color-primary); font-size: 13.5px;">${escapeHtml(o.name)}</strong></td>
+                        <td><span class="region-badge">${escapeHtml(o.branch)}</span></td>
+                        <td><strong>${escapeHtml(o.apmCode || 'N/A')}</strong></td>
+                        <td>${escapeHtml(o.designation)}</td>
+                        <td>${escapeHtml(o.role || 'BFO')}</td>
+                        <td>
+                            <div>${escapeHtml(o.mobile)}</div>
+                            <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                <a href="tel:${escapeHtml(cleanPhone)}" style="color:var(--md-sys-color-primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 Call</a>
+                                <a href="https://wa.me/91${escapeHtml(cleanPhone)}?text=Hi%20${encodeURIComponent(o.name)}" target="_blank" style="color:#15803d; font-weight:700; font-size:11.5px; text-decoration:none;">💬 WA</a>
+                            </div>
+                        </td>
+                        <td><span class="state-badge ${statusClass}">${escapeHtml(o.status || 'Active')}</span></td>
+                        <td style="text-align: center; white-space: nowrap;">
+                            <button class="action-icon-btn btn-edit-tbl" onclick="startEditOfficer('${o.id}')" title="Edit Officer">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+                            </button>
+                            <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteOfficer('${o.id}', '${escapeHtml(o.name)}')" title="Delete Officer">
+                                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Edit Officer
+        window.startEditOfficer = function(id) {
+            const officer = loadedOfficers.find(o => o.id === id);
+            if (!officer) return;
+
+            document.getElementById('editingOfficerId').value = id;
+            document.getElementById('formName').value = officer.name || '';
+            document.getElementById('formBranch').value = officer.branch || '';
+            document.getElementById('formApmCode').value = officer.apmCode === 'N/A' ? '' : (officer.apmCode || '');
+            document.getElementById('formDesignation').value = officer.designation || 'Marketing Executive';
+            document.getElementById('formRole').value = officer.role || 'BFO';
+            document.getElementById('formMobile').value = officer.mobile || '';
+            document.getElementById('formStatus').value = officer.status || 'Active';
+
+            document.getElementById('formHeaderIcon').innerText = 'edit_document';
+            document.getElementById('formHeaderTitle').innerText = `Edit Officer: ${officer.name}`;
+            document.getElementById('btnSubmitText').innerText = 'Update Officer';
+            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+            scrollToAddForm();
+        };
+
+        window.cancelEditMode = function() {
+            document.getElementById('editingOfficerId').value = '';
+            document.getElementById('officerForm').reset();
+            document.getElementById('formHeaderIcon').innerText = 'person_add';
+            document.getElementById('formHeaderTitle').innerText = 'Add New Field Officer Contact';
+            document.getElementById('btnSubmitText').innerText = 'Save to Database';
+            document.getElementById('btnCancelEdit').style.display = 'none';
+        };
+
+        // Form Submit Handler
+        document.getElementById('officerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const editingId = document.getElementById('editingOfficerId').value;
+            const name = document.getElementById('formName').value.trim();
+            const branch = document.getElementById('formBranch').value.trim().toUpperCase();
+            const apmCode = document.getElementById('formApmCode').value.trim() || 'N/A';
+            const designation = document.getElementById('formDesignation').value;
+            const role = document.getElementById('formRole').value.trim() || 'BFO';
+            const mobile = document.getElementById('formMobile').value.trim();
+            const status = document.getElementById('formStatus').value;
+
+            if (!name || !branch || !mobile) {
+                alert("Please fill in all mandatory fields (Name, Branch, Mobile).");
+                return;
+            }
+
+            const officerData = {
+                name,
+                branch,
+                apmCode,
+                designation,
+                role,
+                mobile,
+                status
+            };
+
+            if (editingId) {
+                officerData.lastEditedAt = Date.now();
+                officersRef.child(editingId).update(officerData).then(() => {
+                    cancelEditMode();
+                    alert("Field officer details updated successfully!");
+                }).catch(err => alert("Error: " + err.message));
+            } else {
+                officerData.timestamp = Date.now();
+                officersRef.push(officerData).then(() => {
+                    document.getElementById('officerForm').reset();
+                    alert("New field officer saved to live database!");
+                }).catch(err => alert("Error: " + err.message));
+            }
+        });
+
+        // Delete Officer
+        window.promptDeleteOfficer = function(id, officerName) {
+            const confirmed = confirm(`Are you sure you want to delete ${officerName || 'this officer'}?`);
+            if (!confirmed) return;
+
+            officersRef.child(id).remove().then(() => {
+                alert("Officer record deleted successfully.");
+            }).catch(err => alert("Error: " + err.message));
+        };
+
+        // Clean & Re-Sync Master Dataset to Firebase (Overwrites any accumulated duplicates in DB)
+        window.syncMasterDataset = function() {
+            if (confirm("Reset & overwrite Firebase with the clean, deduplicated list of 72 Field Officers?")) {
+                officersRef.set(initialExcelOfficers)
+                    .then(() => alert("Firebase successfully cleaned and updated with 72 unique officers!"))
+                    .catch(err => alert("Error syncing: " + err.message));
+            }
+        };
+
+        document.getElementById('tableSearchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = loadedOfficers.filter(o => 
+                (o.name || '').toLowerCase().includes(term) ||
+                (o.branch || '').toLowerCase().includes(term) ||
+                (o.apmCode || '').toLowerCase().includes(term) ||
+                (o.designation || '').toLowerCase().includes(term) ||
+                (o.role || '').toLowerCase().includes(term) ||
+                (o.mobile || '').toLowerCase().includes(term) ||
+                (o.status || '').toLowerCase().includes(term)
+            );
+            renderTable(filtered);
+        });
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
