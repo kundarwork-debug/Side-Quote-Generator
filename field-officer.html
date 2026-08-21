@@ -215,25 +215,27 @@
             transform: translateY(-2px);
         }
 
-        .btn-top-sync {
+        .btn-bottom-trash {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 7px 18px;
+            gap: 8px;
+            padding: 10px 24px;
             background: #ffffff;
             color: var(--md-sys-color-primary);
             border: 1.5px solid var(--md-sys-color-primary);
             border-radius: var(--md-sys-shape-corner-full);
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
+            box-shadow: var(--md-elevation-1);
             transition: var(--transition-m3);
         }
 
-        .btn-top-sync:hover {
+        .btn-bottom-trash:hover {
             background: var(--md-sys-color-primary-container);
             transform: translateY(-2px);
+            box-shadow: var(--md-elevation-2);
         }
 
         .card {
@@ -618,11 +620,6 @@
                     <span class="material-symbols-outlined" style="font-size: 17px;">add_circle</span>
                     <span>Add New Officer</span>
                 </button>
-
-                <button type="button" class="btn-top-sync" onclick="syncMasterDataset()" title="Sync deduplicated master records">
-                    <span class="material-symbols-outlined" style="font-size: 17px;">cleaning_services</span>
-                    <span>Clean &amp; Re-Sync Firebase</span>
-                </button>
             </div>
         </div>
 
@@ -746,6 +743,14 @@
             </div>
         </section>
 
+        <!-- Bottom Action Bar / Trash Recovery Link -->
+        <div style="display: flex; justify-content: center; align-items: center; margin: 16px 0 32px;">
+            <a href="admin-trash.html" class="btn-bottom-trash" title="Open Trash &amp; Recovery Archive">
+                <span class="material-symbols-outlined" style="font-size: 20px;">delete_sweep</span>
+                <span>Trash / Recovery Archive</span>
+            </a>
+        </div>
+
     </main>
 
     <!-- COMMON FOOTER CONTAINER -->
@@ -775,8 +780,9 @@
         }
         const db = firebase.database();
         const officersRef = db.ref('field_officers');
+        const trashRef = db.ref('deleted_hubs');
 
-        // Master Field Officer Clean Unique Dataset (Deduplicated)
+        // Master Field Officer Clean Unique Dataset
         const initialExcelOfficers = [
             { id: 1, branch: "AHMD", apmCode: "APM9990", name: "JAIPAL SINGH", role: "BFO", mobile: "9289620037", designation: "Marketing Executive", status: "Active" },
             { id: 2, branch: "AHMD", apmCode: "APM11767", name: "DHARMENDRA KUMAR", role: "BFO", mobile: "9377787518", designation: "Marketing Executive", status: "Active" },
@@ -890,7 +896,6 @@
                 const phoneKey = extractPhone(item.mobile);
                 const nameKey = (item.name || '').trim().toLowerCase();
 
-                // If mobile number already seen, skip duplicate
                 if (phoneKey && phoneKey.length >= 10) {
                     if (seenPhones.has(phoneKey)) continue;
                     seenPhones.add(phoneKey);
@@ -1154,23 +1159,31 @@
             }
         });
 
-        // Delete Officer
+        // Delete Officer (Moves contact directly to deleted_hubs in Firebase for recovery in admin-trash.html)
         window.promptDeleteOfficer = function(id, officerName) {
             const confirmed = confirm(`Are you sure you want to delete ${officerName || 'this officer'}?`);
             if (!confirmed) return;
 
-            officersRef.child(id).remove().then(() => {
-                alert("Officer record deleted successfully.");
-            }).catch(err => alert("Error: " + err.message));
-        };
+            officersRef.child(id).once('value', (snap) => {
+                const officerData = snap.val();
+                if (!officerData) return;
 
-        // Clean & Re-Sync Master Dataset to Firebase (Overwrites any accumulated duplicates in DB)
-        window.syncMasterDataset = function() {
-            if (confirm("Reset & overwrite Firebase with the clean, deduplicated list of 72 Field Officers?")) {
-                officersRef.set(initialExcelOfficers)
-                    .then(() => alert("Firebase successfully cleaned and updated with 72 unique officers!"))
-                    .catch(err => alert("Error syncing: " + err.message));
-            }
+                // Move record to trash location in Firebase
+                trashRef.child(id).set({
+                    ...officerData,
+                    city: `${officerData.name || 'Officer'} (${officerData.branch || 'WCRO'})`,
+                    region: officerData.branch || 'WCRO',
+                    contact: officerData.mobile || '',
+                    hod: `${officerData.designation || 'Field Officer'} - ${officerData.apmCode || ''}`,
+                    type: 'field_officer',
+                    deletedAt: Date.now()
+                }).then(() => {
+                    // Remove from active list
+                    officersRef.child(id).remove().then(() => {
+                        alert("Officer record deleted and moved to recovery archive (admin-trash.html).");
+                    });
+                }).catch(err => alert("Error: " + err.message));
+            });
         };
 
         document.getElementById('tableSearchInput').addEventListener('input', function(e) {
