@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Field Officer Directory WCRO - APML Portal</title>
     
-    <!-- Network/Hub SVG Favicon from root folder -->
     <link rel="icon" type="image/svg+xml" href="logo.svg">
-
-    <!-- STANDARD COMMON CSS -->
     <link rel="stylesheet" href="common.css?v=2.2">
 
-    <!-- Google Fonts & Material Symbols -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
@@ -62,7 +58,6 @@
             vertical-align: middle;
         }
 
-        /* Loading Overlay */
         #pageLoadingOverlay {
             position: fixed;
             inset: 0;
@@ -424,19 +419,35 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            background: var(--md-sys-color-surface-container-low);
-            border: 1px solid var(--md-sys-color-outline-variant);
+            background: #ffffff;
             cursor: pointer;
+            border: 1.5px solid #0f172a;
             transition: var(--transition-m3);
         }
 
-        .btn-pencil-edit { color: #0284c7; }
-        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
-        .btn-pencil-delete { color: #d32f2f; }
-        .btn-pencil-delete:hover { background: #fee2e2; border-color: #ef4444; transform: scale(1.08); }
+        .btn-pencil-edit { 
+            color: #0284c7; 
+            border-color: #0f172a;
+        }
+        .btn-pencil-edit:hover { 
+            background: #e0f2fe; 
+            border-color: #0284c7; 
+            transform: scale(1.1); 
+        }
+
+        .btn-pencil-delete { 
+            color: #d32f2f; 
+            border-color: rgba(226, 232, 240, 0.9);
+            background: var(--md-sys-color-surface-container-low);
+        }
+        .btn-pencil-delete:hover { 
+            background: #fee2e2; 
+            border-color: #ef4444; 
+            transform: scale(1.1); 
+        }
 
         .region-badge {
             background-color: var(--md-sys-color-primary);
@@ -448,7 +459,7 @@
         }
 
         .state-badge {
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: var(--md-sys-shape-corner-full);
             font-size: 10.5px;
             font-weight: 800;
@@ -491,7 +502,6 @@
 
         tr:hover td { background-color: #fff9f9; }
 
-        /* Form Layout */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -570,7 +580,7 @@
             background: none;
             border: none;
             cursor: pointer;
-            padding: 4px;
+            padding: 5px;
             border-radius: 50%;
             display: inline-flex;
             align-items: center;
@@ -585,7 +595,6 @@
 </head>
 <body>
 
-    <!-- PAGE LOADING ANIMATION OVERLAY -->
     <div id="pageLoadingOverlay">
         <div class="loader-spinner-box">
             <div class="loader-ring"></div>
@@ -597,12 +606,10 @@
         </div>
     </div>
 
-    <!-- COMMON HEADER CONTAINER -->
     <div id="header-container"></div>
 
     <main class="main-container">
         
-        <!-- Header Info & Actions -->
         <div class="directory-header-wrap">
             <div class="header-badge">
                 <span class="material-symbols-outlined" style="font-size: 15px;">badge</span>
@@ -623,7 +630,6 @@
             </div>
         </div>
 
-        <!-- 1. Quick Field Officer Lookup Tool -->
         <section class="card" style="border: 2px solid var(--md-sys-color-primary);">
             <div class="card-header">
                 <span class="material-symbols-outlined">travel_explore</span>
@@ -635,14 +641,11 @@
                 <input type="text" id="officerLookupInput" class="lookup-input" placeholder="Search by name, branch (MUM, PUN, AHMD), APM code, designation, or phone...">
             </div>
 
-            <!-- Quick Branch Shortcut Chips -->
             <div class="quick-chips" id="quickChipsContainer"></div>
 
-            <!-- Multiple Lookup Results Container -->
             <div id="lookupResultsContainer" class="lookup-results-list" style="display: none;"></div>
         </section>
 
-        <!-- 2. Add / Edit Field Officer Section -->
         <section class="card" id="addOfficerSection">
             <div class="card-header" id="formCardHeader">
                 <span class="material-symbols-outlined" id="formHeaderIcon">person_add</span>
@@ -704,7 +707,6 @@
             </form>
         </section>
 
-        <!-- 3. Full Active Field Officers Table -->
         <section class="card">
             <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                 <div class="card-header" style="margin-bottom: 0;">
@@ -743,7 +745,6 @@
             </div>
         </section>
 
-        <!-- Bottom Action Bar / Trash Recovery Link -->
         <div style="display: flex; justify-content: center; align-items: center; margin: 16px 0 32px;">
             <a href="admin-trash.html" class="btn-bottom-trash" title="Open Trash &amp; Recovery Archive">
                 <span class="material-symbols-outlined" style="font-size: 20px;">delete_sweep</span>
@@ -753,13 +754,10 @@
 
     </main>
 
-    <!-- COMMON FOOTER CONTAINER -->
     <div id="footer-container"></div>
 
-    <!-- STANDARD COMMON SCRIPT -->
     <script src="common.js?v=2.2"></script>
 
-    <!-- Firebase Compatibility SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -782,80 +780,79 @@
         const officersRef = db.ref('field_officers');
         const trashRef = db.ref('deleted_hubs');
 
-        // Master Field Officer Clean Unique Dataset
         const initialExcelOfficers = [
-            { id: 1, branch: "AHMD", apmCode: "APM9990", name: "JAIPAL SINGH", role: "BFO", mobile: "9289620037", designation: "Marketing Executive", status: "Active" },
-            { id: 2, branch: "AHMD", apmCode: "APM11767", name: "DHARMENDRA KUMAR", role: "BFO", mobile: "9377787518", designation: "Marketing Executive", status: "Active" },
-            { id: 3, branch: "AHMD", apmCode: "APM14941", name: "Pankajkumar Bechan Zha", role: "BFO", mobile: "93119 46278", designation: "Marketing Executive", status: "Active" },
-            { id: 4, branch: "AHMD", apmCode: "APM15425", name: "Gautam Ray", role: "BFO", mobile: "93270 93171", designation: "Marketing Executive", status: "Active" },
-            { id: 5, branch: "ANK", apmCode: "N/A", name: "MANOJ SHARMA", role: "BFO", mobile: "93116 68190", designation: "Branch Incharge", status: "Assco" },
-            { id: 6, branch: "AUGD", apmCode: "APM8911", name: "JAYPAL KUMAR MANDAL", role: "BFO", mobile: "7777098396", designation: "Marketing Executive", status: "Active" },
-            { id: 7, branch: "BHND", apmCode: "APM9152", name: "SUNIL SHUKRU SAHU", role: "BFO", mobile: "7428471925", designation: "Marketing Executive", status: "Active" },
-            { id: 8, branch: "BHND", apmCode: "APM11205", name: "AVIKANT ATMARAM PARAB", role: "BFO", mobile: "9289697409", designation: "Marketing Executive", status: "Active" },
-            { id: 9, branch: "BHND", apmCode: "APM8242", name: "DEEPAK BACHCHA UPADHYAY", role: "BFO", mobile: "9326731923", designation: "Marketing Executive", status: "Active" },
-            { id: 10, branch: "BHND", apmCode: "APM9605", name: "BHAKT BAHADUR KALU SINGH VISHWAKARMA", role: "BFO", mobile: "7428132521", designation: "Marketing Executive", status: "Active" },
-            { id: 11, branch: "BHPL", apmCode: "APM6936", name: "TARACHAND NORIYA", role: "BFO", mobile: "7303097123", designation: "Marketing Executive", status: "Active" },
-            { id: 12, branch: "BHPL", apmCode: "APM13078", name: "RAHUL GUPTA", role: "BFO", mobile: "7428 132 368", designation: "Marketing Executive", status: "Active" },
-            { id: 13, branch: "BRD", apmCode: "APM6129", name: "YASHPAL SINGH", role: "BFO", mobile: "93776 60887", designation: "Marketing Executive", status: "Active" },
-            { id: 14, branch: "BRD", apmCode: "APM15272", name: "GUDDU KUMAR", role: "BFO", mobile: "92666 20922", designation: "Marketing Executive", status: "Active" },
-            { id: 15, branch: "CWK", apmCode: "APM10172", name: "ABHIJIT Kumar", role: "BFO", mobile: "7428 132 454", designation: "Marketing Executive", status: "Active" },
-            { id: 16, branch: "GDHM", apmCode: "N/A", name: "RAKESH SHARMA", role: "BFO", mobile: "93777 35277", designation: "Marketing Executive", status: "Assco" },
-            { id: 17, branch: "GOA", apmCode: "APM10834", name: "VIKASH SHEKHAWAT", role: "BFO", mobile: "99580 37009", designation: "Marketing Executive", status: "Active" },
-            { id: 18, branch: "GOA", apmCode: "APM14910", name: "Sunil Odian", role: "BFO", mobile: "93251 01131", designation: "Marketing Executive", status: "Active" },
-            { id: 19, branch: "GRGN", apmCode: "APM8181", name: "RAHUL KUMAR JHA", role: "BFO", mobile: "93112 34329", designation: "Marketing Executive", status: "Active" },
-            { id: 20, branch: "GRGN", apmCode: "APM8638", name: "AMAN KUMAR KESHAV JHA", role: "BFO", mobile: "89297 63309", designation: "Marketing Executive", status: "Active" },
-            { id: 21, branch: "GRGN", apmCode: "APMPRO0305", name: "DEEPAK PANDEY", role: "BFO", mobile: "7428 131 165", designation: "Marketing Executive", status: "Active" },
-            { id: 22, branch: "GRGN", apmCode: "APM14660", name: "ANKESH KUMAR DUBEY", role: "BFO", mobile: "96677 25134", designation: "Marketing Executive", status: "Active" },
-            { id: 23, branch: "GRGN", apmCode: "APM11806", name: "VIKASH S PANDEY", role: "BFO", mobile: "92891 34879", designation: "Marketing Executive", status: "Active" },
-            { id: 24, branch: "GRGN", apmCode: "APM8233", name: "AJAY KUMAR CHAUDHARY", role: "BFO", mobile: "93112 34328", designation: "Marketing Executive", status: "Active" },
-            { id: 25, branch: "GRGN", apmCode: "APM11619", name: "Ajay Kumar Rajbhar", role: "BFO", mobile: "92173 76173", designation: "Marketing Executive", status: "Active" },
-            { id: 26, branch: "GRGN", apmCode: "APM12914", name: "Arvind Jaiswal", role: "BFO", mobile: "9217376175", designation: "Marketing Executive", status: "Active" },
-            { id: 27, branch: "IND", apmCode: "APM13110", name: "SANJAY PAL", role: "BFO", mobile: "92897 67436", designation: "Marketing Executive", status: "Active" },
-            { id: 28, branch: "IND", apmCode: "APM11659", name: "ABHISHEK ROY", role: "BFO", mobile: "97550 47404", designation: "Marketing Executive", status: "Active" },
-            { id: 29, branch: "JAM", apmCode: "APM9901", name: "ANIL KUMAR", role: "BFO", mobile: "93193 33694", designation: "Branch Incharge", status: "Active" },
-            { id: 30, branch: "JAM", apmCode: "APM14583", name: "Prakash Kumar", role: "BFO", mobile: "93270 24402", designation: "Marketing Executive", status: "Active" },
-            { id: 31, branch: "JBPR", apmCode: "APM10978", name: "Saurabh Lodhi", role: "BFO", mobile: "93017 80115", designation: "Marketing Executive", status: "Active" },
-            { id: 32, branch: "JDP", apmCode: "APM15630", name: "Ratan Singh Nirwan", role: "BFO", mobile: "93522 25553", designation: "Marketing Executive", status: "Active" },
-            { id: 33, branch: "JLGC", apmCode: "APM11870", name: "SURENDRA KUMAR JOKANLAN SAROJ", role: "BFO", mobile: "96677 25034", designation: "Marketing Executive", status: "Leave" },
-            { id: 34, branch: "KLH", apmCode: "N/A", name: "BADRINATH SHINDE", role: "BFO", mobile: "93116 68184", designation: "Branch Incharge", status: "Assco" },
-            { id: 35, branch: "KRB", apmCode: "APM8306", name: "Rajan Kumar", role: "BFO", mobile: "7428132038", designation: "Branch Incharge", status: "Active" },
-            { id: 36, branch: "MUM", apmCode: "APM9355", name: "SHAIKH MOHD MUZAMMIL MOHD FAROOQUE", role: "BFO", mobile: "92891 34878", designation: "Marketing Executive", status: "Active" },
-            { id: 37, branch: "MUM", apmCode: "APM9923", name: "ROBERT ANTHONY DSOUZA", role: "BFO", mobile: "93112 21864", designation: "Marketing Executive", status: "Active" },
-            { id: 38, branch: "MUM", apmCode: "APM12620", name: "SUBHASH KUMAR MANDAL", role: "BFO", mobile: "96670 74909", designation: "Marketing Executive", status: "Active" },
-            { id: 39, branch: "MUM", apmCode: "APM11240", name: "PANKAJ KUMAR", role: "BFO", mobile: "7428 132 719", designation: "Marketing Executive", status: "Active" },
-            { id: 40, branch: "MUM", apmCode: "APM9391", name: "RIHAN AHMED FAIYAZ AHMED SHAIKH", role: "BFO", mobile: "92891 44934", designation: "Marketing Executive", status: "Active" },
-            { id: 41, branch: "MUM", apmCode: "APM12714", name: "BRIJMOHAN YOGENDRA MANDAL", role: "BFO", mobile: "92897 67426", designation: "Marketing Executive", status: "Active" },
-            { id: 42, branch: "MUM", apmCode: "APM15228", name: "Pramod Kumar Mandal", role: "BFO", mobile: "92173 37223", designation: "Marketing Executive", status: "Active" },
-            { id: 43, branch: "MUM", apmCode: "APM15428", name: "Narayan Ray", role: "BFO", mobile: "92173 37246", designation: "Marketing Executive", status: "Active" },
-            { id: 44, branch: "NGP", apmCode: "APM12954", name: "KAMAL KUMAR", role: "BFO", mobile: "93251 62372", designation: "Marketing Executive", status: "Leave" },
-            { id: 45, branch: "NGP", apmCode: "APM11043", name: "DHIRAJ DILIP NARNAWARE", role: "BFO", mobile: "93256 68615", designation: "Branch Incharge", status: "Active" },
-            { id: 46, branch: "NMUM", apmCode: "APM11495", name: "PARMESH PASWAN", role: "BFO", mobile: "92890 52849", designation: "Marketing Executive", status: "Active" },
-            { id: 47, branch: "NMUM", apmCode: "APM8323", name: "GOPAL PANDIT", role: "BFO", mobile: "92892 78248", designation: "Marketing Executive", status: "Active" },
-            { id: 48, branch: "NMUM", apmCode: "APM10740", name: "ROHAN BHAGWAN DHANKE", role: "BFO", mobile: "92896 62710", designation: "Marketing Executive", status: "Active" },
-            { id: 49, branch: "NMUM", apmCode: "APM11340", name: "SURAJ SHIVAJI DHULUGADE", role: "BFO", mobile: "98212 15268", designation: "Marketing Executive", status: "Active" },
-            { id: 50, branch: "NSK", apmCode: "N/A", name: "Ajit Sharma", role: "BFO", mobile: "93116 68206", designation: "Branch Incharge", status: "Assco" },
-            { id: 51, branch: "PUN", apmCode: "APM14758", name: "RAJESH KUMAR UPADHYAY", role: "BFO", mobile: "93727 34321", designation: "Marketing Executive", status: "Active" },
-            { id: 52, branch: "PUN", apmCode: "APM13550", name: "RAVI SHARMA", role: "BFO", mobile: "93722 44129", designation: "Marketing Executive", status: "Active" },
-            { id: 53, branch: "PUN", apmCode: "APM11636", name: "LALIT KUMAR", role: "BFO", mobile: "7428 469 233", designation: "Marketing Executive", status: "Active" },
-            { id: 54, branch: "PUN", apmCode: "APM9986", name: "DURGESH KUMAR PASWAN", role: "BFO", mobile: "92891 44946", designation: "Marketing Executive", status: "Active" },
-            { id: 55, branch: "PUN", apmCode: "APM9868", name: "JAVED AKHTAR", role: "BFO", mobile: "92892 78237", designation: "Marketing Executive", status: "Active" },
-            { id: 56, branch: "PUN", apmCode: "APM1215", name: "KUSHESHWAR KUMAR", role: "BFO", mobile: "93253 54321", designation: "Marketing Executive", status: "Active" },
-            { id: 57, branch: "PUN", apmCode: "APM11411", name: "SOURAV PRADHAN", role: "BFO", mobile: "99587 62165", designation: "Marketing Executive", status: "Active" },
-            { id: 58, branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
-            { id: 59, branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
-            { id: 60, branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
-            { id: 61, branch: "PUN", apmCode: "APM13913", name: "SANDEEP KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
-            { id: 62, branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
-            { id: 63, branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
-            { id: 64, branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
-            { id: 65, branch: "RKT", apmCode: "APM12959", name: "SHYALU KUMAR SAINI", role: "BFO", mobile: "93768 81185", designation: "Marketing Executive", status: "Active" },
-            { id: 66, branch: "RKT", apmCode: "APM8398", name: "SURENDER SINGH", role: "BFO", mobile: "9537797122/9327584321", designation: "Branch Incharge", status: "Active" },
-            { id: 67, branch: "SRT", apmCode: "APM14147", name: "ASHOK SHARMA", role: "BFO", mobile: "98210 02628", designation: "Marketing Executive", status: "Leave" },
-            { id: 68, branch: "SRT", apmCode: "APM12040", name: "LAXMICHAND", role: "BFO", mobile: "93276 59101", designation: "Marketing Executive", status: "Active" },
-            { id: 69, branch: "STNA", apmCode: "APM9998", name: "Brij Kishor Mishra", role: "BFO", mobile: "9311775197", designation: "Branch Incharge", status: "Active" },
-            { id: 70, branch: "UDPC", apmCode: "APM11973", name: "Pawan Sharma", role: "BFO", mobile: "9205997342", designation: "Branch Incharge", status: "Active" },
-            { id: 71, branch: "UDPC", apmCode: "APM15578", name: "Anish Kumar", role: "BFO", mobile: "7428 819 361", designation: "Marketing Executive", status: "Active" },
-            { id: 72, branch: "VPI", apmCode: "APM10886", name: "RAJPOOT SHUBHAM", role: "BFO", mobile: "7428131405", designation: "Marketing Executive", status: "Active" }
+            { branch: "AHMD", apmCode: "APM9990", name: "JAIPAL SINGH", role: "BFO", mobile: "9289620037", designation: "Marketing Executive", status: "Active" },
+            { branch: "AHMD", apmCode: "APM11767", name: "DHARMENDRA KUMAR", role: "BFO", mobile: "9377787518", designation: "Marketing Executive", status: "Active" },
+            { branch: "AHMD", apmCode: "APM14941", name: "Pankajkumar Bechan Zha", role: "BFO", mobile: "93119 46278", designation: "Marketing Executive", status: "Active" },
+            { branch: "AHMD", apmCode: "APM15425", name: "Gautam Ray", role: "BFO", mobile: "93270 93171", designation: "Marketing Executive", status: "Active" },
+            { branch: "ANK", apmCode: "N/A", name: "MANOJ SHARMA", role: "BFO", mobile: "93116 68190", designation: "Branch Incharge", status: "Assco" },
+            { branch: "AUGD", apmCode: "APM8911", name: "JAYPAL KUMAR MANDAL", role: "BFO", mobile: "7777098396", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHND", apmCode: "APM9152", name: "SUNIL SHUKRU SAHU", role: "BFO", mobile: "7428471925", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHND", apmCode: "APM11205", name: "AVIKANT ATMARAM PARAB", role: "BFO", mobile: "9289697409", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHND", apmCode: "APM8242", name: "DEEPAK BACHCHA UPADHYAY", role: "BFO", mobile: "9326731923", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHND", apmCode: "APM9605", name: "BHAKT BAHADUR KALU SINGH VISHWAKARMA", role: "BFO", mobile: "7428132521", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHPL", apmCode: "APM6936", name: "TARACHAND NORIYA", role: "BFO", mobile: "7303097123", designation: "Marketing Executive", status: "Active" },
+            { branch: "BHPL", apmCode: "APM13078", name: "RAHUL GUPTA", role: "BFO", mobile: "7428 132 368", designation: "Marketing Executive", status: "Active" },
+            { branch: "BRD", apmCode: "APM6129", name: "YASHPAL SINGH", role: "BFO", mobile: "93776 60887", designation: "Marketing Executive", status: "Active" },
+            { branch: "BRD", apmCode: "APM15272", name: "GUDDU KUMAR", role: "BFO", mobile: "92666 20922", designation: "Marketing Executive", status: "Active" },
+            { branch: "CWK", apmCode: "APM10172", name: "ABHIJIT Kumar", role: "BFO", mobile: "7428 132 454", designation: "Marketing Executive", status: "Active" },
+            { branch: "GDHM", apmCode: "N/A", name: "RAKESH SHARMA", role: "BFO", mobile: "93777 35277", designation: "Marketing Executive", status: "Assco" },
+            { branch: "GOA", apmCode: "APM10834", name: "VIKASH SHEKHAWAT", role: "BFO", mobile: "99580 37009", designation: "Marketing Executive", status: "Active" },
+            { branch: "GOA", apmCode: "APM14910", name: "Sunil Odian", role: "BFO", mobile: "93251 01131", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM8181", name: "RAHUL KUMAR JHA", role: "BFO", mobile: "93112 34329", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM8638", name: "AMAN KUMAR KESHAV JHA", role: "BFO", mobile: "89297 63309", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APMPRO0305", name: "DEEPAK PANDEY", role: "BFO", mobile: "7428 131 165", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM14660", name: "ANKESH KUMAR DUBEY", role: "BFO", mobile: "96677 25134", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM11806", name: "VIKASH S PANDEY", role: "BFO", mobile: "92891 34879", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM8233", name: "AJAY KUMAR CHAUDHARY", role: "BFO", mobile: "93112 34328", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM11619", name: "Ajay Kumar Rajbhar", role: "BFO", mobile: "92173 76173", designation: "Marketing Executive", status: "Active" },
+            { branch: "GRGN", apmCode: "APM12914", name: "Arvind Jaiswal", role: "BFO", mobile: "9217376175", designation: "Marketing Executive", status: "Active" },
+            { branch: "IND", apmCode: "APM13110", name: "SANJAY PAL", role: "BFO", mobile: "92897 67436", designation: "Marketing Executive", status: "Active" },
+            { branch: "IND", apmCode: "APM11659", name: "ABHISHEK ROY", role: "BFO", mobile: "97550 47404", designation: "Marketing Executive", status: "Active" },
+            { branch: "JAM", apmCode: "APM9901", name: "ANIL KUMAR", role: "BFO", mobile: "93193 33694", designation: "Branch Incharge", status: "Active" },
+            { branch: "JAM", apmCode: "APM14583", name: "Prakash Kumar", role: "BFO", mobile: "93270 24402", designation: "Marketing Executive", status: "Active" },
+            { branch: "JBPR", apmCode: "APM10978", name: "Saurabh Lodhi", role: "BFO", mobile: "93017 80115", designation: "Marketing Executive", status: "Active" },
+            { branch: "JDP", apmCode: "APM15630", name: "Ratan Singh Nirwan", role: "BFO", mobile: "93522 25553", designation: "Marketing Executive", status: "Active" },
+            { branch: "JLGC", apmCode: "APM11870", name: "SURENDRA KUMAR JOKANLAN SAROJ", role: "BFO", mobile: "96677 25034", designation: "Marketing Executive", status: "Leave" },
+            { branch: "KLH", apmCode: "N/A", name: "BADRINATH SHINDE", role: "BFO", mobile: "93116 68184", designation: "Branch Incharge", status: "Assco" },
+            { branch: "KRB", apmCode: "APM8306", name: "Rajan Kumar", role: "BFO", mobile: "7428132038", designation: "Branch Incharge", status: "Active" },
+            { branch: "MUM", apmCode: "APM9355", name: "SHAIKH MOHD MUZAMMIL MOHD FAROOQUE", role: "BFO", mobile: "92891 34878", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM9923", name: "ROBERT ANTHONY DSOUZA", role: "BFO", mobile: "93112 21864", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM12620", name: "SUBHASH KUMAR MANDAL", role: "BFO", mobile: "96670 74909", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM11240", name: "PANKAJ KUMAR", role: "BFO", mobile: "7428 132 719", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM9391", name: "RIHAN AHMED FAIYAZ AHMED SHAIKH", role: "BFO", mobile: "92891 44934", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM12714", name: "BRIJMOHAN YOGENDRA MANDAL", role: "BFO", mobile: "92897 67426", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM15228", name: "Pramod Kumar Mandal", role: "BFO", mobile: "92173 37223", designation: "Marketing Executive", status: "Active" },
+            { branch: "MUM", apmCode: "APM15428", name: "Narayan Ray", role: "BFO", mobile: "92173 37246", designation: "Marketing Executive", status: "Active" },
+            { branch: "NGP", apmCode: "APM12954", name: "KAMAL KUMAR", role: "BFO", mobile: "93251 62372", designation: "Marketing Executive", status: "Leave" },
+            { branch: "NGP", apmCode: "APM11043", name: "DHIRAJ DILIP NARNAWARE", role: "BFO", mobile: "93256 68615", designation: "Branch Incharge", status: "Active" },
+            { branch: "NMUM", apmCode: "APM11495", name: "PARMESH PASWAN", role: "BFO", mobile: "92890 52849", designation: "Marketing Executive", status: "Active" },
+            { branch: "NMUM", apmCode: "APM8323", name: "GOPAL PANDIT", role: "BFO", mobile: "92892 78248", designation: "Marketing Executive", status: "Active" },
+            { branch: "NMUM", apmCode: "APM10740", name: "ROHAN BHAGWAN DHANKE", role: "BFO", mobile: "92896 62710", designation: "Marketing Executive", status: "Active" },
+            { branch: "NMUM", apmCode: "APM11340", name: "SURAJ SHIVAJI DHULUGADE", role: "BFO", mobile: "98212 15268", designation: "Marketing Executive", status: "Active" },
+            { branch: "NSK", apmCode: "N/A", name: "Ajit Sharma", role: "BFO", mobile: "93116 68206", designation: "Branch Incharge", status: "Assco" },
+            { branch: "PUN", apmCode: "APM14758", name: "RAJESH KUMAR UPADHYAY", role: "BFO", mobile: "93727 34321", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM13550", name: "RAVI SHARMA", role: "BFO", mobile: "93722 44129", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM11636", name: "LALIT KUMAR", role: "BFO", mobile: "7428 469 233", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM9986", name: "DURGESH KUMAR PASWAN", role: "BFO", mobile: "92891 44946", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM9868", name: "JAVED AKHTAR", role: "BFO", mobile: "92892 78237", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM1215", name: "KUSHESHWAR KUMAR", role: "BFO", mobile: "93253 54321", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM11411", name: "SOURAV PRADHAN", role: "BFO", mobile: "99587 62165", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM13913", name: "SANDEEP KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
+            { branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
+            { branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
+            { branch: "RKT", apmCode: "APM12959", name: "SHYALU KUMAR SAINI", role: "BFO", mobile: "93768 81185", designation: "Marketing Executive", status: "Active" },
+            { branch: "RKT", apmCode: "APM8398", name: "SURENDER SINGH", role: "BFO", mobile: "9537797122/9327584321", designation: "Branch Incharge", status: "Active" },
+            { branch: "SRT", apmCode: "APM14147", name: "ASHOK SHARMA", role: "BFO", mobile: "98210 02628", designation: "Marketing Executive", status: "Leave" },
+            { branch: "SRT", apmCode: "APM12040", name: "LAXMICHAND", role: "BFO", mobile: "93276 59101", designation: "Marketing Executive", status: "Active" },
+            { branch: "STNA", apmCode: "APM9998", name: "Brij Kishor Mishra", role: "BFO", mobile: "9311775197", designation: "Branch Incharge", status: "Active" },
+            { branch: "UDPC", apmCode: "APM11973", name: "Pawan Sharma", role: "BFO", mobile: "9205997342", designation: "Branch Incharge", status: "Active" },
+            { branch: "UDPC", apmCode: "APM15578", name: "Anish Kumar", role: "BFO", mobile: "7428 819 361", designation: "Marketing Executive", status: "Active" },
+            { branch: "VPI", apmCode: "APM10886", name: "RAJPOOT SHUBHAM", role: "BFO", mobile: "7428131405", designation: "Marketing Executive", status: "Active" }
         ];
 
         let loadedOfficers = [];
@@ -885,7 +882,6 @@
             return match.length >= 10 ? match.substring(match.length - 10) : match;
         }
 
-        // Automatic Client-Side Deduplicator by Normalized Phone & Name
         function deduplicateList(list) {
             const seenPhones = new Set();
             const seenNames = new Set();
@@ -908,23 +904,27 @@
             return unique;
         }
 
-        // Real-time Database Sync
         officersRef.on('value', (snapshot) => {
             const data = snapshot.val();
             let rawList = [];
 
             if (!data || Object.keys(data).length === 0) {
-                officersRef.set(initialExcelOfficers);
-                rawList = [...initialExcelOfficers];
+                initialExcelOfficers.forEach(officer => {
+                    officersRef.push({ ...officer, timestamp: Date.now() });
+                });
+                return;
             } else {
                 if (Array.isArray(data)) {
-                    rawList = data.filter(Boolean);
+                    data.forEach((val, idx) => {
+                        if (val) rawList.push({ id: String(idx), _firebaseKey: String(idx), ...val });
+                    });
                 } else {
-                    rawList = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                    Object.keys(data).forEach(key => {
+                        if (data[key]) rawList.push({ id: key, _firebaseKey: key, ...data[key] });
+                    });
                 }
             }
 
-            // Always enforce strict deduplication on load
             loadedOfficers = deduplicateList(rawList);
             loadedOfficers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
 
@@ -988,6 +988,7 @@
 
                     const cleanPhone = extractPhone(officer.mobile);
                     const statusClass = (officer.status || 'active').toLowerCase();
+                    const recordKey = officer._firebaseKey || officer.id;
 
                     card.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
@@ -1002,10 +1003,10 @@
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span class="region-badge">${escapeHtml(officer.branch)}</span>
                                 <span class="state-badge ${statusClass}">${escapeHtml(officer.status || 'Active')}</span>
-                                <button class="btn-pencil-edit" onclick="startEditOfficer('${officer.id}')" title="Edit Details">
+                                <button type="button" class="btn-pencil-edit" onclick="startEditOfficer('${recordKey}')" title="Edit ${escapeHtml(officer.name)}">
                                     <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
                                 </button>
-                                <button class="btn-pencil-delete" onclick="promptDeleteOfficer('${officer.id}', '${escapeHtml(officer.name)}')" title="Delete Officer">
+                                <button type="button" class="btn-pencil-delete" onclick="promptDeleteOfficer('${recordKey}', '${escapeHtml(officer.name)}')" title="Delete ${escapeHtml(officer.name)}">
                                     <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
                                 </button>
                             </div>
@@ -1055,6 +1056,7 @@
             tbody.innerHTML = list.map((o, idx) => {
                 const cleanPhone = extractPhone(o.mobile);
                 const statusClass = (o.status || 'active').toLowerCase();
+                const recordKey = o._firebaseKey || o.id;
 
                 return `
                     <tr>
@@ -1073,10 +1075,10 @@
                         </td>
                         <td><span class="state-badge ${statusClass}">${escapeHtml(o.status || 'Active')}</span></td>
                         <td style="text-align: center; white-space: nowrap;">
-                            <button class="action-icon-btn btn-edit-tbl" onclick="startEditOfficer('${o.id}')" title="Edit Officer">
+                            <button type="button" class="action-icon-btn btn-edit-tbl" onclick="startEditOfficer('${recordKey}')" title="Edit ${escapeHtml(o.name)}">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
                             </button>
-                            <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteOfficer('${o.id}', '${escapeHtml(o.name)}')" title="Delete Officer">
+                            <button type="button" class="action-icon-btn btn-delete-tbl" onclick="promptDeleteOfficer('${recordKey}', '${escapeHtml(o.name)}')" title="Delete ${escapeHtml(o.name)}">
                                 <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
                             </button>
                         </td>
@@ -1085,12 +1087,11 @@
             }).join('');
         }
 
-        // Edit Officer
         window.startEditOfficer = function(id) {
-            const officer = loadedOfficers.find(o => o.id === id);
+            const officer = loadedOfficers.find(o => String(o._firebaseKey) === String(id) || String(o.id) === String(id));
             if (!officer) return;
 
-            document.getElementById('editingOfficerId').value = id;
+            document.getElementById('editingOfficerId').value = officer._firebaseKey || officer.id;
             document.getElementById('formName').value = officer.name || '';
             document.getElementById('formBranch').value = officer.branch || '';
             document.getElementById('formApmCode').value = officer.apmCode === 'N/A' ? '' : (officer.apmCode || '');
@@ -1116,7 +1117,6 @@
             document.getElementById('btnCancelEdit').style.display = 'none';
         };
 
-        // Form Submit Handler
         document.getElementById('officerForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -1141,11 +1141,11 @@
                 designation,
                 role,
                 mobile,
-                status
+                status,
+                lastEditedAt: Date.now()
             };
 
             if (editingId) {
-                officerData.lastEditedAt = Date.now();
                 officersRef.child(editingId).update(officerData).then(() => {
                     cancelEditMode();
                     alert("Field officer details updated successfully!");
@@ -1159,7 +1159,6 @@
             }
         });
 
-        // Delete Officer (Moves contact directly to deleted_hubs in Firebase for recovery in admin-trash.html)
         window.promptDeleteOfficer = function(id, officerName) {
             const confirmed = confirm(`Are you sure you want to delete ${officerName || 'this officer'}?`);
             if (!confirmed) return;
@@ -1168,7 +1167,6 @@
                 const officerData = snap.val();
                 if (!officerData) return;
 
-                // Move record to trash location in Firebase
                 trashRef.child(id).set({
                     ...officerData,
                     city: `${officerData.name || 'Officer'} (${officerData.branch || 'WCRO'})`,
@@ -1178,7 +1176,6 @@
                     type: 'field_officer',
                     deletedAt: Date.now()
                 }).then(() => {
-                    // Remove from active list
                     officersRef.child(id).remove().then(() => {
                         alert("Officer record deleted and moved to recovery archive (admin-trash.html).");
                     });
