@@ -13,6 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <!-- Official Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
   <style>
     :root {
       --primary: #b91c1c;
@@ -109,7 +112,7 @@
       background: var(--primary);
       color: #ffffff;
       border: none;
-      padding: 9px 20px;
+      padding: 10px 22px;
       border-radius: var(--radius-pill);
       font-size: 13px;
       font-weight: 700;
@@ -123,14 +126,14 @@
       transform: translateY(-1px);
     }
 
-    .btn-logout {
+    .btn-switch {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       background: #ffffff;
-      color: var(--text-muted);
+      color: var(--text-main);
       border: 1px solid var(--surface-border);
-      padding: 6px 14px;
+      padding: 7px 14px;
       border-radius: var(--radius-pill);
       font-size: 12px;
       font-weight: 700;
@@ -138,10 +141,10 @@
       transition: all 0.2s ease;
     }
 
-    .btn-logout:hover {
-      background: #fef2f2;
+    .btn-switch:hover {
+      background: var(--bg-base);
+      border-color: var(--primary);
       color: var(--primary);
-      border-color: #fecaca;
     }
 
     .btn-refresh {
@@ -187,28 +190,6 @@
       color: var(--text-muted);
       max-width: 520px;
       line-height: 1.5;
-    }
-
-    .auth-id-badge {
-      display: inline-block;
-      background: var(--primary-soft);
-      color: var(--primary);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      font-weight: 800;
-      font-size: 13.5px;
-      border: 1px solid rgba(185, 28, 28, 0.2);
-    }
-
-    .error-notice {
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 700;
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      padding: 8px 16px;
-      border-radius: 8px;
-      display: none;
     }
 
     /* Controls Strip */
@@ -333,65 +314,59 @@
 </head>
 <body>
 
-  <!-- COMMON HEADER CONTAINER -->
   <div id="header-container"></div>
 
   <main class="main-container">
 
-    <!-- Top Status Header -->
     <div class="sheet-header-box">
       <div class="header-title-wrap">
         <h1>
           <span class="material-symbols-outlined" style="font-size: 28px; color: var(--primary);">shield_lock</span>
-          <span>Google Sheet</span> Secure Portal
+          <span>Google Sheet</span> Direct Access
         </h1>
-        <p class="header-subtitle">Direct authenticated live synchronization with Firebase &amp; Google Workspace</p>
+        <p class="header-subtitle">Real-time OAuth synchronization with Google Sheets API</p>
       </div>
 
       <div class="header-actions">
         <div id="authStatusPill" class="user-pill" style="display: none;">
-          <span class="material-symbols-outlined" style="font-size: 18px;">verified_user</span>
-          <span id="authEmailText">wcro.helpdesk1@agarwalpackers.com</span>
+          <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
+          <span id="activeUserEmail">Connected</span>
         </div>
 
-        <button type="button" class="btn-refresh" id="btnRefresh" onclick="fetchLiveDatabaseRecords()" style="display: none;" title="Refresh Data">
+        <button type="button" class="btn-switch" id="btnSwitch" onclick="requestGoogleLogin(true)" style="display: none;" title="Switch Account">
+          <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
+          <span>Switch Account</span>
+        </button>
+
+        <button type="button" class="btn-refresh" id="btnRefresh" onclick="fetchLiveSheet()" style="display: none;" title="Refresh Data">
           <span class="material-symbols-outlined" style="font-size: 17px;">refresh</span>
           <span>Sync Now</span>
         </button>
 
-        <button type="button" class="btn-logout" id="btnLogout" onclick="handleFirebaseSignOut()" style="display: none;">
-          <span class="material-symbols-outlined" style="font-size: 16px;">logout</span>
-          <span>Sign Out</span>
-        </button>
-
-        <button type="button" class="btn-auth" id="btnLogin" onclick="handleFirebaseGoogleSignIn()">
+        <button type="button" class="btn-auth" id="btnLogin" onclick="requestGoogleLogin(true)">
           <span class="material-symbols-outlined" style="font-size: 18px;">login</span>
-          <span>Sign In with Google</span>
+          <span>Choose Account</span>
         </button>
       </div>
     </div>
 
-    <!-- Login Prompt Gate (Shown when logged out) -->
+    <!-- Login Gate -->
     <div id="authGateBanner" class="auth-banner-card">
       <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">lock</span>
-      <h2>Authorized Workspace Access Required</h2>
-      <p>This operational dataset requires corporate authentication. Sign in with your registered APML operational Google account to access live records.</p>
-      <div class="auth-id-badge">Allowed: wcro.helpdesk1@agarwalpackers.com</div>
-      
-      <div id="authErrorMsg" class="error-notice"></div>
-
-      <button type="button" class="btn-auth" style="padding: 12px 28px; font-size: 14px;" onclick="handleFirebaseGoogleSignIn()">
-        <span class="material-symbols-outlined">account_circle</span>
-        <span>Sign in with Google</span>
+      <h2>Choose Authorized Google Account</h2>
+      <p>Sign in using any Google account that has permission to view this corporate spreadsheet.</p>
+      <button type="button" class="btn-auth" style="padding: 12px 28px; font-size: 14px;" onclick="requestGoogleLogin(true)">
+        <span class="material-symbols-outlined">switch_account</span>
+        <span>Select Google Account</span>
       </button>
     </div>
 
-    <!-- Controls & Table (Shown when authenticated) -->
+    <!-- Data Table View -->
     <div id="tableSection" style="display: none; flex-direction: column; gap: 16px;">
       <div class="controls-strip">
         <div class="search-box">
           <span class="material-symbols-outlined">search</span>
-          <input type="text" id="sheetSearchInput" placeholder="Filter rows by name, branch, contact...">
+          <input type="text" id="sheetSearchInput" placeholder="Filter records by any keyword...">
         </div>
 
         <div class="meta-counts" id="rowCountDisplay">
@@ -410,7 +385,7 @@
                 <td colspan="10">
                   <div class="state-msg-box">
                     <div class="loading-spinner"></div>
-                    <span>Loading operational records...</span>
+                    <span>Streaming live spreadsheet rows...</span>
                   </div>
                 </td>
               </tr>
@@ -422,152 +397,137 @@
 
   </main>
 
-  <!-- COMMON FOOTER CONTAINER -->
   <div id="footer-container"></div>
 
-  <!-- COMMON SCRIPT -->
   <script src="common.js?v=2.2"></script>
 
-  <!-- Firebase Compat SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <script>
-    const ALLOWED_EMAIL = "wcro.helpdesk1@agarwalpackers.com";
+    const CLIENT_ID = '955313515261-hubqj7l3gi852f98fjbp022gipbd396p.apps.googleusercontent.com';
+    const SPREADSHEET_ID = '19asDVHENrRl1m2paoNVXtO10PtuTl4StIJ9m6quzX1o';
 
-    // Firebase Configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-      authDomain: "apml-portal.firebaseapp.com",
-      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-      projectId: "apml-portal",
-      storageBucket: "apml-portal.firebasestorage.app",
-      messagingSenderId: "479017159240",
-      appId: "1:479017159240:web:0853422718e6195b74a67d",
-      measurementId: "G-4H1HT31DYB"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const auth = firebase.auth();
-    const db = firebase.database();
-
+    let tokenClient;
+    let accessToken = null;
     let allHeaders = [];
     let allRows = [];
 
-    // Track Authentication State
-    auth.onAuthStateChanged((user) => {
-      const errorBox = document.getElementById('authErrorMsg');
-
-      if (user) {
-        // Enforce specific email constraint
-        if (user.email && user.email.toLowerCase() === ALLOWED_EMAIL.toLowerCase()) {
-          errorBox.style.display = 'none';
-          document.getElementById('authGateBanner').style.display = 'none';
-          document.getElementById('tableSection').style.display = 'flex';
-          document.getElementById('btnLogin').style.display = 'none';
-          document.getElementById('btnLogout').style.display = 'inline-flex';
-          document.getElementById('btnRefresh').style.display = 'inline-flex';
-          document.getElementById('authStatusPill').style.display = 'inline-flex';
-          document.getElementById('authEmailText').textContent = user.email;
-
-          fetchLiveDatabaseRecords();
-        } else {
-          // Reject other accounts and sign them out immediately
-          errorBox.textContent = `Access restricted. Account ${user.email} is not authorized for this dataset.`;
-          errorBox.style.display = 'block';
-          auth.signOut();
-        }
-      } else {
-        document.getElementById('authGateBanner').style.display = 'flex';
-        document.getElementById('tableSection').style.display = 'none';
-        document.getElementById('btnLogin').style.display = 'inline-flex';
-        document.getElementById('btnLogout').style.display = 'none';
-        document.getElementById('btnRefresh').style.display = 'none';
-        document.getElementById('authStatusPill').style.display = 'none';
+    window.onload = function () {
+      try {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.email',
+          callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              accessToken = tokenResponse.access_token;
+              onLoginSuccess();
+            }
+          },
+        });
+      } catch (err) {
+        console.warn("GIS SDK loading error:", err);
       }
-    });
+    };
 
-    // Google Sign-In with Firebase Auth
-    function handleFirebaseGoogleSignIn() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({
-        login_hint: ALLOWED_EMAIL
-      });
-
-      auth.signInWithPopup(provider).catch((error) => {
-        console.error("Sign-In Error:", error);
-        const errorBox = document.getElementById('authErrorMsg');
-        errorBox.textContent = error.message;
-        errorBox.style.display = 'block';
-      });
+    function requestGoogleLogin(forceSelect = true) {
+      if (tokenClient) {
+        tokenClient.requestAccessToken({ prompt: forceSelect ? 'select_account' : '' });
+      } else {
+        alert("Google Identity Services is initializing. Please try again in a few moments.");
+      }
     }
 
-    // Sign Out
-    function handleFirebaseSignOut() {
-      auth.signOut();
+    async function onLoginSuccess() {
+      document.getElementById('authGateBanner').style.display = 'none';
+      document.getElementById('tableSection').style.display = 'flex';
+      document.getElementById('btnLogin').style.display = 'none';
+      document.getElementById('btnSwitch').style.display = 'inline-flex';
+      document.getElementById('btnRefresh').style.display = 'inline-flex';
+      document.getElementById('authStatusPill').style.display = 'inline-flex';
+
+      // Fetch logged in profile email
+      try {
+        const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          if (profile.email) {
+            document.getElementById('activeUserEmail').textContent = profile.email;
+          }
+        }
+      } catch (e) {
+        console.warn("Could not retrieve email info:", e);
+      }
+
+      fetchLiveSheet();
     }
 
-    // Fetch Protected Operational Records
-    function fetchLiveDatabaseRecords() {
+    async function fetchLiveSheet() {
+      if (!accessToken) return;
+
       const tbody = document.getElementById('sheetBodyRow');
-      
-      db.ref('sheet_records').on('value', (snapshot) => {
-        const data = snapshot.val();
 
-        if (!data) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="10">
-                <div class="state-msg-box">
-                  <span class="material-symbols-outlined" style="font-size: 36px; color: var(--primary);">database</span>
-                  <span>No records found in database path <code>/sheet_records</code>.</span>
-                </div>
-              </td>
-            </tr>
-          `;
-          document.getElementById('rowCountDisplay').innerHTML = `Showing <b>0</b> records`;
+      try {
+        // Step 1: Query first tab name dynamically
+        const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets(properties(title))`;
+        const metaRes = await fetch(metaUrl, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+
+        if (metaRes.status === 401) {
+          accessToken = null;
+          requestGoogleLogin(true);
           return;
         }
 
-        if (Array.isArray(data)) {
-          if (Array.isArray(data[0])) {
-            allHeaders = data[0].map(h => String(h).trim());
-            allRows = data.slice(1);
-          } else {
-            allHeaders = Object.keys(data[0] || {});
-            allRows = data.map(item => allHeaders.map(h => item[h] ?? ''));
-          }
-        } else if (typeof data === 'object') {
-          const keys = Object.keys(data);
-          const firstItem = data[keys[0]];
-          
-          if (typeof firstItem === 'object' && firstItem !== null) {
-            allHeaders = Object.keys(firstItem);
-            allRows = keys.map(k => allHeaders.map(h => data[k][h] ?? ''));
-          } else {
-            allHeaders = ["Key", "Value"];
-            allRows = keys.map(k => [k, data[k]]);
-          }
+        if (!metaRes.ok) {
+          const err = await metaRes.json();
+          throw new Error(err.error?.message || "Google Sheets access denied for this account");
         }
+
+        const metaData = await metaRes.json();
+        const firstSheetTitle = metaData.sheets?.[0]?.properties?.title || 'Sheet1';
+
+        // Step 2: Fetch actual data rows
+        const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/'${encodeURIComponent(firstSheetTitle)}'!A1:Z500`;
+        const response = await fetch(apiUrl, {
+          headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.error?.message || "Google Sheets API Error");
+        }
+
+        const result = await response.json();
+        const rows = result.values || [];
+
+        if (!rows.length) {
+          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px;">Sheet is empty.</td></tr>`;
+          return;
+        }
+
+        allHeaders = rows[0].map(h => String(h).trim());
+        allRows = rows.slice(1);
 
         renderHeaders();
         filterAndRenderTable();
-      }, (error) => {
-        console.error("Firebase Read Error:", error);
+      } catch (err) {
+        console.error("Fetch Error:", err);
         tbody.innerHTML = `
           <tr>
             <td colspan="10">
               <div class="state-msg-box" style="color: #b91c1c;">
                 <span class="material-symbols-outlined" style="font-size: 32px;">error</span>
-                <span>Database Read Failed: ${escapeHtml(error.message)}</span>
+                <span>${escapeHtml(err.message)}</span>
+                <button type="button" class="btn-switch" style="margin-top: 10px;" onclick="requestGoogleLogin(true)">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
+                  <span>Try a Different Google Account</span>
+                </button>
               </div>
             </td>
           </tr>
         `;
-      });
+      }
     }
 
     function renderHeaders() {
