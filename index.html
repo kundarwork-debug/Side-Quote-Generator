@@ -432,8 +432,6 @@
       margin: 0 auto;
       aspect-ratio: 16/9;
       background: var(--surface-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
       overflow: hidden;
@@ -554,8 +552,6 @@
 
     .module-card {
       background: var(--surface-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
       padding: 28px 24px;
@@ -707,8 +703,6 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
       background: var(--surface-card);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
       padding: 28px 24px;
@@ -1037,6 +1031,8 @@
         ];
 
         let mouseX = 0, mouseY = 0;
+        let rafId = null;
+        let isVisible = false;
 
         zone.addEventListener('mouseleave', () => { mouseX = 0; mouseY = 0; });
         zone.addEventListener('mousemove', (e) => {
@@ -1065,10 +1061,36 @@
             }
           }
 
-          requestAnimationFrame(render);
+          rafId = requestAnimationFrame(render);
         }
 
-        requestAnimationFrame(render);
+        function startLoop() {
+          if (rafId === null) rafId = requestAnimationFrame(render);
+        }
+        function stopLoop() {
+          if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+        }
+
+        // Only animate while the hero is actually on screen, and pause entirely
+        // when the browser tab is in the background.
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              isVisible = entry.isIntersecting;
+              if (isVisible && !document.hidden) startLoop();
+              else stopLoop();
+            });
+          }, { threshold: 0 });
+          io.observe(zone);
+        } else {
+          isVisible = true;
+          startLoop();
+        }
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) stopLoop();
+          else if (isVisible) startLoop();
+        });
       })();
     </script>
 
@@ -1291,6 +1313,18 @@
         playPauseBtn.addEventListener('click', () => playing ? pause() : play());
         document.getElementById('reelNext').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current + 1); });
         document.getElementById('reelPrev').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current - 1); });
+
+        // Stop burning frames on this loop while the tab is in the background.
+        let wasPlayingBeforeHide = true;
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            wasPlayingBeforeHide = playing;
+            if (playing) pause();
+          } else if (wasPlayingBeforeHide) {
+            play();
+          }
+        });
+
         rafId = requestAnimationFrame((ts) => { segStart = ts; tick(ts); });
       })();
     </script>
@@ -1659,6 +1693,8 @@
       let currentAngle = 0;
       let isInside = false;
       let lastSmokeTime = 0;
+      let rafId = null;
+      let zoneVisible = false;
 
       const particles = [];
 
@@ -1744,10 +1780,39 @@
           ctx.restore();
         }
 
-        requestAnimationFrame(updateAndDraw);
+        rafId = requestAnimationFrame(updateAndDraw);
       }
 
-      requestAnimationFrame(updateAndDraw);
+      function startLoop() {
+        if (rafId === null) rafId = requestAnimationFrame(updateAndDraw);
+      }
+      function stopLoop() {
+        if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+        // Clear any lingering particles/canvas paint once we stop drawing.
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // This effect is only relevant near the hero — stop the full-viewport
+      // canvas redraw loop entirely once it scrolls out of view or the tab
+      // is backgrounded, instead of running 60x/sec for the whole session.
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            zoneVisible = entry.isIntersecting;
+            if (zoneVisible && !document.hidden) startLoop();
+            else stopLoop();
+          });
+        }, { threshold: 0 });
+        io.observe(targetZone);
+      } else {
+        zoneVisible = true;
+        startLoop();
+      }
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopLoop();
+        else if (zoneVisible) startLoop();
+      });
     })();
   </script>
 
