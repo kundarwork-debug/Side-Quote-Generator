@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Live Operations Tracker - APML Portal</title>
+  <title>WCRO Consignment Status - APML Portal</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="stylesheet" href="common.css?v=2.2">
 
@@ -103,6 +103,29 @@
       border: 1px solid #a7f3d0;
       font-size: 12.5px;
       font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-pill:hover {
+      background: #d1fae5;
+      border-color: #6ee7b7;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(4, 120, 87, 0.15);
+    }
+
+    .user-pill .material-symbols-outlined:last-child {
+      font-size: 15px;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: all 0.2s ease;
+      margin-left: -2px;
+    }
+
+    .user-pill:hover .material-symbols-outlined:last-child {
+      opacity: 0.75;
+      transform: translateX(0);
+      margin-left: 0;
     }
 
     .btn-auth {
@@ -124,7 +147,10 @@
     .btn-auth:hover {
       background: var(--primary-dark);
       transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.32);
     }
+
+    .btn-auth:active { transform: translateY(0) scale(0.98); }
 
     .btn-switch {
       display: inline-flex;
@@ -162,7 +188,14 @@
       transition: all 0.2s ease;
     }
 
-    .btn-refresh:hover { background: var(--primary-soft); }
+    .btn-refresh:hover {
+      background: var(--primary-soft);
+      transform: translateY(-1px);
+    }
+
+    .btn-refresh:active { transform: translateY(0) scale(0.98); }
+
+    .btn-refresh.is-syncing .material-symbols-outlined { animation: spin 0.7s linear infinite; }
 
     /* Tab Selector Strip */
     .tab-selector-strip {
@@ -185,10 +218,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       white-space: nowrap;
       user-select: none;
     }
+
+    .sheet-tab-btn:active { transform: scale(0.97); }
 
     .sheet-tab-btn:hover {
       background: var(--primary-soft);
@@ -343,6 +378,29 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Smooth entrance & transition polish */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sheet-header-box,
+    .auth-banner-card,
+    #tableSection {
+      animation: fadeSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    .table-container { transition: box-shadow 0.2s ease; }
+
+    .table-responsive { scroll-behavior: smooth; }
+
+    tbody tr {
+      transition: background-color 0.15s ease;
+      animation: fadeSlideUp 0.25s ease both;
+    }
+
+    tbody td { transition: background-color 0.15s ease; }
+
     @media (max-width: 768px) {
       .main-container { padding: 18px 14px 36px; }
       .sheet-header-box { padding: 16px; }
@@ -360,22 +418,18 @@
     <div class="sheet-header-box">
       <div class="header-title-wrap">
         <h1>
-          <span class="material-symbols-outlined" style="font-size: 28px; color: var(--primary);">shield_lock</span>
-          <span>Google Sheet</span> Multi-Tab Direct Access
+          <span class="material-symbols-outlined" style="font-size: 28px; color: var(--primary);">local_shipping</span>
+          <span>WCRO</span> Consignment Status
         </h1>
-        <p class="header-subtitle">Real-time OAuth synchronization for Tab (gid=739912770) &amp; Sheet1</p>
+        <p class="header-subtitle">Real-time consignment tracking synced from Google Sheets</p>
       </div>
 
       <div class="header-actions">
-        <div id="authStatusPill" class="user-pill" style="display: none;">
+        <div id="authStatusPill" class="user-pill" style="display: none;" onclick="requestGoogleLogin(true)" title="Click to switch account">
           <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
           <span id="activeUserEmail">Connected</span>
+          <span class="material-symbols-outlined">swap_horiz</span>
         </div>
-
-        <button type="button" class="btn-switch" id="btnSwitch" onclick="requestGoogleLogin(true)" style="display: none;" title="Switch Account">
-          <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
-          <span>Switch Account</span>
-        </button>
 
         <button type="button" class="btn-refresh" id="btnRefresh" onclick="fetchLiveSheet()" style="display: none;" title="Refresh Data">
           <span class="material-symbols-outlined" style="font-size: 17px;">refresh</span>
@@ -485,7 +539,6 @@
       document.getElementById('authGateBanner').style.display = 'none';
       document.getElementById('tableSection').style.display = 'flex';
       document.getElementById('btnLogin').style.display = 'none';
-      document.getElementById('btnSwitch').style.display = 'inline-flex';
       document.getElementById('btnRefresh').style.display = 'inline-flex';
       document.getElementById('authStatusPill').style.display = 'inline-flex';
 
@@ -568,6 +621,9 @@
     async function fetchLiveSheet() {
       if (!accessToken || !currentSelectedSheetTitle) return;
 
+      const refreshBtn = document.getElementById('btnRefresh');
+      refreshBtn.classList.add('is-syncing');
+
       const tbody = document.getElementById('sheetBodyRow');
       tbody.innerHTML = `
         <tr>
@@ -615,6 +671,8 @@
       } catch (err) {
         console.error("Fetch Error:", err);
         showErrorState(err.message);
+      } finally {
+        refreshBtn.classList.remove('is-syncing');
       }
     }
 
