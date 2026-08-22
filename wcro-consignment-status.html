@@ -111,21 +111,6 @@
       background: #d1fae5;
       border-color: #6ee7b7;
       transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(4, 120, 87, 0.15);
-    }
-
-    .user-pill .material-symbols-outlined:last-child {
-      font-size: 15px;
-      opacity: 0;
-      transform: translateX(-4px);
-      transition: all 0.2s ease;
-      margin-left: -2px;
-    }
-
-    .user-pill:hover .material-symbols-outlined:last-child {
-      opacity: 0.75;
-      transform: translateX(0);
-      margin-left: 0;
     }
 
     .btn-auth {
@@ -147,10 +132,7 @@
     .btn-auth:hover {
       background: var(--primary-dark);
       transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.32);
     }
-
-    .btn-auth:active { transform: translateY(0) scale(0.98); }
 
     .btn-switch {
       display: inline-flex;
@@ -193,9 +175,9 @@
       transform: translateY(-1px);
     }
 
-    .btn-refresh:active { transform: translateY(0) scale(0.98); }
-
-    .btn-refresh.is-syncing .material-symbols-outlined { animation: spin 0.7s linear infinite; }
+    .btn-refresh.is-syncing .material-symbols-outlined {
+      animation: spin 0.7s linear infinite;
+    }
 
     /* Tab Selector Strip */
     .tab-selector-strip {
@@ -218,12 +200,10 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s ease;
       white-space: nowrap;
       user-select: none;
     }
-
-    .sheet-tab-btn:active { transform: scale(0.97); }
 
     .sheet-tab-btn:hover {
       background: var(--primary-soft);
@@ -344,7 +324,6 @@
       letter-spacing: 0.04em;
       padding: 14px 18px;
       border-bottom: 2px solid rgba(185, 28, 28, 0.2);
-      box-shadow: 0 1px 0 rgba(185, 28, 28, 0.2);
       white-space: nowrap;
     }
 
@@ -381,29 +360,6 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Smooth entrance & transition polish */
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .sheet-header-box,
-    .auth-banner-card,
-    #tableSection {
-      animation: fadeSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-
-    .table-container { transition: box-shadow 0.2s ease; }
-
-    .table-responsive { scroll-behavior: smooth; }
-
-    tbody tr {
-      transition: background-color 0.15s ease;
-      animation: fadeSlideUp 0.25s ease both;
-    }
-
-    tbody td { transition: background-color 0.15s ease; }
-
     @media (max-width: 768px) {
       .main-container { padding: 18px 14px 36px; }
       .sheet-header-box { padding: 16px; }
@@ -431,29 +387,33 @@
         <div id="authStatusPill" class="user-pill" style="display: none;" onclick="requestGoogleLogin(true)" title="Click to switch account">
           <span class="material-symbols-outlined" style="font-size: 18px;">account_circle</span>
           <span id="activeUserEmail">Connected</span>
-          <span class="material-symbols-outlined">swap_horiz</span>
         </div>
+
+        <button type="button" class="btn-switch" id="btnSwitch" onclick="requestGoogleLogin(true)" style="display: none;" title="Switch Account">
+          <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
+          <span>Switch Account</span>
+        </button>
 
         <button type="button" class="btn-refresh" id="btnRefresh" onclick="fetchLiveSheet()" style="display: none;" title="Refresh Data">
           <span class="material-symbols-outlined" style="font-size: 17px;">refresh</span>
           <span>Sync Now</span>
         </button>
 
-        <button type="button" class="btn-auth" id="btnLogin" onclick="requestGoogleLogin(true)">
+        <button type="button" class="btn-auth" id="btnLogin" onclick="requestGoogleLogin(false)">
           <span class="material-symbols-outlined" style="font-size: 18px;">login</span>
-          <span>Choose Account</span>
+          <span>Authorize Once</span>
         </button>
       </div>
     </div>
 
-    <!-- Login Gate -->
+    <!-- Login Gate (Shown only if no cached session exists) -->
     <div id="authGateBanner" class="auth-banner-card">
       <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">lock</span>
-      <h2>Choose Authorized Google Account</h2>
-      <p>Sign in using any Google account that has permission to view this spreadsheet.</p>
-      <button type="button" class="btn-auth" style="padding: 12px 28px; font-size: 14px;" onclick="requestGoogleLogin(true)">
-        <span class="material-symbols-outlined">switch_account</span>
-        <span>Select Google Account</span>
+      <h2>One-Time Google Authorization</h2>
+      <p>Sign in once with your authorized Google Account. Your session will be remembered automatically on every future visit.</p>
+      <button type="button" class="btn-auth" style="padding: 12px 28px; font-size: 14px;" onclick="requestGoogleLogin(false)">
+        <span class="material-symbols-outlined">account_circle</span>
+        <span>Authorize Access</span>
       </button>
     </div>
 
@@ -504,77 +464,120 @@
   <script>
     const CLIENT_ID = '955313515261-hubqj7l3gi852f98fjbp022gipbd396p.apps.googleusercontent.com';
     const SPREADSHEET_ID = '19asDVHENrRl1m2paoNVXtO10PtuTl4StIJ9m6quzX1o';
-    const TARGET_GID = 739912770; // Pre-selects requested tab
+    const TARGET_GID = 739912770;
 
-    let tokenClient;
-    let accessToken = null;
+    let tokenClient = null;
+    let isSdkLoaded = false;
     let allSheetsList = [];
     let currentSelectedSheetTitle = '';
     let allHeaders = [];
     let allRows = [];
 
-    window.onload = function () {
-      try {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.email',
-          callback: (tokenResponse) => {
-            if (tokenResponse && tokenResponse.access_token) {
-              accessToken = tokenResponse.access_token;
-              onLoginSuccess();
-            }
-          },
-        });
-      } catch (err) {
-        console.warn("GIS SDK loading error:", err);
+    // Initialize GIS Token Client
+    function initGIS() {
+      if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+        setTimeout(initGIS, 100);
+        return;
       }
-    };
 
-    function requestGoogleLogin(forceSelect = true) {
-      if (tokenClient) {
-        tokenClient.requestAccessToken({ prompt: forceSelect ? 'select_account' : '' });
-      } else {
-        alert("Google Identity Services is initializing. Please try again in a few moments.");
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/userinfo.email',
+        callback: async (tokenResponse) => {
+          if (tokenResponse && tokenResponse.access_token) {
+            const expiresIn = parseInt(tokenResponse.expires_in || '3599', 10);
+            const expiryTime = Date.now() + (expiresIn * 1000);
+            
+            localStorage.setItem('g_sheet_access_token', tokenResponse.access_token);
+            localStorage.setItem('g_sheet_token_expiry', expiryTime.toString());
+
+            // Fetch user profile email
+            try {
+              const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                headers: { 'Authorization': `Bearer ${tokenResponse.access_token}` }
+              });
+              if (profileRes.ok) {
+                const profile = await profileRes.json();
+                if (profile.email) {
+                  localStorage.setItem('g_sheet_user_email', profile.email);
+                  document.getElementById('activeUserEmail').textContent = profile.email;
+                }
+              }
+            } catch (e) {
+              console.warn("Could not save profile email:", e);
+            }
+
+            unlockAppUI();
+            fetchSheetMetadataAndLoad();
+          }
+        },
+      });
+
+      isSdkLoaded = true;
+      checkPersistentSession();
+    }
+
+    // Check if user already authorized in a previous visit
+    function checkPersistentSession() {
+      const storedToken = localStorage.getItem('g_sheet_access_token');
+      const storedExpiry = parseInt(localStorage.getItem('g_sheet_token_expiry') || '0', 10);
+      const storedEmail = localStorage.getItem('g_sheet_user_email');
+
+      if (storedEmail) {
+        document.getElementById('activeUserEmail').textContent = storedEmail;
+      }
+
+      // Valid token exists (with 60-second safety window)
+      if (storedToken && Date.now() < (storedExpiry - 60000)) {
+        unlockAppUI();
+        fetchSheetMetadataAndLoad();
+      } else if (storedEmail && tokenClient) {
+        // Token expired but account is remembered -> silently re-authenticate without popup
+        tokenClient.requestAccessToken({ prompt: 'none', login_hint: storedEmail });
       }
     }
 
-    async function onLoginSuccess() {
+    function requestGoogleLogin(forceSelect = false) {
+      if (tokenClient) {
+        const storedEmail = localStorage.getItem('g_sheet_user_email');
+        tokenClient.requestAccessToken({ 
+          prompt: forceSelect ? 'select_account' : (storedEmail ? 'none' : 'consent'),
+          login_hint: storedEmail || undefined
+        });
+      } else {
+        alert("Google Identity Services is still loading. Please try again in 1 second.");
+      }
+    }
+
+    function getValidToken() {
+      return localStorage.getItem('g_sheet_access_token') || null;
+    }
+
+    function unlockAppUI() {
       document.getElementById('authGateBanner').style.display = 'none';
       document.getElementById('tableSection').style.display = 'flex';
       document.getElementById('btnLogin').style.display = 'none';
+      document.getElementById('btnSwitch').style.display = 'inline-flex';
       document.getElementById('btnRefresh').style.display = 'inline-flex';
       document.getElementById('authStatusPill').style.display = 'inline-flex';
-
-      try {
-        const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { 'Authorization': `Bearer ${accessToken}` }
-        });
-        if (profileRes.ok) {
-          const profile = await profileRes.json();
-          if (profile.email) {
-            document.getElementById('activeUserEmail').textContent = profile.email;
-          }
-        }
-      } catch (e) {
-        console.warn("Could not retrieve email info:", e);
-      }
-
-      fetchSheetMetadataAndLoad();
     }
 
-    // Read all available sheet tabs dynamically and target gid=739912770
     async function fetchSheetMetadataAndLoad() {
-      if (!accessToken) return;
+      const token = getValidToken();
+      if (!token) return;
 
       try {
         const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets(properties(sheetId,title))`;
         const metaRes = await fetch(metaUrl, {
-          headers: { 'Authorization': `Bearer ${accessToken}` }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (metaRes.status === 401) {
-          accessToken = null;
-          requestGoogleLogin(true);
+          // Token expired, attempt silent renewal
+          const storedEmail = localStorage.getItem('g_sheet_user_email');
+          if (tokenClient) {
+            tokenClient.requestAccessToken({ prompt: 'none', login_hint: storedEmail || undefined });
+          }
           return;
         }
 
@@ -588,7 +591,7 @@
 
         if (!allSheetsList.length) throw new Error("No sheet tabs found in spreadsheet.");
 
-        // Find sheet matching TARGET_GID (739912770) or fallback to first sheet
+        // Automatically activate gid=739912770 tab
         const matched = allSheetsList.find(s => s.properties?.sheetId === TARGET_GID);
         currentSelectedSheetTitle = matched ? matched.properties.title : allSheetsList[0].properties.title;
 
@@ -622,10 +625,11 @@
     }
 
     async function fetchLiveSheet() {
-      if (!accessToken || !currentSelectedSheetTitle) return;
+      const token = getValidToken();
+      if (!token || !currentSelectedSheetTitle) return;
 
       const refreshBtn = document.getElementById('btnRefresh');
-      refreshBtn.classList.add('is-syncing');
+      if (refreshBtn) refreshBtn.classList.add('is-syncing');
 
       const tbody = document.getElementById('sheetBodyRow');
       tbody.innerHTML = `
@@ -642,12 +646,14 @@
       try {
         const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/'${encodeURIComponent(currentSelectedSheetTitle)}'!A1:Z500`;
         const response = await fetch(apiUrl, {
-          headers: { 'Authorization': `Bearer ${accessToken}` }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (response.status === 401) {
-          accessToken = null;
-          requestGoogleLogin(true);
+          const storedEmail = localStorage.getItem('g_sheet_user_email');
+          if (tokenClient) {
+            tokenClient.requestAccessToken({ prompt: 'none', login_hint: storedEmail || undefined });
+          }
           return;
         }
 
@@ -675,7 +681,7 @@
         console.error("Fetch Error:", err);
         showErrorState(err.message);
       } finally {
-        refreshBtn.classList.remove('is-syncing');
+        if (refreshBtn) refreshBtn.classList.remove('is-syncing');
       }
     }
 
@@ -689,7 +695,7 @@
               <span>${escapeHtml(msg)}</span>
               <button type="button" class="btn-switch" style="margin-top: 10px;" onclick="requestGoogleLogin(true)">
                 <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
-                <span>Try a Different Google Account</span>
+                <span>Select Account</span>
               </button>
             </div>
           </td>
@@ -758,6 +764,9 @@
     }
 
     document.getElementById('sheetSearchInput').addEventListener('input', filterAndRenderTable);
+
+    // Run initialization
+    window.addEventListener('DOMContentLoaded', initGIS);
   </script>
 </body>
 </html>
