@@ -332,9 +332,11 @@
       min-width: 780px;
     }
 
-    thead { position: sticky; top: 0; z-index: 10; }
     th {
-      background-color: var(--primary-soft);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background-color: #fdf1f1;
       color: var(--primary);
       font-weight: 800;
       font-size: 11.5px;
@@ -342,6 +344,7 @@
       letter-spacing: 0.04em;
       padding: 14px 18px;
       border-bottom: 2px solid rgba(185, 28, 28, 0.2);
+      box-shadow: 0 1px 0 rgba(185, 28, 28, 0.2);
       white-space: nowrap;
     }
 
