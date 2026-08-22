@@ -28,7 +28,7 @@
       --primary-soft: rgba(185, 28, 28, 0.08);
       --primary-glow: rgba(185, 28, 28, 0.28);
       --bg-base: #f8fafc;
-      --surface-card: rgba(255, 255, 255, 0.9);
+      --surface-card: rgba(255, 255, 255, 0.94);
       --surface-border: rgba(226, 232, 240, 0.9);
       --text-main: #0f172a;
       --text-muted: #64748b;
@@ -60,9 +60,7 @@
       position: relative;
     }
 
-    /* =========================================================
-       CUSTOM ROCKET CURSOR & SMOKE TRAIL (ONLY IN HERO ZONE)
-       ========================================================= */
+    /* CUSTOM ROCKET CURSOR & SMOKE TRAIL */
     #rocket-cursor {
       position: fixed;
       top: 0;
@@ -88,7 +86,6 @@
       z-index: 99999;
     }
 
-    /* Hide standard pointer ONLY inside the target hero section */
     @media (hover: hover) and (pointer: fine) {
       .hero-target-zone,
       .hero-target-zone * {
@@ -110,7 +107,7 @@
         radial-gradient(circle at 82% 80%, rgba(225, 29, 72, 0.04) 0%, transparent 45%);
     }
 
-    /* DYNAMIC 3D PERSPECTIVE MATRIX & MATERIAL ELEMENTS */
+    /* DYNAMIC 3D PERSPECTIVE MATRIX */
     .perspective-grid-layer {
       position: fixed;
       inset: 0;
@@ -193,19 +190,8 @@
       background: var(--primary);
     }
 
-    .bg-crosshair::before {
-      top: 8px;
-      left: 0;
-      width: 18px;
-      height: 1.5px;
-    }
-
-    .bg-crosshair::after {
-      top: 0;
-      left: 8px;
-      width: 1.5px;
-      height: 18px;
-    }
+    .bg-crosshair::before { top: 8px; left: 0; width: 18px; height: 1.5px; }
+    .bg-crosshair::after { top: 0; left: 8px; width: 1.5px; height: 18px; }
 
     .ch-1 { top: 18%; left: 8%; }
     .ch-2 { top: 48%; right: 12%; }
@@ -224,7 +210,7 @@
     .matrix-left { top: 32%; left: 4%; }
     .matrix-right { bottom: 30%; right: 6%; }
 
-    /* FLYING TINY ROCKETS (BACKGROUND) */
+    /* FLYING TINY ROCKETS */
     .tiny-rocket {
       position: absolute;
       pointer-events: none;
@@ -233,27 +219,10 @@
       z-index: 1;
     }
 
-    .tiny-rocket svg {
-      filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.2));
-    }
-
-    .rocket-1 {
-      bottom: -60px;
-      left: 14%;
-      animation: flyUpRight1 14s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    }
-
-    .rocket-2 {
-      bottom: -60px;
-      right: 18%;
-      animation: flyUpLeft2 19s cubic-bezier(0.4, 0, 0.2, 1) infinite 6s;
-    }
-
-    .rocket-3 {
-      bottom: -60px;
-      left: 55%;
-      animation: flyUpSteep3 23s cubic-bezier(0.4, 0, 0.2, 1) infinite 11s;
-    }
+    .tiny-rocket svg { filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.2)); }
+    .rocket-1 { bottom: -60px; left: 14%; animation: flyUpRight1 14s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+    .rocket-2 { bottom: -60px; right: 18%; animation: flyUpLeft2 19s cubic-bezier(0.4, 0, 0.2, 1) infinite 6s; }
+    .rocket-3 { bottom: -60px; left: 55%; animation: flyUpSteep3 23s cubic-bezier(0.4, 0, 0.2, 1) infinite 11s; }
 
     @keyframes flyUpRight1 {
       0% { transform: translate3d(0, 0, 0) rotate(38deg) scale(0.75); opacity: 0; }
@@ -284,11 +253,7 @@
       vertical-align: middle;
     }
 
-    main {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-    }
+    main { position: relative; z-index: 1; width: 100%; }
 
     /* HERO STAGE */
     .hero-stage {
@@ -356,7 +321,6 @@
       100% { opacity: 1; transform: translateY(0); }
     }
 
-    /* Target Zone: Scopes the interactive zone */
     .hero-target-zone {
       width: 100%;
       display: flex;
@@ -460,149 +424,6 @@
       100% { transform: scale(1.7); opacity: 0; }
     }
 
-    /* WORKSPACE GRID */
-    .workspace-section {
-      max-width: 1440px;
-      margin: 20px auto 40px;
-      padding: 0 32px;
-      width: 100%;
-    }
-
-    .section-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .section-heading {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .section-counter {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-    }
-
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-      gap: 24px;
-      width: 100%;
-    }
-
-    .module-card {
-      background: var(--surface-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-xl);
-      padding: 28px 24px;
-      text-decoration: none;
-      color: inherit;
-      box-shadow: var(--shadow-subtle);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .module-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--primary), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .module-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(185, 28, 28, 0.3);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .module-card:hover::before { opacity: 1; }
-
-    .module-card.disabled { cursor: default; opacity: 0.88; }
-    .module-card.disabled:hover { transform: none; border-color: var(--surface-border); box-shadow: var(--shadow-subtle); }
-    .module-card.disabled:hover::before { opacity: 0; }
-    .module-card.disabled:hover .card-icon-pill { transform: none; background: #ffffff; color: var(--primary); border-color: var(--surface-border); }
-
-    .status-tag.coming-soon { background: #fffbeb; color: #b45309; border-color: #fde68a; }
-
-    .card-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
-    .card-icon-pill {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      box-shadow: var(--shadow-subtle);
-      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
-    }
-
-    .module-card:hover .card-icon-pill {
-      transform: scale(1.08) rotate(-4deg);
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-    }
-
-    .card-icon-pill span { font-size: 28px; }
-    .status-tag { font-size: 10.5px; font-weight: 700; color: var(--text-muted); background: rgba(241, 245, 249, 0.8); border: 1px solid var(--surface-border); padding: 4px 10px; border-radius: var(--radius-pill); }
-    .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
-    .card-description { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; margin-bottom: 20px; }
-    .tags-flow { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
-    .micro-tag { font-size: 11px; font-weight: 600; padding: 4px 10px; background: #ffffff; border: 1px solid var(--surface-border); border-radius: 8px; color: #475569; }
-
-    .card-footer-cta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 16px;
-      border-top: 1px solid var(--surface-border);
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .card-footer-cta.coming-soon-cta { color: #b45309; }
-    .cta-arrow {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--primary-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
-    }
-
-    .module-card:hover .cta-arrow { transform: translateX(4px); background: var(--primary); color: #ffffff; }
-    .module-card.disabled:hover .cta-arrow { transform: none; background: #fef3c7; color: #b45309; }
-
     /* REEL SECTION */
     .reel-section { max-width: 1440px; margin: 8px auto 36px; padding: 0 32px; width: 100%; }
     .reel-player {
@@ -686,19 +507,376 @@
     .reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-border); cursor: pointer; transition: background 0.2s ease; }
     .reel-dot.active { background: var(--primary); transform: scale(1.3); }
 
-    /* METRICS BAR */
-    .metrics-bar-wrap { max-width: 1440px; margin: 10px auto 30px; padding: 0 32px; width: 100%; }
-    .metrics-dock { background: #ffffff; border: 1px solid var(--surface-border); border-radius: 18px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-shadow: var(--shadow-subtle); }
-    .metrics-lead { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--text-main); }
-    .metrics-list { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .metric-pill { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-base); border: 1px solid var(--surface-border); padding: 5px 12px; border-radius: var(--radius-pill); font-size: 12px; }
-    .metric-label { color: var(--text-muted); font-weight: 500; }
-    .metric-val { color: var(--text-main); font-weight: 800; font-feature-settings: "tnum"; }
+    /* =========================================================
+       THEME FEATURE: LIVE LOGISTICS TELEMETRY & ROUTE MATRIX
+       ========================================================= */
+    .telemetry-section {
+      max-width: 1440px;
+      margin: 8px auto 36px;
+      padding: 0 32px;
+      width: 100%;
+    }
 
-    .pulse-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; display: inline-block; animation: liveGlow 1.8s infinite; }
-    @keyframes liveGlow { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    .telemetry-dashboard {
+      background: var(--surface-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-    /* NEOBRUTALIST RETRO SUPPORT FAB & BUBBLE */
+    .telemetry-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 14px;
+      border-bottom: 1px dashed var(--surface-border);
+    }
+
+    .telemetry-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .route-ticker-wrap {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .route-pill-card {
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1 0 240px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .route-pill-card:hover {
+      border-color: rgba(185, 28, 28, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .route-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .route-info h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .route-info p {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* =========================================================
+       OPERATIONS MODULES GRID
+       ========================================================= */
+    .workspace-section {
+      max-width: 1440px;
+      margin: 20px auto 40px;
+      padding: 0 32px;
+      width: 100%;
+    }
+
+    .section-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .section-heading {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-counter {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+      gap: 24px;
+      width: 100%;
+    }
+
+    .module-card {
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 28px 24px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow-subtle);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  border-color 0.25s ease;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3.5px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(185, 28, 28, 0.35);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .module-card:hover::before { opacity: 1; }
+
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .card-icon-pill {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      box-shadow: var(--shadow-subtle);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+    }
+
+    .module-card:hover .card-icon-pill {
+      transform: scale(1.08) rotate(-4deg);
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .card-icon-pill span { font-size: 28px; }
+
+    .status-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: rgba(241, 245, 249, 0.8);
+      border: 1px solid var(--surface-border);
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 20px;
+    }
+
+    .tags-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .micro-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      color: #475569;
+    }
+
+    .card-footer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--surface-border);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .cta-arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease, color 0.3s ease;
+    }
+
+    .module-card:hover .cta-arrow {
+      transform: translateX(4px);
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* =========================================================
+       LIVE IMPACT STATS SECTION
+       ========================================================= */
+    .impact-section {
+      max-width: 1440px;
+      margin: 8px auto 36px;
+      padding: 0 32px;
+      width: 100%;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      background: var(--surface-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .impact-item {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: center;
+      padding: 8px 12px;
+      border-right: 1px dashed var(--surface-border);
+    }
+
+    .impact-item:last-child { border-right: none; }
+
+    .impact-num {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .impact-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .pulse-dot-large {
+      width: 10px;
+      height: 10px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      animation: liveGlow 1.8s infinite;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+      animation: liveGlow 1.8s infinite;
+    }
+
+    @keyframes liveGlow {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @media (max-width: 768px) {
+      .impact-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 12px;
+      }
+      .impact-item:nth-child(2) { border-right: none; }
+    }
+
+    /* =========================================================
+       NEOBRUTALIST RETRO SUPPORT FAB & BUBBLE (FIXED VISIBILITY)
+       ========================================================= */
     .support-fab {
       position: fixed;
       bottom: 32px;
@@ -740,9 +918,9 @@
     }
 
     .support-msg-bubble.show {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
+      opacity: 1 !important;
+      transform: translateY(0) scale(1) !important;
+      pointer-events: auto !important;
     }
 
     .support-msg-bubble:hover {
@@ -793,11 +971,8 @@
       .reel-section { display: none !important; }
       .interactive-hero-zone { display: none !important; }
       .hero-stage { padding: 80px 16px 24px; }
-      .workspace-section, .metrics-bar-wrap { padding: 0 16px; }
+      .workspace-section, .impact-section, .telemetry-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
-      .metrics-dock { flex-direction: column; align-items: flex-start; }
-      .metrics-list { width: 100%; gap: 6px; }
-      .metric-pill { font-size: 11px; padding: 4px 10px; }
       .support-fab { bottom: 20px; right: 20px; }
       .support-msg-bubble { max-width: 220px; font-size: 12.5px; padding: 10px 14px; }
       .perspective-grid-layer { opacity: 0.45; }
@@ -808,21 +983,16 @@
 </head>
 <body>
 
-  <!-- FULL-PAGE SMOKE TRAIL CANVAS (FADES SMOKE ACROSS WHOLE VIEWPORT) -->
+  <!-- FULL-PAGE SMOKE TRAIL CANVAS -->
   <canvas id="smoke-canvas"></canvas>
 
   <!-- CUSTOM ROTATING MINI ROCKET CURSOR -->
   <div id="rocket-cursor">
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.35));">
-      <!-- Main Rocket Body (Tip points directly UP along 0deg axis) -->
       <path d="M16 2.5C16 2.5 22.5 8 22.5 19L19 21.5L16 20L13 21.5L9.5 19C9.5 8 16 2.5 16 2.5Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.2"/>
-      <!-- Window Porthole -->
       <circle cx="16" cy="9.5" r="2.2" fill="#ffffff" stroke="#0f172a" stroke-width="0.8"/>
-      <!-- Left Fin -->
       <path d="M9.5 15L4.5 19.5V22.5L9.5 21V15Z" fill="#0f172a"/>
-      <!-- Right Fin -->
       <path d="M22.5 15L27.5 19.5V22.5L22.5 21V15Z" fill="#0f172a"/>
-      <!-- Thrust Fire Flame -->
       <path d="M13.5 21.5L16 28L18.5 21.5H13.5Z" fill="#f59e0b"/>
       <path d="M14.5 21.5L16 25L17.5 21.5H14.5Z" fill="#fef08a"/>
     </svg>
@@ -831,23 +1001,20 @@
   <!-- Ambient Light Mesh Background -->
   <div class="ambient-bg"></div>
 
-  <!-- SCROLL-DYNAMIC 3D PERSPECTIVE MATRIX & MATERIAL ELEMENTS -->
+  <!-- SCROLL-DYNAMIC 3D PERSPECTIVE MATRIX -->
   <div class="perspective-grid-layer" aria-hidden="true">
     <div class="matrix-plane" id="matrixPlane"></div>
     <div class="radar-sweep-disc"></div>
     <div class="radar-sweep-disc-secondary"></div>
 
-    <!-- Technical Crosshairs -->
     <div class="bg-crosshair ch-1"></div>
     <div class="bg-crosshair ch-2"></div>
     <div class="bg-crosshair ch-3"></div>
     <div class="bg-crosshair ch-4"></div>
 
-    <!-- Dot Array Matrices -->
     <div class="bg-dot-matrix matrix-left"></div>
     <div class="bg-dot-matrix matrix-right"></div>
 
-    <!-- Tiny Background Rockets Flying Upward -->
     <div class="tiny-rocket rocket-1">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 2.5C12 2.5 17 6.5 17 14.5L14.5 16.5L12 15L9.5 16.5L7 14.5C7 6.5 12 2.5 12 2.5Z" fill="#b91c1c"/>
@@ -886,7 +1053,7 @@
 
   <main>
     
-    <!-- CENTRAL HERO (CUSTOM ROCKET POINTER TARGET ZONE) -->
+    <!-- CENTRAL HERO -->
     <section class="hero-stage">
       <div class="hero-target-zone" id="heroTargetZone">
         
@@ -997,6 +1164,7 @@
       })();
     </script>
 
+    <!-- REEL SECTION -->
     <section class="reel-section">
       <div class="section-bar">
         <div class="section-heading">
@@ -1219,6 +1387,56 @@
       })();
     </script>
 
+    <!-- LOGISTICS FLEET TELEMETRY & ROUTE STATUS -->
+    <section class="telemetry-section">
+      <div class="telemetry-dashboard">
+        <div class="telemetry-header">
+          <div class="telemetry-title">
+            <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">alt_route</span>
+            <span>National Hub Transit &amp; Freight Lanes</span>
+          </div>
+          <span class="status-tag" style="background: rgba(16, 185, 129, 0.1); color: #047857; border-color: rgba(16, 185, 129, 0.3);">
+            <span class="pulse-dot" style="margin-right: 4px;"></span> Active Movement Lanes
+          </span>
+        </div>
+
+        <div class="route-ticker-wrap">
+          <div class="route-pill-card">
+            <div class="route-icon-box"><span class="material-symbols-outlined">local_shipping</span></div>
+            <div class="route-info">
+              <h4>MUM ⇄ DEL</h4>
+              <p>1,420 KM • 32ft MXL Container</p>
+            </div>
+          </div>
+
+          <div class="route-pill-card">
+            <div class="route-icon-box" style="background: rgba(2, 132, 199, 0.1); color: #0284c7;"><span class="material-symbols-outlined">directions_car</span></div>
+            <div class="route-info">
+              <h4>PUN ⇄ BLR</h4>
+              <p>840 KM • Car Carrier Express</p>
+            </div>
+          </div>
+
+          <div class="route-pill-card">
+            <div class="route-icon-box" style="background: rgba(217, 119, 6, 0.1); color: #d97706;"><span class="material-symbols-outlined">inventory_2</span></div>
+            <div class="route-info">
+              <h4>AHM ⇄ HYD</h4>
+              <p>1,190 KM • APML Lite Volume</p>
+            </div>
+          </div>
+
+          <div class="route-pill-card">
+            <div class="route-icon-box" style="background: rgba(16, 185, 129, 0.1); color: #059669;"><span class="material-symbols-outlined">shield</span></div>
+            <div class="route-info">
+              <h4>NRO ⇄ SRO</h4>
+              <p>Pan-India 100% Insured Transit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLEAN & FLAT OPERATIONS MODULES GRID -->
     <section class="workspace-section">
       
       <div class="section-bar">
@@ -1402,34 +1620,30 @@
       </div>
     </section>
 
-    <div class="metrics-bar-wrap">
-      <div class="metrics-dock">
-        <div class="metrics-lead">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 18px;">insights</span>
-          <span>Portal Activity</span>
+    <!-- LIVE IMPACT & STATS SECTION -->
+    <section class="impact-section">
+      <div class="impact-grid">
+        <div class="impact-item">
+          <div class="impact-num">7</div>
+          <div class="impact-label">Active Modules</div>
         </div>
-
-        <div class="metrics-list">
-          <div class="metric-pill">
-            <span class="pulse-dot"></span>
-            <span class="metric-label">Online Users:</span>
-            <span class="metric-val" id="liveUserCount">1</span>
+        <div class="impact-item">
+          <div class="impact-num">
+            <span class="pulse-dot-large"></span>
+            <span id="liveUserCount">1</span>
           </div>
-
-          <div class="metric-pill">
-            <span class="material-symbols-outlined" style="font-size: 15px; color: #b91c1c;">picture_as_pdf</span>
-            <span class="metric-label">PDFs Exported:</span>
-            <span class="metric-val" id="totalPdfDownloads">0</span>
-          </div>
-
-          <div class="metric-pill">
-            <span class="material-symbols-outlined" style="font-size: 15px; color: #2563eb;">photo_library</span>
-            <span class="metric-label">Media Downloads:</span>
-            <span class="metric-val" id="totalMediaDownloads">0</span>
-          </div>
+          <div class="impact-label">Online Users</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-num" id="totalPdfDownloads">0</div>
+          <div class="impact-label">PDFs Exported</div>
+        </div>
+        <div class="impact-item">
+          <div class="impact-num" id="totalMediaDownloads">0</div>
+          <div class="impact-label">Media Downloads</div>
         </div>
       </div>
-    </div>
+    </section>
 
   </main>
 
@@ -1505,7 +1719,6 @@
         const scrollPosition = window.scrollY + window.innerHeight;
         const bodyHeight = document.documentElement.scrollHeight || document.body.offsetHeight;
         
-        // Vanish completely as soon as user approaches the bottom/footer
         const isNearBottom = scrollPosition >= (bodyHeight - 120);
 
         if (supportFab) {
@@ -1526,6 +1739,7 @@
       window.addEventListener('scroll', checkBottomScroll, { passive: true });
       window.addEventListener('resize', checkBottomScroll, { passive: true });
 
+      // Fallback display timeout
       setTimeout(() => {
         if (!hasStarted) {
           hasStarted = true;
@@ -1536,9 +1750,7 @@
     })();
   </script>
 
-  <!-- =====================================================================
-       ROTATING ROCKET POINTER & SMOKE TRAIL (ONLY IN HERO ZONE)
-       ===================================================================== -->
+  <!-- ROTATING ROCKET POINTER & SMOKE TRAIL -->
   <script>
     (function initHeroScopedRocket() {
       if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
@@ -1656,11 +1868,11 @@
     })();
   </script>
 
+  <!-- FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase Configurations
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
