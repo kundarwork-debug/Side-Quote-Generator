@@ -164,6 +164,45 @@
 
     .btn-refresh:hover { background: var(--primary-soft); }
 
+    /* Tab Selector Strip */
+    .tab-selector-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .sheet-tab-btn {
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .sheet-tab-btn:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: rgba(185, 28, 28, 0.25);
+    }
+
+    .sheet-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
+    }
+
     /* Auth Banner / Gate */
     .auth-banner-card {
       background: var(--surface-card);
@@ -245,7 +284,7 @@
     .table-responsive {
       width: 100%;
       overflow-x: auto;
-      max-height: calc(100vh - 300px);
+      max-height: calc(100vh - 340px);
       position: relative;
     }
 
@@ -322,9 +361,9 @@
       <div class="header-title-wrap">
         <h1>
           <span class="material-symbols-outlined" style="font-size: 28px; color: var(--primary);">shield_lock</span>
-          <span>Google Sheet</span> Direct Access
+          <span>Google Sheet</span> Multi-Tab Direct Access
         </h1>
-        <p class="header-subtitle">Real-time OAuth synchronization with Google Sheets API</p>
+        <p class="header-subtitle">Real-time OAuth synchronization for Tab (gid=739912770) &amp; Sheet1</p>
       </div>
 
       <div class="header-actions">
@@ -354,15 +393,19 @@
     <div id="authGateBanner" class="auth-banner-card">
       <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary);">lock</span>
       <h2>Choose Authorized Google Account</h2>
-      <p>Sign in using any Google account that has permission to view this corporate spreadsheet.</p>
+      <p>Sign in using any Google account that has permission to view this spreadsheet.</p>
       <button type="button" class="btn-auth" style="padding: 12px 28px; font-size: 14px;" onclick="requestGoogleLogin(true)">
         <span class="material-symbols-outlined">switch_account</span>
         <span>Select Google Account</span>
       </button>
     </div>
 
-    <!-- Data Table View -->
+    <!-- Data Table & Tabs View -->
     <div id="tableSection" style="display: none; flex-direction: column; gap: 16px;">
+      
+      <!-- Dynamic Tab Bar -->
+      <div class="tab-selector-strip" id="sheetTabBar"></div>
+
       <div class="controls-strip">
         <div class="search-box">
           <span class="material-symbols-outlined">search</span>
@@ -404,9 +447,12 @@
   <script>
     const CLIENT_ID = '955313515261-hubqj7l3gi852f98fjbp022gipbd396p.apps.googleusercontent.com';
     const SPREADSHEET_ID = '19asDVHENrRl1m2paoNVXtO10PtuTl4StIJ9m6quzX1o';
+    const TARGET_GID = 739912770; // Pre-selects requested tab
 
     let tokenClient;
     let accessToken = null;
+    let allSheetsList = [];
+    let currentSelectedSheetTitle = '';
     let allHeaders = [];
     let allRows = [];
 
@@ -443,7 +489,6 @@
       document.getElementById('btnRefresh').style.display = 'inline-flex';
       document.getElementById('authStatusPill').style.display = 'inline-flex';
 
-      // Fetch logged in profile email
       try {
         const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
           headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -458,17 +503,15 @@
         console.warn("Could not retrieve email info:", e);
       }
 
-      fetchLiveSheet();
+      fetchSheetMetadataAndLoad();
     }
 
-    async function fetchLiveSheet() {
+    // Read all available sheet tabs dynamically and target gid=739912770
+    async function fetchSheetMetadataAndLoad() {
       if (!accessToken) return;
 
-      const tbody = document.getElementById('sheetBodyRow');
-
       try {
-        // Step 1: Query first tab name dynamically
-        const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets(properties(title))`;
+        const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets(properties(sheetId,title))`;
         const metaRes = await fetch(metaUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
@@ -485,13 +528,69 @@
         }
 
         const metaData = await metaRes.json();
-        const firstSheetTitle = metaData.sheets?.[0]?.properties?.title || 'Sheet1';
+        allSheetsList = metaData.sheets || [];
 
-        // Step 2: Fetch actual data rows
-        const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/'${encodeURIComponent(firstSheetTitle)}'!A1:Z500`;
+        if (!allSheetsList.length) throw new Error("No sheet tabs found in spreadsheet.");
+
+        // Find sheet matching TARGET_GID (739912770) or fallback to first sheet
+        const matched = allSheetsList.find(s => s.properties?.sheetId === TARGET_GID);
+        currentSelectedSheetTitle = matched ? matched.properties.title : allSheetsList[0].properties.title;
+
+        renderTabBar();
+        fetchLiveSheet();
+      } catch (err) {
+        console.error("Metadata Error:", err);
+        showErrorState(err.message);
+      }
+    }
+
+    function renderTabBar() {
+      const tabBar = document.getElementById('sheetTabBar');
+      tabBar.innerHTML = allSheetsList.map(sheet => {
+        const title = sheet.properties.title;
+        const isActive = title === currentSelectedSheetTitle;
+        return `
+          <button class="sheet-tab-btn ${isActive ? 'active' : ''}" onclick="switchSheetTab('${escapeHtml(title)}')">
+            <span class="material-symbols-outlined" style="font-size: 16px;">table_chart</span>
+            <span>${escapeHtml(title)}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function switchSheetTab(sheetTitle) {
+      if (currentSelectedSheetTitle === sheetTitle) return;
+      currentSelectedSheetTitle = sheetTitle;
+      renderTabBar();
+      fetchLiveSheet();
+    }
+
+    async function fetchLiveSheet() {
+      if (!accessToken || !currentSelectedSheetTitle) return;
+
+      const tbody = document.getElementById('sheetBodyRow');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="10">
+            <div class="state-msg-box">
+              <div class="loading-spinner"></div>
+              <span>Streaming rows from "${escapeHtml(currentSelectedSheetTitle)}"...</span>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      try {
+        const apiUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/'${encodeURIComponent(currentSelectedSheetTitle)}'!A1:Z500`;
         const response = await fetch(apiUrl, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
+
+        if (response.status === 401) {
+          accessToken = null;
+          requestGoogleLogin(true);
+          return;
+        }
 
         if (!response.ok) {
           const err = await response.json();
@@ -502,7 +601,9 @@
         const rows = result.values || [];
 
         if (!rows.length) {
-          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px;">Sheet is empty.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:30px;">Tab "${escapeHtml(currentSelectedSheetTitle)}" is empty.</td></tr>`;
+          document.getElementById('sheetHeaderRow').innerHTML = '';
+          document.getElementById('rowCountDisplay').innerHTML = `Showing <b>0</b> records`;
           return;
         }
 
@@ -513,21 +614,26 @@
         filterAndRenderTable();
       } catch (err) {
         console.error("Fetch Error:", err);
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="10">
-              <div class="state-msg-box" style="color: #b91c1c;">
-                <span class="material-symbols-outlined" style="font-size: 32px;">error</span>
-                <span>${escapeHtml(err.message)}</span>
-                <button type="button" class="btn-switch" style="margin-top: 10px;" onclick="requestGoogleLogin(true)">
-                  <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
-                  <span>Try a Different Google Account</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        `;
+        showErrorState(err.message);
       }
+    }
+
+    function showErrorState(msg) {
+      const tbody = document.getElementById('sheetBodyRow');
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="10">
+            <div class="state-msg-box" style="color: #b91c1c;">
+              <span class="material-symbols-outlined" style="font-size: 32px;">error</span>
+              <span>${escapeHtml(msg)}</span>
+              <button type="button" class="btn-switch" style="margin-top: 10px;" onclick="requestGoogleLogin(true)">
+                <span class="material-symbols-outlined" style="font-size: 16px;">switch_account</span>
+                <span>Try a Different Google Account</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
     }
 
     function renderHeaders() {
@@ -552,7 +658,7 @@
             <td colspan="${Math.max(allHeaders.length, 1)}">
               <div class="state-msg-box">
                 <span class="material-symbols-outlined" style="font-size: 32px;">search_off</span>
-                <span>No matching records found.</span>
+                <span>No matching records found in "${escapeHtml(currentSelectedSheetTitle)}".</span>
               </div>
             </td>
           </tr>
