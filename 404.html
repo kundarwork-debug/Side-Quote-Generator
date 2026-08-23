@@ -34,34 +34,39 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
+    html, body {
+      height: 100vh;
+      overflow: hidden;
+    }
+
     body {
       background-color: var(--bg-base);
       color: var(--text-main);
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
+      justify-content: space-between;
       position: relative;
     }
 
-    /* FAILING SMOKING ENGINE CURSOR */
-    #smoke-canvas {
+    /* FULLSCREEN INTERACTIVE GAME CANVAS */
+    #game-canvas {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 99999;
+      z-index: 99998;
     }
 
+    /* COMPACT MINI ROCKET CURSOR */
     #failed-rocket-cursor {
       position: fixed;
       top: 0;
       left: 0;
-      width: 38px;
-      height: 38px;
-      margin-top: -19px;
-      margin-left: -19px;
+      width: 22px;
+      height: 22px;
+      margin-top: -11px;
+      margin-left: -11px;
       pointer-events: none;
       z-index: 100000;
       will-change: transform, opacity;
@@ -100,7 +105,7 @@
       z-index: 0;
       perspective: 1000px;
       overflow: hidden;
-      opacity: 0.7;
+      opacity: 0.6;
     }
 
     .matrix-plane {
@@ -112,7 +117,7 @@
       background-image: 
         linear-gradient(to right, rgba(185, 28, 28, 0.05) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
-      background-size: 60px 60px;
+      background-size: 50px 50px;
       transform: rotateX(45deg) scale(1.1);
       transform-origin: center top;
     }
@@ -125,175 +130,367 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 90px 24px 40px;
+      padding: 68px 16px 8px;
       text-align: center;
+    }
+
+    /* ARCADE HUD SCOREBOARD */
+    .arcade-scoreboard {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 6px 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-subtle);
+      margin-bottom: 8px;
+      z-index: 10;
+      backdrop-filter: blur(8px);
+    }
+
+    .score-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .score-label {
+      color: var(--text-muted);
+    }
+
+    .score-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 800;
+      font-size: 13.5px;
+      color: var(--primary);
+    }
+
+    .score-divider {
+      width: 1px;
+      height: 12px;
+      background: var(--surface-border);
+    }
+
+    .level-badge {
+      color: #0284c7;
+    }
+
+    .misses-badge {
+      color: #e11d48;
+    }
+
+    /* LEVEL UP NOTIFICATION TOAST */
+    .level-toast {
+      position: fixed;
+      top: 76px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
+      color: #ffffff;
+      padding: 6px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-hover);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10000;
+    }
+
+    .level-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* GAME OVER MODAL OVERLAY */
+    .game-over-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100001;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .game-over-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .game-over-card {
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: 20px;
+      padding: 24px 28px;
+      max-width: 340px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 40px -10px rgba(185, 28, 28, 0.3);
+      transform: scale(0.92);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .game-over-modal.active .game-over-card {
+      transform: scale(1);
+    }
+
+    .game-over-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .game-over-reason {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .game-over-stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 16px 0 14px;
+      padding: 12px;
+      background: var(--bg-base);
+      border-radius: 12px;
+      border: 1px solid var(--surface-border);
+    }
+
+    .stat-box span {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .stat-box b {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      color: var(--text-main);
+    }
+
+    .esc-prompt-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #0f172a;
+      background: rgba(241, 245, 249, 0.95);
+      border: 1px solid var(--surface-border);
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-subtle);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .esc-prompt-pill:hover {
+      background: var(--primary-soft);
+      border-color: rgba(185, 28, 28, 0.3);
+      color: var(--primary);
+    }
+
+    .esc-key {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-bottom: 2px solid #94a3b8;
+      border-radius: 6px;
+      padding: 2px 6px;
+      font-size: 10.5px;
+      font-family: monospace;
+      font-weight: 800;
+      color: #0f172a;
     }
 
     /* OPEN SPACE VISUAL STAGE */
     .open-space-stage {
       position: relative;
-      width: min(90vw, 480px);
-      height: 380px;
+      width: 220px;
+      height: 190px;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
-      margin-bottom: 20px;
+      margin-bottom: 4px;
     }
 
-    /* DAMAGED PLANET CORE */
-    .damaged-planet-wrap {
+    /* FRACTURED PLANET SHARDS */
+    .broken-planet-center {
       position: relative;
-      width: 110px;
-      height: 110px;
+      width: 60px;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 5;
     }
 
     .planet-glow {
       position: absolute;
-      inset: -15px;
+      inset: -12px;
       border-radius: 50%;
       background: radial-gradient(circle, rgba(185, 28, 28, 0.22) 0%, rgba(185, 28, 28, 0) 70%);
-      animation: pulseDistress 2.4s ease-in-out infinite alternate;
-    }
-
-    .planet-sphere {
-      position: relative;
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: linear-gradient(145deg, #ffffff 0%, #fee2e2 65%, #fecaca 100%);
-      border: 2px solid #ffffff;
-      box-shadow: 0 14px 30px -4px rgba(185, 28, 28, 0.25), 0 0 0 6px rgba(185, 28, 28, 0.06);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      overflow: hidden;
-      animation: wobbleFloat 6s ease-in-out infinite;
-    }
-
-    /* Planet Cracks & Fractures */
-    .crack-line {
-      position: absolute;
-      background: rgba(185, 28, 28, 0.6);
       pointer-events: none;
     }
-    .crack-1 { top: 22px; left: 16px; width: 28px; height: 1.5px; transform: rotate(25deg); }
-    .crack-2 { top: 32px; left: 36px; width: 22px; height: 1.5px; transform: rotate(-40deg); }
-    .crack-3 { bottom: 25px; right: 20px; width: 34px; height: 1.5px; transform: rotate(15deg); }
 
-    .planet-sphere .material-symbols-outlined {
-      font-size: 40px;
-      z-index: 2;
-      animation: alertFlicker 3s infinite;
+    .planet-shard {
+      position: absolute;
+      background: linear-gradient(145deg, #ffffff 0%, #fee2e2 65%, #fecaca 100%);
+      border: 1px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(185, 28, 28, 0.18);
+      will-change: transform;
     }
 
-    /* ORBIT RINGS */
+    .shard-top {
+      width: 26px;
+      height: 18px;
+      top: 4px;
+      left: 17px;
+      clip-path: polygon(30% 0%, 90% 10%, 75% 100%, 0% 85%);
+      border-radius: 8px 8px 2px 2px;
+    }
+
+    .shard-left {
+      width: 22px;
+      height: 24px;
+      top: 18px;
+      left: 3px;
+      clip-path: polygon(10% 20%, 95% 0%, 80% 90%, 0% 70%);
+      border-radius: 6px 2px 4px 6px;
+    }
+
+    .shard-right {
+      width: 24px;
+      height: 22px;
+      top: 16px;
+      right: 4px;
+      clip-path: polygon(0% 10%, 100% 30%, 85% 95%, 15% 80%);
+      border-radius: 2px 8px 6px 2px;
+    }
+
+    .shard-bottom {
+      width: 26px;
+      height: 19px;
+      bottom: 4px;
+      left: 17px;
+      clip-path: polygon(15% 10%, 85% 5%, 70% 95%, 20% 90%);
+      border-radius: 2px 2px 8px 8px;
+    }
+
+    .shard-core {
+      width: 14px;
+      height: 14px;
+      top: 23px;
+      left: 23px;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      background: var(--primary);
+    }
+
+    /* COMPACT ORBIT RINGS */
     .orbit-ring {
       position: absolute;
       border-radius: 50%;
-      border: 1.5px dashed rgba(185, 28, 28, 0.22);
+      border: 1px dashed rgba(185, 28, 28, 0.22);
       pointer-events: none;
     }
-    .orbit-1 { width: 180px; height: 180px; }
-    .orbit-2 { width: 260px; height: 260px; border-color: rgba(225, 29, 72, 0.25); }
-    .orbit-3 { width: 340px; height: 340px; border-color: rgba(185, 28, 28, 0.18); }
+    .orbit-1 { width: 100px; height: 100px; }
+    .orbit-2 { width: 150px; height: 150px; border-color: rgba(225, 29, 72, 0.22); }
+    .orbit-3 { width: 195px; height: 195px; border-color: rgba(185, 28, 28, 0.16); }
 
-    /* ORBITING DRIFT NODES */
+    /* DRIFT NODES */
     .free-node {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 34px;
-      height: 34px;
-      margin-top: -17px;
-      margin-left: -17px;
+      width: 23px;
+      height: 23px;
+      margin-top: -11.5px;
+      margin-left: -11.5px;
       border-radius: 50%;
       background: #ffffff;
-      border: 1.5px solid var(--primary);
+      border: 1px solid var(--primary);
       color: var(--primary);
-      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+      box-shadow: 0 2px 6px rgba(185, 28, 28, 0.18);
       display: flex;
       align-items: center;
       justify-content: center;
       will-change: transform;
       z-index: 10;
     }
-    .free-node .material-symbols-outlined { font-size: 18px; }
+    .free-node .material-symbols-outlined { font-size: 13px; }
     .node-truck { color: var(--primary); border-color: var(--primary); }
     .node-car { color: #e11d48; border-color: #e11d48; }
     .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
     .node-hub { color: #0284c7; border-color: #0284c7; }
 
-    /* DEBRIS PARTICLES */
-    .debris-cluster {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
-    .debris-shard {
-      position: absolute;
-      background: #b91c1c;
-      border-radius: 2px;
-      opacity: 0.5;
-    }
-    .shard-1 { width: 5px; height: 5px; top: 38%; left: 34%; animation: shardDrift1 4s ease-in-out infinite alternate; }
-    .shard-2 { width: 4px; height: 7px; top: 62%; right: 36%; animation: shardDrift2 5s ease-in-out infinite alternate; }
-    .shard-3 { width: 6px; height: 3px; bottom: 35%; left: 40%; animation: shardDrift3 3.5s ease-in-out infinite alternate; }
-
-    /* TYPOGRAPHY & ACTIONS */
+    /* COMPACT TYPOGRAPHY & ACTIONS */
     .badge-capsule {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 16px;
+      gap: 5px;
+      padding: 4px 12px;
       background: #ffffff;
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-pill);
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       color: var(--primary);
       letter-spacing: 0.08em;
       text-transform: uppercase;
       box-shadow: var(--shadow-subtle);
-      margin-bottom: 12px;
+      margin-bottom: 4px;
     }
 
     .error-code {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(54px, 10vw, 84px);
+      font-size: clamp(34px, 5vw, 42px);
       font-weight: 800;
       line-height: 1;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.03em;
       background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
     .error-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(22px, 4vw, 28px);
+      font-size: clamp(15px, 2.2vw, 17px);
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 10px;
+      margin-bottom: 4px;
     }
 
     .error-description {
-      font-size: 14.5px;
+      font-size: 11.5px;
       color: var(--text-muted);
-      line-height: 1.6;
-      max-width: 480px;
-      margin-bottom: 28px;
+      line-height: 1.4;
+      max-width: 360px;
+      margin-bottom: 12px;
     }
 
     .action-group {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -301,20 +498,21 @@
     .btn-action {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
+      gap: 6px;
+      padding: 6px 15px;
       border-radius: var(--radius-pill);
-      font-size: 13.5px;
+      font-size: 11.5px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      cursor: pointer;
     }
 
     .btn-primary {
       background: var(--primary);
       color: #ffffff;
       border: 1px solid var(--primary);
-      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.22);
     }
 
     .btn-primary:hover {
@@ -337,55 +535,64 @@
       transform: translateY(-2px);
     }
 
-    /* KEYFRAME ANIMATIONS */
-    @keyframes pulseDistress {
-      0% { transform: scale(0.9); opacity: 0.4; }
-      100% { transform: scale(1.35); opacity: 0.85; }
-    }
-
-    @keyframes wobbleFloat {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(4deg); }
-    }
-
-    @keyframes alertFlicker {
-      0%, 100% { opacity: 1; }
-      45% { opacity: 0.6; }
-      50% { opacity: 0.2; }
-      55% { opacity: 0.9; }
-    }
-
-    @keyframes shardDrift1 { to { transform: translate(-12px, -8px) rotate(45deg); } }
-    @keyframes shardDrift2 { to { transform: translate(10px, -14px) rotate(-30deg); } }
-    @keyframes shardDrift3 { to { transform: translate(8px, 10px) rotate(60deg); } }
-
     @media (max-width: 768px) {
-      .open-space-stage { height: 300px; transform: scale(0.85); margin-bottom: 0; }
-      .perspective-grid-layer { opacity: 0.4; }
-      #failed-rocket-cursor, #smoke-canvas { display: none !important; }
+      .open-space-stage { transform: scale(0.85); margin-bottom: 0; }
+      .perspective-grid-layer { opacity: 0.35; }
+      #failed-rocket-cursor { display: none !important; }
       body, a, button { cursor: auto !important; }
+      .error-description { max-width: 270px; }
+      .arcade-scoreboard { gap: 8px; padding: 5px 12px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ENGINE FAILURE SMOKE TRAIL CANVAS -->
-  <canvas id="smoke-canvas"></canvas>
+  <!-- GAME INTERACTION CANVAS -->
+  <canvas id="game-canvas"></canvas>
 
-  <!-- DAMAGED FAILING ENGINE ROCKET CURSOR -->
+  <!-- LEVEL UP TOAST -->
+  <div class="level-toast" id="levelToast">Level 1 • Velocity Increased!</div>
+
+  <!-- GAME OVER MODAL -->
+  <div class="game-over-modal" id="gameOverModal">
+    <div class="game-over-card">
+      <h2 class="game-over-title">Defense Failed!</h2>
+      <p class="game-over-reason" id="gameOverReason">
+        Center Station Destroyed! An asteroid slammed into the core!
+      </p>
+
+      <div class="game-over-stats">
+        <div class="stat-box">
+          <span>Score</span>
+          <b id="finalScore">0</b>
+        </div>
+        <div class="stat-box">
+          <span>Level</span>
+          <b id="finalLevel">1</b>
+        </div>
+        <div class="stat-box">
+          <span>Best</span>
+          <b id="finalHigh">0</b>
+        </div>
+      </div>
+
+      <div class="esc-prompt-pill" id="escPromptBtn">
+        <span>Press</span>
+        <kbd class="esc-key">Esc</kbd>
+        <span>to exit</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI FAILING ENGINE ROCKET CURSOR (22px) -->
   <div id="failed-rocket-cursor">
-    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));">
-      <!-- Burnt Hull -->
+    <svg width="22" height="22" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));">
       <path d="M19 3C19 3 26 9.5 26 22.5L22.5 25.5L19 23.5L15.5 25.5L12 22.5C12 9.5 19 3 19 3Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.3"/>
-      <!-- Shattered Viewport Window -->
       <circle cx="19" cy="11.5" r="2.8" fill="#e2e8f0" stroke="#0f172a" stroke-width="0.9"/>
       <path d="M17.8 10.5L20.2 12.5M19 9.5L18.5 13.5" stroke="#0f172a" stroke-width="0.7"/>
-      <!-- Burnt Wings -->
       <path d="M12 18L6 23.5V27L12 25.5V18Z" fill="#334155" stroke="#0f172a" stroke-width="1"/>
       <path d="M26 18L32 23.5V27L26 25.5V18Z" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
-      <!-- Sputtering Smashed Nozzle -->
       <path d="M16 25.5L19 31L22 25.5H16Z" fill="#475569"/>
-      <!-- Sparks / Sputtering Flame -->
       <path d="M17.5 25.5L19 28.5L20.5 25.5H17.5Z" fill="#f59e0b"/>
     </svg>
   </div>
@@ -398,11 +605,34 @@
     <div class="matrix-plane" id="matrixPlane"></div>
   </div>
 
-  <!-- Header Injected via common.js -->
+  <!-- Header Injected via common.js[cite: 4] -->
   <div id="header-container"></div>
 
   <main>
     
+    <!-- ARCADE SCOREBOARD -->
+    <div class="arcade-scoreboard">
+      <div class="score-item">
+        <span class="score-label">Score:</span>
+        <span class="score-val" id="currentScore">0</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="score-label">High:</span>
+        <span class="score-val" id="highScore">0</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="score-label">Lvl:</span>
+        <span class="score-val level-badge" id="currentLevel">1</span>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-item">
+        <span class="score-label">Missed:</span>
+        <span class="score-val misses-badge" id="missedCount">0/1</span>
+      </div>
+    </div>
+
     <!-- OPEN SPACE ORBIT RIG -->
     <div class="open-space-stage" id="spaceStage">
       
@@ -410,25 +640,17 @@
       <div class="orbit-ring orbit-2"></div>
       <div class="orbit-ring orbit-3"></div>
 
-      <!-- Damaged Planet -->
-      <div class="damaged-planet-wrap" id="damagedPlanet">
+      <!-- Shattered Planet Core Pieces -->
+      <div class="broken-planet-center" id="planetCenter">
         <div class="planet-glow"></div>
-        <div class="planet-sphere">
-          <div class="crack-line crack-1"></div>
-          <div class="crack-line crack-2"></div>
-          <div class="crack-line crack-3"></div>
-          <span class="material-symbols-outlined">hub</span>
-        </div>
+        <div class="planet-shard shard-top" id="shardTop"></div>
+        <div class="planet-shard shard-left" id="shardLeft"></div>
+        <div class="planet-shard shard-right" id="shardRight"></div>
+        <div class="planet-shard shard-bottom" id="shardBottom"></div>
+        <div class="planet-shard shard-core" id="shardCore"></div>
       </div>
 
-      <!-- Floating Shards & Debris -->
-      <div class="debris-cluster">
-        <div class="debris-shard shard-1"></div>
-        <div class="debris-shard shard-2"></div>
-        <div class="debris-shard shard-3"></div>
-      </div>
-
-      <!-- Orbiting Debris & Displaced Icons -->
+      <!-- Orbiting Displaced Icons -->
       <div class="free-node node-carton-1" id="node1" title="Displaced Carton">
         <span class="material-symbols-outlined">package_2</span>
       </div>
@@ -453,8 +675,8 @@
 
     <!-- Error Information -->
     <div class="badge-capsule">
-      <span class="material-symbols-outlined" style="font-size: 15px;">report_problem</span>
-      <span>Trajectory Lost • 404</span>
+      <span class="material-symbols-outlined" style="font-size: 13px;">smart_toy</span>
+      <span>Click to Fire • Defend the Core!</span>
     </div>
 
     <div class="error-code">404</div>
@@ -462,53 +684,95 @@
     <h1 class="error-title">Signal Lost in Deep Orbit</h1>
 
     <p class="error-description">
-      The logistics route, module, or destination hub you are attempting to reach has drifted out of range or no longer exists.
+      The logistics route or module has drifted out of range. Protect the central station and intercept incoming space debris!
     </p>
 
     <div class="action-group">
       <a href="index.html" class="btn-action btn-primary">
-        <span class="material-symbols-outlined" style="font-size: 18px;">hub</span>
+        <span class="material-symbols-outlined" style="font-size: 14px;">hub</span>
         <span>Re-dock at Home Hub</span>
       </a>
       <button onclick="window.history.back()" class="btn-action btn-secondary">
-        <span class="material-symbols-outlined" style="font-size: 18px;">history</span>
+        <span class="material-symbols-outlined" style="font-size: 14px;">history</span>
         <span>Return to Last Coordinates</span>
       </button>
     </div>
 
   </main>
 
-  <!-- Footer Injected via common.js -->
+  <!-- Footer Injected via common.js[cite: 4] -->
   <div id="footer-container"></div>
 
-  <!-- Common Navigation Scripts -->
+  <!-- Common Navigation Scripts[cite: 4] -->
   <script src="common.js?v=2.2"></script>
 
-  <!-- ORBIT MOTION & FRACTURE DRIFT -->
+  <!-- PLANET ATTRACTION & ORBIT MOTION RIG -->
   <script>
-    (function initBrokenOrbit() {
-      const planet = document.getElementById('damagedPlanet');
+    let globalRocketX = window.innerWidth / 2;
+    let globalRocketY = window.innerHeight / 2;
+    let globalRocketAngle = 0;
+
+    (function initPhysicsAndAttraction() {
+      const stage = document.getElementById('spaceStage');
+      
+      const shards = [
+        { el: document.getElementById('shardTop'), baseDist: 7, angle: -Math.PI / 2, currX: 0, currY: 0, rot: 8 },
+        { el: document.getElementById('shardLeft'), baseDist: 8, angle: Math.PI, currX: 0, currY: 0, rot: -12 },
+        { el: document.getElementById('shardRight'), baseDist: 8, angle: 0, currX: 0, currY: 0, rot: 15 },
+        { el: document.getElementById('shardBottom'), baseDist: 7, angle: Math.PI / 2, currX: 0, currY: 0, rot: -6 },
+        { el: document.getElementById('shardCore'), baseDist: 0, angle: 0, currX: 0, currY: 0, rot: 45 }
+      ];
+
       const nodes = [
-        { el: document.getElementById('node1'), radius: 90,  speed:  0.008, angle: 0.5,             x: 0, y: 0 },
-        { el: document.getElementById('node2'), radius: 130, speed: -0.006, angle: Math.PI,         x: 0, y: 0 },
-        { el: document.getElementById('node3'), radius: 130, speed: -0.006, angle: 0.2,            x: 0, y: 0 },
-        { el: document.getElementById('node4'), radius: 170, speed:  0.004, angle: -Math.PI / 2,     x: 0, y: 0 },
-        { el: document.getElementById('node5'), radius: 170, speed:  0.004, angle:  Math.PI / 2.2,   x: 0, y: 0 }
+        { el: document.getElementById('node1'), radius: 50,  speed:  0.009, angle: 0.5,             x: 0, y: 0 },
+        { el: document.getElementById('node2'), radius: 75,  speed: -0.007, angle: Math.PI,         x: 0, y: 0 },
+        { el: document.getElementById('node3'), radius: 75,  speed: -0.007, angle: 0.2,            x: 0, y: 0 },
+        { el: document.getElementById('node4'), radius: 98,  speed:  0.005, angle: -Math.PI / 2,     x: 0, y: 0 },
+        { el: document.getElementById('node5'), radius: 98,  speed:  0.005, angle:  Math.PI / 2.2,   x: 0, y: 0 }
       ];
 
       function render() {
-        for (let i = 0; i < nodes.length; i++) {
-          const item = nodes[i];
-          item.angle += item.speed;
+        if (stage) {
+          const rect = stage.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const relX = globalRocketX - centerX;
+          const relY = globalRocketY - centerY;
 
-          const targetX = Math.cos(item.angle) * item.radius;
-          const targetY = Math.sin(item.angle) * item.radius;
+          const pullDist = Math.hypot(relX, relY) || 1;
+          const pullStrength = Math.min(22, 1200 / (pullDist + 60));
+          const pullAngle = Math.atan2(relY, relX);
 
-          item.x += (targetX - item.x) * 0.1;
-          item.y += (targetY - item.y) * 0.1;
+          shards.forEach((s, idx) => {
+            const time = performance.now() * 0.002 + idx;
+            const floatOffset = Math.sin(time) * 2;
+            const baseX = Math.cos(s.angle) * (s.baseDist + floatOffset);
+            const baseY = Math.sin(s.angle) * (s.baseDist + floatOffset);
 
-          if (item.el) {
-            item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+            const targetX = baseX + Math.cos(pullAngle) * pullStrength * (1 + idx * 0.15);
+            const targetY = baseY + Math.sin(pullAngle) * pullStrength * (1 + idx * 0.15);
+
+            s.currX += (targetX - s.currX) * 0.12;
+            s.currY += (targetY - s.currY) * 0.12;
+
+            if (s.el) {
+              s.el.style.transform = `translate(${s.currX}px, ${s.currY}px) rotate(${s.rot + Math.sin(time) * 4}deg)`;
+            }
+          });
+
+          for (let i = 0; i < nodes.length; i++) {
+            const item = nodes[i];
+            item.angle += item.speed;
+
+            const targetX = Math.cos(item.angle) * item.radius + (Math.cos(pullAngle) * pullStrength * 0.4);
+            const targetY = Math.sin(item.angle) * item.radius + (Math.sin(pullAngle) * pullStrength * 0.4);
+
+            item.x += (targetX - item.x) * 0.1;
+            item.y += (targetY - item.y) * 0.1;
+
+            if (item.el) {
+              item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+            }
           }
         }
         requestAnimationFrame(render);
@@ -517,23 +781,49 @@
     })();
   </script>
 
-  <!-- FAILING ROCKET ENGINE CURSOR & BLACK/GRAY SMOKE PUFF CONTROLLER -->
+  <!-- HARDCORE ASTEROID DEFENSE ENGINE WITH ESCAPE EXIT ROUTING -->
   <script>
-    (function initFailedRocketCursor() {
-      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-
+    (function initAsteroidArcade() {
+      const canvas = document.getElementById('game-canvas');
       const rocket = document.getElementById('failed-rocket-cursor');
-      const canvas = document.getElementById('smoke-canvas');
-      if (!rocket || !canvas) return;
+      const curScoreEl = document.getElementById('currentScore');
+      const highScoreEl = document.getElementById('highScore');
+      const levelEl = document.getElementById('currentLevel');
+      const missedEl = document.getElementById('missedCount');
+      const toastEl = document.getElementById('levelToast');
+      const gameOverModal = document.getElementById('gameOverModal');
+      const gameOverReason = document.getElementById('gameOverReason');
+      const finalScoreEl = document.getElementById('finalScore');
+      const finalLevelEl = document.getElementById('finalLevel');
+      const finalHighEl = document.getElementById('finalHigh');
+      const escPromptBtn = document.getElementById('escPromptBtn');
+      const planetCenterEl = document.getElementById('planetCenter');
+      if (!canvas) return;
 
       const ctx = canvas.getContext('2d');
 
-      function resizeCanvas() {
+      function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
       }
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Game State Variables
+      let score = 0;
+      let missed = 0;
+      const MAX_MISSED = 1;
+      let level = 1;
+      let isGameOver = false;
+      let spawnTimer = null;
+      let highScore = parseInt(localStorage.getItem('apml_404_highscore') || '0', 10);
+      if (highScoreEl) highScoreEl.textContent = highScore;
+
+      // Entities
+      const missiles = [];
+      const asteroids = [];
+      const smokeParticles = [];
+      const blastParticles = [];
 
       let currentX = window.innerWidth / 2;
       let currentY = window.innerHeight / 2;
@@ -541,38 +831,191 @@
       let targetY = currentY;
       let currentAngle = 0;
       let lastSmokeTime = 0;
-      const particles = [];
 
-      document.addEventListener('mouseenter', () => {
-        rocket.style.opacity = '1';
-      });
-
-      document.addEventListener('mouseleave', () => {
-        rocket.style.opacity = '0';
-      });
-
+      // Cursor tracking
+      document.addEventListener('mouseenter', () => { if (rocket && !isGameOver) rocket.style.opacity = '1'; });
+      document.addEventListener('mouseleave', () => { if (rocket) rocket.style.opacity = '0'; });
       window.addEventListener('mousemove', (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
-        rocket.style.opacity = '1';
+        if (rocket && !isGameOver) rocket.style.opacity = '1';
       });
 
-      // Emits sputtering black soot, dirty grey smoke, and flickering spark embers
+      // Controls: Left click / Touch
+      window.addEventListener('mousedown', (e) => {
+        if (isGameOver) return;
+        if (e.target.closest('a, button, .site-header, .site-footer, .game-over-modal')) return;
+        if (e.button === 0) fireMissile();
+      });
+
+      window.addEventListener('touchstart', (e) => {
+        if (isGameOver) return;
+        if (e.target.closest('a, button, .site-header, .site-footer, .game-over-modal')) return;
+        if (e.touches.length > 0) {
+          targetX = e.touches[0].clientX;
+          targetY = e.touches[0].clientY;
+          fireMissile();
+        }
+      }, { passive: true });
+
+      // Exit back when pressing Escape button or clicking the pill
+      function exitFromGameOver() {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'index.html';
+        }
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          exitFromGameOver();
+        }
+      });
+
+      if (escPromptBtn) {
+        escPromptBtn.addEventListener('click', exitFromGameOver);
+      }
+
+      function fireMissile() {
+        const rad = (currentAngle - 90) * (Math.PI / 180);
+        const speed = 15;
+        missiles.push({
+          x: currentX + Math.cos(rad) * 12,
+          y: currentY + Math.sin(rad) * 12,
+          vx: Math.cos(rad) * speed,
+          vy: Math.sin(rad) * speed,
+          radius: 3,
+          life: 90
+        });
+
+        for (let i = 0; i < 4; i++) {
+          blastParticles.push({
+            x: currentX,
+            y: currentY,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4,
+            radius: Math.random() * 2 + 1,
+            alpha: 1,
+            color: '#38bdf8'
+          });
+        }
+      }
+
+      // Scaling Slabs Every 250 Score Points
+      function updateDifficulty() {
+        const newLevel = Math.floor(score / 250) + 1;
+        if (newLevel > level) {
+          level = newLevel;
+          if (levelEl) levelEl.textContent = level;
+          showToast(`Level ${level} • Wave Speed Up!`);
+          resetSpawnTimer();
+        }
+      }
+
+      function showToast(text) {
+        if (!toastEl) return;
+        toastEl.textContent = text;
+        toastEl.classList.add('show');
+        setTimeout(() => toastEl.classList.remove('show'), 2400);
+      }
+
+      function addScore(pts) {
+        score += pts;
+        if (curScoreEl) curScoreEl.textContent = score;
+        if (score > highScore) {
+          highScore = score;
+          localStorage.setItem('apml_404_highscore', highScore);
+          if (highScoreEl) highScoreEl.textContent = highScore;
+        }
+        updateDifficulty();
+      }
+
+      function triggerGameOver(reasonText) {
+        if (isGameOver) return;
+        isGameOver = true;
+        if (rocket) rocket.style.opacity = '0';
+        if (gameOverReason) gameOverReason.textContent = reasonText || "Center Station Destroyed! An asteroid slammed into the core!";
+        if (finalScoreEl) finalScoreEl.textContent = score;
+        if (finalLevelEl) finalLevelEl.textContent = level;
+        if (finalHighEl) finalHighEl.textContent = highScore;
+        if (gameOverModal) gameOverModal.classList.add('active');
+        if (spawnTimer) clearInterval(spawnTimer);
+      }
+
+      // Asteroid Spawner with Targeted Vectoring Towards Core
+      function spawnAsteroid() {
+        if (isGameOver) return;
+        const maxAsteroids = 8 + level * 2;
+        if (asteroids.length >= maxAsteroids) return;
+
+        const side = Math.floor(Math.random() * 4);
+        let x, y;
+        const margin = 40;
+
+        if (side === 0) { x = Math.random() * canvas.width; y = -margin; }
+        else if (side === 1) { x = canvas.width + margin; y = Math.random() * canvas.height; }
+        else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + margin; }
+        else { x = -margin; y = Math.random() * canvas.height; }
+
+        let coreX = canvas.width / 2;
+        let coreY = canvas.height / 2;
+        if (planetCenterEl) {
+          const rect = planetCenterEl.getBoundingClientRect();
+          coreX = rect.left + rect.width / 2;
+          coreY = rect.top + rect.height / 2;
+        }
+
+        const targetX = coreX + (Math.random() - 0.5) * 40;
+        const targetY = coreY + (Math.random() - 0.5) * 40;
+        const angle = Math.atan2(targetY - y, targetX - x);
+
+        const baseSpeed = Math.random() * 0.9 + 0.7;
+        const levelSpeedMultiplier = 1 + (level - 1) * 0.25;
+        const speed = baseSpeed * levelSpeedMultiplier;
+
+        const numPoints = Math.floor(Math.random() * 3) + 6;
+        const radius = Math.random() * 11 + 13;
+        const offsets = [];
+        for (let i = 0; i < numPoints; i++) {
+          offsets.push(0.75 + Math.random() * 0.5);
+        }
+
+        asteroids.push({
+          x, y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          radius,
+          numPoints,
+          offsets,
+          rot: Math.random() * Math.PI * 2,
+          rotSpeed: (Math.random() - 0.5) * (0.02 + level * 0.006),
+          color: Math.random() > 0.4 ? '#94a3b8' : '#b91c1c'
+        });
+      }
+
+      function resetSpawnTimer() {
+        if (spawnTimer) clearInterval(spawnTimer);
+        const interval = Math.max(650, 1500 - (level - 1) * 190);
+        spawnTimer = setInterval(spawnAsteroid, interval);
+      }
+      resetSpawnTimer();
+
+      // Smoke and explosion helpers
       function createEngineFailureSmoke(x, y, angleDeg) {
-        const exhaustDist = 16;
+        const exhaustDist = 10;
         const rad = (angleDeg - 90) * (Math.PI / 180);
         const spawnX = x - Math.cos(rad) * exhaustDist;
         const spawnY = y - Math.sin(rad) * exhaustDist;
-
         const isSpark = Math.random() < 0.25;
 
-        particles.push({
-          x: spawnX + (Math.random() - 0.5) * 6,
-          y: spawnY + (Math.random() - 0.5) * 6,
-          vx: -Math.cos(rad) * (Math.random() * 1.5 + 0.5) + (Math.random() - 0.5) * 1.2,
-          vy: -Math.sin(rad) * (Math.random() * 1.5 + 0.5) + (Math.random() - 0.5) * 1.2,
-          radius: isSpark ? Math.random() * 2 + 1.2 : Math.random() * 4 + 3,
-          alpha: isSpark ? 0.9 : 0.65,
+        smokeParticles.push({
+          x: spawnX + (Math.random() - 0.5) * 3,
+          y: spawnY + (Math.random() - 0.5) * 3,
+          vx: -Math.cos(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
+          vy: -Math.sin(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
+          radius: isSpark ? Math.random() * 1.2 + 0.6 : Math.random() * 2.2 + 1.4,
+          alpha: isSpark ? 0.9 : 0.55,
           color: isSpark 
             ? (Math.random() > 0.5 ? '#f97316' : '#eab308') 
             : (Math.random() > 0.4 ? '#334155' : '#64748b'),
@@ -580,24 +1023,54 @@
         });
       }
 
-      function updateAndDraw() {
+      function createExplosion(x, y, baseColor) {
+        for (let i = 0; i < 18; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const spd = Math.random() * 4.5 + 1.5;
+          blastParticles.push({
+            x, y,
+            vx: Math.cos(angle) * spd,
+            vy: Math.sin(angle) * spd,
+            radius: Math.random() * 3 + 1.5,
+            alpha: 1,
+            color: Math.random() > 0.5 ? baseColor : '#f59e0b'
+          });
+        }
+      }
+
+      // Main Animation/Game Frame
+      function gameLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let coreX = canvas.width / 2;
+        let coreY = canvas.height / 2;
+        const coreHitRadius = 32;
+
+        if (planetCenterEl) {
+          const rect = planetCenterEl.getBoundingClientRect();
+          coreX = rect.left + rect.width / 2;
+          coreY = rect.top + rect.height / 2;
+        }
+
+        // 1. Rocket Cursor Smoothing
         const dx = targetX - currentX;
         const dy = targetY - currentY;
         const dist = Math.hypot(dx, dy);
 
         currentX += dx * 0.45;
         currentY += dy * 0.45;
+        globalRocketX = currentX;
+        globalRocketY = currentY;
 
-        // Wobble angle when engine fails
-        if (dist > 1.2) {
+        if (dist > 1 && !isGameOver) {
           const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
           let diff = (targetAngle - currentAngle) % 360;
           if (diff > 180) diff -= 360;
           if (diff < -180) diff += 360;
           
-          // Sputter vibration jitter
-          const sputter = (Math.random() - 0.5) * 12;
+          const sputter = (Math.random() - 0.5) * 8;
           currentAngle += diff * 0.25 + sputter;
+          globalRocketAngle = currentAngle;
 
           const now = performance.now();
           if (now - lastSmokeTime > 18) {
@@ -606,25 +1079,26 @@
           }
         }
 
-        rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
+        if (rocket && !isGameOver) {
+          rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
+        }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (let i = particles.length - 1; i >= 0; i--) {
-          const p = particles[i];
+        // 2. Engine Smoke & Spark Trails
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+          const p = smokeParticles[i];
           p.x += p.vx;
           p.y += p.vy;
 
           if (p.isSpark) {
             p.radius *= 0.94;
-            p.alpha -= 0.035;
+            p.alpha -= 0.04;
           } else {
-            p.radius += 0.28;
-            p.alpha -= 0.018;
+            p.radius += 0.16;
+            p.alpha -= 0.022;
           }
 
           if (p.alpha <= 0 || p.radius <= 0.2) {
-            particles.splice(i, 1);
+            smokeParticles.splice(i, 1);
             continue;
           }
 
@@ -637,10 +1111,128 @@
           ctx.restore();
         }
 
-        requestAnimationFrame(updateAndDraw);
+        // 3. Render Missiles
+        for (let i = missiles.length - 1; i >= 0; i--) {
+          const m = missiles[i];
+          m.x += m.vx;
+          m.y += m.vy;
+          m.life--;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.radius + 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
+          ctx.fillStyle = '#38bdf8';
+          ctx.shadowColor = '#38bdf8';
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.restore();
+
+          if (m.life <= 0 || m.x < -50 || m.x > canvas.width + 50 || m.y < -50 || m.y > canvas.height + 50) {
+            missiles.splice(i, 1);
+          }
+        }
+
+        // 4. Render Asteroids & Hit/Core Detection
+        for (let i = asteroids.length - 1; i >= 0; i--) {
+          const a = asteroids[i];
+          a.x += a.vx;
+          a.y += a.vy;
+          a.rot += a.rotSpeed;
+
+          ctx.save();
+          ctx.translate(a.x, a.y);
+          ctx.rotate(a.rot);
+          ctx.beginPath();
+          for (let j = 0; j < a.numPoints; j++) {
+            const theta = (j / a.numPoints) * Math.PI * 2;
+            const r = a.radius * a.offsets[j];
+            const px = Math.cos(theta) * r;
+            const py = Math.sin(theta) * r;
+            if (j === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          ctx.closePath();
+          ctx.fillStyle = a.color === '#b91c1c' ? 'rgba(185, 28, 28, 0.12)' : 'rgba(241, 245, 249, 0.9)';
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = a.color;
+          ctx.stroke();
+          ctx.restore();
+
+          // Core Collision Check
+          const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
+          if (distToCenter < a.radius + coreHitRadius) {
+            createExplosion(a.x, a.y, '#b91c1c');
+            asteroids.splice(i, 1);
+            if (missedEl) missedEl.textContent = '1/1';
+            triggerGameOver("Center Station Destroyed! An asteroid slammed into the core!");
+            continue;
+          }
+
+          // Missile Collision
+          let asteroidDestroyed = false;
+          for (let k = missiles.length - 1; k >= 0; k--) {
+            const m = missiles[k];
+            const dist = Math.hypot(a.x - m.x, a.y - m.y);
+            if (dist < a.radius + m.radius) {
+              createExplosion(a.x, a.y, a.color);
+              addScore(10);
+              missiles.splice(k, 1);
+              asteroidDestroyed = true;
+              break;
+            }
+          }
+
+          if (asteroidDestroyed) {
+            asteroids.splice(i, 1);
+            continue;
+          }
+
+          // Boundary Miss Check
+          if (a.x < -80 || a.x > canvas.width + 80 || a.y < -80 || a.y > canvas.height + 80) {
+            asteroids.splice(i, 1);
+            missed++;
+            if (missedEl) missedEl.textContent = `${missed}/${MAX_MISSED}`;
+            if (missed >= MAX_MISSED) {
+              triggerGameOver("Defense Failed! An asteroid slipped past containment!");
+            }
+          }
+        }
+
+        // 5. Render Blast Debris
+        for (let i = blastParticles.length - 1; i >= 0; i--) {
+          const bp = blastParticles[i];
+          bp.x += bp.vx;
+          bp.y += bp.vy;
+          bp.vx *= 0.95;
+          bp.vy *= 0.95;
+          bp.alpha -= 0.03;
+
+          if (bp.alpha <= 0) {
+            blastParticles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
+          ctx.fillStyle = bp.color;
+          ctx.globalAlpha = Math.max(0, bp.alpha);
+          ctx.shadowColor = bp.color;
+          ctx.shadowBlur = 4;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        requestAnimationFrame(gameLoop);
       }
 
-      requestAnimationFrame(updateAndDraw);
+      requestAnimationFrame(gameLoop);
     })();
   </script>
 </body>
