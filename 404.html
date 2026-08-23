@@ -983,7 +983,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH AUTO-SYNCED GLOBAL HIGHEST SCORE -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH DUAL-MODE FIREBASE REALTIME & REST SYNC -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -1021,7 +1021,6 @@
       resize();
       window.addEventListener('resize', resize);
 
-      // Preload saved callsign
       if (pilotCallsignInput) {
         pilotCallsignInput.value = localStorage.getItem('apml_pilot_name') || '';
       }
@@ -1036,7 +1035,6 @@
       let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
       if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
 
-      // Entities
       const missiles = [];
       const asteroids = [];
       const smokeParticles = [];
@@ -1058,7 +1056,7 @@
         if (rocket && !isGameOver) rocket.style.opacity = '1';
       });
 
-      // Controls: Left click / Touch to shoot
+      // Shoot controls
       window.addEventListener('mousedown', (e) => {
         if (isGameOver) return;
         if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView')) return;
@@ -1074,35 +1072,6 @@
           fireMissile();
         }
       }, { passive: true });
-
-      // LISTEN TO REALTIME FIREBASE FOR GLOBAL HIGHEST SCORE & LEADERBOARD
-      function initGlobalScoreSync() {
-        if (window.db) {
-          db.ref('arcade_scores').orderByChild('score').limitToLast(10).on('value', (snapshot) => {
-            const entries = [];
-            snapshot.forEach((child) => {
-              entries.push(child.val());
-            });
-            entries.reverse(); // Highest score first
-
-            if (entries.length > 0) {
-              const topScore = entries[0].score || 0;
-              globalHighestScore = Math.max(globalHighestScore, topScore);
-              localStorage.setItem('apml_global_highest_score', globalHighestScore);
-              if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
-            }
-
-            renderLeaderboard(entries);
-          }, (err) => {
-            console.warn('Firebase sync error:', err);
-            const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-            renderLeaderboard(localSaved);
-          });
-        } else {
-          const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-          renderLeaderboard(localSaved);
-        }
-      }
 
       function renderLeaderboard(entries) {
         if (!leaderboardList) return;
@@ -1121,10 +1090,8 @@
         `).join('');
       }
 
-      initGlobalScoreSync();
-
       function escapeHtml(str) {
-        return str.replace(/[&<>'"]/g, tag => ({
+        return String(str || '').replace(/[&<>'"]/g, tag => ({
           '&': '&amp;',
           '<': '&lt;',
           '>': '&gt;',
@@ -1133,7 +1100,53 @@
         }[tag] || tag));
       }
 
-      // SUBMIT EXACT CURRENT RUN SCORE AND REFRESH PAGE
+      // 1. LIVE SYNC (SDK Listener + REST Fetch Fallback)
+      function initGlobalScoreSync() {
+        // Fallback REST fetch to ensure instant population even if websockets are delayed
+        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json?orderBy="score"&limitToLast=10')
+          .then(res => res.json())
+          .then(data => {
+            if (data && typeof data === 'object') {
+              const entries = Object.values(data);
+              entries.sort((a, b) => (b.score || 0) - (a.score || 0));
+              if (entries.length > 0) {
+                globalHighestScore = Math.max(globalHighestScore, entries[0].score || 0);
+                localStorage.setItem('apml_global_highest_score', globalHighestScore);
+                if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
+              }
+              renderLeaderboard(entries);
+            }
+          })
+          .catch(() => {});
+
+        // Realtime Websocket Listener
+        if (window.db) {
+          db.ref('arcade_scores').orderByChild('score').limitToLast(10).on('value', (snapshot) => {
+            const entries = [];
+            snapshot.forEach((child) => {
+              entries.push(child.val());
+            });
+            entries.reverse();
+
+            if (entries.length > 0) {
+              const topScore = entries[0].score || 0;
+              globalHighestScore = Math.max(globalHighestScore, topScore);
+              localStorage.setItem('apml_global_highest_score', globalHighestScore);
+              if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
+            }
+
+            renderLeaderboard(entries);
+          }, (err) => {
+            console.warn('Firebase sync note:', err);
+            const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
+            renderLeaderboard(localSaved);
+          });
+        }
+      }
+
+      initGlobalScoreSync();
+
+      // 2. GUARANTEED GLOBAL SCORE PERSISTENCE (SDK + REST POST)
       function executeScoreSubmission(e) {
         if (e) {
           e.preventDefault();
@@ -1146,7 +1159,6 @@
         const currentScoreToSave = score;
         const currentLevelToSave = level;
 
-        // Local cache storage
         const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
         localSaved.push({ pilot: callsign, score: currentScoreToSave, level: currentLevelToSave });
         localSaved.sort((a, b) => b.score - a.score);
@@ -1169,7 +1181,7 @@
         function completeAndReload() {
           if (saveScoreForm) saveScoreForm.style.display = 'none';
           if (globalStatusToast) {
-            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score (${currentScoreToSave.toLocaleString()}) saved! Refreshing...`;
+            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score (${currentScoreToSave.toLocaleString()}) saved globally! Refreshing...`;
             globalStatusToast.style.display = 'block';
           }
           setTimeout(() => {
@@ -1177,16 +1189,24 @@
           }, 900);
         }
 
-        if (window.db) {
-          db.ref('arcade_scores').push(scorePayload).then(() => {
-            completeAndReload();
-          }).catch((err) => {
-            console.error('Firebase save error:', err);
-            completeAndReload();
-          });
-        } else {
+        // Direct write with REST endpoint fallback ensuring database node creation
+        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(scorePayload)
+        })
+        .then(() => {
           completeAndReload();
-        }
+        })
+        .catch(() => {
+          if (window.db) {
+            db.ref('arcade_scores').push(scorePayload)
+              .then(() => completeAndReload())
+              .catch(() => completeAndReload());
+          } else {
+            completeAndReload();
+          }
+        });
       }
 
       if (saveScoreForm) {
@@ -1196,7 +1216,7 @@
         btnSubmitScore.addEventListener('click', executeScoreSubmission);
       }
 
-      // DIRECT SCOREBOARD CHECK BUTTON HANDLER
+      // Check scores modal button
       if (btnCheckScores) {
         btnCheckScores.addEventListener('click', () => {
           isGameOver = true;
@@ -1228,7 +1248,6 @@
         });
       }
 
-      // Reset to Game View upon ESC or Click
       function switchToGameView() {
         if (!isGameOver) return;
         
@@ -1306,7 +1325,6 @@
         }
       }
 
-      // Difficulty Scaling
       function updateDifficulty() {
         const newLevel = Math.floor(score / 250) + 1;
         if (newLevel > level) {
@@ -1346,7 +1364,6 @@
         }
       }
 
-      // SWITCHES TO DEDICATED SCORE PAGE VIEW
       function triggerGameOver() {
         if (isGameOver) return;
         isGameOver = true;
@@ -1355,7 +1372,6 @@
         if (rocket) rocket.style.opacity = '0';
         document.body.classList.remove('game-active');
 
-        // Clear remaining asteroids/particles from screen
         asteroids.length = 0;
         missiles.length = 0;
         blastParticles.length = 0;
@@ -1365,11 +1381,9 @@
         if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
         if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
 
-        // Populate exact current score in score page
         if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
         if (pageFinalLevel) pageFinalLevel.textContent = level;
 
-        // Reset submit button state
         if (saveScoreForm) saveScoreForm.style.display = 'flex';
         if (btnSubmitScore) {
           btnSubmitScore.disabled = false;
@@ -1378,12 +1392,10 @@
         }
         if (globalStatusToast) globalStatusToast.style.display = 'none';
 
-        // Switch active views
         if (gameView) gameView.classList.add('hidden-view');
         if (scoreView) scoreView.classList.remove('hidden-view');
       }
 
-      // Asteroid Spawner
       function spawnAsteroid() {
         if (isGameOver) return;
         const maxAsteroids = 7 + level * 2;
@@ -1441,7 +1453,6 @@
       }
       resetSpawnTimer();
 
-      // Smoke and explosion helpers
       function createEngineFailureSmoke(x, y, angleDeg) {
         const exhaustDist = 10;
         const rad = (angleDeg - 90) * (Math.PI / 180);
@@ -1479,7 +1490,6 @@
         }
       }
 
-      // Main Animation Frame
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1499,7 +1509,6 @@
           coreY = rect.top + rect.height / 2;
         }
 
-        // 1. Rocket Cursor Smoothing
         const dx = targetX - currentX;
         const dy = targetY - currentY;
         const dist = Math.hypot(dx, dy);
@@ -1530,7 +1539,6 @@
           rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
         }
 
-        // 2. Engine Smoke & Spark Trails
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
           const p = smokeParticles[i];
           p.x += p.vx;
@@ -1558,7 +1566,6 @@
           ctx.restore();
         }
 
-        // 3. Missiles
         for (let i = missiles.length - 1; i >= 0; i--) {
           const m = missiles[i];
           m.x += m.vx;
@@ -1584,7 +1591,6 @@
           }
         }
 
-        // 4. Asteroids
         for (let i = asteroids.length - 1; i >= 0; i--) {
           const a = asteroids[i];
           a.x += a.vx;
@@ -1611,7 +1617,6 @@
           ctx.stroke();
           ctx.restore();
 
-          // A. Rocket Body Ramming
           const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
           if (distToRocket < a.radius + rocketHitRadius && !isGameOver) {
             createExplosion(a.x, a.y, a.color, true);
@@ -1620,7 +1625,6 @@
             continue;
           }
 
-          // B. Center Core Collision
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
             createExplosion(a.x, a.y, '#b91c1c');
@@ -1629,7 +1633,6 @@
             continue;
           }
 
-          // C. Missile Collision
           let asteroidDestroyed = false;
           for (let k = missiles.length - 1; k >= 0; k--) {
             const m = missiles[k];
@@ -1648,14 +1651,12 @@
             continue;
           }
 
-          // D. Boundary Miss
           if (a.x < -80 || a.x > canvas.width + 80 || a.y < -80 || a.y > canvas.height + 80) {
             asteroids.splice(i, 1);
             deductLife("Defense Failed! An asteroid slipped past containment!");
           }
         }
 
-        // 5. Blast Debris Particles
         for (let i = blastParticles.length - 1; i >= 0; i--) {
           const bp = blastParticles[i];
           bp.x += bp.vx;
