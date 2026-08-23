@@ -63,10 +63,10 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 22px;
-      height: 22px;
-      margin-top: -11px;
-      margin-left: -11px;
+      width: 24px;
+      height: 24px;
+      margin-top: -12px;
+      margin-left: -12px;
       pointer-events: none;
       z-index: 100000;
       will-change: transform, opacity;
@@ -180,8 +180,16 @@
       color: #0284c7;
     }
 
-    .misses-badge {
+    .lives-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
       color: #e11d48;
+    }
+
+    .lives-badge .material-symbols-outlined {
+      font-size: 15px;
+      font-variation-settings: 'FILL' 1;
     }
 
     /* LEVEL UP NOTIFICATION TOAST */
@@ -558,7 +566,7 @@
     <div class="game-over-card">
       <h2 class="game-over-title">Defense Failed!</h2>
       <p class="game-over-reason" id="gameOverReason">
-        Center Station Destroyed! An asteroid slammed into the core!
+        All 5 lifelines exhausted! Orbit containment collapsed.
       </p>
 
       <div class="game-over-stats">
@@ -584,9 +592,9 @@
     </div>
   </div>
 
-  <!-- MINI FAILING ENGINE ROCKET CURSOR (22px) -->
+  <!-- MINI FAILING ENGINE ROCKET CURSOR (24px) -->
   <div id="failed-rocket-cursor">
-    <svg width="22" height="22" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));">
+    <svg width="24" height="24" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));">
       <path d="M19 3C19 3 26 9.5 26 22.5L22.5 25.5L19 23.5L15.5 25.5L12 22.5C12 9.5 19 3 19 3Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.3"/>
       <circle cx="19" cy="11.5" r="2.8" fill="#e2e8f0" stroke="#0f172a" stroke-width="0.9"/>
       <path d="M17.8 10.5L20.2 12.5M19 9.5L18.5 13.5" stroke="#0f172a" stroke-width="0.7"/>
@@ -610,7 +618,7 @@
 
   <main>
     
-    <!-- ARCADE SCOREBOARD -->
+    <!-- ARCADE SCOREBOARD (5 LIFELINES) -->
     <div class="arcade-scoreboard">
       <div class="score-item">
         <span class="score-label">Score:</span>
@@ -628,8 +636,11 @@
       </div>
       <div class="score-divider"></div>
       <div class="score-item">
-        <span class="score-label">Missed:</span>
-        <span class="score-val misses-badge" id="missedCount">0/1</span>
+        <span class="score-label">Lives:</span>
+        <span class="score-val lives-badge" id="livesDisplay">
+          <span class="material-symbols-outlined">favorite</span>
+          <span id="livesCountText">5</span>
+        </span>
       </div>
     </div>
 
@@ -676,7 +687,7 @@
     <!-- Error Information -->
     <div class="badge-capsule">
       <span class="material-symbols-outlined" style="font-size: 13px;">smart_toy</span>
-      <span>Click to Fire • Defend the Core!</span>
+      <span>Click to Fire • Ram or Shoot Meteors!</span>
     </div>
 
     <div class="error-code">404</div>
@@ -684,7 +695,7 @@
     <h1 class="error-title">Signal Lost in Deep Orbit</h1>
 
     <p class="error-description">
-      The logistics route or module has drifted out of range. Protect the central station and intercept incoming space debris!
+      The logistics route or module has drifted out of range. Intercept incoming meteors using photon missiles or rocket ramming!
     </p>
 
     <div class="action-group">
@@ -781,7 +792,7 @@
     })();
   </script>
 
-  <!-- HARDCORE ASTEROID DEFENSE ENGINE WITH ESCAPE EXIT ROUTING -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH CLEAN IN-PAGE RESET -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -789,7 +800,7 @@
       const curScoreEl = document.getElementById('currentScore');
       const highScoreEl = document.getElementById('highScore');
       const levelEl = document.getElementById('currentLevel');
-      const missedEl = document.getElementById('missedCount');
+      const livesTextEl = document.getElementById('livesCountText');
       const toastEl = document.getElementById('levelToast');
       const gameOverModal = document.getElementById('gameOverModal');
       const gameOverReason = document.getElementById('gameOverReason');
@@ -809,10 +820,10 @@
       resize();
       window.addEventListener('resize', resize);
 
-      // Game State Variables
+      // Game State Variables (5 Lifelines)
       let score = 0;
-      let missed = 0;
-      const MAX_MISSED = 1;
+      let lives = 5;
+      const MAX_LIVES = 5;
       let level = 1;
       let isGameOver = false;
       let spawnTimer = null;
@@ -841,7 +852,7 @@
         if (rocket && !isGameOver) rocket.style.opacity = '1';
       });
 
-      // Controls: Left click / Touch
+      // Controls: Left click / Touch to shoot
       window.addEventListener('mousedown', (e) => {
         if (isGameOver) return;
         if (e.target.closest('a, button, .site-header, .site-footer, .game-over-modal')) return;
@@ -858,23 +869,38 @@
         }
       }, { passive: true });
 
-      // Exit back when pressing Escape button or clicking the pill
-      function exitFromGameOver() {
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          window.location.href = 'index.html';
-        }
+      // Clean local reset back to fresh 404 state without page refresh or leaving URL
+      function resetTo404State() {
+        if (!isGameOver) return;
+        
+        isGameOver = false;
+        score = 0;
+        lives = 5;
+        level = 1;
+
+        if (curScoreEl) curScoreEl.textContent = '0';
+        if (livesTextEl) livesTextEl.textContent = '5';
+        if (levelEl) levelEl.textContent = '1';
+        if (gameOverModal) gameOverModal.classList.remove('active');
+        if (rocket) rocket.style.opacity = '1';
+
+        // Clear ongoing projectiles and objects
+        asteroids.length = 0;
+        missiles.length = 0;
+        blastParticles.length = 0;
+        smokeParticles.length = 0;
+
+        resetSpawnTimer();
       }
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          exitFromGameOver();
+        if (e.key === 'Escape' && isGameOver) {
+          resetTo404State();
         }
       });
 
       if (escPromptBtn) {
-        escPromptBtn.addEventListener('click', exitFromGameOver);
+        escPromptBtn.addEventListener('click', resetTo404State);
       }
 
       function fireMissile() {
@@ -908,7 +934,7 @@
         if (newLevel > level) {
           level = newLevel;
           if (levelEl) levelEl.textContent = level;
-          showToast(`Level ${level} • Wave Speed Up!`);
+          showToast(`Level ${level} • Meteor Velocity Increased!`);
           resetSpawnTimer();
         }
       }
@@ -931,11 +957,24 @@
         updateDifficulty();
       }
 
+      // Decrement Lifeline
+      function deductLife(reason) {
+        if (isGameOver) return;
+        lives--;
+        if (livesTextEl) livesTextEl.textContent = `${lives}`;
+
+        if (lives <= 0) {
+          triggerGameOver(reason || "All 5 lifelines exhausted! Orbit containment collapsed.");
+        } else {
+          showToast(`Lifeline Lost! (${lives}/5 Remaining)`);
+        }
+      }
+
       function triggerGameOver(reasonText) {
         if (isGameOver) return;
         isGameOver = true;
         if (rocket) rocket.style.opacity = '0';
-        if (gameOverReason) gameOverReason.textContent = reasonText || "Center Station Destroyed! An asteroid slammed into the core!";
+        if (gameOverReason) gameOverReason.textContent = reasonText;
         if (finalScoreEl) finalScoreEl.textContent = score;
         if (finalLevelEl) finalLevelEl.textContent = level;
         if (finalHighEl) finalHighEl.textContent = highScore;
@@ -946,7 +985,7 @@
       // Asteroid Spawner with Targeted Vectoring Towards Core
       function spawnAsteroid() {
         if (isGameOver) return;
-        const maxAsteroids = 8 + level * 2;
+        const maxAsteroids = 7 + level * 2;
         if (asteroids.length >= maxAsteroids) return;
 
         const side = Math.floor(Math.random() * 4);
@@ -970,7 +1009,7 @@
         const targetY = coreY + (Math.random() - 0.5) * 40;
         const angle = Math.atan2(targetY - y, targetX - x);
 
-        const baseSpeed = Math.random() * 0.9 + 0.7;
+        const baseSpeed = Math.random() * 0.9 + 0.75;
         const levelSpeedMultiplier = 1 + (level - 1) * 0.25;
         const speed = baseSpeed * levelSpeedMultiplier;
 
@@ -996,7 +1035,7 @@
 
       function resetSpawnTimer() {
         if (spawnTimer) clearInterval(spawnTimer);
-        const interval = Math.max(650, 1500 - (level - 1) * 190);
+        const interval = Math.max(600, 1450 - (level - 1) * 180);
         spawnTimer = setInterval(spawnAsteroid, interval);
       }
       resetSpawnTimer();
@@ -1023,17 +1062,18 @@
         });
       }
 
-      function createExplosion(x, y, baseColor) {
-        for (let i = 0; i < 18; i++) {
+      function createExplosion(x, y, baseColor, isRam = false) {
+        const count = isRam ? 26 : 18;
+        for (let i = 0; i < count; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const spd = Math.random() * 4.5 + 1.5;
+          const spd = (Math.random() * 4.5 + 1.5) * (isRam ? 1.4 : 1);
           blastParticles.push({
             x, y,
             vx: Math.cos(angle) * spd,
             vy: Math.sin(angle) * spd,
-            radius: Math.random() * 3 + 1.5,
+            radius: Math.random() * 3.5 + 1.5,
             alpha: 1,
-            color: Math.random() > 0.5 ? baseColor : '#f59e0b'
+            color: isRam ? (Math.random() > 0.5 ? '#38bdf8' : '#f59e0b') : (Math.random() > 0.5 ? baseColor : '#f59e0b')
           });
         }
       }
@@ -1045,6 +1085,7 @@
         let coreX = canvas.width / 2;
         let coreY = canvas.height / 2;
         const coreHitRadius = 32;
+        const rocketHitRadius = 14;
 
         if (planetCenterEl) {
           const rect = planetCenterEl.getBoundingClientRect();
@@ -1137,7 +1178,7 @@
           }
         }
 
-        // 4. Render Asteroids & Hit/Core Detection
+        // 4. Render Asteroids & Ramming/Hit/Core Detection
         for (let i = asteroids.length - 1; i >= 0; i--) {
           const a = asteroids[i];
           a.x += a.vx;
@@ -1164,17 +1205,25 @@
           ctx.stroke();
           ctx.restore();
 
-          // Core Collision Check
+          // A. Rocket Body Ramming
+          const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
+          if (distToRocket < a.radius + rocketHitRadius && !isGameOver) {
+            createExplosion(a.x, a.y, a.color, true);
+            addScore(15);
+            asteroids.splice(i, 1);
+            continue;
+          }
+
+          // B. Center Core Collision Check
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
             createExplosion(a.x, a.y, '#b91c1c');
             asteroids.splice(i, 1);
-            if (missedEl) missedEl.textContent = '1/1';
-            triggerGameOver("Center Station Destroyed! An asteroid slammed into the core!");
+            deductLife("Center Station Breached! An asteroid slammed into the core!");
             continue;
           }
 
-          // Missile Collision
+          // C. Missile Collision Check
           let asteroidDestroyed = false;
           for (let k = missiles.length - 1; k >= 0; k--) {
             const m = missiles[k];
@@ -1193,14 +1242,10 @@
             continue;
           }
 
-          // Boundary Miss Check
+          // D. Boundary Miss Check
           if (a.x < -80 || a.x > canvas.width + 80 || a.y < -80 || a.y > canvas.height + 80) {
             asteroids.splice(i, 1);
-            missed++;
-            if (missedEl) missedEl.textContent = `${missed}/${MAX_MISSED}`;
-            if (missed >= MAX_MISSED) {
-              triggerGameOver("Defense Failed! An asteroid slipped past containment!");
-            }
+            deductLife("Defense Failed! An asteroid slipped past containment!");
           }
         }
 
