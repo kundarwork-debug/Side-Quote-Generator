@@ -2,7 +2,7 @@
   "id": "/Side-Quote-Generator/",
   "name": "APML Portal - Operations & Quotations",
   "short_name": "APML Portal",
-  "description": "Official operations hub for quotation drafting, hub & branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.",
+  "description": "Official operations hub for quotation drafting, hub directory lookup, freight rate calculators, and packing standards.",
   "lang": "en",
   "dir": "ltr",
   "start_url": "./index.html",
