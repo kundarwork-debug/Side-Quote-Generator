@@ -11,6 +11,7 @@
   "orientation": "portrait-primary",
   "background_color": "#f8fafc",
   "theme_color": "#b91c1c",
+  "prefer_related_applications": false,
   "categories": [
     "business",
     "productivity",
@@ -18,16 +19,22 @@
   ],
   "icons": [
     {
-      "src": "logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://kundarwork-debug.github.io/Side-Quote-Generator/logo.svg",
-      "sizes": "192x192 512x512",
+      "src": "logo.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -38,9 +45,9 @@
       "url": "./index.html",
       "icons": [
         {
-          "src": "logo.svg",
-          "sizes": "any",
-          "type": "image/svg+xml"
+          "src": "icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
