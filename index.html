@@ -14,6 +14,7 @@
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
   <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="common.css?v=2.2">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -883,7 +884,6 @@
     }
 
     @media (max-width: 768px) {
-      /* reel-section already collapses gracefully via its own responsive rules above */
       .interactive-hero-zone { display: none !important; }
       .hero-stage { padding: 80px 16px 24px; }
       .workspace-section, .impact-section { padding: 0 16px; }
@@ -1084,8 +1084,6 @@
           if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         }
 
-        // Only animate while the hero is actually on screen, and pause entirely
-        // when the browser tab is in the background.
         if ('IntersectionObserver' in window) {
           const io = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
@@ -1370,8 +1368,6 @@
         document.getElementById('reelNext').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current + 1); });
         document.getElementById('reelPrev').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current - 1); });
 
-        // Only run the autoplay loop while the reel is on screen, and pause
-        // entirely when the tab is backgrounded.
         let wasPlayingBeforeHide = true;
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
@@ -1681,7 +1677,6 @@
       }
     })();
 
-    // Typewriter message logic for floating FAB (Completely hidden at top, reveals on scroll, disappears near bottom)
     (function initFABScrollReveal() {
       const bubble = document.querySelector('.support-msg-bubble');
       const supportFab = document.getElementById('support-fab');
@@ -1708,9 +1703,7 @@
         const scrollPosition = window.scrollY + window.innerHeight;
         const bodyHeight = document.documentElement.scrollHeight || document.body.offsetHeight;
         
-        // Hide when near bottom
         const isNearBottom = scrollPosition >= (bodyHeight - 140);
-        // Show only after scrolling down at least 160px from the top
         const hasScrolledDown = currentScrollY > 160;
 
         if (supportFab) {
@@ -1727,7 +1720,6 @@
               setTimeout(typeWriter, 250);
             }
           } else {
-            // Back at the top: hide completely
             supportFab.classList.remove('show-scrolled');
             supportFab.classList.remove('hide-bottom');
           }
@@ -1860,13 +1852,9 @@
       }
       function stopLoop() {
         if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
-        // Clear any lingering particles/canvas paint once we stop drawing.
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
 
-      // This effect is only relevant near the hero — stop the full-viewport
-      // canvas redraw loop entirely once it scrolls out of view or the tab
-      // is backgrounded, instead of running 60x/sec for the whole session.
       if ('IntersectionObserver' in window) {
         const io = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
@@ -1944,7 +1932,16 @@
     });
   </script>
 
-  <!-- SCROLL REVEAL FOR .reveal-up ELEMENTS (BENTO GRID, ETC.) -->
+  <!-- SERVICE WORKER REGISTRATION (FOR PWA STANDARDS) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+  <!-- SCROLL REVEAL FOR .reveal-up ELEMENTS -->
   <script>
     (function initScrollReveal() {
       const revealEls = document.querySelectorAll('.reveal-up');
@@ -1952,7 +1949,6 @@
 
       const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Stagger reveal delay for siblings within the same parent grid/list.
       const counters = new Map();
       revealEls.forEach((el) => {
         const parent = el.parentElement;
