@@ -1,26 +1,48 @@
 {
-  "background_color": "#ffffff",
-  "description": "APML Portal is the official operations hub for quotation drafting, hub &amp; branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.",
+  "id": "/Side-Quote-Generator/",
+  "name": "APML Portal - Operations & Quotations",
+  "short_name": "APML Portal",
+  "description": "Official operations hub for quotation drafting, hub & branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.",
+  "lang": "en",
   "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "name": "kundarwork-debug.github",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "kundarwork-debug.github",
-  "start_url": "/",
-  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "background_color": "#f8fafc",
+  "theme_color": "#b91c1c",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
   "icons": [
     {
-      "src": "https://kundarwork-debug.github.io/Side-Quote-Generator/logo.svg",
+      "src": "logo.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
-      "isSquare": false,
-      "isPng": false,
-      "isWebp": false,
-      "isJpg": false,
-      "width": 0,
-      "is512x512": false,
-      "is256x256": false,
-      "is192x192": false
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://kundarwork-debug.github.io/Side-Quote-Generator/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Draft Quotation",
+      "short_name": "Quote",
+      "description": "Create a new logistics quotation",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "logo.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
     }
   ]
 }
