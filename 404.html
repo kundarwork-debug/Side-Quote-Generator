@@ -124,6 +124,29 @@
       transform-origin: center top;
     }
 
+    /* HEADER & FOOTER SMOOTH BLAST TRANSITION CONTAINERS */
+    #header-container,
+    #footer-container {
+      position: relative;
+      z-index: 20;
+      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
+      will-change: opacity, transform, filter;
+    }
+
+    #header-container.fired-up {
+      opacity: 0 !important;
+      transform: translateY(-40px) scale(0.96) !important;
+      filter: blur(4px) brightness(1.6);
+      pointer-events: none !important;
+    }
+
+    #footer-container.fired-up {
+      opacity: 0 !important;
+      transform: translateY(40px) scale(0.96) !important;
+      filter: blur(4px) brightness(1.6);
+      pointer-events: none !important;
+    }
+
     /* SCREEN CONTAINERS */
     .screen-view {
       position: relative;
@@ -133,7 +156,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 68px 16px 8px;
+      padding: 16px;
       text-align: center;
       transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -144,19 +167,29 @@
       pointer-events: none;
     }
 
-    /* ARCADE HUD SCOREBOARD */
+    /* ARCADE HUD SCOREBOARD WITH INTEGRATED CLOSE / ABORT BUTTON */
     .arcade-scoreboard {
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 6px 16px;
+      padding: 5px 8px 5px 16px;
       background: rgba(255, 255, 255, 0.95);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-pill);
       box-shadow: var(--shadow-subtle);
       margin-bottom: 8px;
-      z-index: 10;
+      z-index: 25;
       backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    body.game-active .arcade-scoreboard {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     .score-item {
@@ -202,10 +235,35 @@
       font-variation-settings: 'FILL' 1;
     }
 
+    /* LIVE GAME CLOSE / QUIT BUTTON */
+    .btn-quit-game {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: var(--primary);
+      border-radius: var(--radius-pill);
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      transition: all 0.2s ease;
+    }
+
+    .btn-quit-game:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      transform: scale(1.04);
+    }
+
     /* LEVEL UP NOTIFICATION TOAST */
     .level-toast {
       position: fixed;
-      top: 76px;
+      top: 32px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
       background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
@@ -348,7 +406,23 @@
     .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
     .node-hub { color: #0284c7; border-color: #0284c7; }
 
-    /* COMPACT TYPOGRAPHY & ACTIONS */
+    /* BLAST / VANISH TRANSITION FOR UI ELEMENTS */
+    .blast-ui-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      transition: opacity 0.3s ease, transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      will-change: opacity, transform, filter;
+    }
+
+    .blast-ui-group.blasted {
+      opacity: 0 !important;
+      transform: scale(0.6) translateY(32px) !important;
+      filter: blur(4px) brightness(1.8);
+      pointer-events: none !important;
+    }
+
     .badge-capsule {
       display: inline-flex;
       align-items: center;
@@ -580,7 +654,7 @@
       text-align: center;
     }
 
-    /* GLOBAL LEADERBOARD SECTION */
+    /* GLOBAL LEADERBOARD SECTION - EXPANDED SCROLL FOR 30 ENTRIES */
     .leaderboard-wrap {
       width: 100%;
       background: var(--bg-base);
@@ -588,7 +662,7 @@
       border-radius: 14px;
       padding: 12px 14px;
       margin-bottom: 14px;
-      max-height: 150px;
+      max-height: 220px;
       overflow-y: auto;
     }
 
@@ -631,7 +705,7 @@
       font-size: 10px;
       font-weight: 800;
       color: var(--primary);
-      width: 14px;
+      width: 18px;
     }
 
     .leaderboard-row .entry-score {
@@ -683,13 +757,14 @@
       #failed-rocket-cursor { display: none !important; }
       body, a, button { cursor: auto !important; }
       .error-description { max-width: 270px; }
-      .arcade-scoreboard { gap: 8px; padding: 5px 12px; }
+      .arcade-scoreboard { gap: 6px; padding: 4px 6px 4px 12px; }
       .score-page-container { padding: 18px 16px; }
       .metrics-row { gap: 6px; }
+      .leaderboard-wrap { max-height: 180px; }
     }
   </style>
 </head>
-<body class="game-active">
+<body>
 
   <!-- GAME INTERACTION CANVAS -->
   <canvas id="game-canvas"></canvas>
@@ -718,7 +793,7 @@
     <div class="matrix-plane" id="matrixPlane"></div>
   </div>
 
-  <!-- Header Injected via common.js[cite: 4] -->
+  <!-- Header Injected via common.js -->
   <div id="header-container"></div>
 
   <!-- =========================================================
@@ -726,7 +801,7 @@
        ========================================================= -->
   <main class="screen-view" id="gameView">
     
-    <!-- ARCADE SCOREBOARD WITH GLOBAL HIGH INDICATOR -->
+    <!-- ARCADE SCOREBOARD WITH GLOBAL HIGH INDICATOR AND CLOSE BUTTON -->
     <div class="arcade-scoreboard">
       <div class="score-item">
         <span class="score-label">Score:</span>
@@ -750,9 +825,15 @@
           <span id="livesCountText">5</span>
         </span>
       </div>
+      <div class="score-divider"></div>
+      <!-- IN-GAME CLOSE / QUIT BUTTON -->
+      <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
+        <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+        <span>Close</span>
+      </button>
     </div>
 
-    <!-- OPEN SPACE ORBIT RIG -->
+    <!-- OPEN SPACE ORBIT RIG (PERMANENT CENTRAL TARGET) -->
     <div class="open-space-stage" id="spaceStage">
       
       <div class="orbit-ring orbit-1"></div>
@@ -792,33 +873,41 @@
 
     </div>
 
-    <!-- Error Information -->
-    <div class="badge-capsule">
-      <span class="material-symbols-outlined" style="font-size: 13px;">smart_toy</span>
-      <span>Click to Fire • Ram or Shoot Meteors!</span>
-    </div>
+    <!-- BLAST GROUP: TEXT, BADGE & BUTTONS THAT BLAST & VANISH WHEN START IS CLICKED -->
+    <div class="blast-ui-group" id="blastUiGroup">
+      
+      <div class="badge-capsule" id="gameModeBadge">
+        <span class="material-symbols-outlined" style="font-size: 13px;">smart_toy</span>
+        <span id="badgeStatusText">Press Start Game • Defend the Core</span>
+      </div>
 
-    <div class="error-code">404</div>
+      <div class="error-code">404</div>
 
-    <h1 class="error-title">Signal Lost in Deep Orbit</h1>
+      <h1 class="error-title">Signal Lost in Deep Orbit</h1>
 
-    <p class="error-description">
-      The logistics route or module has drifted out of range. Intercept incoming meteors using photon missiles or rocket ramming!
-    </p>
+      <p class="error-description" id="gameDescText">
+        The logistics route or module has drifted out of range. Launch defense to clear space debris using photon missiles or rocket ramming!
+      </p>
 
-    <div class="action-group">
-      <button type="button" class="btn-action btn-primary" id="btnCheckScores">
-        <span class="material-symbols-outlined" style="font-size: 16px;">leaderboard</span>
-        <span>Check Scores</span>
-      </button>
-      <a href="index.html" class="btn-action btn-secondary">
-        <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
-        <span>Re-dock at Home Hub</span>
-      </a>
-      <button type="button" onclick="window.history.back()" class="btn-action btn-secondary">
-        <span class="material-symbols-outlined" style="font-size: 15px;">history</span>
-        <span>Return</span>
-      </button>
+      <div class="action-group" id="actionGroupBar">
+        <button type="button" class="btn-action btn-primary" id="btnStartGame">
+          <span class="material-symbols-outlined" style="font-size: 16px;">play_arrow</span>
+          <span>Start Game</span>
+        </button>
+        <button type="button" class="btn-action btn-secondary" id="btnCheckScores">
+          <span class="material-symbols-outlined" style="font-size: 16px;">leaderboard</span>
+          <span>Check Scores</span>
+        </button>
+        <a href="index.html" class="btn-action btn-secondary">
+          <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
+          <span>Home Hub</span>
+        </a>
+        <button type="button" onclick="window.history.back()" class="btn-action btn-secondary">
+          <span class="material-symbols-outlined" style="font-size: 15px;">history</span>
+          <span>Return</span>
+        </button>
+      </div>
+
     </div>
 
   </main>
@@ -859,10 +948,10 @@
 
       <div class="status-toast" id="globalStatusToast">✓ Score saved! Reloading mission...</div>
 
-      <!-- GLOBAL REAL-TIME LEADERBOARD -->
+      <!-- GLOBAL REAL-TIME LEADERBOARD (TOP 30) -->
       <div class="leaderboard-wrap">
         <div class="leaderboard-title">
-          <span>Global Scoreboard</span>
+          <span>Top 30 Global Scoreboard</span>
           <span>Score</span>
         </div>
         <div class="leaderboard-list" id="leaderboardList">
@@ -880,7 +969,7 @@
     </div>
   </main>
 
-  <!-- Footer Injected via common.js[cite: 4] -->
+  <!-- Footer Injected via common.js -->
   <div id="footer-container"></div>
 
   <!-- FIREBASE APML CLOUD PERSISTENCE SDK -->
@@ -905,7 +994,7 @@
     const db = firebase.database();
   </script>
 
-  <!-- Common Navigation Scripts[cite: 4] -->
+  <!-- Common Navigation Scripts -->
   <script src="common.js?v=2.2"></script>
 
   <!-- PLANET ATTRACTION & ORBIT MOTION RIG -->
@@ -983,7 +1072,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH DUAL-MODE FIREBASE REALTIME & REST SYNC -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH TOP-30 AUTO-SYNCED GLOBAL SCOREBOARD -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -994,7 +1083,9 @@
       const livesTextEl = document.getElementById('livesCountText');
       const toastEl = document.getElementById('levelToast');
       
-      // Page Views
+      // Page Views & Containers
+      const headerContainer = document.getElementById('header-container');
+      const footerContainer = document.getElementById('footer-container');
       const gameView = document.getElementById('gameView');
       const scoreView = document.getElementById('scoreView');
       const pageFinalScore = document.getElementById('pageFinalScore');
@@ -1003,6 +1094,9 @@
       const pilotCallsignInput = document.getElementById('pilotCallsignInput');
       const btnSubmitScore = document.getElementById('btnSubmitScore');
       const btnCheckScores = document.getElementById('btnCheckScores');
+      const btnStartGame = document.getElementById('btnStartGame');
+      const btnQuitLiveGame = document.getElementById('btnQuitLiveGame');
+      const blastUiGroup = document.getElementById('blastUiGroup');
       const globalStatusToast = document.getElementById('globalStatusToast');
       const leaderboardList = document.getElementById('leaderboardList');
       const pageEscBtn = document.getElementById('pageEscBtn');
@@ -1030,6 +1124,7 @@
       let lives = 5;
       const MAX_LIVES = 5;
       let level = 1;
+      let isGameActive = false;
       let isGameOver = false;
       let spawnTimer = null;
       let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
@@ -1048,24 +1143,24 @@
       let lastSmokeTime = 0;
 
       // Cursor tracking
-      document.addEventListener('mouseenter', () => { if (rocket && !isGameOver) rocket.style.opacity = '1'; });
+      document.addEventListener('mouseenter', () => { if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1'; });
       document.addEventListener('mouseleave', () => { if (rocket) rocket.style.opacity = '0'; });
       window.addEventListener('mousemove', (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
-        if (rocket && !isGameOver) rocket.style.opacity = '1';
+        if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1';
       });
 
       // Shoot controls
       window.addEventListener('mousedown', (e) => {
-        if (isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView')) return;
+        if (!isGameActive || isGameOver) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game')) return;
         if (e.button === 0) fireMissile();
       });
 
       window.addEventListener('touchstart', (e) => {
-        if (isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView')) return;
+        if (!isGameActive || isGameOver) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game')) return;
         if (e.touches.length > 0) {
           targetX = e.touches[0].clientX;
           targetY = e.touches[0].clientY;
@@ -1100,10 +1195,9 @@
         }[tag] || tag));
       }
 
-      // 1. LIVE SYNC (SDK Listener + REST Fetch Fallback)
+      // 1. LIVE SYNC FOR TOP 30 SCORES (SDK Listener + REST Fetch Fallback)
       function initGlobalScoreSync() {
-        // Fallback REST fetch to ensure instant population even if websockets are delayed
-        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json?orderBy="score"&limitToLast=10')
+        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json?orderBy="score"&limitToLast=30')
           .then(res => res.json())
           .then(data => {
             if (data && typeof data === 'object') {
@@ -1119,9 +1213,8 @@
           })
           .catch(() => {});
 
-        // Realtime Websocket Listener
         if (window.db) {
-          db.ref('arcade_scores').orderByChild('score').limitToLast(10).on('value', (snapshot) => {
+          db.ref('arcade_scores').orderByChild('score').limitToLast(30).on('value', (snapshot) => {
             const entries = [];
             snapshot.forEach((child) => {
               entries.push(child.val());
@@ -1146,7 +1239,100 @@
 
       initGlobalScoreSync();
 
-      // 2. GUARANTEED GLOBAL SCORE PERSISTENCE (SDK + REST POST)
+      // Trigger fiery blast explosion animation across elements
+      function triggerUiBlastEffect(el, intensity = 42) {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) return;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < intensity; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const spd = Math.random() * 7 + 2.5;
+          blastParticles.push({
+            x: centerX + (Math.random() - 0.5) * rect.width * 0.8,
+            y: centerY + (Math.random() - 0.5) * rect.height * 0.8,
+            vx: Math.cos(angle) * spd,
+            vy: Math.sin(angle) * spd,
+            radius: Math.random() * 4 + 2,
+            alpha: 1,
+            color: Math.random() > 0.4 ? '#b91c1c' : (Math.random() > 0.5 ? '#f59e0b' : '#38bdf8')
+          });
+        }
+      }
+
+      // 2. START GAME FUNCTIONALITY (BLASTS AND HIDES HEADER, FOOTER & UI TEXT)
+      function startGame() {
+        if (headerContainer) {
+          triggerUiBlastEffect(headerContainer, 36);
+          headerContainer.classList.add('fired-up');
+        }
+        if (footerContainer) {
+          triggerUiBlastEffect(footerContainer, 36);
+          footerContainer.classList.add('fired-up');
+        }
+        if (blastUiGroup) {
+          triggerUiBlastEffect(btnStartGame, 45);
+          triggerUiBlastEffect(blastUiGroup, 55);
+          blastUiGroup.classList.add('blasted');
+        }
+
+        setTimeout(() => {
+          if (blastUiGroup) blastUiGroup.style.display = 'none';
+          if (headerContainer) headerContainer.style.display = 'none';
+          if (footerContainer) footerContainer.style.display = 'none';
+        }, 340);
+
+        isGameActive = true;
+        isGameOver = false;
+        score = 0;
+        lives = 5;
+        level = 1;
+
+        if (curScoreEl) curScoreEl.textContent = '0';
+        if (livesTextEl) livesTextEl.textContent = '5';
+        if (levelEl) levelEl.textContent = '1';
+
+        document.body.classList.add('game-active');
+        if (rocket) rocket.style.opacity = '1';
+
+        asteroids.length = 0;
+        missiles.length = 0;
+        smokeParticles.length = 0;
+
+        resetSpawnTimer();
+        showToast("Defense Initialized! Protect the Core!");
+      }
+
+      if (btnStartGame) {
+        btnStartGame.addEventListener('click', startGame);
+      }
+
+      // LIVE GAME CLOSE / QUIT BUTTON HANDLER
+      function quitLiveGameSession() {
+        if (!isGameActive) return;
+        isGameActive = false;
+        isGameOver = false;
+        if (spawnTimer) clearInterval(spawnTimer);
+        
+        asteroids.length = 0;
+        missiles.length = 0;
+        smokeParticles.length = 0;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        showToast("Mission Aborted");
+        switchToGameView();
+      }
+
+      if (btnQuitLiveGame) {
+        btnQuitLiveGame.addEventListener('click', (e) => {
+          e.stopPropagation();
+          quitLiveGameSession();
+        });
+      }
+
+      // 3. GUARANTEED GLOBAL SCORE PERSISTENCE (SDK + REST POST)
       function executeScoreSubmission(e) {
         if (e) {
           e.preventDefault();
@@ -1162,7 +1348,7 @@
         const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
         localSaved.push({ pilot: callsign, score: currentScoreToSave, level: currentLevelToSave });
         localSaved.sort((a, b) => b.score - a.score);
-        localStorage.setItem('apml_local_leaderboard', JSON.stringify(localSaved.slice(0, 10)));
+        localStorage.setItem('apml_local_leaderboard', JSON.stringify(localSaved.slice(0, 30)));
 
         if (btnSubmitScore) {
           btnSubmitScore.disabled = true;
@@ -1189,7 +1375,6 @@
           }, 900);
         }
 
-        // Direct write with REST endpoint fallback ensuring database node creation
         fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1220,6 +1405,7 @@
       if (btnCheckScores) {
         btnCheckScores.addEventListener('click', () => {
           isGameOver = true;
+          isGameActive = false;
           if (spawnTimer) clearInterval(spawnTimer);
           if (rocket) rocket.style.opacity = '0';
           document.body.classList.remove('game-active');
@@ -1249,9 +1435,8 @@
       }
 
       function switchToGameView() {
-        if (!isGameOver) return;
-        
         isGameOver = false;
+        isGameActive = false;
         score = 0;
         lives = 5;
         level = 1;
@@ -1260,10 +1445,24 @@
         if (livesTextEl) livesTextEl.textContent = '5';
         if (levelEl) levelEl.textContent = '1';
 
-        document.body.classList.add('game-active');
+        document.body.classList.remove('game-active');
         if (scoreView) scoreView.classList.add('hidden-view');
         if (gameView) gameView.classList.remove('hidden-view');
-        if (rocket) rocket.style.opacity = '1';
+        
+        // Restore Header, Footer & UI view smoothly
+        if (headerContainer) {
+          headerContainer.style.display = 'block';
+          headerContainer.classList.remove('fired-up');
+        }
+        if (footerContainer) {
+          footerContainer.style.display = 'block';
+          footerContainer.classList.remove('fired-up');
+        }
+        if (blastUiGroup) {
+          blastUiGroup.style.display = 'flex';
+          blastUiGroup.classList.remove('blasted');
+        }
+        if (rocket) rocket.style.opacity = '0';
 
         if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
         if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
@@ -1283,16 +1482,20 @@
         blastParticles.length = 0;
         smokeParticles.length = 0;
 
-        resetSpawnTimer();
+        if (spawnTimer) clearInterval(spawnTimer);
       }
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && isGameOver) {
+        if (e.key === 'Escape') {
           if (document.activeElement === pilotCallsignInput) {
             pilotCallsignInput.blur();
             return;
           }
-          switchToGameView();
+          if (isGameActive) {
+            quitLiveGameSession();
+          } else if (isGameOver) {
+            switchToGameView();
+          }
         }
       });
 
@@ -1353,7 +1556,7 @@
       }
 
       function deductLife(reason) {
-        if (isGameOver) return;
+        if (!isGameActive || isGameOver) return;
         lives--;
         if (livesTextEl) livesTextEl.textContent = `${lives}`;
 
@@ -1367,6 +1570,7 @@
       function triggerGameOver() {
         if (isGameOver) return;
         isGameOver = true;
+        isGameActive = false;
         
         if (spawnTimer) clearInterval(spawnTimer);
         if (rocket) rocket.style.opacity = '0';
@@ -1397,7 +1601,7 @@
       }
 
       function spawnAsteroid() {
-        if (isGameOver) return;
+        if (!isGameActive || isGameOver) return;
         const maxAsteroids = 7 + level * 2;
         if (asteroids.length >= maxAsteroids) return;
 
@@ -1451,7 +1655,6 @@
         const interval = Math.max(600, 1450 - (level - 1) * 180);
         spawnTimer = setInterval(spawnAsteroid, interval);
       }
-      resetSpawnTimer();
 
       function createEngineFailureSmoke(x, y, angleDeg) {
         const exhaustDist = 10;
@@ -1490,10 +1693,36 @@
         }
       }
 
+      // Main Animation Frame
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        if (isGameOver) {
+        // Always render fiery particles & blast bursts
+        for (let i = blastParticles.length - 1; i >= 0; i--) {
+          const bp = blastParticles[i];
+          bp.x += bp.vx;
+          bp.y += bp.vy;
+          bp.vx *= 0.95;
+          bp.vy *= 0.95;
+          bp.alpha -= 0.024;
+
+          if (bp.alpha <= 0) {
+            blastParticles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
+          ctx.fillStyle = bp.color;
+          ctx.globalAlpha = Math.max(0, bp.alpha);
+          ctx.shadowColor = bp.color;
+          ctx.shadowBlur = 6;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        if (!isGameActive || isGameOver) {
           requestAnimationFrame(gameLoop);
           return;
         }
@@ -1518,7 +1747,7 @@
         globalRocketX = currentX;
         globalRocketY = currentY;
 
-        if (dist > 1 && !isGameOver) {
+        if (dist > 1 && isGameActive && !isGameOver) {
           const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
           let diff = (targetAngle - currentAngle) % 360;
           if (diff > 180) diff -= 360;
@@ -1535,7 +1764,7 @@
           }
         }
 
-        if (rocket && !isGameOver) {
+        if (rocket && isGameActive && !isGameOver) {
           rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
         }
 
@@ -1618,7 +1847,7 @@
           ctx.restore();
 
           const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
-          if (distToRocket < a.radius + rocketHitRadius && !isGameOver) {
+          if (distToRocket < a.radius + rocketHitRadius && isGameActive && !isGameOver) {
             createExplosion(a.x, a.y, a.color, true);
             addScore(15);
             asteroids.splice(i, 1);
@@ -1655,30 +1884,6 @@
             asteroids.splice(i, 1);
             deductLife("Defense Failed! An asteroid slipped past containment!");
           }
-        }
-
-        for (let i = blastParticles.length - 1; i >= 0; i--) {
-          const bp = blastParticles[i];
-          bp.x += bp.vx;
-          bp.y += bp.vy;
-          bp.vx *= 0.95;
-          bp.vy *= 0.95;
-          bp.alpha -= 0.03;
-
-          if (bp.alpha <= 0) {
-            blastParticles.splice(i, 1);
-            continue;
-          }
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
-          ctx.fillStyle = bp.color;
-          ctx.globalAlpha = Math.max(0, bp.alpha);
-          ctx.shadowColor = bp.color;
-          ctx.shadowBlur = 4;
-          ctx.fill();
-          ctx.restore();
         }
 
         requestAnimationFrame(gameLoop);
