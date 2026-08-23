@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>404 - Signal Lost | APML Portal</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="stylesheet" href="common.css?v=2.2">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    :root {
+      --primary: #b91c1c;
+      --primary-dark: #881337;
+      --primary-soft: rgba(185, 28, 28, 0.08);
+      --primary-glow: rgba(185, 28, 28, 0.28);
+      --bg-base: #f8fafc;
+      --surface-border: rgba(226, 232, 240, 0.9);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --radius-pill: 9999px;
+      --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+      --shadow-hover: 0 20px 35px -10px rgba(185, 28, 28, 0.14), 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* FAILING SMOKING ENGINE CURSOR */
+    #smoke-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 99999;
+    }
+
+    #failed-rocket-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 38px;
+      height: 38px;
+      margin-top: -19px;
+      margin-left: -19px;
+      pointer-events: none;
+      z-index: 100000;
+      will-change: transform, opacity;
+      transform: translate3d(-100px, -100px, 0);
+      opacity: 0;
+      transition: opacity 0.2s ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      body, a, button {
+        cursor: none !important;
+      }
+    }
+
+    /* Ambient Light Mesh Background */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(185, 28, 28, 0.06) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(225, 29, 72, 0.05) 0%, transparent 50%);
+    }
+
+    /* 3D PERSPECTIVE MATRIX FLOOR */
+    .perspective-grid-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      perspective: 1000px;
+      overflow: hidden;
+      opacity: 0.7;
+    }
+
+    .matrix-plane {
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background-image: 
+        linear-gradient(to right, rgba(185, 28, 28, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transform: rotateX(45deg) scale(1.1);
+      transform-origin: center top;
+    }
+
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 24px 40px;
+      text-align: center;
+    }
+
+    /* OPEN SPACE VISUAL STAGE */
+    .open-space-stage {
+      position: relative;
+      width: min(90vw, 480px);
+      height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      margin-bottom: 20px;
+    }
+
+    /* DAMAGED PLANET CORE */
+    .damaged-planet-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .planet-glow {
+      position: absolute;
+      inset: -15px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(185, 28, 28, 0.22) 0%, rgba(185, 28, 28, 0) 70%);
+      animation: pulseDistress 2.4s ease-in-out infinite alternate;
+    }
+
+    .planet-sphere {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #ffffff 0%, #fee2e2 65%, #fecaca 100%);
+      border: 2px solid #ffffff;
+      box-shadow: 0 14px 30px -4px rgba(185, 28, 28, 0.25), 0 0 0 6px rgba(185, 28, 28, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      overflow: hidden;
+      animation: wobbleFloat 6s ease-in-out infinite;
+    }
+
+    /* Planet Cracks & Fractures */
+    .crack-line {
+      position: absolute;
+      background: rgba(185, 28, 28, 0.6);
+      pointer-events: none;
+    }
+    .crack-1 { top: 22px; left: 16px; width: 28px; height: 1.5px; transform: rotate(25deg); }
+    .crack-2 { top: 32px; left: 36px; width: 22px; height: 1.5px; transform: rotate(-40deg); }
+    .crack-3 { bottom: 25px; right: 20px; width: 34px; height: 1.5px; transform: rotate(15deg); }
+
+    .planet-sphere .material-symbols-outlined {
+      font-size: 40px;
+      z-index: 2;
+      animation: alertFlicker 3s infinite;
+    }
+
+    /* ORBIT RINGS */
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(185, 28, 28, 0.22);
+      pointer-events: none;
+    }
+    .orbit-1 { width: 180px; height: 180px; }
+    .orbit-2 { width: 260px; height: 260px; border-color: rgba(225, 29, 72, 0.25); }
+    .orbit-3 { width: 340px; height: 340px; border-color: rgba(185, 28, 28, 0.18); }
+
+    /* ORBITING DRIFT NODES */
+    .free-node {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 34px;
+      height: 34px;
+      margin-top: -17px;
+      margin-left: -17px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform;
+      z-index: 10;
+    }
+    .free-node .material-symbols-outlined { font-size: 18px; }
+    .node-truck { color: var(--primary); border-color: var(--primary); }
+    .node-car { color: #e11d48; border-color: #e11d48; }
+    .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
+    .node-hub { color: #0284c7; border-color: #0284c7; }
+
+    /* DEBRIS PARTICLES */
+    .debris-cluster {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .debris-shard {
+      position: absolute;
+      background: #b91c1c;
+      border-radius: 2px;
+      opacity: 0.5;
+    }
+    .shard-1 { width: 5px; height: 5px; top: 38%; left: 34%; animation: shardDrift1 4s ease-in-out infinite alternate; }
+    .shard-2 { width: 4px; height: 7px; top: 62%; right: 36%; animation: shardDrift2 5s ease-in-out infinite alternate; }
+    .shard-3 { width: 6px; height: 3px; bottom: 35%; left: 40%; animation: shardDrift3 3.5s ease-in-out infinite alternate; }
+
+    /* TYPOGRAPHY & ACTIONS */
+    .badge-capsule {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: #ffffff;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: var(--shadow-subtle);
+      margin-bottom: 12px;
+    }
+
+    .error-code {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(54px, 10vw, 84px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .error-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(22px, 4vw, 28px);
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .error-description {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 28px;
+    }
+
+    .action-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: var(--text-main);
+      border: 1px solid var(--surface-border);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary-soft);
+      border-color: rgba(185, 28, 28, 0.25);
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    /* KEYFRAME ANIMATIONS */
+    @keyframes pulseDistress {
+      0% { transform: scale(0.9); opacity: 0.4; }
+      100% { transform: scale(1.35); opacity: 0.85; }
+    }
+
+    @keyframes wobbleFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(4deg); }
+    }
+
+    @keyframes alertFlicker {
+      0%, 100% { opacity: 1; }
+      45% { opacity: 0.6; }
+      50% { opacity: 0.2; }
+      55% { opacity: 0.9; }
+    }
+
+    @keyframes shardDrift1 { to { transform: translate(-12px, -8px) rotate(45deg); } }
+    @keyframes shardDrift2 { to { transform: translate(10px, -14px) rotate(-30deg); } }
+    @keyframes shardDrift3 { to { transform: translate(8px, 10px) rotate(60deg); } }
+
+    @media (max-width: 768px) {
+      .open-space-stage { height: 300px; transform: scale(0.85); margin-bottom: 0; }
+      .perspective-grid-layer { opacity: 0.4; }
+      #failed-rocket-cursor, #smoke-canvas { display: none !important; }
+      body, a, button { cursor: auto !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ENGINE FAILURE SMOKE TRAIL CANVAS -->
+  <canvas id="smoke-canvas"></canvas>
+
+  <!-- DAMAGED FAILING ENGINE ROCKET CURSOR -->
+  <div id="failed-rocket-cursor">
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 3px 6px rgba(0,0,0,0.3));">
+      <!-- Burnt Hull -->
+      <path d="M19 3C19 3 26 9.5 26 22.5L22.5 25.5L19 23.5L15.5 25.5L12 22.5C12 9.5 19 3 19 3Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.3"/>
+      <!-- Shattered Viewport Window -->
+      <circle cx="19" cy="11.5" r="2.8" fill="#e2e8f0" stroke="#0f172a" stroke-width="0.9"/>
+      <path d="M17.8 10.5L20.2 12.5M19 9.5L18.5 13.5" stroke="#0f172a" stroke-width="0.7"/>
+      <!-- Burnt Wings -->
+      <path d="M12 18L6 23.5V27L12 25.5V18Z" fill="#334155" stroke="#0f172a" stroke-width="1"/>
+      <path d="M26 18L32 23.5V27L26 25.5V18Z" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
+      <!-- Sputtering Smashed Nozzle -->
+      <path d="M16 25.5L19 31L22 25.5H16Z" fill="#475569"/>
+      <!-- Sparks / Sputtering Flame -->
+      <path d="M17.5 25.5L19 28.5L20.5 25.5H17.5Z" fill="#f59e0b"/>
+    </svg>
+  </div>
+
+  <!-- Ambient Light Mesh Background -->
+  <div class="ambient-bg"></div>
+
+  <!-- 3D Perspective Matrix Floor -->
+  <div class="perspective-grid-layer" aria-hidden="true">
+    <div class="matrix-plane" id="matrixPlane"></div>
+  </div>
+
+  <!-- Header Injected via common.js -->
+  <div id="header-container"></div>
+
+  <main>
+    
+    <!-- OPEN SPACE ORBIT RIG -->
+    <div class="open-space-stage" id="spaceStage">
+      
+      <div class="orbit-ring orbit-1"></div>
+      <div class="orbit-ring orbit-2"></div>
+      <div class="orbit-ring orbit-3"></div>
+
+      <!-- Damaged Planet -->
+      <div class="damaged-planet-wrap" id="damagedPlanet">
+        <div class="planet-glow"></div>
+        <div class="planet-sphere">
+          <div class="crack-line crack-1"></div>
+          <div class="crack-line crack-2"></div>
+          <div class="crack-line crack-3"></div>
+          <span class="material-symbols-outlined">hub</span>
+        </div>
+      </div>
+
+      <!-- Floating Shards & Debris -->
+      <div class="debris-cluster">
+        <div class="debris-shard shard-1"></div>
+        <div class="debris-shard shard-2"></div>
+        <div class="debris-shard shard-3"></div>
+      </div>
+
+      <!-- Orbiting Debris & Displaced Icons -->
+      <div class="free-node node-carton-1" id="node1" title="Displaced Carton">
+        <span class="material-symbols-outlined">package_2</span>
+      </div>
+
+      <div class="free-node node-truck" id="node2" title="Stranded Fleet Logistics">
+        <span class="material-symbols-outlined">local_shipping</span>
+      </div>
+
+      <div class="free-node node-hub" id="node3" title="Unreachable Hub">
+        <span class="material-symbols-outlined">location_city</span>
+      </div>
+
+      <div class="free-node node-car" id="node4" title="Off-course Car Carrier">
+        <span class="material-symbols-outlined">directions_car</span>
+      </div>
+
+      <div class="free-node node-carton-2" id="node5" title="Lost Consignment">
+        <span class="material-symbols-outlined">inventory_2</span>
+      </div>
+
+    </div>
+
+    <!-- Error Information -->
+    <div class="badge-capsule">
+      <span class="material-symbols-outlined" style="font-size: 15px;">report_problem</span>
+      <span>Trajectory Lost • 404</span>
+    </div>
+
+    <div class="error-code">404</div>
+
+    <h1 class="error-title">Signal Lost in Deep Orbit</h1>
+
+    <p class="error-description">
+      The logistics route, module, or destination hub you are attempting to reach has drifted out of range or no longer exists.
+    </p>
+
+    <div class="action-group">
+      <a href="index.html" class="btn-action btn-primary">
+        <span class="material-symbols-outlined" style="font-size: 18px;">hub</span>
+        <span>Re-dock at Home Hub</span>
+      </a>
+      <button onclick="window.history.back()" class="btn-action btn-secondary">
+        <span class="material-symbols-outlined" style="font-size: 18px;">history</span>
+        <span>Return to Last Coordinates</span>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer Injected via common.js -->
+  <div id="footer-container"></div>
+
+  <!-- Common Navigation Scripts -->
+  <script src="common.js?v=2.2"></script>
+
+  <!-- ORBIT MOTION & FRACTURE DRIFT -->
+  <script>
+    (function initBrokenOrbit() {
+      const planet = document.getElementById('damagedPlanet');
+      const nodes = [
+        { el: document.getElementById('node1'), radius: 90,  speed:  0.008, angle: 0.5,             x: 0, y: 0 },
+        { el: document.getElementById('node2'), radius: 130, speed: -0.006, angle: Math.PI,         x: 0, y: 0 },
+        { el: document.getElementById('node3'), radius: 130, speed: -0.006, angle: 0.2,            x: 0, y: 0 },
+        { el: document.getElementById('node4'), radius: 170, speed:  0.004, angle: -Math.PI / 2,     x: 0, y: 0 },
+        { el: document.getElementById('node5'), radius: 170, speed:  0.004, angle:  Math.PI / 2.2,   x: 0, y: 0 }
+      ];
+
+      function render() {
+        for (let i = 0; i < nodes.length; i++) {
+          const item = nodes[i];
+          item.angle += item.speed;
+
+          const targetX = Math.cos(item.angle) * item.radius;
+          const targetY = Math.sin(item.angle) * item.radius;
+
+          item.x += (targetX - item.x) * 0.1;
+          item.y += (targetY - item.y) * 0.1;
+
+          if (item.el) {
+            item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
+          }
+        }
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    })();
+  </script>
+
+  <!-- FAILING ROCKET ENGINE CURSOR & BLACK/GRAY SMOKE PUFF CONTROLLER -->
+  <script>
+    (function initFailedRocketCursor() {
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+      const rocket = document.getElementById('failed-rocket-cursor');
+      const canvas = document.getElementById('smoke-canvas');
+      if (!rocket || !canvas) return;
+
+      const ctx = canvas.getContext('2d');
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      let currentX = window.innerWidth / 2;
+      let currentY = window.innerHeight / 2;
+      let targetX = currentX;
+      let targetY = currentY;
+      let currentAngle = 0;
+      let lastSmokeTime = 0;
+      const particles = [];
+
+      document.addEventListener('mouseenter', () => {
+        rocket.style.opacity = '1';
+      });
+
+      document.addEventListener('mouseleave', () => {
+        rocket.style.opacity = '0';
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        targetX = e.clientX;
+        targetY = e.clientY;
+        rocket.style.opacity = '1';
+      });
+
+      // Emits sputtering black soot, dirty grey smoke, and flickering spark embers
+      function createEngineFailureSmoke(x, y, angleDeg) {
+        const exhaustDist = 16;
+        const rad = (angleDeg - 90) * (Math.PI / 180);
+        const spawnX = x - Math.cos(rad) * exhaustDist;
+        const spawnY = y - Math.sin(rad) * exhaustDist;
+
+        const isSpark = Math.random() < 0.25;
+
+        particles.push({
+          x: spawnX + (Math.random() - 0.5) * 6,
+          y: spawnY + (Math.random() - 0.5) * 6,
+          vx: -Math.cos(rad) * (Math.random() * 1.5 + 0.5) + (Math.random() - 0.5) * 1.2,
+          vy: -Math.sin(rad) * (Math.random() * 1.5 + 0.5) + (Math.random() - 0.5) * 1.2,
+          radius: isSpark ? Math.random() * 2 + 1.2 : Math.random() * 4 + 3,
+          alpha: isSpark ? 0.9 : 0.65,
+          color: isSpark 
+            ? (Math.random() > 0.5 ? '#f97316' : '#eab308') 
+            : (Math.random() > 0.4 ? '#334155' : '#64748b'),
+          isSpark
+        });
+      }
+
+      function updateAndDraw() {
+        const dx = targetX - currentX;
+        const dy = targetY - currentY;
+        const dist = Math.hypot(dx, dy);
+
+        currentX += dx * 0.45;
+        currentY += dy * 0.45;
+
+        // Wobble angle when engine fails
+        if (dist > 1.2) {
+          const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+          let diff = (targetAngle - currentAngle) % 360;
+          if (diff > 180) diff -= 360;
+          if (diff < -180) diff += 360;
+          
+          // Sputter vibration jitter
+          const sputter = (Math.random() - 0.5) * 12;
+          currentAngle += diff * 0.25 + sputter;
+
+          const now = performance.now();
+          if (now - lastSmokeTime > 18) {
+            createEngineFailureSmoke(currentX, currentY, currentAngle);
+            lastSmokeTime = now;
+          }
+        }
+
+        rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.isSpark) {
+            p.radius *= 0.94;
+            p.alpha -= 0.035;
+          } else {
+            p.radius += 0.28;
+            p.alpha -= 0.018;
+          }
+
+          if (p.alpha <= 0 || p.radius <= 0.2) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.alpha);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        requestAnimationFrame(updateAndDraw);
+      }
+
+      requestAnimationFrame(updateAndDraw);
+    })();
+  </script>
+</body>
+</html>
