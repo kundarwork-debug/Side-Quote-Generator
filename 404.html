@@ -726,7 +726,7 @@
        ========================================================= -->
   <main class="screen-view" id="gameView">
     
-    <!-- ARCADE SCOREBOARD (5 LIFELINES) -->
+    <!-- ARCADE SCOREBOARD WITH GLOBAL HIGH INDICATOR -->
     <div class="arcade-scoreboard">
       <div class="score-item">
         <span class="score-label">Score:</span>
@@ -734,8 +734,8 @@
       </div>
       <div class="score-divider"></div>
       <div class="score-item">
-        <span class="score-label">High:</span>
-        <span class="score-val" id="highScore">0</span>
+        <span class="score-label">Global High:</span>
+        <span class="score-val" id="globalHighScore">0</span>
       </div>
       <div class="score-divider"></div>
       <div class="score-item">
@@ -989,7 +989,7 @@
       const canvas = document.getElementById('game-canvas');
       const rocket = document.getElementById('failed-rocket-cursor');
       const curScoreEl = document.getElementById('currentScore');
-      const highScoreEl = document.getElementById('highScore');
+      const globalHighScoreEl = document.getElementById('globalHighScore');
       const levelEl = document.getElementById('currentLevel');
       const livesTextEl = document.getElementById('livesCountText');
       const toastEl = document.getElementById('levelToast');
@@ -1034,7 +1034,7 @@
       let isGameOver = false;
       let spawnTimer = null;
       let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
-      if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
+      if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
 
       // Entities
       const missiles = [];
@@ -1087,11 +1087,9 @@
 
             if (entries.length > 0) {
               const topScore = entries[0].score || 0;
-              if (topScore > globalHighestScore) {
-                globalHighestScore = topScore;
-                localStorage.setItem('apml_global_highest_score', globalHighestScore);
-                if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
-              }
+              globalHighestScore = Math.max(globalHighestScore, topScore);
+              localStorage.setItem('apml_global_highest_score', globalHighestScore);
+              if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
             }
 
             renderLeaderboard(entries);
@@ -1331,7 +1329,7 @@
         if (curScoreEl) curScoreEl.textContent = score;
         if (score > globalHighestScore) {
           globalHighestScore = score;
-          if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
+          if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
         }
         updateDifficulty();
       }
