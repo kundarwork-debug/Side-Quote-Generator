@@ -55,7 +55,7 @@
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 99998;
+      z-index: 5;
     }
 
     /* COMPACT MINI ROCKET CURSOR */
@@ -68,7 +68,7 @@
       margin-top: -12px;
       margin-left: -12px;
       pointer-events: none;
-      z-index: 100000;
+      z-index: 99999;
       will-change: transform, opacity;
       transform: translate3d(-100px, -100px, 0);
       opacity: 0;
@@ -76,7 +76,9 @@
     }
 
     @media (hover: hover) and (pointer: fine) {
-      body, a, button {
+      body.game-active, 
+      body.game-active a, 
+      body.game-active button {
         cursor: none !important;
       }
     }
@@ -122,9 +124,10 @@
       transform-origin: center top;
     }
 
-    main {
+    /* SCREEN CONTAINERS */
+    .screen-view {
       position: relative;
-      z-index: 1;
+      z-index: 10;
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -132,6 +135,13 @@
       justify-content: center;
       padding: 68px 16px 8px;
       text-align: center;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .screen-view.hidden-view {
+      display: none !important;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* ARCADE HUD SCOREBOARD */
@@ -216,118 +226,6 @@
     .level-toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
-    }
-
-    /* GAME OVER MODAL OVERLAY */
-    .game-over-modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.4);
-      backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100001;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .game-over-modal.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .game-over-card {
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
-      border-radius: 20px;
-      padding: 24px 28px;
-      max-width: 340px;
-      width: 90%;
-      text-align: center;
-      box-shadow: 0 20px 40px -10px rgba(185, 28, 28, 0.3);
-      transform: scale(0.92);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .game-over-modal.active .game-over-card {
-      transform: scale(1);
-    }
-
-    .game-over-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 6px;
-    }
-
-    .game-over-reason {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.4;
-      font-weight: 600;
-    }
-
-    .game-over-stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 16px 0 14px;
-      padding: 12px;
-      background: var(--bg-base);
-      border-radius: 12px;
-      border: 1px solid var(--surface-border);
-    }
-
-    .stat-box span {
-      display: block;
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-    }
-
-    .stat-box b {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px;
-      color: var(--text-main);
-    }
-
-    .esc-prompt-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      color: #0f172a;
-      background: rgba(241, 245, 249, 0.95);
-      border: 1px solid var(--surface-border);
-      padding: 8px 18px;
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-subtle);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-    }
-
-    .esc-prompt-pill:hover {
-      background: var(--primary-soft);
-      border-color: rgba(185, 28, 28, 0.3);
-      color: var(--primary);
-    }
-
-    .esc-key {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-bottom: 2px solid #94a3b8;
-      border-radius: 6px;
-      padding: 2px 6px;
-      font-size: 10.5px;
-      font-family: monospace;
-      font-weight: 800;
-      color: #0f172a;
     }
 
     /* OPEN SPACE VISUAL STAGE */
@@ -543,6 +441,242 @@
       transform: translateY(-2px);
     }
 
+    /* =========================================================
+       PAGE 2: DEDICATED SCORE & GLOBAL LEADERBOARD PAGE
+       ========================================================= */
+    #scoreView {
+      z-index: 1000;
+      pointer-events: auto !important;
+    }
+
+    .score-page-container {
+      max-width: 480px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 1001;
+      pointer-events: auto !important;
+      animation: scorePageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes scorePageFadeIn {
+      from { opacity: 0; transform: translateY(16px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .score-card-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .score-headline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+
+    .metric-card {
+      background: var(--bg-base);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .metric-card span {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      display: block;
+    }
+
+    .metric-card b {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      color: var(--text-main);
+    }
+
+    /* PILOT SUBMIT FORM */
+    .save-score-form {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1002;
+    }
+
+    .pilot-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--surface-border);
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+      color: var(--text-main);
+      background: #ffffff;
+    }
+
+    .pilot-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+    }
+
+    .btn-submit-score {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-submit-score:hover {
+      background: var(--primary-dark);
+    }
+
+    .status-toast {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #16a34a;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 14px;
+      display: none;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* GLOBAL LEADERBOARD SECTION */
+    .leaderboard-wrap {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .leaderboard-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      border-bottom: 1px dashed var(--surface-border);
+      padding-bottom: 4px;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .leaderboard-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .leaderboard-row .rank-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .leaderboard-row .rank-num {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      width: 14px;
+    }
+
+    .leaderboard-row .entry-score {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .esc-prompt-bar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #0f172a;
+      background: rgba(241, 245, 249, 0.95);
+      border: 1px solid var(--surface-border);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-subtle);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      width: 100%;
+    }
+
+    .esc-prompt-bar:hover {
+      background: var(--primary-soft);
+      border-color: rgba(185, 28, 28, 0.3);
+      color: var(--primary);
+    }
+
+    .esc-key {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-bottom: 2px solid #94a3b8;
+      border-radius: 5px;
+      padding: 2px 5px;
+      font-size: 10px;
+      font-family: monospace;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
     @media (max-width: 768px) {
       .open-space-stage { transform: scale(0.85); margin-bottom: 0; }
       .perspective-grid-layer { opacity: 0.35; }
@@ -550,47 +684,18 @@
       body, a, button { cursor: auto !important; }
       .error-description { max-width: 270px; }
       .arcade-scoreboard { gap: 8px; padding: 5px 12px; }
+      .score-page-container { padding: 18px 16px; }
+      .metrics-row { gap: 6px; }
     }
   </style>
 </head>
-<body>
+<body class="game-active">
 
   <!-- GAME INTERACTION CANVAS -->
   <canvas id="game-canvas"></canvas>
 
   <!-- LEVEL UP TOAST -->
   <div class="level-toast" id="levelToast">Level 1 • Velocity Increased!</div>
-
-  <!-- GAME OVER MODAL -->
-  <div class="game-over-modal" id="gameOverModal">
-    <div class="game-over-card">
-      <h2 class="game-over-title">Defense Failed!</h2>
-      <p class="game-over-reason" id="gameOverReason">
-        All 5 lifelines exhausted! Orbit containment collapsed.
-      </p>
-
-      <div class="game-over-stats">
-        <div class="stat-box">
-          <span>Score</span>
-          <b id="finalScore">0</b>
-        </div>
-        <div class="stat-box">
-          <span>Level</span>
-          <b id="finalLevel">1</b>
-        </div>
-        <div class="stat-box">
-          <span>Best</span>
-          <b id="finalHigh">0</b>
-        </div>
-      </div>
-
-      <div class="esc-prompt-pill" id="escPromptBtn">
-        <span>Press</span>
-        <kbd class="esc-key">Esc</kbd>
-        <span>to exit</span>
-      </div>
-    </div>
-  </div>
 
   <!-- MINI FAILING ENGINE ROCKET CURSOR (24px) -->
   <div id="failed-rocket-cursor">
@@ -616,7 +721,10 @@
   <!-- Header Injected via common.js[cite: 4] -->
   <div id="header-container"></div>
 
-  <main>
+  <!-- =========================================================
+       VIEW 1: PRIMARY 404 ORBIT & GAME STAGE
+       ========================================================= -->
+  <main class="screen-view" id="gameView">
     
     <!-- ARCADE SCOREBOARD (5 LIFELINES) -->
     <div class="arcade-scoreboard">
@@ -711,8 +819,87 @@
 
   </main>
 
+  <!-- =========================================================
+       VIEW 2: DEDICATED SCORE & GLOBAL LEADERBOARD PAGE
+       ========================================================= -->
+  <main class="screen-view hidden-view" id="scoreView">
+    <div class="score-page-container">
+      
+      <div class="score-card-header">
+        <div class="badge-capsule">
+          <span class="material-symbols-outlined" style="font-size: 13px;">military_tech</span>
+          <span>Mission Debrief</span>
+        </div>
+        <h2 class="score-headline">Defense Over</h2>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric-card">
+          <span>Current Score</span>
+          <b id="pageFinalScore">0</b>
+        </div>
+        <div class="metric-card">
+          <span>Wave Level</span>
+          <b id="pageFinalLevel">1</b>
+        </div>
+      </div>
+
+      <!-- FORM TO SAVE CURRENT SCORE GLOBALLY TO FIREBASE -->
+      <form class="save-score-form" id="saveScoreForm">
+        <input type="text" id="pilotCallsignInput" class="pilot-input" placeholder="Enter pilot callsign..." maxlength="18" required autocomplete="off">
+        <button type="submit" id="btnSubmitScore" class="btn-submit-score">
+          <span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span>
+          <span>Save Score</span>
+        </button>
+      </form>
+
+      <div class="status-toast" id="globalStatusToast">✓ Current score saved globally to APML Scoreboard!</div>
+
+      <!-- GLOBAL REAL-TIME LEADERBOARD -->
+      <div class="leaderboard-wrap">
+        <div class="leaderboard-title">
+          <span>Global Scoreboard</span>
+          <span>Score</span>
+        </div>
+        <div class="leaderboard-list" id="leaderboardList">
+          <div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 10px 0;">Syncing scoreboard...</div>
+        </div>
+      </div>
+
+      <!-- ESC RETURN CONTROLLER -->
+      <div class="esc-prompt-bar" id="pageEscBtn">
+        <span>Press</span>
+        <kbd class="esc-key">Esc</kbd>
+        <span>to replay 404 mission</span>
+      </div>
+
+    </div>
+  </main>
+
   <!-- Footer Injected via common.js[cite: 4] -->
   <div id="footer-container"></div>
+
+  <!-- FIREBASE APML CLOUD PERSISTENCE SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+  </script>
 
   <!-- Common Navigation Scripts[cite: 4] -->
   <script src="common.js?v=2.2"></script>
@@ -743,7 +930,7 @@
       ];
 
       function render() {
-        if (stage) {
+        if (stage && !stage.closest('.hidden-view')) {
           const rect = stage.getBoundingClientRect();
           const centerX = rect.left + rect.width / 2;
           const centerY = rect.top + rect.height / 2;
@@ -792,7 +979,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH CLEAN IN-PAGE RESET -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH GLOBAL CURRENT SCORE RECORDING -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -802,13 +989,20 @@
       const levelEl = document.getElementById('currentLevel');
       const livesTextEl = document.getElementById('livesCountText');
       const toastEl = document.getElementById('levelToast');
-      const gameOverModal = document.getElementById('gameOverModal');
-      const gameOverReason = document.getElementById('gameOverReason');
-      const finalScoreEl = document.getElementById('finalScore');
-      const finalLevelEl = document.getElementById('finalLevel');
-      const finalHighEl = document.getElementById('finalHigh');
-      const escPromptBtn = document.getElementById('escPromptBtn');
+      
+      // Page Views
+      const gameView = document.getElementById('gameView');
+      const scoreView = document.getElementById('scoreView');
+      const pageFinalScore = document.getElementById('pageFinalScore');
+      const pageFinalLevel = document.getElementById('pageFinalLevel');
+      const saveScoreForm = document.getElementById('saveScoreForm');
+      const pilotCallsignInput = document.getElementById('pilotCallsignInput');
+      const btnSubmitScore = document.getElementById('btnSubmitScore');
+      const globalStatusToast = document.getElementById('globalStatusToast');
+      const leaderboardList = document.getElementById('leaderboardList');
+      const pageEscBtn = document.getElementById('pageEscBtn');
       const planetCenterEl = document.getElementById('planetCenter');
+
       if (!canvas) return;
 
       const ctx = canvas.getContext('2d');
@@ -820,7 +1014,12 @@
       resize();
       window.addEventListener('resize', resize);
 
-      // Game State Variables (5 Lifelines)
+      // Preload saved callsign
+      if (pilotCallsignInput) {
+        pilotCallsignInput.value = localStorage.getItem('apml_pilot_name') || '';
+      }
+
+      // Game State Variables
       let score = 0;
       let lives = 5;
       const MAX_LIVES = 5;
@@ -855,13 +1054,13 @@
       // Controls: Left click / Touch to shoot
       window.addEventListener('mousedown', (e) => {
         if (isGameOver) return;
-        if (e.target.closest('a, button, .site-header, .site-footer, .game-over-modal')) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView')) return;
         if (e.button === 0) fireMissile();
       });
 
       window.addEventListener('touchstart', (e) => {
         if (isGameOver) return;
-        if (e.target.closest('a, button, .site-header, .site-footer, .game-over-modal')) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView')) return;
         if (e.touches.length > 0) {
           targetX = e.touches[0].clientX;
           targetY = e.touches[0].clientY;
@@ -869,8 +1068,121 @@
         }
       }, { passive: true });
 
-      // Clean local reset back to fresh 404 state without page refresh or leaving URL
-      function resetTo404State() {
+      // REALTIME GLOBAL SCOREBOARD (ALL PLAYERS)
+      function fetchGlobalLeaderboard() {
+        if (!leaderboardList) return;
+
+        function renderScores(entries) {
+          if (!entries || entries.length === 0) {
+            leaderboardList.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0;">No global scores yet. Be the first to save!</div>';
+            return;
+          }
+          leaderboardList.innerHTML = entries.map((item, idx) => `
+            <div class="leaderboard-row">
+              <div class="rank-name">
+                <span class="rank-num">#${idx + 1}</span>
+                <span>${escapeHtml(item.pilot || 'Pilot')}</span>
+              </div>
+              <span class="entry-score">${(item.score || 0).toLocaleString()}</span>
+            </div>
+          `).join('');
+        }
+
+        if (window.db) {
+          db.ref('arcade_scores').orderByChild('score').limitToLast(10).on('value', (snapshot) => {
+            const entries = [];
+            snapshot.forEach((child) => {
+              entries.push(child.val());
+            });
+            entries.reverse();
+            renderScores(entries);
+          }, (err) => {
+            console.warn('Firebase read error:', err);
+            const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
+            renderScores(localSaved);
+          });
+        } else {
+          const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
+          renderScores(localSaved);
+        }
+      }
+
+      function escapeHtml(str) {
+        return str.replace(/[&<>'"]/g, tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag));
+      }
+
+      // SUBMIT EXACT CURRENT RUN SCORE TO GLOBAL FIREBASE DATABASE
+      function executeScoreSubmission(e) {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        
+        const callsign = (pilotCallsignInput ? pilotCallsignInput.value : '').trim() || 'Pilot_' + Math.random().toString(36).substring(2, 6).toUpperCase();
+        localStorage.setItem('apml_pilot_name', callsign);
+
+        const currentScoreToSave = score;
+        const currentLevelToSave = level;
+
+        // Local cache storage
+        const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
+        localSaved.push({ pilot: callsign, score: currentScoreToSave, level: currentLevelToSave });
+        localSaved.sort((a, b) => b.score - a.score);
+        localStorage.setItem('apml_local_leaderboard', JSON.stringify(localSaved.slice(0, 10)));
+
+        if (btnSubmitScore) {
+          btnSubmitScore.disabled = true;
+          btnSubmitScore.style.opacity = '0.7';
+          btnSubmitScore.innerHTML = '<span>Saving...</span>';
+        }
+
+        const scorePayload = {
+          pilot: callsign,
+          score: currentScoreToSave,
+          level: currentLevelToSave,
+          timestamp: Date.now(),
+          date: new Date().toISOString()
+        };
+
+        if (window.db) {
+          db.ref('arcade_scores').push(scorePayload).then(() => {
+            if (saveScoreForm) saveScoreForm.style.display = 'none';
+            if (globalStatusToast) {
+              globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} synced globally!`;
+              globalStatusToast.style.display = 'block';
+            }
+          }).catch((err) => {
+            console.error('Firebase save error:', err);
+            if (saveScoreForm) saveScoreForm.style.display = 'none';
+            if (globalStatusToast) {
+              globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} preserved locally!`;
+              globalStatusToast.style.display = 'block';
+            }
+          });
+        } else {
+          if (saveScoreForm) saveScoreForm.style.display = 'none';
+          if (globalStatusToast) {
+            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} preserved!`;
+            globalStatusToast.style.display = 'block';
+          }
+        }
+      }
+
+      if (saveScoreForm) {
+        saveScoreForm.addEventListener('submit', executeScoreSubmission);
+      }
+      if (btnSubmitScore) {
+        btnSubmitScore.addEventListener('click', executeScoreSubmission);
+      }
+
+      // Reset to Game View upon ESC or Click
+      function switchToGameView() {
         if (!isGameOver) return;
         
         isGameOver = false;
@@ -881,10 +1193,22 @@
         if (curScoreEl) curScoreEl.textContent = '0';
         if (livesTextEl) livesTextEl.textContent = '5';
         if (levelEl) levelEl.textContent = '1';
-        if (gameOverModal) gameOverModal.classList.remove('active');
+
+        document.body.classList.add('game-active');
+        if (scoreView) scoreView.classList.add('hidden-view');
+        if (gameView) gameView.classList.remove('hidden-view');
         if (rocket) rocket.style.opacity = '1';
 
-        // Clear ongoing projectiles and objects
+        if (saveScoreForm) {
+          saveScoreForm.style.display = 'flex';
+          if (btnSubmitScore) {
+            btnSubmitScore.disabled = false;
+            btnSubmitScore.style.opacity = '1';
+            btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
+          }
+        }
+        if (globalStatusToast) globalStatusToast.style.display = 'none';
+
         asteroids.length = 0;
         missiles.length = 0;
         blastParticles.length = 0;
@@ -895,12 +1219,17 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isGameOver) {
-          resetTo404State();
+          // If typing inside the input, unfocus instead of leaving
+          if (document.activeElement === pilotCallsignInput) {
+            pilotCallsignInput.blur();
+            return;
+          }
+          switchToGameView();
         }
       });
 
-      if (escPromptBtn) {
-        escPromptBtn.addEventListener('click', resetTo404State);
+      if (pageEscBtn) {
+        pageEscBtn.addEventListener('click', switchToGameView);
       }
 
       function fireMissile() {
@@ -928,7 +1257,7 @@
         }
       }
 
-      // Scaling Slabs Every 250 Score Points
+      // Difficulty Scaling
       function updateDifficulty() {
         const newLevel = Math.floor(score / 250) + 1;
         if (newLevel > level) {
@@ -957,32 +1286,56 @@
         updateDifficulty();
       }
 
-      // Decrement Lifeline
       function deductLife(reason) {
         if (isGameOver) return;
         lives--;
         if (livesTextEl) livesTextEl.textContent = `${lives}`;
 
         if (lives <= 0) {
-          triggerGameOver(reason || "All 5 lifelines exhausted! Orbit containment collapsed.");
+          triggerGameOver();
         } else {
           showToast(`Lifeline Lost! (${lives}/5 Remaining)`);
         }
       }
 
-      function triggerGameOver(reasonText) {
+      // SWITCHES TO DEDICATED SCORE PAGE VIEW
+      function triggerGameOver() {
         if (isGameOver) return;
         isGameOver = true;
-        if (rocket) rocket.style.opacity = '0';
-        if (gameOverReason) gameOverReason.textContent = reasonText;
-        if (finalScoreEl) finalScoreEl.textContent = score;
-        if (finalLevelEl) finalLevelEl.textContent = level;
-        if (finalHighEl) finalHighEl.textContent = highScore;
-        if (gameOverModal) gameOverModal.classList.add('active');
+        
         if (spawnTimer) clearInterval(spawnTimer);
+        if (rocket) rocket.style.opacity = '0';
+        document.body.classList.remove('game-active');
+
+        // Clear remaining asteroids/particles from screen
+        asteroids.length = 0;
+        missiles.length = 0;
+        blastParticles.length = 0;
+        smokeParticles.length = 0;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Populate exact current score in score page
+        if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
+        if (pageFinalLevel) pageFinalLevel.textContent = level;
+
+        // Reset submit button state
+        if (saveScoreForm) saveScoreForm.style.display = 'flex';
+        if (btnSubmitScore) {
+          btnSubmitScore.disabled = false;
+          btnSubmitScore.style.opacity = '1';
+          btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
+        }
+        if (globalStatusToast) globalStatusToast.style.display = 'none';
+
+        // Switch active views
+        if (gameView) gameView.classList.add('hidden-view');
+        if (scoreView) scoreView.classList.remove('hidden-view');
+
+        // Fetch live global scoreboard
+        fetchGlobalLeaderboard();
       }
 
-      // Asteroid Spawner with Targeted Vectoring Towards Core
+      // Asteroid Spawner
       function spawnAsteroid() {
         if (isGameOver) return;
         const maxAsteroids = 7 + level * 2;
@@ -1078,9 +1431,14 @@
         }
       }
 
-      // Main Animation/Game Frame
+      // Main Animation Frame
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (isGameOver) {
+          requestAnimationFrame(gameLoop);
+          return;
+        }
 
         let coreX = canvas.width / 2;
         let coreY = canvas.height / 2;
@@ -1152,7 +1510,7 @@
           ctx.restore();
         }
 
-        // 3. Render Missiles
+        // 3. Missiles
         for (let i = missiles.length - 1; i >= 0; i--) {
           const m = missiles[i];
           m.x += m.vx;
@@ -1178,7 +1536,7 @@
           }
         }
 
-        // 4. Render Asteroids & Ramming/Hit/Core Detection
+        // 4. Asteroids
         for (let i = asteroids.length - 1; i >= 0; i--) {
           const a = asteroids[i];
           a.x += a.vx;
@@ -1214,7 +1572,7 @@
             continue;
           }
 
-          // B. Center Core Collision Check
+          // B. Center Core Collision
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
             createExplosion(a.x, a.y, '#b91c1c');
@@ -1223,7 +1581,7 @@
             continue;
           }
 
-          // C. Missile Collision Check
+          // C. Missile Collision
           let asteroidDestroyed = false;
           for (let k = missiles.length - 1; k >= 0; k--) {
             const m = missiles[k];
@@ -1242,14 +1600,14 @@
             continue;
           }
 
-          // D. Boundary Miss Check
+          // D. Boundary Miss
           if (a.x < -80 || a.x > canvas.width + 80 || a.y < -80 || a.y > canvas.height + 80) {
             asteroids.splice(i, 1);
             deductLife("Defense Failed! An asteroid slipped past containment!");
           }
         }
 
-        // 5. Render Blast Debris
+        // 5. Blast Debris Particles
         for (let i = blastParticles.length - 1; i >= 0; i--) {
           const bp = blastParticles[i];
           bp.x += bp.vx;
