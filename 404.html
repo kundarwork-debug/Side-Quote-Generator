@@ -807,13 +807,17 @@
     </p>
 
     <div class="action-group">
-      <a href="index.html" class="btn-action btn-primary">
-        <span class="material-symbols-outlined" style="font-size: 14px;">hub</span>
+      <button type="button" class="btn-action btn-primary" id="btnCheckScores">
+        <span class="material-symbols-outlined" style="font-size: 16px;">leaderboard</span>
+        <span>Check Scores</span>
+      </button>
+      <a href="index.html" class="btn-action btn-secondary">
+        <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
         <span>Re-dock at Home Hub</span>
       </a>
-      <button onclick="window.history.back()" class="btn-action btn-secondary">
-        <span class="material-symbols-outlined" style="font-size: 14px;">history</span>
-        <span>Return to Last Coordinates</span>
+      <button type="button" onclick="window.history.back()" class="btn-action btn-secondary">
+        <span class="material-symbols-outlined" style="font-size: 15px;">history</span>
+        <span>Return</span>
       </button>
     </div>
 
@@ -828,9 +832,9 @@
       <div class="score-card-header">
         <div class="badge-capsule">
           <span class="material-symbols-outlined" style="font-size: 13px;">military_tech</span>
-          <span>Mission Debrief</span>
+          <span id="scoreCardBadge">Mission Debrief</span>
         </div>
-        <h2 class="score-headline">Defense Over</h2>
+        <h2 class="score-headline" id="scoreCardHeading">Defense Over</h2>
       </div>
 
       <div class="metrics-row">
@@ -853,7 +857,7 @@
         </button>
       </form>
 
-      <div class="status-toast" id="globalStatusToast">✓ Current score saved globally to APML Scoreboard!</div>
+      <div class="status-toast" id="globalStatusToast">✓ Score saved! Reloading mission...</div>
 
       <!-- GLOBAL REAL-TIME LEADERBOARD -->
       <div class="leaderboard-wrap">
@@ -979,7 +983,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH GLOBAL CURRENT SCORE RECORDING -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH AUTO-SYNCED GLOBAL HIGHEST SCORE -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -998,9 +1002,12 @@
       const saveScoreForm = document.getElementById('saveScoreForm');
       const pilotCallsignInput = document.getElementById('pilotCallsignInput');
       const btnSubmitScore = document.getElementById('btnSubmitScore');
+      const btnCheckScores = document.getElementById('btnCheckScores');
       const globalStatusToast = document.getElementById('globalStatusToast');
       const leaderboardList = document.getElementById('leaderboardList');
       const pageEscBtn = document.getElementById('pageEscBtn');
+      const scoreCardBadge = document.getElementById('scoreCardBadge');
+      const scoreCardHeading = document.getElementById('scoreCardHeading');
       const planetCenterEl = document.getElementById('planetCenter');
 
       if (!canvas) return;
@@ -1026,8 +1033,8 @@
       let level = 1;
       let isGameOver = false;
       let spawnTimer = null;
-      let highScore = parseInt(localStorage.getItem('apml_404_highscore') || '0', 10);
-      if (highScoreEl) highScoreEl.textContent = highScore;
+      let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
+      if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
 
       // Entities
       const missiles = [];
@@ -1068,44 +1075,55 @@
         }
       }, { passive: true });
 
-      // REALTIME GLOBAL SCOREBOARD (ALL PLAYERS)
-      function fetchGlobalLeaderboard() {
-        if (!leaderboardList) return;
-
-        function renderScores(entries) {
-          if (!entries || entries.length === 0) {
-            leaderboardList.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0;">No global scores yet. Be the first to save!</div>';
-            return;
-          }
-          leaderboardList.innerHTML = entries.map((item, idx) => `
-            <div class="leaderboard-row">
-              <div class="rank-name">
-                <span class="rank-num">#${idx + 1}</span>
-                <span>${escapeHtml(item.pilot || 'Pilot')}</span>
-              </div>
-              <span class="entry-score">${(item.score || 0).toLocaleString()}</span>
-            </div>
-          `).join('');
-        }
-
+      // LISTEN TO REALTIME FIREBASE FOR GLOBAL HIGHEST SCORE & LEADERBOARD
+      function initGlobalScoreSync() {
         if (window.db) {
           db.ref('arcade_scores').orderByChild('score').limitToLast(10).on('value', (snapshot) => {
             const entries = [];
             snapshot.forEach((child) => {
               entries.push(child.val());
             });
-            entries.reverse();
-            renderScores(entries);
+            entries.reverse(); // Highest score first
+
+            if (entries.length > 0) {
+              const topScore = entries[0].score || 0;
+              if (topScore > globalHighestScore) {
+                globalHighestScore = topScore;
+                localStorage.setItem('apml_global_highest_score', globalHighestScore);
+                if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
+              }
+            }
+
+            renderLeaderboard(entries);
           }, (err) => {
-            console.warn('Firebase read error:', err);
+            console.warn('Firebase sync error:', err);
             const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-            renderScores(localSaved);
+            renderLeaderboard(localSaved);
           });
         } else {
           const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-          renderScores(localSaved);
+          renderLeaderboard(localSaved);
         }
       }
+
+      function renderLeaderboard(entries) {
+        if (!leaderboardList) return;
+        if (!entries || entries.length === 0) {
+          leaderboardList.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0;">No global scores yet. Be the first to save!</div>';
+          return;
+        }
+        leaderboardList.innerHTML = entries.map((item, idx) => `
+          <div class="leaderboard-row">
+            <div class="rank-name">
+              <span class="rank-num">#${idx + 1}</span>
+              <span>${escapeHtml(item.pilot || 'Pilot')}</span>
+            </div>
+            <span class="entry-score">${(item.score || 0).toLocaleString()}</span>
+          </div>
+        `).join('');
+      }
+
+      initGlobalScoreSync();
 
       function escapeHtml(str) {
         return str.replace(/[&<>'"]/g, tag => ({
@@ -1117,7 +1135,7 @@
         }[tag] || tag));
       }
 
-      // SUBMIT EXACT CURRENT RUN SCORE TO GLOBAL FIREBASE DATABASE
+      // SUBMIT EXACT CURRENT RUN SCORE AND REFRESH PAGE
       function executeScoreSubmission(e) {
         if (e) {
           e.preventDefault();
@@ -1150,27 +1168,26 @@
           date: new Date().toISOString()
         };
 
-        if (window.db) {
-          db.ref('arcade_scores').push(scorePayload).then(() => {
-            if (saveScoreForm) saveScoreForm.style.display = 'none';
-            if (globalStatusToast) {
-              globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} synced globally!`;
-              globalStatusToast.style.display = 'block';
-            }
-          }).catch((err) => {
-            console.error('Firebase save error:', err);
-            if (saveScoreForm) saveScoreForm.style.display = 'none';
-            if (globalStatusToast) {
-              globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} preserved locally!`;
-              globalStatusToast.style.display = 'block';
-            }
-          });
-        } else {
+        function completeAndReload() {
           if (saveScoreForm) saveScoreForm.style.display = 'none';
           if (globalStatusToast) {
-            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score of ${currentScoreToSave.toLocaleString()} preserved!`;
+            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score (${currentScoreToSave.toLocaleString()}) saved! Refreshing...`;
             globalStatusToast.style.display = 'block';
           }
+          setTimeout(() => {
+            window.location.reload();
+          }, 900);
+        }
+
+        if (window.db) {
+          db.ref('arcade_scores').push(scorePayload).then(() => {
+            completeAndReload();
+          }).catch((err) => {
+            console.error('Firebase save error:', err);
+            completeAndReload();
+          });
+        } else {
+          completeAndReload();
         }
       }
 
@@ -1179,6 +1196,38 @@
       }
       if (btnSubmitScore) {
         btnSubmitScore.addEventListener('click', executeScoreSubmission);
+      }
+
+      // DIRECT SCOREBOARD CHECK BUTTON HANDLER
+      if (btnCheckScores) {
+        btnCheckScores.addEventListener('click', () => {
+          isGameOver = true;
+          if (spawnTimer) clearInterval(spawnTimer);
+          if (rocket) rocket.style.opacity = '0';
+          document.body.classList.remove('game-active');
+
+          asteroids.length = 0;
+          missiles.length = 0;
+          blastParticles.length = 0;
+          smokeParticles.length = 0;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          if (scoreCardBadge) scoreCardBadge.textContent = "Global Rankings";
+          if (scoreCardHeading) scoreCardHeading.textContent = "APML Scoreboard";
+          if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
+          if (pageFinalLevel) pageFinalLevel.textContent = level;
+
+          if (saveScoreForm) saveScoreForm.style.display = 'flex';
+          if (btnSubmitScore) {
+            btnSubmitScore.disabled = false;
+            btnSubmitScore.style.opacity = '1';
+            btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
+          }
+          if (globalStatusToast) globalStatusToast.style.display = 'none';
+
+          if (gameView) gameView.classList.add('hidden-view');
+          if (scoreView) scoreView.classList.remove('hidden-view');
+        });
       }
 
       // Reset to Game View upon ESC or Click
@@ -1198,6 +1247,9 @@
         if (scoreView) scoreView.classList.add('hidden-view');
         if (gameView) gameView.classList.remove('hidden-view');
         if (rocket) rocket.style.opacity = '1';
+
+        if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
+        if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
 
         if (saveScoreForm) {
           saveScoreForm.style.display = 'flex';
@@ -1219,7 +1271,6 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && isGameOver) {
-          // If typing inside the input, unfocus instead of leaving
           if (document.activeElement === pilotCallsignInput) {
             pilotCallsignInput.blur();
             return;
@@ -1278,10 +1329,9 @@
       function addScore(pts) {
         score += pts;
         if (curScoreEl) curScoreEl.textContent = score;
-        if (score > highScore) {
-          highScore = score;
-          localStorage.setItem('apml_404_highscore', highScore);
-          if (highScoreEl) highScoreEl.textContent = highScore;
+        if (score > globalHighestScore) {
+          globalHighestScore = score;
+          if (highScoreEl) highScoreEl.textContent = globalHighestScore.toLocaleString();
         }
         updateDifficulty();
       }
@@ -1314,6 +1364,9 @@
         smokeParticles.length = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
+        if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
+
         // Populate exact current score in score page
         if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
         if (pageFinalLevel) pageFinalLevel.textContent = level;
@@ -1330,9 +1383,6 @@
         // Switch active views
         if (gameView) gameView.classList.add('hidden-view');
         if (scoreView) scoreView.classList.remove('hidden-view');
-
-        // Fetch live global scoreboard
-        fetchGlobalLeaderboard();
       }
 
       // Asteroid Spawner
