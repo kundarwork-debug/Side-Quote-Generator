@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>404 - Signal Lost | APML Portal</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="common.css?v=2.2">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -289,84 +290,85 @@
     /* OPEN SPACE VISUAL STAGE */
     .open-space-stage {
       position: relative;
-      width: 220px;
-      height: 190px;
+      width: 250px;
+      height: 220px;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
-    /* FRACTURED PLANET SHARDS */
+    /* =========================================================
+       BEAUTIFUL FUTURISTIC APML LOGO CORE & SHIELD PULSE
+       ========================================================= */
     .broken-planet-center {
       position: relative;
-      width: 60px;
-      height: 60px;
+      width: 74px;
+      height: 74px;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 8;
     }
 
-    .planet-glow {
+    .core-shield-beacon {
       position: absolute;
-      inset: -12px;
+      inset: -14px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(185, 28, 28, 0.22) 0%, rgba(185, 28, 28, 0) 70%);
+      border: 1.5px solid rgba(185, 28, 28, 0.38);
+      background: radial-gradient(circle, rgba(185, 28, 28, 0.16) 0%, rgba(225, 29, 72, 0.05) 55%, transparent 72%);
+      animation: shieldPulse 3.2s ease-in-out infinite alternate;
       pointer-events: none;
     }
 
-    .planet-shard {
+    @keyframes shieldPulse {
+      0% { transform: scale(0.92); opacity: 0.6; box-shadow: 0 0 15px rgba(185, 28, 28, 0.15); }
+      100% { transform: scale(1.12); opacity: 1; box-shadow: 0 0 35px rgba(225, 29, 72, 0.35); }
+    }
+
+    .core-quantum-spinner {
       position: absolute;
-      background: linear-gradient(145deg, #ffffff 0%, #fee2e2 65%, #fecaca 100%);
-      border: 1px solid #ffffff;
-      box-shadow: 0 4px 10px rgba(185, 28, 28, 0.18);
-      will-change: transform;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(185, 28, 28, 0.45);
+      animation: quantumRotate 16s linear infinite;
+      pointer-events: none;
     }
 
-    .shard-top {
-      width: 26px;
-      height: 18px;
-      top: 4px;
-      left: 17px;
-      clip-path: polygon(30% 0%, 90% 10%, 75% 100%, 0% 85%);
-      border-radius: 8px 8px 2px 2px;
+    @keyframes quantumRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
-    .shard-left {
-      width: 22px;
-      height: 24px;
-      top: 18px;
-      left: 3px;
-      clip-path: polygon(10% 20%, 95% 0%, 80% 90%, 0% 70%);
-      border-radius: 6px 2px 4px 6px;
+    .core-main-capsule {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffffff 0%, #fff1f2 50%, #ffe4e6 100%);
+      border: 2px solid #ffffff;
+      box-shadow: 0 8px 24px -4px rgba(185, 28, 28, 0.32), 0 0 0 1px rgba(185, 28, 28, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .shard-right {
-      width: 24px;
-      height: 22px;
-      top: 16px;
-      right: 4px;
-      clip-path: polygon(0% 10%, 100% 30%, 85% 95%, 15% 80%);
-      border-radius: 2px 8px 6px 2px;
+    .core-brand-logo {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.25));
+      animation: logoLevitate 3.6s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 2;
     }
 
-    .shard-bottom {
-      width: 26px;
-      height: 19px;
-      bottom: 4px;
-      left: 17px;
-      clip-path: polygon(15% 10%, 85% 5%, 70% 95%, 20% 90%);
-      border-radius: 2px 2px 8px 8px;
-    }
-
-    .shard-core {
-      width: 14px;
-      height: 14px;
-      top: 23px;
-      left: 23px;
-      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-      background: var(--primary);
+    @keyframes logoLevitate {
+      0% { transform: translateY(-2px) scale(0.97); }
+      100% { transform: translateY(2px) scale(1.03); }
     }
 
     /* COMPACT ORBIT RINGS */
@@ -376,31 +378,31 @@
       border: 1px dashed rgba(185, 28, 28, 0.22);
       pointer-events: none;
     }
-    .orbit-1 { width: 100px; height: 100px; }
-    .orbit-2 { width: 150px; height: 150px; border-color: rgba(225, 29, 72, 0.22); }
-    .orbit-3 { width: 195px; height: 195px; border-color: rgba(185, 28, 28, 0.16); }
+    .orbit-1 { width: 110px; height: 110px; }
+    .orbit-2 { width: 165px; height: 165px; border-color: rgba(225, 29, 72, 0.22); }
+    .orbit-3 { width: 220px; height: 220px; border-color: rgba(185, 28, 28, 0.16); }
 
     /* DRIFT NODES */
     .free-node {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 23px;
-      height: 23px;
-      margin-top: -11.5px;
-      margin-left: -11.5px;
+      width: 25px;
+      height: 25px;
+      margin-top: -12.5px;
+      margin-left: -12.5px;
       border-radius: 50%;
       background: #ffffff;
       border: 1px solid var(--primary);
       color: var(--primary);
-      box-shadow: 0 2px 6px rgba(185, 28, 28, 0.18);
+      box-shadow: 0 2px 8px rgba(185, 28, 28, 0.18);
       display: flex;
       align-items: center;
       justify-content: center;
       will-change: transform;
       z-index: 10;
     }
-    .free-node .material-symbols-outlined { font-size: 13px; }
+    .free-node .material-symbols-outlined { font-size: 14px; }
     .node-truck { color: var(--primary); border-color: var(--primary); }
     .node-car { color: #e11d48; border-color: #e11d48; }
     .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
@@ -654,7 +656,7 @@
       text-align: center;
     }
 
-    /* GLOBAL LEADERBOARD SECTION - EXPANDED SCROLL FOR 30 ENTRIES */
+    /* GLOBAL LEADERBOARD SECTION */
     .leaderboard-wrap {
       width: 100%;
       background: var(--bg-base);
@@ -833,21 +835,21 @@
       </button>
     </div>
 
-    <!-- OPEN SPACE ORBIT RIG (PERMANENT CENTRAL TARGET) -->
+    <!-- OPEN SPACE ORBIT RIG (BEAUTIFULLY ANIMATED CENTRAL TARGET WITH LOGO) -->
     <div class="open-space-stage" id="spaceStage">
       
       <div class="orbit-ring orbit-1"></div>
       <div class="orbit-ring orbit-2"></div>
       <div class="orbit-ring orbit-3"></div>
 
-      <!-- Shattered Planet Core Pieces -->
+      <!-- ANIMATED LOGO CORE WITH QUANTUM BEACON -->
       <div class="broken-planet-center" id="planetCenter">
-        <div class="planet-glow"></div>
-        <div class="planet-shard shard-top" id="shardTop"></div>
-        <div class="planet-shard shard-left" id="shardLeft"></div>
-        <div class="planet-shard shard-right" id="shardRight"></div>
-        <div class="planet-shard shard-bottom" id="shardBottom"></div>
-        <div class="planet-shard shard-core" id="shardCore"></div>
+        <div class="core-shield-beacon"></div>
+        <div class="core-quantum-spinner"></div>
+        
+        <div class="core-main-capsule" id="coreMainCapsule">
+          <img src="logo.svg" alt="APML Hub" class="core-brand-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23b91c1c\'><path d=\'M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5V17l10 5 10-5v-3.5l-5-2.5-5 2.5z\'/></svg>'">
+        </div>
       </div>
 
       <!-- Orbiting Displaced Icons -->
