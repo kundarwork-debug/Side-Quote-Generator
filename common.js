@@ -129,4 +129,13 @@
   } else {
     renderHeaderAndFooter();
   }
+
+  // 3. SERVICE WORKER REGISTRATION (PWA Support)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch((err) => {
+        console.warn('ServiceWorker registration note:', err);
+      });
+    });
+  }
 })();
