@@ -424,86 +424,99 @@
       100% { transform: scale(1.7); opacity: 0; }
     }
 
-    /* REEL SECTION */
+    /* =========================================================
+       SCROLL-REVEAL UTILITY
+       ========================================================= */
+    .reveal-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-up.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal-up { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* =========================================================
+       PORTAL HIGHLIGHTS — FULL-WIDTH AUTO-PLAYING REEL
+       ========================================================= */
     .reel-section { max-width: 1440px; margin: 8px auto 36px; padding: 0 32px; width: 100%; }
     .reel-player {
       width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      aspect-ratio: 16/9;
       background: var(--surface-card);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
       overflow: hidden;
       position: relative;
+      box-shadow: var(--shadow-subtle);
       display: flex;
       flex-direction: column;
-      box-shadow: var(--shadow-hover);
     }
-    .reel-progress { display: flex; gap: 6px; padding: 14px 18px 0 18px; z-index: 5; }
+    .reel-progress { display: flex; gap: 6px; padding: 14px 24px 0 24px; z-index: 5; }
     .reel-seg { flex: 1; height: 3px; background: var(--primary-soft); border-radius: 3px; overflow: hidden; }
     .reel-seg > i { display: block; height: 100%; width: 0%; background: var(--primary); border-radius: 3px; }
     .reel-seg.done > i { width: 100%; }
-    .reel-stage { position: relative; flex: 1; overflow: hidden; }
-    .reel-scene { position: absolute; inset: 0; padding: 32px 40px; display: none; flex-direction: column; justify-content: center; opacity: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .reel-stage { position: relative; min-height: 340px; overflow: hidden; }
+    .reel-scene { position: absolute; inset: 0; padding: 36px 48px; display: none; flex-direction: column; justify-content: center; opacity: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     .reel-scene.active { display: flex; animation: reelSceneIn 0.6s ease forwards; }
     @keyframes reelSceneIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-
-    .reel-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
-      font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
-      letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary);
-      background: var(--primary-soft); padding: 6px 12px; border-radius: var(--radius-pill); margin-bottom: 16px;
-    }
-    .reel-eyebrow .reel-num {
-      background: var(--primary); color: #fff; width: 16px; height: 16px; border-radius: 50%;
-      display: inline-flex; align-items: center; justify-content: center; font-size: 10px;
-    }
-    .reel-scene h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(22px, 3.6vw, 32px); color: var(--text-main); line-height: 1.12; max-width: 460px; margin: 0; }
+    .reel-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--primary); background: var(--primary-soft); padding: 5px 12px; border-radius: var(--radius-pill); width: fit-content; }
+    .reel-eyebrow .reel-num { opacity: 0.6; }
+    .reel-scene h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(22px, 3.2vw, 30px); color: var(--text-main); line-height: 1.15; max-width: 480px; margin: 14px 0 0; }
     .reel-scene h3 span { color: var(--primary); }
-    .reel-scene p { margin-top: 10px; font-size: 13.5px; color: var(--text-muted); max-width: 400px; line-height: 1.5; font-weight: 500; }
-    .reel-pills { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 440px; }
-    .reel-pill { font-size: 11.5px; font-weight: 600; color: var(--text-main); background: #fff; border: 1px solid var(--surface-border); padding: 6px 11px; border-radius: var(--radius-pill); }
-    .reel-row { display: flex; align-items: center; gap: 32px; height: 100%; }
+    .reel-scene p { margin-top: 10px; font-size: 13.5px; color: var(--text-muted); max-width: 420px; line-height: 1.55; font-weight: 500; }
+    .reel-pills { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; max-width: 460px; }
+    .reel-pill { font-size: 11.5px; font-weight: 600; color: var(--text-main); background: #fff; border: 1px solid var(--surface-border); padding: 6px 12px; border-radius: var(--radius-pill); }
+    .reel-row { display: flex; align-items: center; gap: 48px; height: 100%; width: 100%; max-width: 1200px; margin: 0 auto; }
     .reel-text { flex: 1; min-width: 0; }
-    .reel-visual { flex: 0 0 240px; display: flex; align-items: center; justify-content: center; }
-    .reel-mock { width: 220px; background: #fff; border: 1px solid var(--surface-border); border-radius: 14px; padding: 14px; box-shadow: var(--shadow-subtle); }
+    .reel-visual { flex: 0 0 260px; display: flex; align-items: center; justify-content: center; }
+    .reel-mock { width: 240px; background: #fff; border: 1px solid var(--surface-border); border-radius: 14px; padding: 16px; box-shadow: var(--shadow-subtle); }
     .reel-mock-bar { height: 7px; width: 60%; background: var(--primary-soft); border-radius: 4px; margin-bottom: 12px; }
     .reel-mock-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed var(--surface-border); font-size: 10.5px; color: var(--text-muted); font-weight: 500; }
     .reel-mock-row b { color: var(--text-main); font-size: 11px; }
     .reel-mock-row:last-child { border-bottom: none; }
     .reel-mock-btn { margin-top: 12px; background: var(--primary); color: #fff; font-size: 10.5px; font-weight: 700; text-align: center; padding: 8px; border-radius: 8px; }
-    .reel-mock-search { display: flex; align-items: center; gap: 6px; border: 1px solid var(--surface-border); border-radius: var(--radius-pill); padding: 8px 11px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; }
+    .reel-mock-search { display: flex; align-items: center; gap: 6px; border: 1px solid var(--surface-border); border-radius: var(--radius-pill); padding: 8px 12px; font-size: 10.5px; color: var(--text-muted); margin-bottom: 10px; }
     .reel-chip-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
     .reel-chip { font-size: 8.5px; background: var(--primary-soft); color: var(--primary); padding: 4px 8px; border-radius: var(--radius-pill); font-weight: 700; }
-    .reel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-    .reel-card { background: var(--bg-base); border: 1px solid var(--surface-border); border-radius: 8px; height: 38px; position: relative; overflow: hidden; }
+    .reel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .reel-card { background: var(--bg-base); border: 1px solid var(--surface-border); border-radius: 8px; height: 42px; position: relative; overflow: hidden; }
     .reel-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, #e8a33d, var(--primary)); opacity: 0.85; }
     .reel-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 9px 0; border-bottom: 1px dashed var(--surface-border); }
     .reel-stat:last-child { border: none; }
     .reel-stat b { font-family: 'Space Grotesk', sans-serif; font-size: 18px; color: var(--primary); }
     .reel-stat span { font-size: 10px; color: var(--text-muted); }
-    .reel-orbit-wrap { width: 170px; height: 170px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .reel-orbit-wrap { width: 190px; height: 190px; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
     .reel-ring { position: absolute; border: 1.5px dashed var(--primary-glow); border-radius: 50%; }
     .reel-ring.r1 { width: 100%; height: 100%; animation: reelSpin 30s linear infinite; }
     .reel-ring.r2 { width: 70%; height: 70%; animation: reelSpin 22s linear infinite reverse; }
     @keyframes reelSpin { to { transform: rotate(360deg); } }
-    .reel-core { width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--primary), var(--primary-dark)); box-shadow: 0 0 0 7px var(--primary-soft); z-index: 2; display: flex; align-items: center; justify-content: center; }
+    .reel-core { width: 48px; height: 48px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--primary), var(--primary-dark)); box-shadow: 0 0 0 7px var(--primary-soft); z-index: 2; display: flex; align-items: center; justify-content: center; }
     .reel-core::after { content: ""; width: 8px; height: 8px; background: #fff; border-radius: 50%; opacity: 0.85; }
     .reel-hero { align-items: center; text-align: center; }
     .reel-hero h3 { max-width: none; }
-    .reel-hero p { max-width: 380px; margin-left: auto; margin-right: auto; }
+    .reel-hero p { max-width: 400px; margin-left: auto; margin-right: auto; }
     .reel-closing { align-items: center; text-align: center; justify-content: center; }
     .reel-closing .reel-url { margin-top: 16px; font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--primary); font-weight: 700; background: var(--primary-soft); padding: 7px 14px; border-radius: var(--radius-pill); }
     .reel-credit { margin-top: 20px; font-size: 10.5px; color: var(--text-muted); }
-    .reel-controls { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 10px 0 16px 0; }
-    .reel-ctl-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--surface-border); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 12px; }
+    .reel-controls { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 0 18px 0; }
+    .reel-ctl-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--surface-border); background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 13px; }
     .reel-ctl-btn:hover { background: var(--primary-soft); }
-    #reelPlayPause { width: 36px; height: 36px; background: var(--primary); color: #fff; border: none; }
-    #reelPlayPause:hover { background: var(--primary-dark); }
-    .reel-dots { display: flex; gap: 6px; margin-left: 6px; }
-    .reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-border); cursor: pointer; transition: background 0.2s ease; }
+    .reel-dots { display: flex; gap: 6px; margin-left: 6px; flex-wrap: wrap; justify-content: center; max-width: 220px; }
+    .reel-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--surface-border); cursor: pointer; transition: background 0.2s ease; border: none; padding: 0; }
     .reel-dot.active { background: var(--primary); transform: scale(1.3); }
+
+    @media (max-width: 768px) {
+      .reel-row { flex-direction: column; gap: 20px; text-align: center; }
+      .reel-text { text-align: center; }
+      .reel-pills, .reel-mock-search { justify-content: center; }
+      .reel-scene h3, .reel-scene p { max-width: none; margin-left: auto; margin-right: auto; }
+      .reel-scene { padding: 28px 24px; }
+      .reel-visual { flex: 0 0 auto; }
+    }
 
     /* =========================================================
        OPERATIONS MODULES GRID
@@ -870,7 +883,7 @@
     }
 
     @media (max-width: 768px) {
-      .reel-section { display: none !important; }
+      /* reel-section already collapses gracefully via its own responsive rules above */
       .interactive-hero-zone { display: none !important; }
       .hero-stage { padding: 80px 16px 24px; }
       .workspace-section, .impact-section { padding: 0 16px; }
@@ -1094,7 +1107,7 @@
       })();
     </script>
 
-    <!-- REEL SECTION -->
+    <!-- PORTAL HIGHLIGHTS — FULL-WIDTH AUTO-PLAYING REEL -->
     <section class="reel-section">
       <div class="section-bar">
         <div class="section-heading">
@@ -1110,26 +1123,22 @@
         <div class="reel-stage">
 
           <section class="reel-scene reel-hero active">
-            <div class="reel-eyebrow"><span class="reel-num">1</span> UNIFIED WORKSPACE</div>
             <div class="reel-orbit-wrap">
-              <div class="reel-ring r1"></div><div class="reel-ring r2"></div>
-              <div class="reel-core"></div>
+              <div class="reel-ring r1"></div>
+              <div class="reel-ring r2"></div>
+              <div class="reel-core"><span class="material-symbols-outlined" style="color:#fff; font-size:18px;">hub</span></div>
             </div>
-            <h3>One Portal. <span>Six Tools.</span> Zero Chaos.</h3>
-            <p>Quotations, hub directories, packing standards and rate calculators, in a single real-time workspace.</p>
+            <h3>One Portal for <span>All Solutions</span></h3>
+            <p>Eight tools, one login. Quotations, tracking, directories, and rate calculators — all in one place.</p>
           </section>
 
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
-                <div class="reel-eyebrow"><span class="reel-num">2</span> DOCUMENTATION</div>
-                <h3>Dual-branded quotes, <span>built in seconds.</span></h3>
-                <p>One editor generates client-ready quotations for both Exact Container Logistics and Maxcare Packers &amp; Movers.</p>
-                <div class="reel-pills">
-                  <span class="reel-pill">📄 A4 PDF Export</span>
-                  <span class="reel-pill">⚙️ Freight Matrix</span>
-                  <span class="reel-pill">🔒 Local Save</span>
-                </div>
+                <span class="reel-eyebrow"><span class="reel-num">01</span> Documentation</span>
+                <h3>Draft a <span>quotation</span> in minutes</h3>
+                <p>Line items, automated freight formulas, and GST insurance — with a real-time A4 preview as you type.</p>
+                <div class="reel-pills"><span class="reel-pill">📄 A4 PDF Export</span><span class="reel-pill">⚙️ Freight Matrix</span></div>
               </div>
               <div class="reel-visual">
                 <div class="reel-mock">
@@ -1137,7 +1146,7 @@
                   <div class="reel-mock-row"><span>Freight</span><b>₹28,500</b></div>
                   <div class="reel-mock-row"><span>Packing Charges</span><b>₹6,200</b></div>
                   <div class="reel-mock-row"><span>Loading (Origin)</span><b>₹1,800</b></div>
-                  <div class="reel-mock-btn">Apply Standard %</div>
+                  <div class="reel-mock-btn">Export PDF</div>
                 </div>
               </div>
             </div>
@@ -1146,27 +1155,16 @@
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
-                <div class="reel-eyebrow"><span class="reel-num">3</span> DIRECTORY</div>
-                <h3>Every branch, <span>one search away.</span></h3>
-                <p>Instant, Firebase-backed lookup for nationwide hubs — search by city, incharge name, phone, or designation.</p>
-                <div class="reel-pills">
-                  <span class="reel-pill">📍 Pan-India Hubs</span>
-                  <span class="reel-pill">☎️ Direct Contacts</span>
-                  <span class="reel-pill">🔄 Real-Time Connected</span>
-                </div>
+                <span class="reel-eyebrow"><span class="reel-num">02</span> Live Tracker</span>
+                <h3>Track every <span>consignment</span> live</h3>
+                <p>Real-time status synced straight from Google Sheets, with secure persistent access and dynamic filters.</p>
+                <div class="reel-pills"><span class="reel-pill">📦 Live Consignment</span><span class="reel-pill">📊 Sheets Sync</span></div>
               </div>
               <div class="reel-visual">
                 <div class="reel-mock">
-                  <div class="reel-mock-search">🔍 Search city, incharge, phone…</div>
-                  <div class="reel-chip-row">
-                    <span class="reel-chip">GURGAON</span>
-                    <span class="reel-chip">PUNE</span>
-                    <span class="reel-chip">DELHI</span>
-                  </div>
-                  <div class="reel-chip-row">
-                    <span class="reel-chip">AHMEDABAD</span>
-                    <span class="reel-chip">CHENNAI</span>
-                  </div>
+                  <div class="reel-stat"><span>In Transit</span><b>14</b></div>
+                  <div class="reel-stat"><span>Delivered Today</span><b>6</b></div>
+                  <div class="reel-stat"><span>Pending Pickup</span><b>3</b></div>
                 </div>
               </div>
             </div>
@@ -1175,22 +1173,15 @@
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
-                <div class="reel-eyebrow"><span class="reel-num">4</span> MEDIA LIBRARY</div>
-                <h3>See the standard, <span>not just read it.</span></h3>
-                <p>A visual reference library of fleet operations and vehicle loading, with dedicated categories for bikes, cars, and cartons.</p>
-                <div class="reel-pills">
-                  <span class="reel-pill">🚚 Fleet Logistics</span>
-                  <span class="reel-pill">🏍️ Bike Packaging</span>
-                  <span class="reel-pill">📦 Solid &amp; TV Box</span>
-                </div>
+                <span class="reel-eyebrow"><span class="reel-num">03</span> Media Library</span>
+                <h3>Packing done <span>right</span>, every time</h3>
+                <p>HD video demonstrations and official packaging standards for fleet, bike, and car consignments.</p>
+                <div class="reel-pills"><span class="reel-pill">🚚 Fleet Logistics</span><span class="reel-pill">🚗 Car Carriers</span></div>
               </div>
               <div class="reel-visual">
-                <div class="reel-mock">
-                  <div class="reel-mock-bar" style="width:40%;"></div>
-                  <div class="reel-grid">
-                    <div class="reel-card"></div><div class="reel-card"></div>
-                    <div class="reel-card"></div><div class="reel-card"></div>
-                  </div>
+                <div class="reel-grid">
+                  <div class="reel-card"></div><div class="reel-card"></div>
+                  <div class="reel-card"></div><div class="reel-card"></div>
                 </div>
               </div>
             </div>
@@ -1199,50 +1190,126 @@
           <section class="reel-scene">
             <div class="reel-row">
               <div class="reel-text">
-                <div class="reel-eyebrow"><span class="reel-num">5</span> PORTAL ACTIVITY</div>
-                <h3>Built for the <span>field team.</span></h3>
-                <p>Six active operations modules working together — with live usage tracked across the portal.</p>
+                <span class="reel-eyebrow"><span class="reel-num">04</span> Directory</span>
+                <h3>Every branch, <span>one search away</span></h3>
+                <p>Instant lookup for hubs, HODs, phone contacts, and map pins — nationwide.</p>
+                <div class="reel-pills"><span class="reel-pill">📍 Pan-India Hubs</span><span class="reel-pill">🗺️ Map Navigation</span></div>
               </div>
               <div class="reel-visual">
                 <div class="reel-mock">
-                  <div class="reel-stat"><span>PDFs Exported</span><b>45</b></div>
-                  <div class="reel-stat"><span>Media Downloads</span><b>36</b></div>
-                  <div class="reel-stat"><span>Active Tools</span><b>6</b></div>
+                  <div class="reel-mock-search"><span class="material-symbols-outlined" style="font-size:13px;">search</span> Search city, hub, phone...</div>
+                  <div class="reel-chip-row"><span class="reel-chip">GURGAON</span><span class="reel-chip">PUNE</span><span class="reel-chip">DELHI</span></div>
+                  <div class="reel-chip-row"><span class="reel-chip">AHMEDABAD</span><span class="reel-chip">CHENNAI</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="reel-scene">
+            <div class="reel-row">
+              <div class="reel-text">
+                <span class="reel-eyebrow"><span class="reel-num">05</span> Directory</span>
+                <h3>Reach any <span>field officer</span> instantly</h3>
+                <p>WCRO field officers with direct WhatsApp contact, mobile numbers, and designated areas.</p>
+                <div class="reel-pills"><span class="reel-pill">🏢 WCRO Region</span><span class="reel-pill">💬 Direct WhatsApp</span></div>
+              </div>
+              <div class="reel-visual">
+                <div class="reel-mock">
+                  <div class="reel-stat"><span>Active Officers</span><b>22</b></div>
+                  <div class="reel-stat"><span>Regions Covered</span><b>6</b></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="reel-scene">
+            <div class="reel-row">
+              <div class="reel-text">
+                <span class="reel-eyebrow"><span class="reel-num">06</span> Volume Pricing</span>
+                <h3>CFT pricing, <span>instantly</span></h3>
+                <p>Volume calculator with floor constraints, destination routing, and a 450 CFT capacity ceiling.</p>
+                <div class="reel-pills"><span class="reel-pill">📦 450 CFT Limit</span><span class="reel-pill">🏙️ 4 Major Hubs</span></div>
+              </div>
+              <div class="reel-visual">
+                <div class="reel-mock">
+                  <div class="reel-mock-row"><span>Volume</span><b>320 CFT</b></div>
+                  <div class="reel-mock-row"><span>Base Floor</span><b>₹5,000</b></div>
+                  <div class="reel-mock-row"><span>Route</span><b>MUM → PUN</b></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="reel-scene">
+            <div class="reel-row">
+              <div class="reel-text">
+                <span class="reel-eyebrow"><span class="reel-num">07</span> Vehicle Freight</span>
+                <h3>Car transport, <span>automated</span></h3>
+                <p>Vehicle rate estimation with intelligent model detection and a 600 KM baseline formula.</p>
+                <div class="reel-pills"><span class="reel-pill">🚗 Model Detection</span><span class="reel-pill">⚡ Per-KM Slabs</span></div>
+              </div>
+              <div class="reel-visual">
+                <div class="reel-mock">
+                  <div class="reel-mock-row"><span>Model</span><b>Hatchback</b></div>
+                  <div class="reel-mock-row"><span>Distance</span><b>640 KM</b></div>
+                  <div class="reel-mock-row"><span>Estimate</span><b>₹9,200</b></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="reel-scene">
+            <div class="reel-row">
+              <div class="reel-text">
+                <span class="reel-eyebrow"><span class="reel-num">08</span> Local Shifting</span>
+                <h3>Intra-city rates, <span>sorted</span></h3>
+                <p>SOP budget rates, CFT-based pricing, and add-on services for local relocations.</p>
+                <div class="reel-pills"><span class="reel-pill">🚛 Intra-City</span><span class="reel-pill">₹5,000 Minimum</span></div>
+              </div>
+              <div class="reel-visual">
+                <div class="reel-mock">
+                  <div class="reel-mock-row"><span>CFT Rate</span><b>₹25 / CFT</b></div>
+                  <div class="reel-mock-row"><span>Add-ons</span><b>₹1,200</b></div>
                 </div>
               </div>
             </div>
           </section>
 
           <section class="reel-scene reel-closing">
-            <div class="reel-eyebrow"><span class="reel-num">6</span> APML PORTAL</div>
-            <h3>Work smarter. <span>Move faster.</span></h3>
-            <p>Everything your operations team needs, in one place.</p>
-            <div class="reel-url">kundarwork-debug.github.io/Side-Quote-Generator</div>
-            <div class="reel-credit">Designed &amp; developed by Prasad</div>
+            <h3>Ready when <span>you</span> are.</h3>
+            <p>All eight tools, one login, zero friction.</p>
+            <span class="reel-url">kundarwork-debug.github.io/Side-Quote-Generator</span>
+            <div class="reel-credit">APML Portal — built for the ops team</div>
           </section>
 
         </div>
 
         <div class="reel-controls">
-          <button class="reel-ctl-btn" id="reelPrev">‹</button>
-          <button class="reel-ctl-btn" id="reelPlayPause">❚❚</button>
-          <button class="reel-ctl-btn" id="reelNext">›</button>
+          <button class="reel-ctl-btn" id="reelPrev" aria-label="Previous"><span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span></button>
+          <button class="reel-ctl-btn" id="reelPlayPause" aria-label="Play or pause"><span class="material-symbols-outlined" style="font-size:16px;" id="reelPlayIcon">pause</span></button>
+          <button class="reel-ctl-btn" id="reelNext" aria-label="Next"><span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span></button>
           <div class="reel-dots" id="reelDots"></div>
         </div>
       </div>
     </section>
 
     <script>
-      (function () {
-        if (window.innerWidth <= 768) return;
-
-        const scenes = document.querySelectorAll('.reel-scene');
+      (function initHighlightReel() {
+        const scenes = Array.from(document.querySelectorAll('.reel-scene'));
         const progressWrap = document.getElementById('reelProgress');
         const dotsWrap = document.getElementById('reelDots');
         const playPauseBtn = document.getElementById('reelPlayPause');
-        const DURATION = 4200;
+        const playIcon = document.getElementById('reelPlayIcon');
+        const reelSection = document.querySelector('.reel-section');
+        if (!scenes.length || !progressWrap || !reelSection) return;
 
-        let current = 0, playing = true, segStart = null, rafId = null, pausedElapsed = 0;
+        const DURATION = 4200;
+        let current = 0;
+        let playing = true;
+        let segStart = null;
+        let pausedElapsed = 0;
+        let rafId = null;
+        let sectionVisible = true;
 
         scenes.forEach((_, i) => {
           const seg = document.createElement('div');
@@ -1250,82 +1317,87 @@
           seg.innerHTML = '<i></i>';
           progressWrap.appendChild(seg);
 
-          const dot = document.createElement('div');
+          const dot = document.createElement('button');
           dot.className = 'reel-dot' + (i === 0 ? ' active' : '');
-          dot.addEventListener('click', () => goTo(i));
+          dot.setAttribute('aria-label', 'Go to scene ' + (i + 1));
+          dot.addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(i); });
           dotsWrap.appendChild(dot);
         });
+        const segs = Array.from(progressWrap.children);
+        const dots = Array.from(dotsWrap.children);
 
-        const segs = document.querySelectorAll('.reel-seg');
-        const dots = document.querySelectorAll('.reel-dot');
         function setScene(i) {
-          scenes[current].classList.remove('active');
-          dots[current].classList.remove('active');
-          segs[current].classList.remove('done');
-          segs[current].querySelector('i').style.width = '0%';
           current = (i + scenes.length) % scenes.length;
-
-          scenes[current].classList.add('active');
-          dots[current].classList.add('active');
-
+          scenes.forEach((s, idx) => s.classList.toggle('active', idx === current));
+          dots.forEach((d, idx) => d.classList.toggle('active', idx === current));
           segs.forEach((s, idx) => {
-            if (idx < current) { s.classList.add('done'); s.querySelector('i').style.width = '100%'; }
-            else if (idx > current) { s.classList.remove('done'); s.querySelector('i').style.width = '0%'; }
+            s.classList.toggle('done', idx < current);
+            const bar = s.querySelector('i');
+            if (idx === current) bar.style.width = '0%';
+            else if (idx > current) bar.style.width = '0%';
           });
-        }
-
-        function goTo(i) {
-          setScene(i);
           pausedElapsed = 0;
           segStart = null;
-          if (playing) rafId = requestAnimationFrame(tick);
         }
 
         function tick(ts) {
           if (!playing) return;
           if (segStart === null) segStart = ts - pausedElapsed;
           const elapsed = ts - segStart;
-          const pct = Math.min(100, (elapsed / DURATION) * 100);
-          segs[current].querySelector('i').style.width = pct + '%';
+          const bar = segs[current].querySelector('i');
+          bar.style.width = Math.min((elapsed / DURATION) * 100, 100) + '%';
+
           if (elapsed >= DURATION) {
-            pausedElapsed = 0;
-            segStart = null;
             setScene(current + 1);
-            rafId = requestAnimationFrame(tick);
-          } else {
-            rafId = requestAnimationFrame(tick);
           }
+          rafId = requestAnimationFrame(tick);
         }
 
         function play() {
           playing = true;
-          playPauseBtn.textContent = '❚❚';
-          rafId = requestAnimationFrame((ts) => { segStart = ts - pausedElapsed; tick(ts); });
+          playIcon.textContent = 'pause';
+          segStart = null;
+          if (rafId === null) rafId = requestAnimationFrame(tick);
         }
-
         function pause() {
           playing = false;
-          playPauseBtn.textContent = '▶';
-          cancelAnimationFrame(rafId);
+          playIcon.textContent = 'play_arrow';
           if (segStart !== null) pausedElapsed = performance.now() - segStart;
+          if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
         }
 
         playPauseBtn.addEventListener('click', () => playing ? pause() : play());
         document.getElementById('reelNext').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current + 1); });
         document.getElementById('reelPrev').addEventListener('click', () => { pausedElapsed = 0; segStart = null; setScene(current - 1); });
 
-        // Stop burning frames on this loop while the tab is in the background.
+        // Only run the autoplay loop while the reel is on screen, and pause
+        // entirely when the tab is backgrounded.
         let wasPlayingBeforeHide = true;
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             wasPlayingBeforeHide = playing;
             if (playing) pause();
-          } else if (wasPlayingBeforeHide) {
+          } else if (wasPlayingBeforeHide && sectionVisible) {
             play();
           }
         });
 
-        rafId = requestAnimationFrame((ts) => { segStart = ts; tick(ts); });
+        if ('IntersectionObserver' in window) {
+          const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              sectionVisible = entry.isIntersecting;
+              if (sectionVisible && !document.hidden) {
+                if (wasPlayingBeforeHide) play();
+              } else {
+                wasPlayingBeforeHide = playing;
+                pause();
+              }
+            });
+          }, { threshold: 0.2 });
+          io.observe(reelSection);
+        } else {
+          rafId = requestAnimationFrame((ts) => { segStart = ts; tick(ts); });
+        }
       })();
     </script>
 
@@ -1870,6 +1942,41 @@
       const totalEl = document.getElementById("totalMediaDownloads");
       if (totalEl) totalEl.textContent = totalCount.toLocaleString();
     });
+  </script>
+
+  <!-- SCROLL REVEAL FOR .reveal-up ELEMENTS (BENTO GRID, ETC.) -->
+  <script>
+    (function initScrollReveal() {
+      const revealEls = document.querySelectorAll('.reveal-up');
+      if (!revealEls.length) return;
+
+      const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // Stagger reveal delay for siblings within the same parent grid/list.
+      const counters = new Map();
+      revealEls.forEach((el) => {
+        const parent = el.parentElement;
+        const n = counters.get(parent) || 0;
+        counters.set(parent, n + 1);
+        el.style.transitionDelay = reduceMotion ? '0s' : Math.min(n * 60, 320) + 'ms';
+      });
+
+      if (!('IntersectionObserver' in window)) {
+        revealEls.forEach((el) => el.classList.add('revealed'));
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      revealEls.forEach((el) => observer.observe(el));
+    })();
   </script>
 </body>
 </html>
