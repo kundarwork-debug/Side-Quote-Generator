@@ -299,9 +299,7 @@
       margin-bottom: 6px;
     }
 
-    /* =========================================================
-       BEAUTIFUL FUTURISTIC APML LOGO CORE & SHIELD PULSE
-       ========================================================= */
+    /* BEAUTIFULLY ANIMATED CENTRAL TARGET WITH LOGO */
     .broken-planet-center {
       position: relative;
       width: 74px;
@@ -526,7 +524,7 @@
     }
 
     .score-page-container {
-      max-width: 480px;
+      max-width: 520px;
       width: 100%;
       background: rgba(255, 255, 255, 0.96);
       border: 1px solid var(--surface-border);
@@ -664,7 +662,7 @@
       border-radius: 14px;
       padding: 12px 14px;
       margin-bottom: 14px;
-      max-height: 220px;
+      max-height: 240px;
       overflow-y: auto;
     }
 
@@ -695,12 +693,15 @@
       font-size: 12px;
       font-weight: 600;
       color: var(--text-main);
+      padding: 2px 0;
     }
 
     .leaderboard-row .rank-name {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      flex-wrap: wrap;
+      text-align: left;
     }
 
     .leaderboard-row .rank-num {
@@ -710,10 +711,28 @@
       width: 18px;
     }
 
+    .entry-badge {
+      font-size: 9.5px;
+      color: #64748b;
+      font-weight: 600;
+      background: rgba(226, 232, 240, 0.6);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .entry-date {
+      font-size: 9.5px;
+      color: #94a3b8;
+      font-weight: 600;
+      font-family: 'Space Grotesk', monospace;
+    }
+
     .leaderboard-row .entry-score {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 700;
       color: var(--primary);
+      font-size: 13px;
+      margin-left: 8px;
     }
 
     .esc-prompt-bar {
@@ -762,7 +781,7 @@
       .arcade-scoreboard { gap: 6px; padding: 4px 6px 4px 12px; }
       .score-page-container { padding: 18px 16px; }
       .metrics-row { gap: 6px; }
-      .leaderboard-wrap { max-height: 180px; }
+      .leaderboard-wrap { max-height: 200px; }
     }
   </style>
 </head>
@@ -828,7 +847,6 @@
         </span>
       </div>
       <div class="score-divider"></div>
-      <!-- IN-GAME CLOSE / QUIT BUTTON -->
       <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
         <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
         <span>Close</span>
@@ -852,7 +870,6 @@
         </div>
       </div>
 
-      <!-- Orbiting Displaced Icons -->
       <div class="free-node node-carton-1" id="node1" title="Displaced Carton">
         <span class="material-symbols-outlined">package_2</span>
       </div>
@@ -875,7 +892,6 @@
 
     </div>
 
-    <!-- BLAST GROUP: TEXT, BADGE & BUTTONS THAT BLAST & VANISH WHEN START IS CLICKED -->
     <div class="blast-ui-group" id="blastUiGroup">
       
       <div class="badge-capsule" id="gameModeBadge">
@@ -1007,22 +1023,18 @@
 
     (function initPhysicsAndAttraction() {
       const stage = document.getElementById('spaceStage');
-      
-      const shards = [
-        { el: document.getElementById('shardTop'), baseDist: 7, angle: -Math.PI / 2, currX: 0, currY: 0, rot: 8 },
-        { el: document.getElementById('shardLeft'), baseDist: 8, angle: Math.PI, currX: 0, currY: 0, rot: -12 },
-        { el: document.getElementById('shardRight'), baseDist: 8, angle: 0, currX: 0, currY: 0, rot: 15 },
-        { el: document.getElementById('shardBottom'), baseDist: 7, angle: Math.PI / 2, currX: 0, currY: 0, rot: -6 },
-        { el: document.getElementById('shardCore'), baseDist: 0, angle: 0, currX: 0, currY: 0, rot: 45 }
-      ];
+      const coreCapsule = document.getElementById('coreMainCapsule');
 
       const nodes = [
-        { el: document.getElementById('node1'), radius: 50,  speed:  0.009, angle: 0.5,             x: 0, y: 0 },
-        { el: document.getElementById('node2'), radius: 75,  speed: -0.007, angle: Math.PI,         x: 0, y: 0 },
-        { el: document.getElementById('node3'), radius: 75,  speed: -0.007, angle: 0.2,            x: 0, y: 0 },
-        { el: document.getElementById('node4'), radius: 98,  speed:  0.005, angle: -Math.PI / 2,     x: 0, y: 0 },
-        { el: document.getElementById('node5'), radius: 98,  speed:  0.005, angle:  Math.PI / 2.2,   x: 0, y: 0 }
+        { el: document.getElementById('node1'), radius: 55,  speed:  0.009, angle: 0.5,             x: 0, y: 0 },
+        { el: document.getElementById('node2'), radius: 82,  speed: -0.007, angle: Math.PI,         x: 0, y: 0 },
+        { el: document.getElementById('node3'), radius: 82,  speed: -0.007, angle: 0.2,            x: 0, y: 0 },
+        { el: document.getElementById('node4'), radius: 110, speed:  0.005, angle: -Math.PI / 2,     x: 0, y: 0 },
+        { el: document.getElementById('node5'), radius: 110, speed:  0.005, angle:  Math.PI / 2.2,   x: 0, y: 0 }
       ];
+
+      let coreOffsetX = 0;
+      let coreOffsetY = 0;
 
       function render() {
         if (stage && !stage.closest('.hidden-view')) {
@@ -1033,25 +1045,17 @@
           const relY = globalRocketY - centerY;
 
           const pullDist = Math.hypot(relX, relY) || 1;
-          const pullStrength = Math.min(22, 1200 / (pullDist + 60));
+          const pullStrength = Math.min(18, 1100 / (pullDist + 60));
           const pullAngle = Math.atan2(relY, relX);
 
-          shards.forEach((s, idx) => {
-            const time = performance.now() * 0.002 + idx;
-            const floatOffset = Math.sin(time) * 2;
-            const baseX = Math.cos(s.angle) * (s.baseDist + floatOffset);
-            const baseY = Math.sin(s.angle) * (s.baseDist + floatOffset);
+          const targetCoreX = Math.cos(pullAngle) * pullStrength * 0.7;
+          const targetCoreY = Math.sin(pullAngle) * pullStrength * 0.7;
+          coreOffsetX += (targetCoreX - coreOffsetX) * 0.1;
+          coreOffsetY += (targetCoreY - coreOffsetY) * 0.1;
 
-            const targetX = baseX + Math.cos(pullAngle) * pullStrength * (1 + idx * 0.15);
-            const targetY = baseY + Math.sin(pullAngle) * pullStrength * (1 + idx * 0.15);
-
-            s.currX += (targetX - s.currX) * 0.12;
-            s.currY += (targetY - s.currY) * 0.12;
-
-            if (s.el) {
-              s.el.style.transform = `translate(${s.currX}px, ${s.currY}px) rotate(${s.rot + Math.sin(time) * 4}deg)`;
-            }
-          });
+          if (coreCapsule) {
+            coreCapsule.style.transform = `translate(${coreOffsetX}px, ${coreOffsetY}px) rotate(${coreOffsetX * 1.5}deg)`;
+          }
 
           for (let i = 0; i < nodes.length; i++) {
             const item = nodes[i];
@@ -1085,7 +1089,6 @@
       const livesTextEl = document.getElementById('livesCountText');
       const toastEl = document.getElementById('levelToast');
       
-      // Page Views & Containers
       const headerContainer = document.getElementById('header-container');
       const footerContainer = document.getElementById('footer-container');
       const gameView = document.getElementById('gameView');
@@ -1121,7 +1124,6 @@
         pilotCallsignInput.value = localStorage.getItem('apml_pilot_name') || '';
       }
 
-      // Game State Variables
       let score = 0;
       let lives = 5;
       const MAX_LIVES = 5;
@@ -1144,7 +1146,6 @@
       let currentAngle = 0;
       let lastSmokeTime = 0;
 
-      // Cursor tracking
       document.addEventListener('mouseenter', () => { if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1'; });
       document.addEventListener('mouseleave', () => { if (rocket) rocket.style.opacity = '0'; });
       window.addEventListener('mousemove', (e) => {
@@ -1153,7 +1154,6 @@
         if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1';
       });
 
-      // Shoot controls
       window.addEventListener('mousedown', (e) => {
         if (!isGameActive || isGameOver) return;
         if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game')) return;
@@ -1170,6 +1170,23 @@
         }
       }, { passive: true });
 
+      function formatScoreDate(item) {
+        if (item.date && /^\d{2}\/\d{2}\/\d{4}$/.test(item.date)) {
+          return item.date;
+        }
+        if (item.timestamp || item.isoDate || item.date) {
+          const d = new Date(item.timestamp || item.isoDate || item.date);
+          if (!isNaN(d.getTime())) {
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+          }
+        }
+        const now = new Date();
+        return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+      }
+
       function renderLeaderboard(entries) {
         if (!leaderboardList) return;
         if (!entries || entries.length === 0) {
@@ -1181,6 +1198,8 @@
             <div class="rank-name">
               <span class="rank-num">#${idx + 1}</span>
               <span>${escapeHtml(item.pilot || 'Pilot')}</span>
+              <span class="entry-badge">Lvl ${item.level || 1}</span>
+              <span class="entry-date">${formatScoreDate(item)}</span>
             </div>
             <span class="entry-score">${(item.score || 0).toLocaleString()}</span>
           </div>
@@ -1197,7 +1216,6 @@
         }[tag] || tag));
       }
 
-      // 1. LIVE SYNC FOR TOP 30 SCORES (SDK Listener + REST Fetch Fallback)
       function initGlobalScoreSync() {
         fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json?orderBy="score"&limitToLast=30')
           .then(res => res.json())
@@ -1241,7 +1259,6 @@
 
       initGlobalScoreSync();
 
-      // Trigger fiery blast explosion animation across elements
       function triggerUiBlastEffect(el, intensity = 42) {
         if (!el) return;
         const rect = el.getBoundingClientRect();
@@ -1264,7 +1281,6 @@
         }
       }
 
-      // 2. START GAME FUNCTIONALITY (BLASTS AND HIDES HEADER, FOOTER & UI TEXT)
       function startGame() {
         if (headerContainer) {
           triggerUiBlastEffect(headerContainer, 36);
@@ -1311,7 +1327,6 @@
         btnStartGame.addEventListener('click', startGame);
       }
 
-      // LIVE GAME CLOSE / QUIT BUTTON HANDLER
       function quitLiveGameSession() {
         if (!isGameActive) return;
         isGameActive = false;
@@ -1334,7 +1349,6 @@
         });
       }
 
-      // 3. GUARANTEED GLOBAL SCORE PERSISTENCE (SDK + REST POST)
       function executeScoreSubmission(e) {
         if (e) {
           e.preventDefault();
@@ -1346,9 +1360,23 @@
 
         const currentScoreToSave = score;
         const currentLevelToSave = level;
+        
+        const now = new Date();
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const formattedDate = `${day}/${month}/${year}`;
+        const currentIsoDate = now.toISOString();
+        const currentTimestamp = Date.now();
 
         const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-        localSaved.push({ pilot: callsign, score: currentScoreToSave, level: currentLevelToSave });
+        localSaved.push({ 
+          pilot: callsign, 
+          score: currentScoreToSave, 
+          level: currentLevelToSave, 
+          date: formattedDate,
+          timestamp: currentTimestamp 
+        });
         localSaved.sort((a, b) => b.score - a.score);
         localStorage.setItem('apml_local_leaderboard', JSON.stringify(localSaved.slice(0, 30)));
 
@@ -1362,8 +1390,9 @@
           pilot: callsign,
           score: currentScoreToSave,
           level: currentLevelToSave,
-          timestamp: Date.now(),
-          date: new Date().toISOString()
+          date: formattedDate,
+          isoDate: currentIsoDate,
+          timestamp: currentTimestamp
         };
 
         function completeAndReload() {
@@ -1403,7 +1432,6 @@
         btnSubmitScore.addEventListener('click', executeScoreSubmission);
       }
 
-      // Check scores modal button
       if (btnCheckScores) {
         btnCheckScores.addEventListener('click', () => {
           isGameOver = true;
@@ -1451,7 +1479,6 @@
         if (scoreView) scoreView.classList.add('hidden-view');
         if (gameView) gameView.classList.remove('hidden-view');
         
-        // Restore Header, Footer & UI view smoothly
         if (headerContainer) {
           headerContainer.style.display = 'block';
           headerContainer.classList.remove('fired-up');
@@ -1695,11 +1722,9 @@
         }
       }
 
-      // Main Animation Frame
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Always render fiery particles & blast bursts
         for (let i = blastParticles.length - 1; i >= 0; i--) {
           const bp = blastParticles[i];
           bp.x += bp.vx;
@@ -1731,7 +1756,7 @@
 
         let coreX = canvas.width / 2;
         let coreY = canvas.height / 2;
-        const coreHitRadius = 32;
+        const coreHitRadius = 34;
         const rocketHitRadius = 14;
 
         if (planetCenterEl) {
