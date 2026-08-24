@@ -1,4 +1,17 @@
 // =========================================================
+// APML STANDALONE APK DETECTION
+// =========================================================
+(function detectStandaloneApp() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                    || window.navigator.standalone 
+                    || document.referrer.includes('android-app://');
+
+  if (isStandalone) {
+    document.documentElement.classList.add('is-native-apk');
+  }
+})();
+
+// =========================================================
 // APML COMMON HEADER, FOOTER & ROTATING HAMBURGER SCRIPT
 // =========================================================
 (function initCommonLayout() {
@@ -114,7 +127,7 @@
             <div class="footer-actions">
               <!-- M3 Themed About Me Button with GitHub Avatar -->
               <a href="about.html" class="m3-about-btn" title="About Developer">
-                <img src="https://github.com/github.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
+                <img src="https://github.com/kundarwork-debug.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
                 <span>About Me</span>
               </a>
             </div>
@@ -138,4 +151,14 @@
       });
     });
   }
+
+  // 4. HARDWARE BACK BUTTON NAVIGATION TRAP
+  window.addEventListener('popstate', () => {
+    const navMenu = document.getElementById("navMenu");
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    if (navMenu && navMenu.classList.contains('open')) {
+      navMenu.classList.remove('open');
+      if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
+    }
+  });
 })();
