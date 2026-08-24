@@ -30,6 +30,48 @@
 }
 
 /* =========================================================
+   STANDARD WEBSITE STYLES (Default for browser visitors)
+   ========================================================= */
+/* Normal web text selection and default scrolling remain intact */
+
+
+/* =========================================================
+   APK-ONLY STYLES (Applies ONLY when opened from the APK)
+   ========================================================= */
+.is-native-apk *, 
+.is-native-apk *::before, 
+.is-native-apk *::after {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.is-native-apk input, 
+.is-native-apk textarea {
+  -webkit-user-select: text !important;
+  user-select: text !important;
+}
+
+.is-native-apk body {
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Native active feedback only inside APK */
+.is-native-apk button:active, 
+.is-native-apk .btn-action:active, 
+.is-native-apk .module-card:active, 
+.is-native-apk .tech-chip:active, 
+.is-native-apk .nav-link:active {
+  transform: scale(0.96) !important;
+  transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  filter: brightness(0.92);
+}
+
+/* =========================================================
    COMMON HEADER STYLING (FULL-WIDTH BALANCED)
    ========================================================= */
 #header-container {
