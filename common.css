@@ -38,13 +38,47 @@
 /* =========================================================
    APK-ONLY STYLES (Applies ONLY when opened from the APK)
    ========================================================= */
+/* 1. Pure CSS Media Query Support for Standalone / Installed Apps */
+@media all and (display-mode: standalone), (display-mode: fullscreen) {
+  *, *::before, *::after {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  input, textarea {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+  }
+
+  html, body {
+    overscroll-behavior-y: none !important;
+    touch-action: manipulation !important;
+    padding-top: env(safe-area-inset-top) !important;
+    padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  button:active, 
+  .btn-action:active, 
+  .module-card:active, 
+  .tech-chip:active, 
+  .nav-link:active,
+  .m3-about-btn:active {
+    transform: scale(0.96) !important;
+    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    filter: brightness(0.92) !important;
+  }
+}
+
+/* 2. JavaScript Flag Class Support (.is-native-apk) */
 .is-native-apk *, 
 .is-native-apk *::before, 
 .is-native-apk *::after {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 .is-native-apk input, 
@@ -53,22 +87,23 @@
   user-select: text !important;
 }
 
+.is-native-apk html,
 .is-native-apk body {
-  overscroll-behavior-y: none;
-  touch-action: manipulation;
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior-y: none !important;
+  touch-action: manipulation !important;
+  padding-top: env(safe-area-inset-top) !important;
+  padding-bottom: env(safe-area-inset-bottom) !important;
 }
 
-/* Native active feedback only inside APK */
 .is-native-apk button:active, 
 .is-native-apk .btn-action:active, 
 .is-native-apk .module-card:active, 
 .is-native-apk .tech-chip:active, 
-.is-native-apk .nav-link:active {
+.is-native-apk .nav-link:active,
+.is-native-apk .m3-about-btn:active {
   transform: scale(0.96) !important;
   transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  filter: brightness(0.92);
+  filter: brightness(0.92) !important;
 }
 
 /* =========================================================
