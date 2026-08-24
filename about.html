@@ -6,6 +6,7 @@
   <title>Prasad Kundar - Profile</title>
 
   <link rel="icon" type="image/svg+xml" href="logo.svg">
+  <link rel="manifest" href="./manifest.json">
 
   <link rel="stylesheet" href="common.css?v=2.2">
 
@@ -142,7 +143,6 @@
       align-items: center;
       justify-content: center;
       user-select: none;
-      /* Custom Logo SVG Cursor when inside this region */
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fef2f2' stroke='%23b91c1c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23b91c1c'/%3E%3Ccircle cx='10' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='22' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='16' cy='23' r='2' fill='%23b91c1c'/%3E%3Cline x1='16' y1='16' x2='10' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='22' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='16' y2='23' stroke='%23b91c1c' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, crosshair;
     }
 
@@ -241,7 +241,6 @@
       font-size: 17px;
     }
 
-    /* Node color schemes */
     .node-code { color: var(--primary); border-color: var(--primary); }
     .node-web { color: #0284c7; border-color: #0284c7; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25); }
     .node-database { color: #d97706; border-color: #d97706; box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25); }
@@ -421,7 +420,7 @@
       align-items: center;
       gap: 8px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .tech-chip:hover {
@@ -477,7 +476,7 @@
         BDO at APML — built this project to simplify and automate daily operations.
       </p>
 
-      <div class="interactive-hero-zone" id="profileInteractiveZone" title="Move your cursor in this area to form a trailing snake tail!">
+      <div class="interactive-hero-zone" id="profileInteractiveZone" title="Move your cursor in this area to form a trailing snake tail! Triple-click to launch game.">
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
@@ -535,7 +534,6 @@
         const core = document.getElementById('profileCore');
         if (!zone || !core) return;
 
-        // Configuration of the 5 icons for orbital base & follow chain
         const nodes = [
           { el: document.getElementById('node1'), radius: 65,   speed:  0.016, angle: 0,                   x: 0, y: 0, vx: 0, vy: 0 },
           { el: document.getElementById('node2'), radius: 95,   speed: -0.011, angle: Math.PI,            x: 0, y: 0, vx: 0, vy: 0 },
@@ -549,7 +547,23 @@
         let mouseY = 0;
         let coreX = 0, coreY = 0;
 
-        // Check if mouse is strictly inside the interactive zone
+        // Triple Click Easter Egg Detector
+        let clickCount = 0;
+        let clickTimer = null;
+
+        zone.addEventListener('click', () => {
+          clickCount++;
+          if (clickTimer) clearTimeout(clickTimer);
+          if (clickCount >= 3) {
+            clickCount = 0;
+            window.location.href = '404.html';
+          } else {
+            clickTimer = setTimeout(() => {
+              clickCount = 0;
+            }, 600);
+          }
+        });
+
         zone.addEventListener('mousemove', (e) => {
           const rect = zone.getBoundingClientRect();
           mouseX = e.clientX - (rect.left + rect.width / 2);
@@ -561,7 +575,6 @@
           isInsideZone = false;
         });
 
-        // Touch support for tablets/mobile
         zone.addEventListener('touchmove', (e) => {
           if (!e.touches[0]) return;
           const rect = zone.getBoundingClientRect();
@@ -575,7 +588,6 @@
         });
 
         function render() {
-          // Central Avatar Subtle Magnetic Pull
           if (isInsideZone) {
             coreX += (mouseX * 0.08 - coreX) * 0.1;
             coreY += (mouseY * 0.08 - coreY) * 0.1;
@@ -585,7 +597,6 @@
           }
           core.style.transform = `translate(${coreX}px, ${coreY}px)`;
 
-          // Physics for each trailing node
           for (let i = 0; i < nodes.length; i++) {
             const item = nodes[i];
             item.angle += item.speed;
@@ -593,7 +604,6 @@
             let targetX, targetY;
 
             if (isInsideZone) {
-              // FOLLOW-THE-LEADER SNAKE TAIL MANNER
               if (i === 0) {
                 targetX = mouseX;
                 targetY = mouseY;
@@ -602,7 +612,7 @@
                 const dx = item.x - leader.x;
                 const dy = item.y - leader.y;
                 const dist = Math.hypot(dx, dy) || 1;
-                const spacing = 36; // Distance between trailing tail items
+                const spacing = 36;
 
                 targetX = leader.x + (dx / dist) * spacing;
                 targetY = leader.y + (dy / dist) * spacing;
@@ -611,7 +621,6 @@
               item.vx = (item.vx + (targetX - item.x) * 0.22) * 0.68;
               item.vy = (item.vy + (targetY - item.y) * 0.22) * 0.68;
             } else {
-              // ELASTIC RETURN TO CIRCULAR ORBIT
               targetX = Math.cos(item.angle) * item.radius;
               targetY = Math.sin(item.angle) * item.radius;
 
