@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
+  <!-- PREVENT AGGRESSIVE BROWSER CACHING (FIXES HARD REFRESH ISSUE) -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
   <title>APML Portal - Operations Hub & Workspace</title>
   <meta name="description" content="APML Portal is the official operations hub for quotation drafting, hub & branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.">
   <meta name="keywords" content="APML Portal, APML Operations Hub, APML Hub Directory, APML Quotation Studio, APML Rate Calculator">
@@ -13,9 +19,9 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg">
-  <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="common.css?v=3.1">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=3.5">
+  <link rel="manifest" href="./manifest.json?v=3.5">
+  <link rel="stylesheet" href="common.css?v=3.5">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -46,18 +52,15 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    html {
-      scroll-behavior: smooth;
+    /* SCROLL FIX: Native smooth scrolling without locking */
+    html, body {
+      width: 100%;
+      min-height: 100%;
       overflow-x: hidden;
-    }
-
-    body {
+      overflow-y: auto !important;
+      scroll-behavior: smooth;
       background-color: var(--bg-base);
       color: var(--text-main);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
       position: relative;
     }
 
@@ -130,13 +133,11 @@
     @keyframes radarRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes radarRotateRev { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-    /* =========================================================
-       SMOOTH NATURAL SCROLL-REVEAL SYSTEM (1.1s Easing)
-       ========================================================= */
+    /* SMOOTH SCROLL-REVEAL SYSTEM */
     .reveal-up {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 1.1s cubic-bezier(0.2, 0.8, 0.25, 1), transform 1.1s cubic-bezier(0.2, 0.8, 0.25, 1);
+      transform: translateY(24px);
+      transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -340,7 +341,7 @@
       background: transparent;
     }
 
-    /* OPERATIONS MODULES GRID (BENTO CARD SYSTEM) */
+    /* OPERATIONS MODULES GRID */
     .workspace-section {
       max-width: 1440px;
       margin: 10px auto 40px;
@@ -396,9 +397,9 @@
       justify-content: space-between;
       position: relative;
       overflow: hidden;
-      transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1),
-                  box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1),
-                  border-color 0.3s ease;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  border-color 0.25s ease;
     }
 
     .module-card::before {
@@ -1013,7 +1014,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=3.1"></script>
+  <script src="common.js?v=3.5"></script>
 
   <!-- LIVE ORBIT CONTROLLER -->
   <script>
@@ -1135,14 +1136,13 @@
           }
         });
       }, {
-        threshold: 0.08,
-        rootMargin: '0px 0px -40px 0px'
+        threshold: 0.05,
+        rootMargin: '0px 0px -20px 0px'
       });
 
       revealElements.forEach((el, idx) => {
-        // Natural gentle stagger for cards
         if (el.classList.contains('module-card')) {
-          el.style.transitionDelay = `${(idx % 3) * 0.12}s`;
+          el.style.transitionDelay = `${(idx % 3) * 0.08}s`;
         }
         observer.observe(el);
       });
@@ -1153,12 +1153,12 @@
   <script>
     (function init3DMatrixPhysics() {
       const plane = document.getElementById('matrixPlane');
-      let targetScroll = window.scrollY;
-      let currentScroll = window.scrollY;
+      let targetScroll = window.pageYOffset || document.documentElement.scrollTop;
+      let currentScroll = targetScroll;
       let ticking = false;
 
       window.addEventListener('scroll', () => {
-        targetScroll = window.scrollY;
+        targetScroll = window.pageYOffset || document.documentElement.scrollTop;
         if (!ticking) {
           ticking = true;
           requestAnimationFrame(renderMatrix);
@@ -1202,12 +1202,12 @@
       }
 
       function handleScrollFAB() {
-        const currentScrollY = window.scrollY;
-        const scrollPosition = window.scrollY + window.innerHeight;
+        const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollPosition = currentScrollY + window.innerHeight;
         const bodyHeight = document.documentElement.scrollHeight || document.body.offsetHeight;
         
         const isNearBottom = scrollPosition >= (bodyHeight - 140);
-        const hasScrolledDown = currentScrollY > 160;
+        const hasScrolledDown = currentScrollY > 140;
 
         if (supportFab) {
           if (isNearBottom) {
