@@ -54,9 +54,14 @@
 
   html, body {
     overscroll-behavior-y: none !important;
-    touch-action: manipulation !important;
+    touch-action: pan-y !important;
     padding-top: env(safe-area-inset-top) !important;
     padding-bottom: env(safe-area-inset-bottom) !important;
+  }
+
+  button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
+  .hamburger-btn, .support-btn, .cta-arrow {
+    touch-action: manipulation !important;
   }
 
   button:active, 
@@ -72,6 +77,9 @@
 }
 
 /* 2. JavaScript Flag Class Support (.is-native-apk) */
+/* Note: .is-native-apk is applied to the <html> element itself in common.js,
+   so it must be matched directly here, not as an ancestor selector. */
+.is-native-apk, 
 .is-native-apk *, 
 .is-native-apk *::before, 
 .is-native-apk *::after {
@@ -87,12 +95,24 @@
   user-select: text !important;
 }
 
-.is-native-apk html,
+.is-native-apk,
 .is-native-apk body {
   overscroll-behavior-y: none !important;
-  touch-action: manipulation !important;
+  touch-action: pan-y !important;
   padding-top: env(safe-area-inset-top) !important;
   padding-bottom: env(safe-area-inset-bottom) !important;
+}
+
+.is-native-apk button,
+.is-native-apk .btn-action,
+.is-native-apk .module-card,
+.is-native-apk .tech-chip,
+.is-native-apk .nav-link,
+.is-native-apk .m3-about-btn,
+.is-native-apk .hamburger-btn,
+.is-native-apk .support-btn,
+.is-native-apk .cta-arrow {
+  touch-action: manipulation !important;
 }
 
 .is-native-apk button:active, 
