@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Quotation Editor - APML Support Page</title>
 <meta name="description" content="APML Quotation Editor lets you draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers estimates as ready-to-share PDF documents.">
 <meta name="keywords" content="APML Quotation Editor, APML Estimate Generator, Exact Container Logistics Quotation, Maxcare Packers Movers Estimate, APML PDF Quote">
@@ -15,11 +15,14 @@
 <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
 <!-- Network/Hub SVG Favicon from root folder -->
-<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="icon" type="image/svg+xml" href="logo.svg?v=17.0">
 <link rel="manifest" href="./manifest.json">
 
-<link rel="stylesheet" href="common.css?v=3.1">
+<link rel="stylesheet" href="common.css?v=17.0">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -30,64 +33,54 @@
 
 <style>
   /* =========================================================
-     GOOGLE MATERIAL DESIGN 3 (M3) THEME SYSTEM
+     MATCHED WARM CREAM / MAIN PAGE COLOR SYSTEM
      ========================================================= */
   :root {
-    --md-sys-color-primary: #b91c1c;
-    --md-sys-color-primary-container: #fef2f2;
-    --md-sys-color-on-primary-container: #991b1b;
-    --md-sys-color-surface: #f8fafc;
-    --md-sys-color-surface-container-lowest: #ffffff;
-    --md-sys-color-surface-container-low: #f1f5f9;
-    --md-sys-color-surface-container: #e2e8f0;
-    --md-sys-color-outline: #cbd5e1;
-    --md-sys-color-outline-variant: #e2e8f0;
-    --md-sys-color-on-surface: #0f172a;
-    --md-sys-color-on-surface-variant: #64748b;
-    --md-sys-shape-corner-small: 8px;
-    --md-sys-shape-corner-medium: 12px;
-    --md-sys-shape-corner-large: 16px;
-    --md-sys-shape-corner-full: 9999px;
-    --md-elevation-1: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 1px 2px rgba(0, 0, 0, 0.04);
-    --md-elevation-2: 0px 4px 12px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.04);
-    --md-elevation-3: 0px 12px 28px rgba(0, 0, 0, 0.12), 0px 4px 8px rgba(0, 0, 0, 0.06);
+    --primary: #b91c1c;
+    --primary-dark: #881337;
+    --primary-soft: rgba(185, 28, 28, 0.06);
+    --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+    --surface-card: #ffffff;
+    --surface-border: #ede4de;
+    --surface-subtle: #f7ede6;
+    --text-main: #292524;
+    --text-muted: #78716c;
+    --radius-xl: 20px;
+    --radius-pill: 9999px;
+    --shadow-soft: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+    --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
     --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 
-    /* Legacy compatibility bindings */
-    --bg-main: var(--md-sys-color-surface);
-    --panel-bg: var(--md-sys-color-surface-container-lowest);
-    --card-bg: var(--md-sys-color-surface-container-lowest);
-    --border-light: var(--md-sys-color-outline-variant);
-    --border-hover: var(--md-sys-color-outline);
-    --text-main: var(--md-sys-color-on-surface);
-    --text-muted: var(--md-sys-color-on-surface-variant);
+    /* Legacy bindings */
     --accent-exact: #b91c1c;
-    --accent-exact-dark: #991b1b;
+    --accent-exact-dark: #881337;
     --accent-max-blue: #1e40af;
     --accent-max-dark: #1e3a8a;
     --accent-max-yellow: #f4d93e;
-  }
-
-  /* Dark Theme M3 Overrides */
-  body.dark-theme {
-    --md-sys-color-surface: #0b0f19;
-    --md-sys-color-surface-container-lowest: #151e2e;
-    --md-sys-color-surface-container-low: #1e293b;
-    --md-sys-color-surface-container: #334155;
-    --md-sys-color-outline: #475569;
-    --md-sys-color-outline-variant: rgba(255, 255, 255, 0.12);
-    --md-sys-color-on-surface: #f8fafc;
-    --md-sys-color-on-surface-variant: #94a3b8;
   }
 
   * { box-sizing: border-box; }
   
   body {
     margin: 0;
-    background: var(--md-sys-color-surface);
-    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: var(--md-sys-color-on-surface);
+    background: var(--bg-base);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-main);
     -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .ambient-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none !important;
+    z-index: 0;
+    background: 
+      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
   }
 
   .material-symbols-outlined {
@@ -102,39 +95,19 @@
     min-height: 100vh;
     width: 100%;
     padding-top: 64px;
+    position: relative;
+    z-index: 1;
   }
 
   /* ---------- LEFT: CONTROL PANEL ---------- */
   .panel {
-    background: var(--md-sys-color-surface-container-lowest);
-    border-right: 1px solid var(--md-sys-color-outline-variant);
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid var(--surface-border);
     padding: 24px;
     overflow-y: auto;
     max-height: calc(100vh - 64px);
-    box-shadow: var(--md-elevation-1);
+    box-shadow: var(--shadow-soft);
     z-index: 10;
-  }
-
-  .back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--md-sys-color-on-surface-variant);
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 6px 12px;
-    margin-bottom: 16px;
-    text-decoration: none;
-    border-radius: var(--md-sys-shape-corner-full);
-    transition: var(--transition-m3);
-  }
-
-  .back-btn:hover {
-    color: var(--md-sys-color-primary);
-    background: var(--md-sys-color-primary-container);
   }
 
   .brand-row {
@@ -145,82 +118,108 @@
   }
 
   .brand-row h1 {
-    font-size: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 21px;
     letter-spacing: -0.02em;
     font-weight: 800;
     margin: 0;
-    color: var(--md-sys-color-on-surface);
+    color: var(--text-main);
   }
 
   .brand-row span {
     font-size: 12px;
-    color: var(--md-sys-color-primary);
+    color: var(--primary);
     font-weight: 700;
-    background: var(--md-sys-color-primary-container);
+    background: var(--primary-soft);
     padding: 4px 12px;
-    border-radius: var(--md-sys-shape-corner-full);
-    border: 1px solid rgba(185, 28, 28, 0.2);
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(185, 28, 28, 0.15);
   }
 
-  /* M3 Segmented Buttons / Tabs */
+  /* Segmented Buttons / Tabs */
   .tabs {
     display: flex;
     gap: 6px;
     margin: 0 0 24px;
-    background: var(--md-sys-color-surface-container-low);
+    background: var(--surface-subtle);
     padding: 6px;
-    border-radius: var(--md-sys-shape-corner-medium);
-    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--surface-border);
   }
 
   .tab-btn {
     flex: 1;
     padding: 10px 14px;
-    border-radius: var(--md-sys-shape-corner-small);
+    border-radius: 14px;
     border: none;
     background: transparent;
     cursor: pointer;
     font-size: 12px;
     font-weight: 700;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--text-muted);
     text-align: center;
     line-height: 1.35;
     transition: var(--transition-m3);
   }
 
   .tab-btn.active[data-company="exact"] {
-    background: var(--md-sys-color-surface-container-lowest);
-    color: var(--md-sys-color-primary);
-    box-shadow: var(--md-elevation-1);
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: var(--shadow-soft);
   }
 
   .tab-btn.active[data-company="maxcare"] {
-    background: var(--md-sys-color-surface-container-lowest);
+    background: #ffffff;
     color: var(--accent-max-blue);
-    box-shadow: var(--md-elevation-1);
+    box-shadow: var(--shadow-soft);
   }
 
-  /* M3 Form Field Groups */
+  /* Form Field Groups */
   .field-group {
     margin-bottom: 24px;
   }
 
+  /* =========================================================
+     HIGHLIGHTED CUSTOMER & DETAILS CARD
+     ========================================================= */
   #sharedFieldGroup {
-    background: var(--md-sys-color-surface-container-low);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-large);
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.85) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.28);
+    border-radius: var(--radius-xl);
     padding: 18px;
     margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(185, 28, 28, 0.06);
+    position: relative;
   }
 
-  /* HIGHLIGHTED QUICK AUTO-FILL CONTAINER */
+  #sharedFieldGroup h2 {
+    color: var(--primary);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  #sharedFieldGroup h2::after {
+    background: rgba(185, 28, 28, 0.2);
+  }
+
+  #sharedFieldGroup input {
+    background: #ffffff;
+    border-color: rgba(185, 28, 28, 0.22);
+  }
+
+  #sharedFieldGroup input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+  }
+
+  /* QUICK PRICING CONTAINER */
   .quick-pricing-card {
-    background: linear-gradient(135deg, rgba(254, 242, 242, 0.85) 0%, rgba(255, 255, 255, 0.95) 100%);
-    border: 1.5px solid rgba(185, 28, 28, 0.28);
-    border-radius: var(--md-sys-shape-corner-large);
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.9) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.25);
+    border-radius: var(--radius-xl);
     padding: 16px;
     margin-bottom: 18px;
-    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.06);
+    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.05);
     position: relative;
   }
 
@@ -230,17 +229,18 @@
     gap: 4px;
     font-size: 11px;
     font-weight: 800;
-    color: var(--md-sys-color-primary);
+    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 10px;
   }
 
   .field-group h2 {
-    font-size: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--text-muted);
     margin: 0 0 14px;
     font-weight: 800;
     display: flex;
@@ -252,7 +252,7 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: var(--md-sys-color-outline-variant);
+    background: var(--surface-border);
   }
 
   .field { margin-bottom: 14px; }
@@ -260,7 +260,7 @@
   .field label {
     display: block;
     font-size: 12px;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--text-muted);
     margin-bottom: 6px;
     font-weight: 700;
   }
@@ -268,19 +268,19 @@
   .field input, .field textarea, .cost-row input, .term-row textarea {
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid var(--md-sys-color-outline-variant);
-    border-radius: var(--md-sys-shape-corner-medium);
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
     font-size: 13px;
     font-family: inherit;
-    color: var(--md-sys-color-on-surface);
-    background: var(--md-sys-color-surface-container-lowest);
+    color: var(--text-main);
+    background: #ffffff;
     transition: var(--transition-m3);
   }
 
   .field input:focus, .field textarea:focus, .cost-row input:focus, .term-row textarea:focus {
     outline: none;
-    border-color: var(--md-sys-color-primary);
-    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
   }
 
   .row2 {
@@ -300,14 +300,14 @@
   .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
   .term-row textarea { flex: 1; min-height: 42px; resize: vertical; }
 
-  /* M3 Icon Buttons */
+  /* Icon Buttons */
   .icon-btn {
     width: 36px;
     height: 36px;
     flex: none;
-    border-radius: var(--md-sys-shape-corner-full);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    background: var(--md-sys-color-surface-container-lowest);
+    border-radius: 50%;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
     color: #ef4444;
     cursor: pointer;
     font-size: 18px;
@@ -328,10 +328,10 @@
     margin-top: 8px;
     width: 100%;
     padding: 10px;
-    border-radius: var(--md-sys-shape-corner-medium);
-    border: 1px dashed var(--md-sys-color-outline);
-    background: var(--md-sys-color-surface-container-low);
-    color: var(--md-sys-color-primary);
+    border-radius: 12px;
+    border: 1px dashed var(--surface-border);
+    background: #ffffff;
+    color: var(--primary);
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
@@ -343,32 +343,33 @@
   }
 
   .add-btn:hover {
-    border-color: var(--md-sys-color-primary);
-    background: var(--md-sys-color-primary-container);
+    border-color: var(--primary);
+    background: var(--primary-soft);
   }
 
-  /* M3 Totals Container */
+  /* Totals Container */
   .totals-box {
-    background: var(--md-sys-color-primary-container);
-    border: 1px solid rgba(185, 28, 28, 0.2);
-    border-radius: var(--md-sys-shape-corner-medium);
-    padding: 14px 16px;
+    background: #ffffff;
+    border: 1.5px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    padding: 16px 18px;
     font-size: 13px;
     margin-top: 16px;
+    box-shadow: var(--shadow-soft);
   }
 
   .totals-box .line {
     display: flex;
     justify-content: space-between;
     padding: 4px 0;
-    color: var(--md-sys-color-on-surface);
+    color: var(--text-main);
   }
 
   .totals-box .line.total {
     font-weight: 800;
     font-size: 15px;
-    color: var(--md-sys-color-primary);
-    border-top: 1px dashed rgba(185, 28, 28, 0.3);
+    color: var(--primary);
+    border-top: 1px dashed var(--surface-border);
     margin-top: 6px;
     padding-top: 8px;
   }
@@ -376,10 +377,10 @@
   .reset-btn {
     width: 100%;
     padding: 11px;
-    border-radius: var(--md-sys-shape-corner-medium);
-    border: 1px solid var(--md-sys-color-outline-variant);
-    background: var(--md-sys-color-surface-container-lowest);
-    color: var(--md-sys-color-on-surface-variant);
+    border-radius: 12px;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: var(--text-muted);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -388,26 +389,25 @@
   }
 
   .reset-btn:hover {
-    color: var(--md-sys-color-on-surface);
-    border-color: var(--md-sys-color-outline);
-    background: var(--md-sys-color-surface-container-low);
+    color: var(--text-main);
+    background: var(--surface-subtle);
   }
 
-  /* M3 Floating Download Toolbar */
+  /* Download Toolbar */
   .download-bar {
     position: sticky;
     bottom: -1px;
     margin-top: 28px;
     padding: 16px 0;
-    border-top: 1px solid var(--md-sys-color-outline-variant);
-    background: var(--md-sys-color-surface-container-lowest);
+    border-top: 1px solid var(--surface-border);
+    background: rgba(255, 255, 255, 0.95);
   }
 
   .download-btn {
     width: 100%;
     padding: 14px 20px;
     border: none;
-    border-radius: var(--md-sys-shape-corner-medium);
+    border-radius: 14px;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
@@ -417,20 +417,20 @@
     justify-content: center;
     gap: 8px;
     transition: var(--transition-m3);
-    box-shadow: var(--md-elevation-1);
+    box-shadow: var(--shadow-soft);
   }
 
   .download-btn[data-company="exact"] { background: var(--accent-exact); }
-  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); transform: translateY(-2px); box-shadow: var(--md-elevation-2); }
+  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .download-btn[data-company="maxcare"] { background: var(--accent-max-blue); }
-  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); transform: translateY(-2px); box-shadow: var(--md-elevation-2); }
+  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
   .download-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
 
   .status-msg {
     font-size: 12px;
     text-align: center;
     margin-top: 8px;
-    color: var(--md-sys-color-on-surface-variant);
+    color: var(--text-muted);
     min-height: 14px;
   }
 
@@ -442,15 +442,16 @@
     align-items: flex-start;
     overflow-y: auto;
     max-height: calc(100vh - 64px);
-    background: var(--md-sys-color-surface-container-low);
+    background: transparent;
   }
 
   .sheet-wrap { width: 100%; max-width: 794px; }
 
   .sheet-shadow {
     background: #fff;
-    box-shadow: var(--md-elevation-3);
-    border-radius: 4px;
+    box-shadow: 0 16px 36px -8px rgba(120, 113, 108, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    border: 1px solid var(--surface-border);
     overflow: hidden;
   }
 
@@ -515,7 +516,7 @@
   .doc-max .letterhead {
     background: linear-gradient(180deg, #fff7cf 0%, #fdf0a8 100%);
     padding: 16px 40px; border-bottom: 4px solid var(--accent-max-blue);
-    display: flex; flex-direction: column; align-items: center; text-align: center;
+    display: flex; flex-direction: column align-items: center; text-align: center;
   }
   .doc-max .letterhead .cname {
     color: var(--accent-max-blue); font-weight: 700; font-size: 18pt; letter-spacing: .01em;
@@ -552,34 +553,21 @@
       grid-template-columns: 1fr !important;
       width: 100% !important;
       min-height: auto;
-      padding-top: 56px !important;
+      padding-top: 64px !important;
     }
 
     .panel {
       width: 100% !important;
       max-height: none !important;
       border-right: none !important;
-      border-bottom: 1px solid var(--md-sys-color-outline-variant);
+      border-bottom: 1px solid var(--surface-border);
       padding: 20px 16px 40px !important;
       box-sizing: border-box;
     }
 
     .totals-box {
       width: 100% !important;
-      padding: 10px 12px !important;
-      font-size: 12px !important;
-      box-sizing: border-box !important;
-    }
-
-    .totals-box .line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      word-break: break-word;
-    }
-
-    .totals-box .line span {
+      padding: 12px 14px !important;
       font-size: 12px !important;
     }
 
@@ -597,6 +585,8 @@
 </head>
 <body>
 
+<div class="ambient-glow"></div>
+
 <div id="header-container"></div>
 
 <div class="app" id="appView">
@@ -611,8 +601,9 @@
       <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
     </div>
 
+    <!-- HIGHLIGHTED CUSTOMER & DETAILS CARD -->
     <div class="field-group" id="sharedFieldGroup">
-      <h2><span class="material-symbols-outlined" style="font-size: 16px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:400; opacity:0.8;">— shared</span></h2>
+      <h2><span class="material-symbols-outlined" style="font-size: 18px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:600; opacity:0.85;">— shared</span></h2>
       <div class="field"><label>Date</label><input id="f_date"></div>
       <div class="field"><label>Customer name *</label><input id="f_custName"></div>
       <div class="row2">
@@ -634,7 +625,7 @@
     <div class="field-group" id="costItemsGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 16px;">payments</span> Cost items</h2>
       
-      <!-- HIGHLIGHTED QUICK AUTO-FILL CARD -->
+      <!-- QUICK AUTO-FILL CARD -->
       <div class="quick-pricing-card">
         <div class="quick-pricing-badge">
           <span class="material-symbols-outlined" style="font-size: 16px;">bolt</span>
@@ -645,7 +636,7 @@
           <label style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
           <div style="display:flex; gap:8px;">
             <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1; border-color: rgba(185, 28, 28, 0.35); background: #ffffff;">
-            <button id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:var(--md-sys-shape-corner-medium); border:1px solid var(--md-sys-color-primary); background:var(--md-sys-color-primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--md-elevation-1);">Apply</button>
+            <button id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
           </div>
         </div>
 
@@ -1204,7 +1195,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
-    alert("APML ke balak details tho bharo paheley");
+    alert("Please fill in customer details before downloading.");
     return;
   }
 
@@ -1297,6 +1288,6 @@ document.getElementById('dateStamp').textContent = new Date().toLocaleDateString
 renderAll();
 </script>
 
-<script src="common.js?v=3.1"></script>
+<script src="common.js?v=17.0"></script>
 </body>
 </html>
