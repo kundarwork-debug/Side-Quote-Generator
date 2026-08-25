@@ -122,12 +122,13 @@
 }
 
 /* =========================================================
-   COMMON HEADER STYLING (SCROLL-REVEAL SLIDE DOWN)
+   COMMON HEADER STYLING
    ========================================================= */
 #header-container {
   width: 100%;
 }
 
+/* Default state: Static & visible on all pages */
 .site-header {
   position: fixed;
   top: 0;
@@ -143,19 +144,22 @@
   display: flex;
   align-items: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
-
-  /* Hidden off-screen above viewport by default */
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-
-  /* Smooth slide-down animation */
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease;
   will-change: transform, opacity;
 }
 
-/* Slide into view when user scrolls down */
-.site-header.header-visible {
+/* Main/Home page override: Hidden until scrolled */
+.is-home-page .site-header {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Main/Home page state: Visible when scrolled */
+.is-home-page .site-header.header-visible {
   transform: translateY(0);
   opacity: 1;
   pointer-events: auto;
