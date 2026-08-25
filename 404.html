@@ -6,7 +6,7 @@
   <title>404 - Signal Lost | APML Portal</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="manifest" href="./manifest.json">
-  <link rel="stylesheet" href="common.css?v=2.2">
+  <link rel="stylesheet" href="common.css?v=5.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1013,7 +1013,7 @@
   </script>
 
   <!-- Common Navigation Scripts -->
-  <script src="common.js?v=2.2"></script>
+  <script src="common.js?v=5.0"></script>
 
   <!-- PLANET ATTRACTION & ORBIT MOTION RIG -->
   <script>
@@ -1446,6 +1446,16 @@
           smokeParticles.length = 0;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+          if (headerContainer) {
+            headerContainer.style.display = 'block';
+            headerContainer.classList.remove('fired-up');
+          }
+          if (footerContainer) {
+            footerContainer.style.display = 'block';
+            footerContainer.classList.remove('fired-up');
+          }
+          if (blastUiGroup) blastUiGroup.classList.remove('blasted');
+
           if (scoreCardBadge) scoreCardBadge.textContent = "Global Rankings";
           if (scoreCardHeading) scoreCardHeading.textContent = "APML Scoreboard";
           if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
@@ -1610,6 +1620,21 @@
         blastParticles.length = 0;
         smokeParticles.length = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Restore the site header/footer that startGame() hid — otherwise a
+        // natural game-over (running out of lives) leaves the visitor with
+        // no navigation at all on the 404 page.
+        if (headerContainer) {
+          headerContainer.style.display = 'block';
+          headerContainer.classList.remove('fired-up');
+        }
+        if (footerContainer) {
+          footerContainer.style.display = 'block';
+          footerContainer.classList.remove('fired-up');
+        }
+        if (blastUiGroup) {
+          blastUiGroup.classList.remove('blasted');
+        }
 
         if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
         if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
