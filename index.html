@@ -19,8 +19,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=11.0">
-  <link rel="stylesheet" href="common.css?v=11.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=12.0">
+  <link rel="stylesheet" href="common.css?v=12.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -32,7 +32,7 @@
       --primary: #b91c1c;
       --primary-dark: #881337;
       --primary-soft: rgba(185, 28, 28, 0.06);
-      --bg-base: #FDF8F5; /* Warm, peaceful cream canvas */
+      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
       --surface-card: #ffffff;
       --surface-border: #ede4de;
       --text-main: #292524;
@@ -70,7 +70,7 @@
       touch-action: pan-y pinch-zoom !important;
     }
 
-    /* Soft, Non-Distracting Radial Glow (No Grid, No Road Lines) */
+    /* Soft, Non-Distracting Ambient Radial Glow */
     .ambient-glow {
       position: fixed;
       top: 0;
@@ -124,33 +124,32 @@
       justify-content: center;
     }
 
-    /* CLEAN LOGO EMBLEM WITH SMOOTH ROTATION */
+    /* PERFECT CIRCULAR ROTATING HERO LOGO EMBLEM */
     .hero-logo-emblem {
       width: 84px;
       height: 84px;
-      border-radius: 24px;
+      border-radius: 50% !important;
       background: #ffffff;
-      border: 1px solid var(--surface-border);
-      box-shadow: 0 10px 30px -4px rgba(185, 28, 28, 0.12);
+      border: 1.5px solid var(--surface-border);
+      box-shadow: 0 10px 30px -4px rgba(185, 28, 28, 0.12), 0 2px 8px rgba(120, 113, 108, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 24px;
+      margin: 0 auto 24px auto;
       padding: 16px;
+      overflow: hidden;
+      flex-shrink: 0;
     }
 
     .hero-logo-emblem img {
       width: 100%;
       height: 100%;
+      border-radius: 50%;
       object-fit: contain;
       display: block;
-      animation: rotateClockwise 26s linear infinite;
+      animation: unifiedLogoSpin 12s linear infinite; /* Same 12s duration */
       transform-origin: center center;
-    }
-
-    @keyframes rotateClockwise {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+      will-change: transform;
     }
 
     .hero-title {
@@ -585,7 +584,7 @@
     })();
   </script>
 
-  <!-- Clean Subtle Radial Glow (No Grid, No Roads) -->
+  <!-- Clean Subtle Radial Glow -->
   <div class="ambient-glow"></div>
 
   <div id="header-container"></div>
@@ -595,7 +594,7 @@
     <!-- CLEAN HERO STAGE -->
     <section class="hero-stage">
       
-      <!-- Rotating Logo Emblem -->
+      <!-- Perfectly Circular Rotating Logo Emblem -->
       <div class="hero-logo-emblem reveal-up">
         <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23b91c1c\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
       </div>
@@ -873,7 +872,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=11.0"></script>
+  <script src="common.js?v=12.0"></script>
 
   <!-- INSTANT SEARCH & FILTER SCRIPT -->
   <script>
