@@ -1,11 +1,11 @@
-const CACHE_NAME = 'apml-portal-v2.0';
+const CACHE_NAME = 'apml-portal-v5.0';
 const ASSETS = [
   './',
   './404.html',
-  './common.css?v=3.5',
-  './common.js?v=3.5',
+  './common.css?v=5.0',
+  './common.js?v=5.0',
   './manifest.json',
-  './logo.svg'
+  './logo.svg?v=5.0'
 ];
 
 // Install: Cache static core shell
