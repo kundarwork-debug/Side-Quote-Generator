@@ -19,8 +19,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=14.0">
-  <link rel="stylesheet" href="common.css?v=14.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=15.0">
+  <link rel="stylesheet" href="common.css?v=15.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -85,26 +85,20 @@
     }
 
     /* =========================================================
-       ULTRA-SMOOTH CINEMATIC SCROLL REVEAL (1.35s Easing Curve)
+       PURE FADE-IN (INVISIBLE TO VISIBLE ONLY - NO JUMP / NO SHIFT)
        ========================================================= */
-    .reveal-up {
+    .fade-reveal {
       opacity: 0;
-      transform: translateY(38px) scale(0.97);
-      filter: blur(4px);
-      transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
-                  filter 1.35s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform, filter;
+      transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity;
     }
 
-    .reveal-up.revealed {
+    .fade-reveal.is-visible {
       opacity: 1;
-      transform: translateY(0) scale(1);
-      filter: blur(0px);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal-up { opacity: 1; transform: none; filter: none; transition: none; }
+      .fade-reveal { opacity: 1; transition: none; }
     }
 
     .material-symbols-outlined {
@@ -118,7 +112,9 @@
       width: 100%;
     }
 
-    /* FULL 16:9 / 100VH HERO STAGE */
+    /* =========================================================
+       FULL-SCREEN 16:9 / 100VH HERO STAGE
+       ========================================================= */
     .hero-stage {
       max-width: 1440px;
       margin: 0 auto;
@@ -203,7 +199,7 @@
       border-radius: var(--radius-pill);
       padding: 14px 26px;
       box-shadow: 0 10px 30px -5px rgba(120, 113, 108, 0.08);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
     }
 
     .search-filter-box:focus-within {
@@ -239,7 +235,7 @@
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       user-select: none;
     }
 
@@ -250,7 +246,9 @@
       transform: translateY(-1px);
     }
 
-    /* OPERATIONS MODULES GRID */
+    /* =========================================================
+       OPERATIONS MODULES GRID (PURE INVISIBLE TO VISIBLE ON SCROLL)
+       ========================================================= */
     .workspace-section {
       max-width: 1440px;
       margin: 40px auto 60px;
@@ -307,9 +305,10 @@
       position: relative;
       overflow: hidden;
       cursor: pointer !important;
-      transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1),
-                  box-shadow 0.35s cubic-bezier(0.2, 0, 0, 1),
-                  border-color 0.35s ease;
+      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
+                  border-color 0.25s ease,
+                  opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
     .module-card:hover {
@@ -615,20 +614,20 @@
     <section class="hero-stage">
       
       <!-- Perfectly Circular Rotating Logo Emblem -->
-      <div class="hero-logo-emblem reveal-up">
+      <div class="hero-logo-emblem fade-reveal is-visible">
         <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23b91c1c\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
       </div>
 
-      <h1 class="hero-title reveal-up">
+      <h1 class="hero-title fade-reveal is-visible">
         One Portal for <span>All Solutions</span>
       </h1>
 
-      <p class="hero-sub reveal-up">
+      <p class="hero-sub fade-reveal is-visible">
         Work Smarter, Move Faster.
       </p>
 
       <!-- Clean Search Filter Bar -->
-      <div class="search-filter-wrap reveal-up">
+      <div class="search-filter-wrap fade-reveal is-visible">
         <div class="search-filter-box">
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">search</span>
           <input type="text" id="moduleFilterInput" placeholder="Quick find module: Quotation, Car Rate, Directory, Tracking...">
@@ -645,10 +644,10 @@
       </div>
     </section>
 
-    <!-- OPERATIONS MODULES GRID (REACHABLE UPON SCROLLING) -->
+    <!-- OPERATIONS MODULES GRID (PURE INVISIBLE TO VISIBLE ON SCROLL) -->
     <section class="workspace-section">
       
-      <div class="section-bar reveal-up">
+      <div class="section-bar fade-reveal">
         <div class="section-heading">
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">grid_view</span>
           <span>Operations Modules</span>
@@ -658,7 +657,7 @@
 
       <div class="modules-grid" id="modulesGrid">
         
-        <a href="editor.html" class="module-card reveal-up" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
+        <a href="editor.html" class="module-card fade-reveal" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -682,7 +681,7 @@
           </div>
         </a>
 
-        <a href="wcro-consignment-status.html" class="module-card reveal-up" data-tags="consignment tracking live status wcro dockets sheets logistics">
+        <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -706,7 +705,7 @@
           </div>
         </a>
 
-        <a href="gallery.html" class="module-card reveal-up" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <a href="gallery.html" class="module-card fade-reveal" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -730,7 +729,7 @@
           </div>
         </a>
 
-        <a href="hub-details.html" class="module-card reveal-up" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
+        <a href="hub-details.html" class="module-card fade-reveal" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -754,7 +753,7 @@
           </div>
         </a>
 
-        <a href="field-officer.html" class="module-card reveal-up" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
+        <a href="field-officer.html" class="module-card fade-reveal" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -778,7 +777,7 @@
           </div>
         </a>
 
-        <a href="APML-Lite.html" class="module-card reveal-up" data-tags="apml lite calculator volume cft rate pricing cube floor">
+        <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -802,7 +801,7 @@
           </div>
         </a>
 
-        <a href="car-rate.html" class="module-card reveal-up" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
+        <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -826,7 +825,7 @@
           </div>
         </a>
 
-        <a href="local-rate.html" class="module-card reveal-up" data-tags="local shifting intra-city rate sop budget minimum moving city">
+        <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -855,7 +854,7 @@
 
     <!-- STATS SECTION -->
     <section class="impact-section">
-      <div class="impact-grid reveal-up">
+      <div class="impact-grid fade-reveal">
         <div class="impact-item">
           <div class="impact-num">8</div>
           <div class="impact-label">Active Modules</div>
@@ -892,7 +891,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=14.0"></script>
+  <script src="common.js?v=15.0"></script>
 
   <!-- INSTANT SEARCH & FILTER SCRIPT -->
   <script>
@@ -932,28 +931,28 @@
     }
   </script>
 
-  <!-- GENTLE SLOW STAGGERED SCROLL REVEAL OBSERVER -->
+  <!-- PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER (NO MOVEMENT) -->
   <script>
-    (function initSlowCinematicScrollReveal() {
-      const revealElements = document.querySelectorAll('.reveal-up');
-      if (!revealElements.length) return;
+    (function initPureFadeObserver() {
+      const fadeElements = document.querySelectorAll('.fade-reveal');
+      if (!fadeElements.length) return;
 
       const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
+            entry.target.classList.add('is-visible');
             obs.unobserve(entry.target);
           }
         });
       }, {
-        threshold: 0.08,
+        threshold: 0.1,
         rootMargin: '0px 0px -40px 0px'
       });
 
-      revealElements.forEach((el, idx) => {
-        // Slow natural progressive cascading stagger for the cards
+      fadeElements.forEach((el, idx) => {
+        // Smooth gentle opacity stagger across the grid
         if (el.classList.contains('module-card')) {
-          el.style.transitionDelay = `${(idx % 3) * 0.16}s`;
+          el.style.transitionDelay = `${(idx % 3) * 0.14}s`;
         }
         observer.observe(el);
       });
