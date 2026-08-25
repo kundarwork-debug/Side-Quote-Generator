@@ -30,45 +30,50 @@
 }
 
 /* =========================================================
-   APK-ONLY STYLES (Applies ONLY when opened from the APK)
+   APK / TOUCH STANDALONE ONLY (FIXES MOUSE LOCK IN FULLSCREEN)
    ========================================================= */
-@media all and (display-mode: standalone), (display-mode: fullscreen) {
-  *, *::before, *::after {
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    user-select: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
+@media all and (display-mode: standalone) {
+  @media (hover: none) and (pointer: coarse) {
+    *, *::before, *::after {
+      -webkit-touch-callout: none !important;
+      -webkit-user-select: none !important;
+      user-select: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
 
-  input, textarea {
-    -webkit-user-select: text !important;
-    user-select: text !important;
-  }
+    input, textarea {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+    }
 
-  html, body {
-    overscroll-behavior-y: none !important;
-    touch-action: pan-y !important;
-    padding-top: env(safe-area-inset-top) !important;
-    padding-bottom: env(safe-area-inset-bottom) !important;
-  }
+    html, body {
+      overscroll-behavior-y: none !important;
+      touch-action: pan-y !important;
+      padding-top: env(safe-area-inset-top) !important;
+      padding-bottom: env(safe-area-inset-bottom) !important;
+    }
 
-  button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
-  .hamburger-btn, .support-btn, .cta-arrow {
-    touch-action: manipulation !important;
-  }
+    button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
+    .hamburger-btn, .support-btn, .cta-arrow {
+      touch-action: manipulation !important;
+    }
 
-  button:active, 
-  .btn-action:active, 
-  .module-card:active, 
-  .tech-chip:active, 
-  .nav-link:active,
-  .m3-about-btn:active {
-    transform: scale(0.96) !important;
-    transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    filter: brightness(0.92) !important;
+    button:active, 
+    .btn-action:active, 
+    .module-card:active, 
+    .tech-chip:active, 
+    .nav-link:active,
+    .m3-about-btn:active {
+      transform: scale(0.96) !important;
+      transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      filter: brightness(0.92) !important;
+    }
   }
 }
 
+/* =========================================================
+   NATIVE APK JS FALLBACK
+   ========================================================= */
 .is-native-apk, 
 .is-native-apk *, 
 .is-native-apk *::before, 
@@ -144,7 +149,7 @@
   opacity: 0;
   pointer-events: none;
 
-  /* Smooth, slow slide-down animation */
+  /* Smooth slide-down animation */
   transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.65s ease;
   will-change: transform, opacity;
 }
@@ -332,7 +337,7 @@
 }
 
 /* =========================================================
-   COMMON FOOTER STYLING (FULL-WIDTH BALANCED)
+   COMMON FOOTER STYLING
    ========================================================= */
 #footer-container {
   width: 100%;
