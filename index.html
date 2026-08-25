@@ -19,8 +19,8 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=12.0">
-  <link rel="stylesheet" href="common.css?v=12.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=14.0">
+  <link rel="stylesheet" href="common.css?v=14.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -70,7 +70,7 @@
       touch-action: pan-y pinch-zoom !important;
     }
 
-    /* Soft, Non-Distracting Ambient Radial Glow */
+    /* Soft Ambient Radial Glow */
     .ambient-glow {
       position: fixed;
       top: 0;
@@ -80,25 +80,31 @@
       pointer-events: none !important;
       z-index: 0;
       background: 
-        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 50% 25%, rgba(254, 215, 202, 0.4) 0%, transparent 65%),
         radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
     }
 
-    /* GENTLE NATURAL SCROLL-REVEAL */
+    /* =========================================================
+       ULTRA-SMOOTH CINEMATIC SCROLL REVEAL (1.35s Easing Curve)
+       ========================================================= */
     .reveal-up {
       opacity: 0;
-      transform: translateY(18px);
-      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+      transform: translateY(38px) scale(0.97);
+      filter: blur(4px);
+      transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 1.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 1.35s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform, filter;
     }
 
     .reveal-up.revealed {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
+      filter: blur(0px);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .reveal-up { opacity: 1; transform: none; transition: none; }
+      .reveal-up { opacity: 1; transform: none; filter: none; transition: none; }
     }
 
     .material-symbols-outlined {
@@ -112,31 +118,35 @@
       width: 100%;
     }
 
-    /* HERO STAGE */
+    /* FULL 16:9 / 100VH HERO STAGE */
     .hero-stage {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 90px 32px 60px;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 100px 32px 80px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     /* PERFECT CIRCULAR ROTATING HERO LOGO EMBLEM */
     .hero-logo-emblem {
-      width: 84px;
-      height: 84px;
+      width: 90px;
+      height: 90px;
       border-radius: 50% !important;
       background: #ffffff;
       border: 1.5px solid var(--surface-border);
-      box-shadow: 0 10px 30px -4px rgba(185, 28, 28, 0.12), 0 2px 8px rgba(120, 113, 108, 0.05);
+      box-shadow: 0 12px 35px -4px rgba(185, 28, 28, 0.14), 0 2px 8px rgba(120, 113, 108, 0.05);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 24px auto;
-      padding: 16px;
+      margin: 0 auto 28px auto;
+      padding: 18px;
       overflow: hidden;
       flex-shrink: 0;
     }
@@ -147,19 +157,19 @@
       border-radius: 50%;
       object-fit: contain;
       display: block;
-      animation: unifiedLogoSpin 12s linear infinite; /* Same 12s duration */
+      animation: unifiedLogoSpin 12s linear infinite;
       transform-origin: center center;
       will-change: transform;
     }
 
     .hero-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(34px, 5.5vw, 52px);
+      font-size: clamp(38px, 6vw, 58px);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.03em;
       line-height: 1.12;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .hero-title span {
@@ -169,18 +179,18 @@
     }
 
     .hero-sub {
-      font-size: clamp(14.5px, 3.5vw, 17px);
+      font-size: clamp(15px, 3.8vw, 18px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 520px;
+      max-width: 540px;
       line-height: 1.6;
     }
 
-    /* CLEAN FLOATING SEARCH BAR */
+    /* FLOATING SEARCH BAR */
     .search-filter-wrap {
       width: 100%;
-      max-width: 600px;
-      margin: 32px auto 0;
+      max-width: 620px;
+      margin: 36px auto 0;
       padding: 0 16px;
     }
 
@@ -189,16 +199,16 @@
       align-items: center;
       gap: 12px;
       background: #ffffff;
-      border: 1px solid var(--surface-border);
+      border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-pill);
-      padding: 13px 24px;
-      box-shadow: var(--shadow-soft);
-      transition: all 0.25s ease;
+      padding: 14px 26px;
+      box-shadow: 0 10px 30px -5px rgba(120, 113, 108, 0.08);
+      transition: all 0.3s ease;
     }
 
     .search-filter-box:focus-within {
       border-color: rgba(185, 28, 28, 0.4);
-      box-shadow: 0 10px 30px rgba(185, 28, 28, 0.1);
+      box-shadow: 0 12px 32px rgba(185, 28, 28, 0.12);
       transform: translateY(-2px);
     }
 
@@ -217,19 +227,19 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.75);
       border: 1px solid var(--surface-border);
-      padding: 5px 12px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       user-select: none;
     }
 
@@ -237,12 +247,13 @@
       border-color: var(--primary);
       color: var(--primary);
       background: #ffffff;
+      transform: translateY(-1px);
     }
 
     /* OPERATIONS MODULES GRID */
     .workspace-section {
       max-width: 1440px;
-      margin: 10px auto 40px;
+      margin: 40px auto 60px;
       padding: 0 32px;
       width: 100%;
     }
@@ -286,7 +297,7 @@
       background: var(--surface-card);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-xl);
-      padding: 26px 22px;
+      padding: 28px 24px;
       text-decoration: none;
       color: inherit;
       box-shadow: var(--shadow-soft);
@@ -296,9 +307,9 @@
       position: relative;
       overflow: hidden;
       cursor: pointer !important;
-      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
-                  box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
-                  border-color 0.25s ease;
+      transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1),
+                  box-shadow 0.35s cubic-bezier(0.2, 0, 0, 1),
+                  border-color 0.35s ease;
     }
 
     .module-card:hover {
@@ -406,7 +417,7 @@
     /* STATS SECTION */
     .impact-section {
       max-width: 1440px;
-      margin: 8px auto 36px;
+      margin: 8px auto 48px;
       padding: 0 32px;
       width: 100%;
     }
@@ -551,9 +562,18 @@
       display: block;
     }
 
+    /* RESPONSIVE SCALING FOR MOBILE VIEWPORTS */
     @media (max-width: 768px) {
-      .hero-stage { padding: 80px 16px 40px; }
-      .workspace-section, .impact-section { padding: 0 16px; }
+      .hero-stage { 
+        padding: 120px 20px 90px;
+        min-height: 100dvh;
+        justify-content: center;
+      }
+      .hero-logo-emblem { width: 80px; height: 80px; margin-bottom: 22px; }
+      .hero-title { font-size: 32px; }
+      .search-filter-wrap { margin-top: 28px; }
+      .workspace-section { margin-top: 20px; padding: 0 16px; }
+      .impact-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
       .support-fab { bottom: 20px; right: 20px; }
       .support-msg-bubble { max-width: 220px; font-size: 12.5px; padding: 10px 14px; }
@@ -591,7 +611,7 @@
 
   <main>
     
-    <!-- CLEAN HERO STAGE -->
+    <!-- FULL 16:9 / 100VH HERO STAGE -->
     <section class="hero-stage">
       
       <!-- Perfectly Circular Rotating Logo Emblem -->
@@ -625,7 +645,7 @@
       </div>
     </section>
 
-    <!-- OPERATIONS MODULES GRID -->
+    <!-- OPERATIONS MODULES GRID (REACHABLE UPON SCROLLING) -->
     <section class="workspace-section">
       
       <div class="section-bar reveal-up">
@@ -872,7 +892,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=12.0"></script>
+  <script src="common.js?v=14.0"></script>
 
   <!-- INSTANT SEARCH & FILTER SCRIPT -->
   <script>
@@ -912,9 +932,9 @@
     }
   </script>
 
-  <!-- SCROLL REVEAL OBSERVER -->
+  <!-- GENTLE SLOW STAGGERED SCROLL REVEAL OBSERVER -->
   <script>
-    (function initNaturalScrollReveal() {
+    (function initSlowCinematicScrollReveal() {
       const revealElements = document.querySelectorAll('.reveal-up');
       if (!revealElements.length) return;
 
@@ -926,13 +946,14 @@
           }
         });
       }, {
-        threshold: 0.05,
-        rootMargin: '0px 0px -20px 0px'
+        threshold: 0.08,
+        rootMargin: '0px 0px -40px 0px'
       });
 
       revealElements.forEach((el, idx) => {
+        // Slow natural progressive cascading stagger for the cards
         if (el.classList.contains('module-card')) {
-          el.style.transitionDelay = `${(idx % 3) * 0.07}s`;
+          el.style.transitionDelay = `${(idx % 3) * 0.16}s`;
         }
         observer.observe(el);
       });
