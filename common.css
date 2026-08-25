@@ -30,15 +30,8 @@
 }
 
 /* =========================================================
-   STANDARD WEBSITE STYLES (Default for browser visitors)
-   ========================================================= */
-/* Normal web text selection and default scrolling remain intact */
-
-
-/* =========================================================
    APK-ONLY STYLES (Applies ONLY when opened from the APK)
    ========================================================= */
-/* 1. Pure CSS Media Query Support for Standalone / Installed Apps */
 @media all and (display-mode: standalone), (display-mode: fullscreen) {
   *, *::before, *::after {
     -webkit-touch-callout: none !important;
@@ -76,9 +69,6 @@
   }
 }
 
-/* 2. JavaScript Flag Class Support (.is-native-apk) */
-/* Note: .is-native-apk is applied to the <html> element itself in common.js,
-   so it must be matched directly here, not as an ancestor selector. */
 .is-native-apk, 
 .is-native-apk *, 
 .is-native-apk *::before, 
@@ -409,6 +399,41 @@
   box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
 }
 
+/* =========================================================
+   HERO CIRCULAR ROTATING EMBLEM COMPONENT
+   ========================================================= */
+.hero-logo-emblem {
+  width: 84px;
+  height: 84px;
+  border-radius: 50% !important;
+  background: #ffffff;
+  border: 1.5px solid rgba(243, 232, 226, 0.95);
+  box-shadow: 0 10px 30px -4px rgba(185, 28, 28, 0.12), 0 2px 8px rgba(120, 113, 108, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px auto;
+  padding: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hero-logo-emblem img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: contain;
+  display: block;
+  animation: rotateClockwise 24s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+@keyframes rotateClockwise {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .header-inner,
   .footer-inner {
@@ -425,3 +450,4 @@
     gap: 12px;
   }
 }
+```[cite: 3]
