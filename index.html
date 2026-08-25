@@ -55,7 +55,7 @@
     html {
       scroll-behavior: smooth;
       overflow-x: hidden;
-      overflow-y: scroll !important;
+      overflow-y: scroll;
       height: 100%;
     }
 
@@ -66,7 +66,6 @@
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
-      overflow-y: visible !important;
       position: relative;
     }
 
@@ -75,8 +74,8 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none !important;
       z-index: 0;
       background: 
@@ -88,8 +87,8 @@
     .perspective-grid-layer {
       position: fixed;
       inset: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       pointer-events: none !important;
       z-index: 0;
       perspective: 1000px;
@@ -656,26 +655,6 @@
 </head>
 <body>
 
-  <!-- AUTOMATIC CACHE-CLEANER & SERVICE WORKER REFRESH SCRIPT -->
-  <script>
-    (function clearOldCaches() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          for (let registration of registrations) {
-            registration.unregister();
-          }
-        });
-      }
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          for (let name of names) {
-            caches.delete(name);
-          }
-        });
-      }
-    })();
-  </script>
-
   <div class="ambient-bg"></div>
 
   <!-- PERSPECTIVE GRID BACKGROUND -->
@@ -1104,55 +1083,63 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-      authDomain: "apml-portal.firebaseapp.com",
-      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-      projectId: "apml-portal",
-      storageBucket: "apml-portal.firebasestorage.app",
-      messagingSenderId: "479017159240",
-      appId: "1:479017159240:web:0853422718e6195b74a67d",
-      measurementId: "G-4H1HT31DYB"
-    };
+    try {
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+        authDomain: "apml-portal.firebaseapp.com",
+        databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+        projectId: "apml-portal",
+        storageBucket: "apml-portal.firebasestorage.app",
+        messagingSenderId: "479017159240",
+        appId: "1:479017159240:web:0853422718e6195b74a67d",
+        measurementId: "G-4H1HT31DYB"
+      };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-
-    // 1. Live Online Presence Tracker
-    const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
-    const myPresenceRef = db.ref("presence/" + userSessionId);
-    const allPresenceRef = db.ref("presence");
-
-    db.ref(".info/connected").on("value", (snap) => {
-      if (snap.val() === true) {
-        myPresenceRef.onDisconnect().remove();
-        myPresenceRef.set({ online: true, timestamp: Date.now() });
+      if (typeof firebase === "undefined") {
+        throw new Error("Firebase SDK failed to load (blocked network or offline).");
       }
-    });
 
-    allPresenceRef.on("value", (snap) => {
-      const activeCount = snap.numChildren() || 1;
-      const countEl = document.getElementById("liveUserCount");
-      if (countEl) countEl.textContent = activeCount.toLocaleString();
-    });
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const db = firebase.database();
 
-    // 2. PDF Export Counter
-    const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
-    totalDownloadsRef.on("value", (snap) => {
-      const totalCount = snap.val() || 0;
-      const totalEl = document.getElementById("totalPdfDownloads");
-      if (totalEl) totalEl.textContent = totalCount.toLocaleString();
-    });
+      // 1. Live Online Presence Tracker
+      const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
+      const myPresenceRef = db.ref("presence/" + userSessionId);
+      const allPresenceRef = db.ref("presence");
 
-    // 3. Media Download Counter
-    const totalMediaRef = db.ref("analytics/totalMediaDownloads");
-    totalMediaRef.on("value", (snap) => {
-      const totalCount = snap.val() || 0;
-      const totalEl = document.getElementById("totalMediaDownloads");
-      if (totalEl) totalEl.textContent = totalCount.toLocaleString();
-    });
+      db.ref(".info/connected").on("value", (snap) => {
+        if (snap.val() === true) {
+          myPresenceRef.onDisconnect().remove();
+          myPresenceRef.set({ online: true, timestamp: Date.now() });
+        }
+      });
+
+      allPresenceRef.on("value", (snap) => {
+        const activeCount = snap.numChildren() || 1;
+        const countEl = document.getElementById("liveUserCount");
+        if (countEl) countEl.textContent = activeCount.toLocaleString();
+      });
+
+      // 2. PDF Export Counter
+      const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
+      totalDownloadsRef.on("value", (snap) => {
+        const totalCount = snap.val() || 0;
+        const totalEl = document.getElementById("totalPdfDownloads");
+        if (totalEl) totalEl.textContent = totalCount.toLocaleString();
+      });
+
+      // 3. Media Download Counter
+      const totalMediaRef = db.ref("analytics/totalMediaDownloads");
+      totalMediaRef.on("value", (snap) => {
+        const totalCount = snap.val() || 0;
+        const totalEl = document.getElementById("totalMediaDownloads");
+        if (totalEl) totalEl.textContent = totalCount.toLocaleString();
+      });
+    } catch (err) {
+      console.warn("Live stats unavailable:", err.message);
+    }
   </script>
 </body>
 </html>
