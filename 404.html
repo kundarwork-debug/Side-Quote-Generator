@@ -19,7 +19,7 @@
       --primary-dark: #881337;
       --primary-soft: rgba(185, 28, 28, 0.08);
       --primary-glow: rgba(185, 28, 28, 0.28);
-      --bg-base: #f8fafc;
+      --bg-base: #FDF8F5;
       --surface-border: rgba(226, 232, 240, 0.9);
       --text-main: #0f172a;
       --text-muted: #64748b;
@@ -94,8 +94,8 @@
       pointer-events: none;
       z-index: 0;
       background: 
-        radial-gradient(circle at 20% 20%, rgba(185, 28, 28, 0.06) 0%, transparent 45%),
-        radial-gradient(circle at 80% 80%, rgba(225, 29, 72, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
     }
 
     /* 3D PERSPECTIVE MATRIX FLOOR */
@@ -168,28 +168,31 @@
       pointer-events: none;
     }
 
-    /* ARCADE HUD SCOREBOARD WITH INTEGRATED CLOSE / ABORT BUTTON */
+    /* FIXED TOP ARCADE SCOREBOARD */
     .arcade-scoreboard {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-24px);
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 5px 8px 5px 16px;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid var(--surface-border);
+      padding: 6px 10px 6px 18px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-subtle);
-      margin-bottom: 8px;
-      z-index: 25;
-      backdrop-filter: blur(8px);
+      box-shadow: 0 10px 30px -4px rgba(120, 113, 108, 0.15);
+      z-index: 1000;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       opacity: 0;
-      transform: translateY(-12px);
       pointer-events: none;
       transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     body.game-active .arcade-scoreboard {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateX(-50%) translateY(0);
       pointer-events: auto;
     }
 
@@ -264,7 +267,7 @@
     /* LEVEL UP NOTIFICATION TOAST */
     .level-toast {
       position: fixed;
-      top: 32px;
+      top: 68px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
       background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
@@ -515,9 +518,7 @@
       transform: translateY(-2px);
     }
 
-    /* =========================================================
-       PAGE 2: DEDICATED SCORE & GLOBAL LEADERBOARD PAGE
-       ========================================================= */
+    /* PAGE 2: SCORE & LEADERBOARD */
     #scoreView {
       z-index: 1000;
       pointer-events: auto !important;
@@ -778,7 +779,7 @@
       #failed-rocket-cursor { display: none !important; }
       body, a, button { cursor: auto !important; }
       .error-description { max-width: 270px; }
-      .arcade-scoreboard { gap: 6px; padding: 4px 6px 4px 12px; }
+      .arcade-scoreboard { gap: 6px; padding: 4px 6px 4px 12px; top: 12px; }
       .score-page-container { padding: 18px 16px; }
       .metrics-row { gap: 6px; }
       .leaderboard-wrap { max-height: 200px; }
@@ -789,6 +790,37 @@
 
   <!-- GAME INTERACTION CANVAS -->
   <canvas id="game-canvas"></canvas>
+
+  <!-- FIXED TOP ARCADE SCOREBOARD -->
+  <div class="arcade-scoreboard">
+    <div class="score-item">
+      <span class="score-label">Score:</span>
+      <span class="score-val" id="currentScore">0</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-label">Global High:</span>
+      <span class="score-val" id="globalHighScore">0</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-label">Lvl:</span>
+      <span class="score-val level-badge" id="currentLevel">1</span>
+    </div>
+    <div class="score-divider"></div>
+    <div class="score-item">
+      <span class="score-label">Lives:</span>
+      <span class="score-val lives-badge" id="livesDisplay">
+        <span class="material-symbols-outlined">favorite</span>
+        <span id="livesCountText">5</span>
+      </span>
+    </div>
+    <div class="score-divider"></div>
+    <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
+      <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+      <span>Close</span>
+    </button>
+  </div>
 
   <!-- LEVEL UP TOAST -->
   <div class="level-toast" id="levelToast">Level 1 • Velocity Increased!</div>
@@ -822,38 +854,7 @@
        ========================================================= -->
   <main class="screen-view" id="gameView">
     
-    <!-- ARCADE SCOREBOARD WITH GLOBAL HIGH INDICATOR AND CLOSE BUTTON -->
-    <div class="arcade-scoreboard">
-      <div class="score-item">
-        <span class="score-label">Score:</span>
-        <span class="score-val" id="currentScore">0</span>
-      </div>
-      <div class="score-divider"></div>
-      <div class="score-item">
-        <span class="score-label">Global High:</span>
-        <span class="score-val" id="globalHighScore">0</span>
-      </div>
-      <div class="score-divider"></div>
-      <div class="score-item">
-        <span class="score-label">Lvl:</span>
-        <span class="score-val level-badge" id="currentLevel">1</span>
-      </div>
-      <div class="score-divider"></div>
-      <div class="score-item">
-        <span class="score-label">Lives:</span>
-        <span class="score-val lives-badge" id="livesDisplay">
-          <span class="material-symbols-outlined">favorite</span>
-          <span id="livesCountText">5</span>
-        </span>
-      </div>
-      <div class="score-divider"></div>
-      <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
-        <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
-        <span>Close</span>
-      </button>
-    </div>
-
-    <!-- OPEN SPACE ORBIT RIG (BEAUTIFULLY ANIMATED CENTRAL TARGET WITH LOGO) -->
+    <!-- OPEN SPACE ORBIT RIG -->
     <div class="open-space-stage" id="spaceStage">
       
       <div class="orbit-ring orbit-1"></div>
@@ -990,7 +991,7 @@
   <!-- Footer Injected via common.js -->
   <div id="footer-container"></div>
 
-  <!-- FIREBASE APML CLOUD PERSISTENCE SDK -->
+  <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -1078,7 +1079,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE WITH TOP-30 AUTO-SYNCED GLOBAL SCOREBOARD -->
+  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -1156,13 +1157,13 @@
 
       window.addEventListener('mousedown', (e) => {
         if (!isGameActive || isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game')) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game, .arcade-scoreboard')) return;
         if (e.button === 0) fireMissile();
       });
 
       window.addEventListener('touchstart', (e) => {
         if (!isGameActive || isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game')) return;
+        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game, .arcade-scoreboard')) return;
         if (e.touches.length > 0) {
           targetX = e.touches[0].clientX;
           targetY = e.touches[0].clientY;
@@ -1621,9 +1622,6 @@
         smokeParticles.length = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Restore the site header/footer that startGame() hid — otherwise a
-        // natural game-over (running out of lives) leaves the visitor with
-        // no navigation at all on the 404 page.
         if (headerContainer) {
           headerContainer.style.display = 'block';
           headerContainer.classList.remove('fired-up');
