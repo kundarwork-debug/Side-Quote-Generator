@@ -12,7 +12,7 @@
 })();
 
 // =========================================================
-// APML COMMON HEADER, FOOTER & ROTATING HAMBURGER SCRIPT
+// APML COMMON HEADER, FOOTER & SCROLL SLIDE-DOWN SCRIPT
 // =========================================================
 (function initCommonLayout() {
   function renderHeaderAndFooter() {
@@ -22,7 +22,7 @@
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
-        <header class="site-header">
+        <header class="site-header" id="siteHeader">
           <div class="header-inner">
             <a href="index.html" class="site-logo">
               <div class="logo-badge">
@@ -76,6 +76,7 @@
       // Event Listeners for Hamburger Click & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
       const navMenu = document.getElementById("navMenu");
+      const siteHeader = document.getElementById("siteHeader");
 
       if (hamburgerBtn && navMenu) {
         hamburgerBtn.addEventListener("click", (e) => {
@@ -109,9 +110,30 @@
           }
         });
       }
+
+      // SLOW SLIDE DOWN HEADER ON SCROLL
+      const scrollTriggerDistance = 110;
+      function handleHeaderScroll() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollY > scrollTriggerDistance) {
+          siteHeader?.classList.add("header-visible");
+        } else {
+          siteHeader?.classList.remove("header-visible");
+          if (navMenu && navMenu.classList.contains("open")) {
+            navMenu.classList.remove("open");
+            if (hamburgerBtn) {
+              hamburgerBtn.classList.remove("is-active");
+              hamburgerBtn.setAttribute("aria-expanded", "false");
+            }
+          }
+        }
+      }
+
+      window.addEventListener("scroll", handleHeaderScroll, { passive: true });
+      handleHeaderScroll(); // Check on initial page load
     }
 
-    // 2. INJECT FOOTER (With GitHub Profile Avatar on About Me Button)
+    // 2. INJECT FOOTER
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -125,7 +147,6 @@
             </div>
 
             <div class="footer-actions">
-              <!-- M3 Themed About Me Button with GitHub Avatar -->
               <a href="about.html" class="m3-about-btn" title="About Developer">
                 <img src="https://github.com/kundarwork-debug.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
                 <span>About Me</span>
