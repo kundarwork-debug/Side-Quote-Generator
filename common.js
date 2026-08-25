@@ -12,11 +12,19 @@
 })();
 
 // =========================================================
-// APML COMMON HEADER, FOOTER & SCROLL SLIDE-DOWN SCRIPT
+// APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
 // =========================================================
 (function initCommonLayout() {
   function renderHeaderAndFooter() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const isHomePage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
+
+    // Add flag to <html> if on home page
+    if (isHomePage) {
+      document.documentElement.classList.add("is-home-page");
+    } else {
+      document.documentElement.classList.remove("is-home-page");
+    }
 
     // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
     const headerContainer = document.getElementById("header-container");
@@ -40,7 +48,7 @@
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
-              <a href="index.html" class="nav-link ${currentPage === 'index.html' || currentPage === '' ? 'active' : ''}">
+              <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
                 <span class="material-symbols-outlined">home</span>
                 <span>Home</span>
               </a>
@@ -111,26 +119,28 @@
         });
       }
 
-      // SLOW SLIDE DOWN HEADER ON SCROLL
-      const scrollTriggerDistance = 110;
-      function handleHeaderScroll() {
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        if (scrollY > scrollTriggerDistance) {
-          siteHeader?.classList.add("header-visible");
-        } else {
-          siteHeader?.classList.remove("header-visible");
-          if (navMenu && navMenu.classList.contains("open")) {
-            navMenu.classList.remove("open");
-            if (hamburgerBtn) {
-              hamburgerBtn.classList.remove("is-active");
-              hamburgerBtn.setAttribute("aria-expanded", "false");
+      // Hide/reveal on scroll only applies to home page
+      if (isHomePage) {
+        const scrollTriggerDistance = 110;
+        function handleHeaderScroll() {
+          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollY > scrollTriggerDistance) {
+            siteHeader?.classList.add("header-visible");
+          } else {
+            siteHeader?.classList.remove("header-visible");
+            if (navMenu && navMenu.classList.contains("open")) {
+              navMenu.classList.remove("open");
+              if (hamburgerBtn) {
+                hamburgerBtn.classList.remove("is-active");
+                hamburgerBtn.setAttribute("aria-expanded", "false");
+              }
             }
           }
         }
-      }
 
-      window.addEventListener("scroll", handleHeaderScroll, { passive: true });
-      handleHeaderScroll(); // Check on initial page load
+        window.addEventListener("scroll", handleHeaderScroll, { passive: true });
+        handleHeaderScroll();
+      }
     }
 
     // 2. INJECT FOOTER
