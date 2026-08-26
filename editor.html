@@ -15,10 +15,10 @@
 <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
 <!-- Network/Hub SVG Favicon from root folder -->
-<link rel="icon" type="image/svg+xml" href="logo.svg?v=17.0">
+<link rel="icon" type="image/svg+xml" href="logo.svg?v=18.0">
 <link rel="manifest" href="./manifest.json">
 
-<link rel="stylesheet" href="common.css?v=17.0">
+<link rel="stylesheet" href="common.css?v=18.0">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -508,6 +508,7 @@
   .doc-exact .footer { margin-top: 12px; font-size: 10pt; line-height: 1.5; }
   .doc-exact .footer b { font-weight: 700; }
 
+  /* MAXCARE PACKERS LETTERHEAD STYLING (COMPANY NAME TOP, ADDRESS DOWN) */
   .doc-max {
     font-family: Arial, Helvetica, sans-serif;
     color: #141414;
@@ -515,14 +516,31 @@
   }
   .doc-max .letterhead {
     background: linear-gradient(180deg, #fff7cf 0%, #fdf0a8 100%);
-    padding: 16px 40px; border-bottom: 4px solid var(--accent-max-blue);
-    display: flex; flex-direction: column align-items: center; text-align: center;
+    padding: 18px 36px 14px;
+    border-bottom: 4px solid var(--accent-max-blue);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   .doc-max .letterhead .cname {
-    color: var(--accent-max-blue); font-weight: 700; font-size: 18pt; letter-spacing: .01em;
-    text-transform: uppercase; margin: 0 0 4px;
+    color: var(--accent-max-blue);
+    font-weight: 800;
+    font-size: 21pt;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+    line-height: 1.15;
   }
-  .doc-max .letterhead .sub { font-size: 9pt; font-weight: 700; color: #222; }
+  .doc-max .letterhead .sub {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #222222;
+    line-height: 1.45;
+    max-width: 95%;
+    margin: 0 auto;
+  }
   .doc-max .body { padding: 20px 40px 0; font-size: 10pt; }
   .doc-max .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 12px; font-weight: 700; }
   .doc-max .meta-block { font-size: 10pt; line-height: 1.7; margin-bottom: 8px; }
@@ -817,7 +835,7 @@ const DEFAULTS = {
     addrLabel: "Regd. office",
     addr: "308, Neelkanth Plaza, Pitampura Community Centre, New Delhi-110034",
     phone: "9311204263",
-    email: "maxcaremoverspvtltd@gmail.com",
+    email: "kundaroffice@gmail.com",
     showEmail: true
   }
 };
@@ -1006,7 +1024,7 @@ function renderPreview(){
     container.innerHTML = `
       <div class="letterhead">
         <p class="cname">${escapeHtml(d.companyName)}</p>
-        <p class="sub">${escapeHtml(d.cin)} &nbsp;•&nbsp; Regd. Office: ${escapeHtml(d.addr)} &nbsp;•&nbsp; Phone: ${escapeHtml(d.phone)}${d.showEmail ? ' &nbsp;•&nbsp; Email: ' + escapeHtml(d.email) : ''}</p>
+        <p class="sub">${escapeHtml(d.cin)} &nbsp;•&nbsp; Regd. Office: ${escapeHtml(d.addr)}<br>Phone: ${escapeHtml(d.phone)}${d.showEmail ? ' &nbsp;•&nbsp; Email: ' + escapeHtml(d.email) : ''}</p>
       </div>
       <div class="body">
         <div class="meta-top">
@@ -1288,6 +1306,6 @@ document.getElementById('dateStamp').textContent = new Date().toLocaleDateString
 renderAll();
 </script>
 
-<script src="common.js?v=17.0"></script>
+<script src="common.js?v=18.0"></script>
 </body>
 </html>
