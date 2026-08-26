@@ -9,46 +9,70 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <title>APML Portal - Operations Hub &amp; Workspace</title>
-  <meta name="description" content="APML Portal is the official operations hub for quotation drafting, hub &amp; branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.">
-  <meta name="keywords" content="APML Portal, APML Operations Hub, APML Hub Directory, APML Quotation Studio, APML Rate Calculator">
+  <title>APML Portal — Enterprise Operations Hub</title>
+  <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
+  <meta name="keywords" content="APML Portal, Enterprise Logistics, APML Operations Hub, Quotation Studio, Freight Rate Engine">
   <link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <meta property="og:title" content="APML Portal - Operations Hub &amp; Workspace">
-  <meta property="og:description" content="One portal for quotation drafting, hub directory lookup, freight rate calculators, and packing standards.">
+  <meta property="og:title" content="APML Portal — Enterprise Operations Hub">
+  <meta property="og:description" content="Unified workspace for real-time quotation drafting, logistics telemetry, rate matrices, and nationwide dispatch directories.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=16.0">
-  <link rel="stylesheet" href="common.css?v=16.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=20.0">
+  <link rel="stylesheet" href="common.css?v=20.0">
 
   <!-- GOOGLE FONTS: Plus Jakarta Sans & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
-  <!-- GOOGLE MATERIAL SYMBOLS OUTLINED -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <!-- GOOGLE MATERIAL SYMBOLS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <style>
     /* =========================================================
-       1. EYE-COMFORT SLATE & LOGISTICS DESIGN TOKENS
+       1. LUXURY ENTERPRISE DESIGN TOKENS & SURFACES
        ========================================================= */
     :root {
       --primary: #c21d1d;
       --primary-dark: #991b1b;
-      --primary-soft: rgba(194, 29, 29, 0.08);
-      --bg-base: #F8FAFC; /* Eye-Safe Slate Neutral */
-      --surface-card: #ffffff;
-      --surface-border: #E2E8F0;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --radius-xl: 20px;
+      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #be123c 100%);
+      --primary-soft: rgba(194, 29, 29, 0.05);
+      --primary-glow: rgba(194, 29, 29, 0.18);
+      
+      /* Pure Minimalist Neutral Palette */
+      --bg-base: #fafbfc;
+      --surface-glass: rgba(255, 255, 255, 0.78);
+      --surface-card: rgba(255, 255, 255, 0.88);
+      --surface-solid: #ffffff;
+      
+      /* Subtle Glass & Border Highlights */
+      --border-subtle: rgba(226, 232, 240, 0.8);
+      --border-highlight: rgba(255, 255, 255, 0.9);
+      --border-hover: rgba(194, 29, 29, 0.35);
+      
+      /* Typography Colors */
+      --text-main: #0b1329;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --text-faint: #94a3b8;
+      
+      /* Radii & Shadows */
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 24px;
       --radius-pill: 9999px;
-      --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-      --shadow-hover: 0 16px 30px -8px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(194, 29, 29, 0.06);
+      
+      --shadow-ambient: 0 20px 40px -15px rgba(15, 23, 42, 0.03);
+      --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --shadow-float: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(194, 29, 29, 0.04);
+      --shadow-glow: 0 0 35px rgba(194, 29, 29, 0.12);
+      
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
     * {
@@ -77,15 +101,15 @@
       position: relative;
       touch-action: pan-y pinch-zoom !important;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* =========================================================
-       LOGISTICS TRANSIT & CORRIDOR NETWORK BACKGROUND
+       2. AMBIENT LUXURY AURORA & MESH BACKDROP
        ========================================================= */
-    .logistics-backdrop {
+    .luxury-ambient-backdrop {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
       pointer-events: none !important;
@@ -93,63 +117,42 @@
       overflow: hidden;
     }
 
-    /* Isometric Highway & Freight Route Grid */
-    .logistics-grid {
+    /* Micro-Engineered Grid Background */
+    .ambient-grid {
       position: absolute;
       inset: 0;
       background-image: 
-        radial-gradient(circle, #CBD5E1 1.2px, transparent 1.2px),
-        linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
-      background-size: 36px 36px, 72px 72px, 72px 72px;
-      opacity: 0.65;
+        radial-gradient(circle at center, rgba(148, 163, 184, 0.15) 1px, transparent 1px),
+        linear-gradient(to right, rgba(241, 245, 249, 0.6) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(241, 245, 249, 0.6) 1px, transparent 1px);
+      background-size: 32px 32px, 96px 96px, 96px 96px;
+      opacity: 0.75;
+      mask-image: radial-gradient(circle at 50% 35%, black 40%, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle at 50% 35%, black 40%, transparent 80%);
     }
 
-    /* Dynamic Route Corridor SVG Lines */
-    .transit-routes-svg {
+    /* Diffuse Top Center Radial Aurora Glow */
+    .aurora-glow-top {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      opacity: 0.35;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1000px, 95vw);
+      height: 520px;
+      background: radial-gradient(50% 50% at 50% 50%, rgba(254, 226, 226, 0.65) 0%, rgba(254, 242, 242, 0.35) 50%, transparent 100%);
+      filter: blur(60px);
+      opacity: 0.9;
     }
 
-    /* Route Dash Flow Animation */
-    @keyframes routeFlow {
-      from { stroke-dashoffset: 200; }
-      to { stroke-dashoffset: 0; }
-    }
-
-    .flowing-route {
-      stroke-dasharray: 8 12;
-      animation: routeFlow 10s linear infinite;
-    }
-
-    .flowing-route-fast {
-      stroke-dasharray: 6 10;
-      animation: routeFlow 6s linear infinite;
-    }
-
-    /* Ambient Soft Radial Radar Spots */
-    .radar-glow-1 {
+    .aurora-glow-secondary {
       position: absolute;
-      top: 10%;
-      left: 15%;
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(194, 29, 29, 0.05) 0%, transparent 70%);
-      filter: blur(40px);
-    }
-
-    .radar-glow-2 {
-      position: absolute;
-      bottom: 10%;
-      right: 15%;
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
-      filter: blur(50px);
+      top: 35%;
+      right: -5%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.3) 60%, transparent 100%);
+      filter: blur(80px);
+      opacity: 0.6;
     }
 
     .material-symbols-outlined {
@@ -164,11 +167,11 @@
     }
 
     /* =========================================================
-       2. ANIMATIONS & REVEALS
+       3. REFINED CINEMATIC ENTRANCE ANIMATIONS
        ========================================================= */
     .slide-up-intro {
       opacity: 0;
-      transform: translateY(42px);
+      transform: translateY(32px);
       transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
                   transform 1.35s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
@@ -181,7 +184,7 @@
 
     .fade-reveal {
       opacity: 0;
-      transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity;
     }
 
@@ -194,9 +197,9 @@
       to { transform: rotate(360deg); }
     }
 
-    @keyframes pulseRadar {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    @keyframes pulseLiveLight {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+      70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
       100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
@@ -210,13 +213,13 @@
         transform: none !important; 
         transition: none !important; 
       }
-      .hero-logo-emblem img, .flowing-route, .flowing-route-fast {
+      .hero-logo-emblem img {
         animation: none !important;
       }
     }
 
     /* =========================================================
-       3. HERO STAGE
+       4. HERO PROFILE STAGE
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -224,7 +227,7 @@
       width: 100%;
       min-height: 100vh;
       min-height: 100dvh;
-      padding: 100px 32px 80px;
+      padding: 110px 32px 80px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -233,20 +236,56 @@
       position: relative;
     }
 
+    /* Enterprise Pill Tag */
+    .hero-enterprise-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px 5px 8px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      margin-bottom: 22px;
+      user-select: none;
+    }
+
+    .hero-pill-badge {
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+    }
+
+    .hero-pill-text {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: -0.01em;
+    }
+
+    /* Floating Center Emblem */
     .hero-logo-emblem {
-      width: 90px;
-      height: 90px;
+      width: 88px;
+      height: 88px;
       border-radius: 50% !important;
       background: #ffffff;
-      border: 1.5px solid var(--surface-border);
-      box-shadow: 0 12px 35px -4px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
+      border: 1.5px solid var(--border-subtle);
+      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08), 0 0 0 6px rgba(255, 255, 255, 0.7);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 28px auto;
-      padding: 18px;
+      margin: 0 auto 24px auto;
+      padding: 16px;
       overflow: hidden;
       flex-shrink: 0;
+      position: relative;
     }
 
     .hero-logo-emblem img {
@@ -262,32 +301,36 @@
 
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(38px, 6vw, 58px);
+      font-size: clamp(38px, 6vw, 62px);
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.03em;
-      line-height: 1.12;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
       margin-bottom: 14px;
+      max-width: 900px;
     }
 
     .hero-title span {
-      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
+      background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .hero-sub {
-      font-size: clamp(15px, 3.8vw, 18px);
+      font-size: clamp(15px, 3.5vw, 18px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 540px;
+      max-width: 520px;
       line-height: 1.6;
+      letter-spacing: -0.01em;
     }
 
-    /* Floating Search Bar */
+    /* =========================================================
+       5. FLOATING GLASS SEARCH MATRIX
+       ========================================================= */
     .search-filter-wrap {
       width: 100%;
-      max-width: 620px;
+      max-width: 640px;
       margin: 36px auto 0;
       padding: 0 16px;
     }
@@ -295,19 +338,24 @@
     .search-filter-box {
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: #ffffff;
-      border: 1.5px solid var(--surface-border);
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       padding: 14px 26px;
-      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06);
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+                  border-color 0.25s ease, 
+                  box-shadow 0.25s ease;
     }
 
     .search-filter-box:focus-within {
-      border-color: rgba(194, 29, 29, 0.4);
-      box-shadow: 0 12px 32px rgba(194, 29, 29, 0.08);
+      border-color: rgba(194, 29, 29, 0.45);
+      box-shadow: 0 16px 36px -4px rgba(194, 29, 29, 0.12), 0 0 0 4px rgba(194, 29, 29, 0.05);
       transform: translateY(-2px);
+      background: #ffffff;
     }
 
     .search-filter-box input {
@@ -318,6 +366,12 @@
       color: var(--text-main);
       width: 100%;
       background: transparent;
+      letter-spacing: -0.01em;
+    }
+
+    .search-filter-box input::placeholder {
+      color: var(--text-faint);
+      font-weight: 500;
     }
 
     .hero-quick-tags {
@@ -329,15 +383,17 @@
     }
 
     .quick-tag-chip {
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
       padding: 6px 14px;
       border-radius: var(--radius-pill);
       font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
+      font-weight: 600;
+      color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       user-select: none;
       box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
     }
@@ -346,11 +402,12 @@
       border-color: var(--primary);
       color: var(--primary);
       background: #ffffff;
-      transform: translateY(-1px);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 10px rgba(194, 29, 29, 0.08);
     }
 
     /* =========================================================
-       4. OPERATIONS WORKSPACE SECTION & CARDS
+       6. WORKSPACE SECTION & CARDS
        ========================================================= */
     .workspace-section {
       max-width: 1440px;
@@ -365,7 +422,7 @@
       justify-content: space-between;
       margin-bottom: 24px;
       padding-bottom: 12px;
-      border-bottom: 1px solid var(--surface-border);
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .section-heading {
@@ -376,15 +433,19 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      letter-spacing: -0.02em;
     }
 
     .section-counter {
-      font-size: 12px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
       font-weight: 700;
       color: var(--primary);
       background: var(--primary-soft);
-      padding: 4px 10px;
+      border: 1px solid rgba(194, 29, 29, 0.15);
+      padding: 4px 12px;
       border-radius: var(--radius-pill);
+      letter-spacing: -0.01em;
     }
 
     .modules-grid {
@@ -396,28 +457,31 @@
 
     .module-card {
       background: var(--surface-card);
-      border: 1px solid var(--surface-border);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 28px 24px;
       text-decoration: none;
       color: inherit;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       overflow: hidden;
       cursor: pointer !important;
-      transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
-                  box-shadow 0.25s cubic-bezier(0.2, 0, 0, 1),
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                   border-color 0.25s ease,
-                  opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+                  opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .module-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(194, 29, 29, 0.3);
-      box-shadow: var(--shadow-hover);
+      transform: translateY(-6px);
+      border-color: rgba(194, 29, 29, 0.35);
+      box-shadow: var(--shadow-float);
+      background: #ffffff;
     }
 
     .card-head {
@@ -437,13 +501,16 @@
       align-items: center;
       justify-content: center;
       color: var(--primary);
-      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  background 0.3s ease, 
+                  color 0.3s ease;
     }
 
     .module-card:hover .card-icon-pill {
-      transform: scale(1.05);
+      transform: scale(1.08);
       background: var(--primary);
       color: #ffffff;
+      border-color: var(--primary);
     }
 
     .card-icon-pill span {
@@ -454,10 +521,11 @@
       font-size: 10.5px;
       font-weight: 700;
       color: var(--text-muted);
-      background: #F1F5F9;
-      border: 1px solid #E2E8F0;
+      background: rgba(241, 245, 249, 0.8);
+      border: 1px solid var(--border-subtle);
       padding: 4px 10px;
       border-radius: var(--radius-pill);
+      letter-spacing: 0.02em;
     }
 
     .card-title {
@@ -466,6 +534,7 @@
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 6px;
+      letter-spacing: -0.02em;
     }
 
     .card-description {
@@ -473,6 +542,7 @@
       color: var(--text-muted);
       line-height: 1.55;
       margin-bottom: 18px;
+      letter-spacing: -0.005em;
     }
 
     .tags-flow {
@@ -486,10 +556,11 @@
       font-size: 11px;
       font-weight: 600;
       padding: 4px 10px;
-      background: #F8FAFC;
-      border: 1px solid #E2E8F0;
+      background: rgba(248, 250, 252, 0.8);
+      border: 1px solid var(--border-subtle);
       border-radius: 6px;
-      color: #475569;
+      color: var(--text-secondary);
+      letter-spacing: -0.01em;
     }
 
     .card-footer-cta {
@@ -497,10 +568,11 @@
       align-items: center;
       justify-content: space-between;
       padding-top: 14px;
-      border-top: 1px solid var(--surface-border);
+      border-top: 1px solid var(--border-subtle);
       font-size: 13.5px;
       font-weight: 700;
       color: var(--primary);
+      letter-spacing: -0.01em;
     }
 
     .cta-arrow {
@@ -521,7 +593,7 @@
     }
 
     /* =========================================================
-       5. IMPACT SECTION & TELEMETRY COUNTERS
+       7. IMPACT SECTION & TELEMETRY
        ========================================================= */
     .impact-section {
       max-width: 1440px;
@@ -534,11 +606,13 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 26px 20px;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-card);
     }
 
     .impact-item {
@@ -548,7 +622,7 @@
       gap: 4px;
       align-items: center;
       padding: 6px 12px;
-      border-right: 1px dashed var(--surface-border);
+      border-right: 1px dashed var(--border-subtle);
     }
 
     .impact-item:last-child {
@@ -560,7 +634,7 @@
       font-size: clamp(26px, 3.8vw, 34px);
       font-weight: 800;
       color: var(--primary);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -570,19 +644,20 @@
       font-size: 12.5px;
       font-weight: 600;
       color: var(--text-muted);
+      letter-spacing: -0.01em;
     }
 
     .pulse-dot-large {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       background-color: #10b981;
       border-radius: 50%;
       display: inline-block;
-      animation: pulseRadar 2s infinite ease-out;
+      animation: pulseLiveLight 2s infinite ease-out;
     }
 
     /* =========================================================
-       6. RETRO SUPPORT FLOATING ACTION BUTTON (FAB)
+       8. SUPPORT FAB
        ========================================================= */
     .support-fab {
       position: fixed;
@@ -673,7 +748,7 @@
     }
 
     /* =========================================================
-       7. RESPONSIVENESS
+       9. RESPONSIVE MEDIA QUERIES
        ========================================================= */
     @media (max-width: 768px) {
       .hero-stage { 
@@ -681,8 +756,8 @@
         min-height: 100dvh;
         justify-content: center;
       }
-      .hero-logo-emblem { width: 80px; height: 80px; margin-bottom: 22px; }
-      .hero-title { font-size: 32px; }
+      .hero-logo-emblem { width: 78px; height: 78px; margin-bottom: 20px; }
+      .hero-title { font-size: 34px; }
       .search-filter-wrap { margin-top: 28px; }
       .workspace-section { margin-top: 20px; padding: 0 16px; }
       .impact-section { padding: 0 16px; }
@@ -716,50 +791,11 @@
     })();
   </script>
 
-  <!-- LOGISTICS NETWORK BACKDROP -->
-  <div class="logistics-backdrop">
-    <!-- Grid System -->
-    <div class="logistics-grid"></div>
-
-    <!-- Soft Radar Light Spots -->
-    <div class="radar-glow-1"></div>
-    <div class="radar-glow-2"></div>
-
-    <!-- Animated Transit Routes SVG -->
-    <svg class="transit-routes-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="routeGradRed" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#c21d1d" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#c21d1d" stop-opacity="0.1"/>
-        </linearGradient>
-        <linearGradient id="routeGradBlue" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1"/>
-          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Highway Route 1 (Diagonal Corridor) -->
-      <path d="M-100 200 C 400 250, 600 600, 1100 550 S 1600 900, 2100 850" fill="none" stroke="url(#routeGradRed)" stroke-width="2" class="flowing-route" />
-      
-      <!-- Highway Route 2 (Cross-Country North-South) -->
-      <path d="M300 -100 C 450 300, 200 700, 500 1200" fill="none" stroke="url(#routeGradBlue)" stroke-width="1.5" class="flowing-route-fast" />
-
-      <!-- Highway Route 3 (East-West Expressway) -->
-      <path d="M-50 850 C 500 800, 900 350, 1500 400 S 1800 150, 2050 100" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 8" opacity="0.4" />
-
-      <!-- GPS Transit Hub Nodes -->
-      <g opacity="0.7">
-        <circle cx="500" cy="300" r="4" fill="#c21d1d" />
-        <circle cx="500" cy="300" r="10" fill="none" stroke="#c21d1d" stroke-width="1" opacity="0.5" />
-        
-        <circle cx="1100" cy="550" r="4" fill="#3b82f6" />
-        <circle cx="1100" cy="550" r="12" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.4" />
-
-        <circle cx="1500" cy="400" r="3.5" fill="#64748b" />
-        <circle cx="850" cy="750" r="3.5" fill="#64748b" />
-      </g>
-    </svg>
+  <!-- LUXURY AMBIENT AURORA BACKDROP -->
+  <div class="luxury-ambient-backdrop">
+    <div class="ambient-grid"></div>
+    <div class="aurora-glow-top"></div>
+    <div class="aurora-glow-secondary"></div>
   </div>
 
   <div id="header-container"></div>
@@ -769,8 +805,14 @@
     <!-- FULL 16:9 / 100VH HERO STAGE -->
     <section class="hero-stage">
       
-      <!-- Perfectly Circular Rotating Logo Emblem -->
-      <div class="hero-logo-emblem slide-up-intro" style="transition-delay: 0.05s;">
+      <!-- Enterprise Status Capsule -->
+      <div class="hero-enterprise-pill slide-up-intro" style="transition-delay: 0.02s;">
+        <span class="hero-pill-badge">v16.0 Enterprise</span>
+        <span class="hero-pill-text">All-in-One Operations Workspace</span>
+      </div>
+
+      <!-- Rotating Logo Emblem with Soft Border Ring -->
+      <div class="hero-logo-emblem slide-up-intro" style="transition-delay: 0.08s;">
         <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
       </div>
 
@@ -782,7 +824,7 @@
         Work Smarter, Move Faster.
       </p>
 
-      <!-- Clean Search Filter Bar -->
+      <!-- Glassmorphic Search Filter Bar -->
       <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.38s;">
         <div class="search-filter-box">
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">search</span>
@@ -1055,7 +1097,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=16.0"></script>
+  <script src="common.js?v=20.0"></script>
 
   <!-- INSTANT SEARCH & FILTER SCRIPT -->
   <script>
