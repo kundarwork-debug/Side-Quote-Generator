@@ -9,12 +9,12 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <title>APML Portal - Operations Hub & Workspace</title>
-  <meta name="description" content="APML Portal is the official operations hub for quotation drafting, hub & branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.">
+  <title>APML Portal - Operations Hub &amp; Workspace</title>
+  <meta name="description" content="APML Portal is the official operations hub for quotation drafting, hub &amp; branch directory lookup, freight rate calculators, and packing standards for APML's nationwide logistics network.">
   <meta name="keywords" content="APML Portal, APML Operations Hub, APML Hub Directory, APML Quotation Studio, APML Rate Calculator">
   <link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <meta property="og:title" content="APML Portal - Operations Hub & Workspace">
+  <meta property="og:title" content="APML Portal - Operations Hub &amp; Workspace">
   <meta property="og:description" content="One portal for quotation drafting, hub directory lookup, freight rate calculators, and packing standards.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
@@ -22,32 +22,40 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=16.0">
   <link rel="stylesheet" href="common.css?v=16.0">
 
+  <!-- GOOGLE FONTS: Plus Jakarta Sans & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- GOOGLE MATERIAL SYMBOLS OUTLINED -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
   <style>
+    /* =========================================================
+       1. EYE-COMFORT SLATE & LOGISTICS DESIGN TOKENS
+       ========================================================= */
     :root {
-      --primary: #b91c1c;
-      --primary-dark: #881337;
-      --primary-soft: rgba(185, 28, 28, 0.06);
-      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+      --primary: #c21d1d;
+      --primary-dark: #991b1b;
+      --primary-soft: rgba(194, 29, 29, 0.08);
+      --bg-base: #F8FAFC; /* Eye-Safe Slate Neutral */
       --surface-card: #ffffff;
-      --surface-border: #ede4de;
-      --text-main: #292524;
-      --text-muted: #78716c;
+      --surface-border: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
       --radius-xl: 20px;
       --radius-pill: 9999px;
-      --shadow-soft: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
-      --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+      --shadow-soft: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+      --shadow-hover: 0 16px 30px -8px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(194, 29, 29, 0.06);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: var(--font-sans);
     }
 
     html {
@@ -68,10 +76,13 @@
       overflow-y: visible !important;
       position: relative;
       touch-action: pan-y pinch-zoom !important;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Soft Ambient Radial Glow */
-    .ambient-glow {
+    /* =========================================================
+       LOGISTICS TRANSIT & CORRIDOR NETWORK BACKGROUND
+       ========================================================= */
+    .logistics-backdrop {
       position: fixed;
       top: 0;
       left: 0;
@@ -79,44 +90,66 @@
       height: 100vh;
       pointer-events: none !important;
       z-index: 0;
-      background: 
-        radial-gradient(circle at 50% 25%, rgba(254, 215, 202, 0.4) 0%, transparent 65%),
-        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+      overflow: hidden;
     }
 
-    /* =========================================================
-       SLOW BOTTOM-TO-TOP SLIDE-IN REVEAL ON PAGE LOAD
-       ========================================================= */
-    .slide-up-intro {
-      opacity: 0;
-      transform: translateY(42px);
-      transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 1.35s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+    /* Isometric Highway & Freight Route Grid */
+    .logistics-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle, #CBD5E1 1.2px, transparent 1.2px),
+        linear-gradient(to right, rgba(226, 232, 240, 0.6) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.6) 1px, transparent 1px);
+      background-size: 36px 36px, 72px 72px, 72px 72px;
+      opacity: 0.65;
     }
 
-    .slide-up-intro.is-loaded {
-      opacity: 1;
-      transform: translateY(0);
+    /* Dynamic Route Corridor SVG Lines */
+    .transit-routes-svg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0.35;
     }
 
-    /* PURE FADE-IN ON SCROLL FOR MODULES */
-    .fade-reveal {
-      opacity: 0;
-      transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
-      will-change: opacity;
+    /* Route Dash Flow Animation */
+    @keyframes routeFlow {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
     }
 
-    .fade-reveal.is-visible {
-      opacity: 1;
+    .flowing-route {
+      stroke-dasharray: 8 12;
+      animation: routeFlow 10s linear infinite;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .slide-up-intro, .fade-reveal { 
-        opacity: 1 !important; 
-        transform: none !important; 
-        transition: none !important; 
-      }
+    .flowing-route-fast {
+      stroke-dasharray: 6 10;
+      animation: routeFlow 6s linear infinite;
+    }
+
+    /* Ambient Soft Radial Radar Spots */
+    .radar-glow-1 {
+      position: absolute;
+      top: 10%;
+      left: 15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(194, 29, 29, 0.05) 0%, transparent 70%);
+      filter: blur(40px);
+    }
+
+    .radar-glow-2 {
+      position: absolute;
+      bottom: 10%;
+      right: 15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+      filter: blur(50px);
     }
 
     .material-symbols-outlined {
@@ -131,7 +164,59 @@
     }
 
     /* =========================================================
-       FULL-SCREEN 16:9 / 100VH HERO STAGE
+       2. ANIMATIONS & REVEALS
+       ========================================================= */
+    .slide-up-intro {
+      opacity: 0;
+      transform: translateY(42px);
+      transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 1.35s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: opacity, transform;
+    }
+
+    .slide-up-intro.is-loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-reveal {
+      opacity: 0;
+      transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+      will-change: opacity;
+    }
+
+    .fade-reveal.is-visible {
+      opacity: 1;
+    }
+
+    @keyframes unifiedLogoSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseRadar {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    @keyframes blinkCursor {
+      50% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slide-up-intro, .fade-reveal { 
+        opacity: 1 !important; 
+        transform: none !important; 
+        transition: none !important; 
+      }
+      .hero-logo-emblem img, .flowing-route, .flowing-route-fast {
+        animation: none !important;
+      }
+    }
+
+    /* =========================================================
+       3. HERO STAGE
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -148,14 +233,13 @@
       position: relative;
     }
 
-    /* PERFECT CIRCULAR ROTATING HERO LOGO EMBLEM */
     .hero-logo-emblem {
       width: 90px;
       height: 90px;
       border-radius: 50% !important;
       background: #ffffff;
       border: 1.5px solid var(--surface-border);
-      box-shadow: 0 12px 35px -4px rgba(185, 28, 28, 0.14), 0 2px 8px rgba(120, 113, 108, 0.05);
+      box-shadow: 0 12px 35px -4px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -177,7 +261,7 @@
     }
 
     .hero-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: clamp(38px, 6vw, 58px);
       font-weight: 800;
       color: var(--text-main);
@@ -200,7 +284,7 @@
       line-height: 1.6;
     }
 
-    /* FLOATING SEARCH BAR */
+    /* Floating Search Bar */
     .search-filter-wrap {
       width: 100%;
       max-width: 620px;
@@ -216,13 +300,13 @@
       border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-pill);
       padding: 14px 26px;
-      box-shadow: 0 10px 30px -5px rgba(120, 113, 108, 0.08);
-      transition: all 0.25s ease;
+      box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.06);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .search-filter-box:focus-within {
-      border-color: rgba(185, 28, 28, 0.4);
-      box-shadow: 0 12px 32px rgba(185, 28, 28, 0.12);
+      border-color: rgba(194, 29, 29, 0.4);
+      box-shadow: 0 12px 32px rgba(194, 29, 29, 0.08);
       transform: translateY(-2px);
     }
 
@@ -245,7 +329,7 @@
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.75);
+      background: #ffffff;
       border: 1px solid var(--surface-border);
       padding: 6px 14px;
       border-radius: var(--radius-pill);
@@ -255,6 +339,7 @@
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
     }
 
     .quick-tag-chip:hover {
@@ -265,7 +350,7 @@
     }
 
     /* =========================================================
-       OPERATIONS MODULES GRID
+       4. OPERATIONS WORKSPACE SECTION & CARDS
        ========================================================= */
     .workspace-section {
       max-width: 1440px;
@@ -284,7 +369,7 @@
     }
 
     .section-heading {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: 18px;
       font-weight: 700;
       color: var(--text-main);
@@ -297,7 +382,7 @@
       font-size: 12px;
       font-weight: 700;
       color: var(--primary);
-      background: rgba(185, 28, 28, 0.08);
+      background: var(--primary-soft);
       padding: 4px 10px;
       border-radius: var(--radius-pill);
     }
@@ -331,7 +416,7 @@
 
     .module-card:hover {
       transform: translateY(-5px);
-      border-color: rgba(185, 28, 28, 0.25);
+      border-color: rgba(194, 29, 29, 0.3);
       box-shadow: var(--shadow-hover);
     }
 
@@ -347,7 +432,7 @@
       height: 48px;
       border-radius: 14px;
       background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, 0.1);
+      border: 1px solid rgba(194, 29, 29, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -361,19 +446,22 @@
       color: #ffffff;
     }
 
-    .card-icon-pill span { font-size: 26px; }
+    .card-icon-pill span {
+      font-size: 26px;
+    }
 
     .status-tag {
       font-size: 10.5px;
       font-weight: 700;
       color: var(--text-muted);
-      background: rgba(120, 113, 108, 0.08);
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
       padding: 4px 10px;
       border-radius: var(--radius-pill);
     }
 
     .card-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: 18.5px;
       font-weight: 700;
       color: var(--text-main);
@@ -398,9 +486,10 @@
       font-size: 11px;
       font-weight: 600;
       padding: 4px 10px;
-      background: rgba(243, 232, 226, 0.5);
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
       border-radius: 6px;
-      color: #57534e;
+      color: #475569;
     }
 
     .card-footer-cta {
@@ -431,7 +520,9 @@
       color: #ffffff;
     }
 
-    /* STATS SECTION */
+    /* =========================================================
+       5. IMPACT SECTION & TELEMETRY COUNTERS
+       ========================================================= */
     .impact-section {
       max-width: 1440px;
       margin: 8px auto 48px;
@@ -460,10 +551,12 @@
       border-right: 1px dashed var(--surface-border);
     }
 
-    .impact-item:last-child { border-right: none; }
+    .impact-item:last-child {
+      border-right: none;
+    }
 
     .impact-num {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: clamp(26px, 3.8vw, 34px);
       font-weight: 800;
       color: var(--primary);
@@ -485,10 +578,12 @@
       background-color: #10b981;
       border-radius: 50%;
       display: inline-block;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulseRadar 2s infinite ease-out;
     }
 
-    /* SUPPORT FAB BUTTON */
+    /* =========================================================
+       6. RETRO SUPPORT FLOATING ACTION BUTTON (FAB)
+       ========================================================= */
     .support-fab {
       position: fixed;
       bottom: 32px;
@@ -519,9 +614,9 @@
 
     .support-msg-bubble {
       background-color: #ffffff; 
-      color: #0a0a0a;
-      border: 2px solid #0a0a0a;
-      box-shadow: 4px 4px 0px #0a0a0a;
+      color: #0F172A;
+      border: 2px solid #0F172A;
+      box-shadow: 4px 4px 0px #0F172A;
       padding: 14px 20px;
       border-radius: 20px 20px 0 20px;
       font-size: 14px;
@@ -544,20 +639,18 @@
     .cursor {
       display: inline-block;
       width: 2px;
-      background-color: #0a0a0a;
+      background-color: #0F172A;
       margin-left: 2px;
       animation: blinkCursor 1s step-end infinite;
     }
-
-    @keyframes blinkCursor { 50% { opacity: 0; } }
 
     .support-btn {
       width: 56px;
       height: 56px;
       border-radius: 50%;
       background-color: #ffffff;
-      border: 2px solid #0a0a0a;
-      box-shadow: 4px 4px 0px #0a0a0a;
+      border: 2px solid #0F172A;
+      box-shadow: 4px 4px 0px #0F172A;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       overflow: hidden;
       display: flex;
@@ -569,7 +662,7 @@
 
     .support-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 5px 5px 0px #0a0a0a;
+      box-shadow: 5px 5px 0px #0F172A;
     }
 
     .support-avatar {
@@ -579,7 +672,9 @@
       display: block;
     }
 
-    /* RESPONSIVE SCALING FOR MOBILE VIEWPORTS */
+    /* =========================================================
+       7. RESPONSIVENESS
+       ========================================================= */
     @media (max-width: 768px) {
       .hero-stage { 
         padding: 120px 20px 90px;
@@ -621,19 +716,62 @@
     })();
   </script>
 
-  <!-- Clean Subtle Radial Glow -->
-  <div class="ambient-glow"></div>
+  <!-- LOGISTICS NETWORK BACKDROP -->
+  <div class="logistics-backdrop">
+    <!-- Grid System -->
+    <div class="logistics-grid"></div>
+
+    <!-- Soft Radar Light Spots -->
+    <div class="radar-glow-1"></div>
+    <div class="radar-glow-2"></div>
+
+    <!-- Animated Transit Routes SVG -->
+    <svg class="transit-routes-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="routeGradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c21d1d" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#c21d1d" stop-opacity="0.1"/>
+        </linearGradient>
+        <linearGradient id="routeGradBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1"/>
+          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Highway Route 1 (Diagonal Corridor) -->
+      <path d="M-100 200 C 400 250, 600 600, 1100 550 S 1600 900, 2100 850" fill="none" stroke="url(#routeGradRed)" stroke-width="2" class="flowing-route" />
+      
+      <!-- Highway Route 2 (Cross-Country North-South) -->
+      <path d="M300 -100 C 450 300, 200 700, 500 1200" fill="none" stroke="url(#routeGradBlue)" stroke-width="1.5" class="flowing-route-fast" />
+
+      <!-- Highway Route 3 (East-West Expressway) -->
+      <path d="M-50 850 C 500 800, 900 350, 1500 400 S 1800 150, 2050 100" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 8" opacity="0.4" />
+
+      <!-- GPS Transit Hub Nodes -->
+      <g opacity="0.7">
+        <circle cx="500" cy="300" r="4" fill="#c21d1d" />
+        <circle cx="500" cy="300" r="10" fill="none" stroke="#c21d1d" stroke-width="1" opacity="0.5" />
+        
+        <circle cx="1100" cy="550" r="4" fill="#3b82f6" />
+        <circle cx="1100" cy="550" r="12" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.4" />
+
+        <circle cx="1500" cy="400" r="3.5" fill="#64748b" />
+        <circle cx="850" cy="750" r="3.5" fill="#64748b" />
+      </g>
+    </svg>
+  </div>
 
   <div id="header-container"></div>
 
   <main>
     
-    <!-- FULL 16:9 / 100VH HERO STAGE (SLIDES UP FROM BOTTOM ON OPEN) -->
+    <!-- FULL 16:9 / 100VH HERO STAGE -->
     <section class="hero-stage">
       
       <!-- Perfectly Circular Rotating Logo Emblem -->
       <div class="hero-logo-emblem slide-up-intro" style="transition-delay: 0.05s;">
-        <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23b91c1c\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
+        <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
       </div>
 
       <h1 class="hero-title slide-up-intro" style="transition-delay: 0.18s;">
@@ -662,7 +800,7 @@
       </div>
     </section>
 
-    <!-- OPERATIONS MODULES GRID (PURE INVISIBLE TO VISIBLE ON SCROLL) -->
+    <!-- OPERATIONS MODULES GRID -->
     <section class="workspace-section">
       
       <div class="section-bar fade-reveal">
@@ -675,6 +813,7 @@
 
       <div class="modules-grid" id="modulesGrid">
         
+        <!-- Module 1: Quotation Studio -->
         <a href="editor.html" class="module-card fade-reveal" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
@@ -699,6 +838,7 @@
           </div>
         </a>
 
+        <!-- Module 2: Consignment Status -->
         <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
@@ -723,6 +863,7 @@
           </div>
         </a>
 
+        <!-- Module 3: Packing Gallery -->
         <a href="gallery.html" class="module-card fade-reveal" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
@@ -747,6 +888,7 @@
           </div>
         </a>
 
+        <!-- Module 4: Hub Directory -->
         <a href="hub-details.html" class="module-card fade-reveal" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
@@ -771,6 +913,7 @@
           </div>
         </a>
 
+        <!-- Module 5: Field Officer Directory -->
         <a href="field-officer.html" class="module-card fade-reveal" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
@@ -795,6 +938,7 @@
           </div>
         </a>
 
+        <!-- Module 6: APML Lite Calculator -->
         <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -819,6 +963,7 @@
           </div>
         </a>
 
+        <!-- Module 7: Car Rate Calculator -->
         <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -843,6 +988,7 @@
           </div>
         </a>
 
+        <!-- Module 8: APML Local Rate -->
         <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -870,7 +1016,7 @@
       </div>
     </section>
 
-    <!-- STATS SECTION -->
+    <!-- IMPACT SECTION -->
     <section class="impact-section">
       <div class="impact-grid fade-reveal">
         <div class="impact-item">
@@ -930,7 +1076,7 @@
       });
 
       if (toolCount) {
-        toolCount.textContent = `${visibleCount} Tool${visibleCount === 1 ? '' : 's'}`;
+        toolCount.textContent = `${visibleCount} Active Tool${visibleCount === 1 ? '' : 's'}`;
       }
     }
 
@@ -952,7 +1098,6 @@
   <!-- PAGE OPEN SLIDE-UP INITIALIZER -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      // Trigger smooth bottom-to-top slide in for hero elements
       requestAnimationFrame(() => {
         document.querySelectorAll('.slide-up-intro').forEach(el => {
           el.classList.add('is-loaded');
@@ -988,7 +1133,7 @@
     })();
   </script>
 
-  <!-- SUPPORT FAB SCROLL REVEAL -->
+  <!-- SUPPORT FAB SCROLL REVEAL & TYPEWRITER ENGINE -->
   <script>
     (function initFABScrollReveal() {
       const bubble = document.querySelector('.support-msg-bubble');
