@@ -25,7 +25,7 @@
       --text-muted: #64748b;
       --radius-pill: 9999px;
       --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-      --shadow-hover: 0 20px 35px -10px rgba(185, 28, 28, 0.14), 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-hover: 0 20px 35px -10px rgba(185, 28, 28, 0.14), 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     * {
@@ -47,6 +47,15 @@
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease;
+    }
+
+    /* =========================================================
+       DYNAMIC BLACK THEME ON START GAME
+       ========================================================= */
+    body.game-active {
+      background-color: #030305 !important;
+      color: #f8fafc !important;
     }
 
     /* FULLSCREEN INTERACTIVE GAME CANVAS */
@@ -96,6 +105,13 @@
       background: 
         radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
         radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+      transition: opacity 0.8s ease;
+    }
+
+    body.game-active .ambient-bg {
+      background: 
+        radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.12) 0%, transparent 65%),
+        radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
     }
 
     /* 3D PERSPECTIVE MATRIX FLOOR */
@@ -109,6 +125,7 @@
       perspective: 1000px;
       overflow: hidden;
       opacity: 0.6;
+      transition: opacity 0.8s ease;
     }
 
     .matrix-plane {
@@ -123,6 +140,14 @@
       background-size: 50px 50px;
       transform: rotateX(45deg) scale(1.1);
       transform-origin: center top;
+      transition: background-image 0.8s ease;
+    }
+
+    body.game-active .matrix-plane {
+      background-image: 
+        linear-gradient(to right, rgba(239, 68, 68, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(245, 158, 11, 0.06) 1px, transparent 1px);
+      opacity: 0.85;
     }
 
     /* HEADER & FOOTER SMOOTH BLAST TRANSITION CONTAINERS */
@@ -168,7 +193,7 @@
       pointer-events: none;
     }
 
-    /* FIXED TOP ARCADE SCOREBOARD */
+    /* FIXED TOP ARCADE SCOREBOARD (DARK MODE TUNED) */
     .arcade-scoreboard {
       position: fixed;
       top: 18px;
@@ -178,16 +203,17 @@
       align-items: center;
       gap: 12px;
       padding: 6px 10px 6px 18px;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1.5px solid var(--surface-border);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1.5px solid rgba(239, 68, 68, 0.3);
       border-radius: var(--radius-pill);
-      box-shadow: 0 10px 30px -4px rgba(120, 113, 108, 0.15);
+      box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(239, 68, 68, 0.2);
       z-index: 1000;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      color: #f8fafc;
     }
 
     body.game-active .arcade-scoreboard {
@@ -207,31 +233,34 @@
     }
 
     .score-label {
-      color: var(--text-muted);
+      color: #94a3b8;
     }
 
     .score-val {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 800;
       font-size: 13.5px;
-      color: var(--primary);
+      color: #f87171;
+      text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
     }
 
     .score-divider {
       width: 1px;
       height: 12px;
-      background: var(--surface-border);
+      background: rgba(255, 255, 255, 0.15);
     }
 
     .level-badge {
-      color: #0284c7;
+      color: #38bdf8;
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
     }
 
     .lives-badge {
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      color: #e11d48;
+      color: #fb7185;
+      text-shadow: 0 0 8px rgba(251, 113, 133, 0.5);
     }
 
     .lives-badge .material-symbols-outlined {
@@ -245,9 +274,9 @@
       align-items: center;
       gap: 4px;
       padding: 4px 10px;
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: var(--primary);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
       border-radius: var(--radius-pill);
       font-size: 10.5px;
       font-weight: 700;
@@ -258,10 +287,11 @@
     }
 
     .btn-quit-game:hover {
-      background: var(--primary);
-      border-color: var(--primary);
+      background: #b91c1c;
+      border-color: #ef4444;
       color: #ffffff;
       transform: scale(1.04);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
     }
 
     /* LEVEL UP NOTIFICATION TOAST */
@@ -270,7 +300,7 @@
       top: 68px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
-      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
+      background: linear-gradient(135deg, #b91c1c 0%, #ea580c 100%);
       color: #ffffff;
       padding: 6px 16px;
       border-radius: var(--radius-pill);
@@ -278,7 +308,7 @@
       font-weight: 800;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-      box-shadow: var(--shadow-hover);
+      box-shadow: 0 0 20px rgba(234, 88, 12, 0.5);
       opacity: 0;
       pointer-events: none;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -302,7 +332,6 @@
       margin-bottom: 6px;
     }
 
-    /* BEAUTIFULLY ANIMATED CENTRAL TARGET WITH LOGO */
     .broken-planet-center {
       position: relative;
       width: 74px;
@@ -905,7 +934,7 @@
       <h1 class="error-title">Signal Lost in Deep Orbit</h1>
 
       <p class="error-description" id="gameDescText">
-        The logistics route or module has drifted out of range. Launch defense to clear space debris using photon missiles or rocket ramming!
+        The logistics route or module has drifted out of range. Launch defense to clear incoming fire-comets before they breach the station core!
       </p>
 
       <div class="action-group" id="actionGroupBar">
@@ -1079,7 +1108,7 @@
     })();
   </script>
 
-  <!-- 5-LIFELINE ASTEROID DEFENSE ENGINE -->
+  <!-- 5-LIFELINE FIRE-COMET ARCADE ENGINE -->
   <script>
     (function initAsteroidArcade() {
       const canvas = document.getElementById('game-canvas');
@@ -1127,7 +1156,6 @@
 
       let score = 0;
       let lives = 5;
-      const MAX_LIVES = 5;
       let level = 1;
       let isGameActive = false;
       let isGameOver = false;
@@ -1139,6 +1167,7 @@
       const asteroids = [];
       const smokeParticles = [];
       const blastParticles = [];
+      const flameTrailParticles = [];
 
       let currentX = window.innerWidth / 2;
       let currentY = window.innerHeight / 2;
@@ -1277,7 +1306,7 @@
             vy: Math.sin(angle) * spd,
             radius: Math.random() * 4 + 2,
             alpha: 1,
-            color: Math.random() > 0.4 ? '#b91c1c' : (Math.random() > 0.5 ? '#f59e0b' : '#38bdf8')
+            color: Math.random() > 0.4 ? '#ef4444' : (Math.random() > 0.5 ? '#f59e0b' : '#fbbf24')
           });
         }
       }
@@ -1313,15 +1342,17 @@
         if (livesTextEl) livesTextEl.textContent = '5';
         if (levelEl) levelEl.textContent = '1';
 
+        // ACTIVATE IMMERSIVE DEEP SPACE BLACK THEME
         document.body.classList.add('game-active');
         if (rocket) rocket.style.opacity = '1';
 
         asteroids.length = 0;
         missiles.length = 0;
         smokeParticles.length = 0;
+        flameTrailParticles.length = 0;
 
         resetSpawnTimer();
-        showToast("Defense Initialized! Protect the Core!");
+        showToast("Deep Space Mode • Defend Against Fire Comets!");
       }
 
       if (btnStartGame) {
@@ -1337,6 +1368,7 @@
         asteroids.length = 0;
         missiles.length = 0;
         smokeParticles.length = 0;
+        flameTrailParticles.length = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         showToast("Mission Aborted");
@@ -1445,6 +1477,7 @@
           missiles.length = 0;
           blastParticles.length = 0;
           smokeParticles.length = 0;
+          flameTrailParticles.length = 0;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
 
           if (headerContainer) {
@@ -1521,6 +1554,7 @@
         missiles.length = 0;
         blastParticles.length = 0;
         smokeParticles.length = 0;
+        flameTrailParticles.length = 0;
 
         if (spawnTimer) clearInterval(spawnTimer);
       }
@@ -1555,7 +1589,7 @@
           life: 90
         });
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 5; i++) {
           blastParticles.push({
             x: currentX,
             y: currentY,
@@ -1573,7 +1607,7 @@
         if (newLevel > level) {
           level = newLevel;
           if (levelEl) levelEl.textContent = level;
-          showToast(`Level ${level} • Meteor Velocity Increased!`);
+          showToast(`Level ${level} • Fire Comet Velocity Surged!`);
           resetSpawnTimer();
         }
       }
@@ -1620,6 +1654,7 @@
         missiles.length = 0;
         blastParticles.length = 0;
         smokeParticles.length = 0;
+        flameTrailParticles.length = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (headerContainer) {
@@ -1654,12 +1689,12 @@
 
       function spawnAsteroid() {
         if (!isGameActive || isGameOver) return;
-        const maxAsteroids = 7 + level * 2;
+        const maxAsteroids = 8 + level * 2;
         if (asteroids.length >= maxAsteroids) return;
 
         const side = Math.floor(Math.random() * 4);
         let x, y;
-        const margin = 40;
+        const margin = 50;
 
         if (side === 0) { x = Math.random() * canvas.width; y = -margin; }
         else if (side === 1) { x = canvas.width + margin; y = Math.random() * canvas.height; }
@@ -1678,12 +1713,12 @@
         const targetY = coreY + (Math.random() - 0.5) * 40;
         const angle = Math.atan2(targetY - y, targetX - x);
 
-        const baseSpeed = Math.random() * 0.9 + 0.75;
+        const baseSpeed = Math.random() * 1.0 + 0.85;
         const levelSpeedMultiplier = 1 + (level - 1) * 0.25;
         const speed = baseSpeed * levelSpeedMultiplier;
 
-        const numPoints = Math.floor(Math.random() * 3) + 6;
-        const radius = Math.random() * 11 + 13;
+        const numPoints = Math.floor(Math.random() * 3) + 7;
+        const radius = Math.random() * 10 + 14;
         const offsets = [];
         for (let i = 0; i < numPoints; i++) {
           offsets.push(0.75 + Math.random() * 0.5);
@@ -1693,18 +1728,19 @@
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
+          angle,
           radius,
           numPoints,
           offsets,
           rot: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * (0.02 + level * 0.006),
-          color: Math.random() > 0.4 ? '#94a3b8' : '#b91c1c'
+          rotSpeed: (Math.random() - 0.5) * (0.03 + level * 0.008),
+          trailHistory: []
         });
       }
 
       function resetSpawnTimer() {
         if (spawnTimer) clearInterval(spawnTimer);
-        const interval = Math.max(600, 1450 - (level - 1) * 180);
+        const interval = Math.max(550, 1350 - (level - 1) * 160);
         spawnTimer = setInterval(spawnAsteroid, interval);
       }
 
@@ -1713,34 +1749,34 @@
         const rad = (angleDeg - 90) * (Math.PI / 180);
         const spawnX = x - Math.cos(rad) * exhaustDist;
         const spawnY = y - Math.sin(rad) * exhaustDist;
-        const isSpark = Math.random() < 0.25;
+        const isSpark = Math.random() < 0.3;
 
         smokeParticles.push({
           x: spawnX + (Math.random() - 0.5) * 3,
           y: spawnY + (Math.random() - 0.5) * 3,
           vx: -Math.cos(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
           vy: -Math.sin(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
-          radius: isSpark ? Math.random() * 1.2 + 0.6 : Math.random() * 2.2 + 1.4,
-          alpha: isSpark ? 0.9 : 0.55,
+          radius: isSpark ? Math.random() * 1.4 + 0.8 : Math.random() * 2.4 + 1.4,
+          alpha: isSpark ? 1 : 0.6,
           color: isSpark 
             ? (Math.random() > 0.5 ? '#f97316' : '#eab308') 
-            : (Math.random() > 0.4 ? '#334155' : '#64748b'),
+            : (Math.random() > 0.4 ? '#475569' : '#94a3b8'),
           isSpark
         });
       }
 
-      function createExplosion(x, y, baseColor, isRam = false) {
-        const count = isRam ? 26 : 18;
+      function createExplosion(x, y, isRam = false) {
+        const count = isRam ? 32 : 22;
         for (let i = 0; i < count; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const spd = (Math.random() * 4.5 + 1.5) * (isRam ? 1.4 : 1);
+          const spd = (Math.random() * 5.5 + 2) * (isRam ? 1.4 : 1);
           blastParticles.push({
             x, y,
             vx: Math.cos(angle) * spd,
             vy: Math.sin(angle) * spd,
-            radius: Math.random() * 3.5 + 1.5,
+            radius: Math.random() * 4 + 1.5,
             alpha: 1,
-            color: isRam ? (Math.random() > 0.5 ? '#38bdf8' : '#f59e0b') : (Math.random() > 0.5 ? baseColor : '#f59e0b')
+            color: Math.random() > 0.6 ? '#fef08a' : (Math.random() > 0.3 ? '#f97316' : '#ef4444')
           });
         }
       }
@@ -1748,13 +1784,14 @@
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+        // RENDER BLAST / FIRE PARTICLES
         for (let i = blastParticles.length - 1; i >= 0; i--) {
           const bp = blastParticles[i];
           bp.x += bp.vx;
           bp.y += bp.vy;
           bp.vx *= 0.95;
           bp.vy *= 0.95;
-          bp.alpha -= 0.024;
+          bp.alpha -= 0.025;
 
           if (bp.alpha <= 0) {
             blastParticles.splice(i, 1);
@@ -1767,6 +1804,30 @@
           ctx.fillStyle = bp.color;
           ctx.globalAlpha = Math.max(0, bp.alpha);
           ctx.shadowColor = bp.color;
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // RENDER COMET FLAME PARTICLES
+        for (let i = flameTrailParticles.length - 1; i >= 0; i--) {
+          const fp = flameTrailParticles[i];
+          fp.x += fp.vx;
+          fp.y += fp.vy;
+          fp.radius *= 0.93;
+          fp.alpha -= 0.035;
+
+          if (fp.alpha <= 0 || fp.radius <= 0.4) {
+            flameTrailParticles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(fp.x, fp.y, fp.radius, 0, Math.PI * 2);
+          ctx.fillStyle = fp.color;
+          ctx.globalAlpha = Math.max(0, fp.alpha);
+          ctx.shadowColor = '#f97316';
           ctx.shadowBlur = 6;
           ctx.fill();
           ctx.restore();
@@ -1818,6 +1879,7 @@
           rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
         }
 
+        // RENDER ROCKET SMOKE & SPARK PARTICLES
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
           const p = smokeParticles[i];
           p.x += p.vx;
@@ -1845,6 +1907,7 @@
           ctx.restore();
         }
 
+        // RENDER PHOTON MISSILES
         for (let i = missiles.length - 1; i >= 0; i--) {
           const m = missiles[i];
           m.x += m.vx;
@@ -1853,15 +1916,15 @@
 
           ctx.save();
           ctx.beginPath();
-          ctx.arc(m.x, m.y, m.radius + 1.5, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+          ctx.arc(m.x, m.y, m.radius + 2, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
           ctx.fill();
 
           ctx.beginPath();
           ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
           ctx.fillStyle = '#38bdf8';
           ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = 10;
           ctx.fill();
           ctx.restore();
 
@@ -1870,12 +1933,68 @@
           }
         }
 
+        // =========================================================
+        // RENDER REALISTIC FIRE-COMET METEORS & FLAME TRAILS
+        // =========================================================
         for (let i = asteroids.length - 1; i >= 0; i--) {
           const a = asteroids[i];
           a.x += a.vx;
           a.y += a.vy;
           a.rot += a.rotSpeed;
 
+          // Track trail coordinates
+          a.trailHistory.push({ x: a.x, y: a.y });
+          if (a.trailHistory.length > 8) a.trailHistory.shift();
+
+          // Spawn dynamic fiery embers from comet core
+          if (Math.random() < 0.6) {
+            const oppAngle = a.angle + Math.PI + (Math.random() - 0.5) * 0.8;
+            const spd = Math.random() * 2.5 + 1;
+            flameTrailParticles.push({
+              x: a.x + (Math.random() - 0.5) * (a.radius * 0.8),
+              y: a.y + (Math.random() - 0.5) * (a.radius * 0.8),
+              vx: Math.cos(oppAngle) * spd,
+              vy: Math.sin(oppAngle) * spd,
+              radius: Math.random() * (a.radius * 0.35) + 1.5,
+              alpha: 0.85,
+              color: Math.random() > 0.5 ? '#f59e0b' : (Math.random() > 0.3 ? '#ea580c' : '#ef4444')
+            });
+          }
+
+          // 1. Draw Fiery Plasma Tail behind comet
+          if (a.trailHistory.length > 2) {
+            const oppX = Math.cos(a.angle + Math.PI);
+            const oppY = Math.sin(a.angle + Math.PI);
+            const tailLength = a.radius * 3.8;
+
+            const flameGrad = ctx.createLinearGradient(
+              a.x, a.y, 
+              a.x + oppX * tailLength, 
+              a.y + oppY * tailLength
+            );
+            flameGrad.addColorStop(0, 'rgba(254, 240, 138, 0.85)'); // Yellow hot core
+            flameGrad.addColorStop(0.3, 'rgba(249, 115, 22, 0.65)'); // Fiery orange
+            flameGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.35)');  // Red smoke
+            flameGrad.addColorStop(1, 'transparent');
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            const perpX = -oppY * (a.radius * 0.75);
+            const perpY = oppX * (a.radius * 0.75);
+
+            ctx.lineTo(a.x + perpX, a.y + perpY);
+            ctx.lineTo(a.x + oppX * tailLength, a.y + oppY * tailLength);
+            ctx.lineTo(a.x - perpX, a.y - perpY);
+            ctx.closePath();
+            ctx.fillStyle = flameGrad;
+            ctx.shadowColor = '#f97316';
+            ctx.shadowBlur = 14;
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // 2. Draw Molten Meteor Rock Body
           ctx.save();
           ctx.translate(a.x, a.y);
           ctx.rotate(a.rot);
@@ -1889,35 +2008,48 @@
             else ctx.lineTo(px, py);
           }
           ctx.closePath();
-          ctx.fillStyle = a.color === '#b91c1c' ? 'rgba(185, 28, 28, 0.12)' : 'rgba(241, 245, 249, 0.9)';
+
+          // Molten rock gradient (dark obsidian + glowing lava fissures)
+          const rockGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, a.radius);
+          rockGrad.addColorStop(0, '#fef08a');
+          rockGrad.addColorStop(0.4, '#dc2626');
+          rockGrad.addColorStop(0.85, '#1e1b4b');
+          rockGrad.addColorStop(1, '#0f172a');
+
+          ctx.fillStyle = rockGrad;
           ctx.fill();
-          ctx.lineWidth = 1.5;
-          ctx.strokeStyle = a.color;
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#f97316';
+          ctx.shadowColor = '#ef4444';
+          ctx.shadowBlur = 10;
           ctx.stroke();
           ctx.restore();
 
+          // Check Rocket Collision (Ramming Defense)
           const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
           if (distToRocket < a.radius + rocketHitRadius && isGameActive && !isGameOver) {
-            createExplosion(a.x, a.y, a.color, true);
+            createExplosion(a.x, a.y, true);
             addScore(15);
             asteroids.splice(i, 1);
             continue;
           }
 
+          // Check Core Planet Breach
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
-            createExplosion(a.x, a.y, '#b91c1c');
+            createExplosion(a.x, a.y);
             asteroids.splice(i, 1);
-            deductLife("Center Station Breached! An asteroid slammed into the core!");
+            deductLife("Center Station Breached! A Fire Comet slammed into the core!");
             continue;
           }
 
+          // Check Missile Impact
           let asteroidDestroyed = false;
           for (let k = missiles.length - 1; k >= 0; k--) {
             const m = missiles[k];
             const dist = Math.hypot(a.x - m.x, a.y - m.y);
             if (dist < a.radius + m.radius) {
-              createExplosion(a.x, a.y, a.color);
+              createExplosion(a.x, a.y);
               addScore(10);
               missiles.splice(k, 1);
               asteroidDestroyed = true;
@@ -1930,9 +2062,10 @@
             continue;
           }
 
-          if (a.x < -80 || a.x > canvas.width + 80 || a.y < -80 || a.y > canvas.height + 80) {
+          // Check Out-of-Bounds Miss
+          if (a.x < -90 || a.x > canvas.width + 90 || a.y < -90 || a.y > canvas.height + 90) {
             asteroids.splice(i, 1);
-            deductLife("Defense Failed! An asteroid slipped past containment!");
+            deductLife("Defense Failed! A Fire Comet slipped past containment!");
           }
         }
 
