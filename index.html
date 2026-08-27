@@ -30,8 +30,8 @@
       --primary-glow: rgba(194, 29, 29, 0.25);
       
       --bg-base: #FDF8F5;
-      --surface-glass: rgba(255, 255, 255, 0.82);
-      --surface-card: rgba(255, 255, 255, 0.9);
+      --surface-glass: rgba(255, 255, 255, 0.88);
+      --surface-card: rgba(255, 255, 255, 0.94);
       
       --border-subtle: rgba(237, 228, 222, 0.9);
       --border-hover: rgba(194, 29, 29, 0.4);
@@ -50,9 +50,6 @@
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-
-      --mouse-x: 50vw;
-      --mouse-y: 35vh;
     }
 
     * {
@@ -82,56 +79,43 @@
     }
 
     /* =========================================================
-       1. INTERACTIVE CANVAS & RADAR BACKDROP
+       1. HERO VIDEO STAGE BACKDROP (NO AMBIENT RADAR/AURORA)
        ========================================================= */
-    .visual-stage-backdrop {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
+    .hero-video-stage-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100vh;
+      min-height: 100dvh;
       pointer-events: none !important;
       z-index: 0;
       overflow: hidden;
+      background-color: #FDF8F5;
     }
 
-    #particleCanvas {
+    .hero-bg-video {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
+      object-fit: cover;
+      object-position: right center;
+      z-index: 0;
     }
 
-    .ambient-mesh-grid {
+    /* Subtle left-side scrim to ensure text readability without overpowering video */
+    .hero-video-scrim {
       position: absolute;
       inset: 0;
-      background-image: 
-        radial-gradient(circle at center, rgba(194, 29, 29, 0.12) 1.5px, transparent 1.5px),
-        linear-gradient(to right, rgba(237, 228, 222, 0.4) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(237, 228, 222, 0.4) 1px, transparent 1px);
-      background-size: 36px 36px, 108px 108px, 108px 108px;
-      opacity: 0.8;
-      mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 35%, transparent 75%);
-      -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 35%, transparent 75%);
-    }
-
-    .aurora-radial-beam {
-      position: absolute;
-      top: -150px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: min(1200px, 98vw);
-      height: 650px;
-      background: 
-        radial-gradient(50% 50% at 50% 40%, rgba(254, 215, 202, 0.7) 0%, rgba(254, 226, 226, 0.3) 50%, transparent 100%),
-        radial-gradient(circle at 80% 20%, rgba(225, 29, 72, 0.12) 0%, transparent 50%);
-      filter: blur(60px);
-      opacity: 0.95;
-      animation: ambientPulse 8s ease-in-out infinite alternate;
-    }
-
-    @keyframes ambientPulse {
-      0% { transform: translateX(-50%) scale(0.96); opacity: 0.8; }
-      100% { transform: translateX(-50%) scale(1.04); opacity: 1; }
+      background: linear-gradient(
+        to right,
+        rgba(253, 248, 245, 0.98) 0%,
+        rgba(253, 248, 245, 0.92) 36%,
+        rgba(253, 248, 245, 0.5) 62%,
+        rgba(253, 248, 245, 0) 100%
+      );
+      z-index: 1;
     }
 
     .material-symbols-outlined {
@@ -172,7 +156,7 @@
     }
 
     /* =========================================================
-       3. HERO STAGE
+       3. HERO STAGE (ALL SENTENCES TO LEFT SIDE)
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -180,13 +164,29 @@
       width: 100%;
       min-height: 100vh;
       min-height: 100dvh;
-      padding: 110px 32px 80px;
-      text-align: center;
+      padding: 120px 48px 80px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      text-align: left;
       position: relative;
+    }
+
+    .hero-left-content {
+      max-width: 680px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero-top-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .hero-enterprise-pill {
@@ -194,13 +194,12 @@
       align-items: center;
       gap: 8px;
       padding: 6px 16px 6px 8px;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.06);
-      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.08);
       user-select: none;
     }
 
@@ -223,22 +222,19 @@
       letter-spacing: -0.01em;
     }
 
-    /* Rotating Emblem with Multi-layer Glow */
     .hero-logo-emblem {
-      width: 96px;
-      height: 96px;
+      width: 58px;
+      height: 58px;
       border-radius: 50% !important;
       background: #ffffff;
       border: 2px solid #ffffff;
       box-shadow: 
-        0 20px 40px -10px rgba(194, 29, 29, 0.2), 
-        0 0 0 8px rgba(255, 255, 255, 0.8),
-        0 0 35px rgba(254, 215, 202, 0.6);
+        0 12px 28px -6px rgba(194, 29, 29, 0.25), 
+        0 0 0 4px rgba(255, 255, 255, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 26px auto;
-      padding: 18px;
+      padding: 10px;
       overflow: hidden;
       flex-shrink: 0;
       position: relative;
@@ -259,17 +255,16 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Grand Hero Title */
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(48px, 8vw, 82px);
+      font-size: clamp(44px, 6.2vw, 76px);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.04em;
-      line-height: 1.04;
+      line-height: 1.05;
       margin-bottom: 18px;
-      max-width: 1100px;
       text-shadow: 0 2px 20px rgba(0,0,0,0.02);
+      text-align: left;
     }
 
     .hero-title span {
@@ -280,33 +275,35 @@
     }
 
     .hero-sub {
-      font-size: clamp(16px, 4vw, 21px);
+      font-size: clamp(16px, 2.4vw, 21px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 580px;
       line-height: 1.55;
       letter-spacing: -0.01em;
+      margin-bottom: 32px;
+      text-align: left;
     }
 
-    /* Floating Glass Search Matrix */
     .search-filter-wrap {
       width: 100%;
-      max-width: 660px;
-      margin: 38px auto 0;
-      padding: 0 16px;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
 
     .search-filter-box {
+      width: 100%;
       display: flex;
       align-items: center;
       gap: 14px;
-      background: rgba(255, 255, 255, 0.92);
+      background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 16px 28px;
-      box-shadow: 0 16px 36px -4px rgba(120, 113, 108, 0.08), 0 0 0 1px #ffffff inset;
+      padding: 16px 24px;
+      box-shadow: 0 16px 36px -4px rgba(120, 113, 108, 0.09), 0 0 0 1px #ffffff inset;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -334,13 +331,13 @@
     .hero-quick-tags {
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 8px;
-      margin-top: 18px;
+      margin-top: 16px;
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-subtle);
@@ -370,6 +367,8 @@
       margin: 40px auto 60px;
       padding: 0 32px;
       width: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .section-bar {
@@ -549,6 +548,8 @@
       margin: 8px auto 56px;
       padding: 0 32px;
       width: 100%;
+      position: relative;
+      z-index: 2;
     }
 
     .impact-grid {
@@ -696,9 +697,8 @@
     }
 
     @media (max-width: 768px) {
-      .hero-stage { padding: 120px 20px 90px; }
-      .hero-logo-emblem { width: 80px; height: 80px; margin-bottom: 20px; }
-      .hero-title { font-size: 40px; }
+      .hero-stage { padding: 120px 24px 80px; }
+      .hero-title { font-size: 42px; }
       .workspace-section { padding: 0 16px; }
       .impact-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
@@ -709,53 +709,64 @@
 </head>
 <body>
 
-  <!-- INTERACTIVE CANVAS PARTICLE RADAR -->
-  <div class="visual-stage-backdrop">
-    <canvas id="particleCanvas"></canvas>
-    <div class="ambient-mesh-grid"></div>
-    <div class="aurora-radial-beam"></div>
+  <!-- HERO SECTION VIDEO BACKDROP (PLAYS ONLY ONCE, NO LOOP) -->
+  <div class="hero-video-stage-backdrop">
+    <video
+      class="hero-bg-video"
+      src="https://pub-86dc5b5484314368ac5436a674b0d919.r2.dev/cloudinarry%20to%20cloudflare/202606021731-e_hqa6sn.mp4"
+      autoplay
+      muted
+      playsinline
+      preload="auto"
+    ></video>
+    <div class="hero-video-scrim"></div>
   </div>
 
   <div id="header-container"></div>
 
   <main>
     
-    <!-- HERO STAGE -->
+    <!-- HERO STAGE (ALL SENTENCES TO LEFT SIDE) -->
     <section class="hero-stage">
       
-      <div class="hero-enterprise-pill slide-up-intro" style="transition-delay: 0.02s;">
-        <span class="hero-pill-badge">v21.0 Enterprise</span>
-        <span class="hero-pill-text">All-in-One Operations Workspace</span>
-      </div>
+      <div class="hero-left-content">
+        <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
+          <div class="hero-enterprise-pill">
+            <span class="hero-pill-badge">v21.0 Enterprise</span>
+            <span class="hero-pill-text">All-in-One Operations Workspace</span>
+          </div>
 
-      <div class="hero-logo-emblem slide-up-intro" style="transition-delay: 0.08s;">
-        <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
-      </div>
-
-      <h1 class="hero-title slide-up-intro" style="transition-delay: 0.18s;">
-        One Portal for <span>All Solutions</span>
-      </h1>
-
-      <p class="hero-sub slide-up-intro" style="transition-delay: 0.28s;">
-        Work Smarter, Move Faster.
-      </p>
-
-      <!-- Glassmorphic Search Bar -->
-      <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.38s;">
-        <div class="search-filter-box">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">search</span>
-          <input type="text" id="moduleFilterInput" placeholder="Quick find module: Quotation, Car Rate, Directory, Tracking...">
+          <div class="hero-logo-emblem">
+            <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
+          </div>
         </div>
 
-        <div class="hero-quick-tags">
-          <span class="quick-tag-chip" onclick="applyQuickFilter('quotation')"># Quotation</span>
-          <span class="quick-tag-chip" onclick="applyQuickFilter('consignment')"># Consignment</span>
-          <span class="quick-tag-chip" onclick="applyQuickFilter('car')"># Car Rates</span>
-          <span class="quick-tag-chip" onclick="applyQuickFilter('hub')"># Directory</span>
-          <span class="quick-tag-chip" onclick="applyQuickFilter('lite')"># Lite CFT</span>
-          <span class="quick-tag-chip" onclick="applyQuickFilter('packing')"># Packing Standards</span>
+        <h1 class="hero-title slide-up-intro" style="transition-delay: 0.18s;">
+          One Portal for <span>All Solutions</span>
+        </h1>
+
+        <p class="hero-sub slide-up-intro" style="transition-delay: 0.28s;">
+          Work Smarter, Move Faster.
+        </p>
+
+        <!-- Left-Aligned Search Bar -->
+        <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.38s;">
+          <div class="search-filter-box">
+            <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">search</span>
+            <input type="text" id="moduleFilterInput" placeholder="Quick find module: Quotation, Car Rate, Directory, Tracking...">
+          </div>
+
+          <div class="hero-quick-tags">
+            <span class="quick-tag-chip" onclick="applyQuickFilter('quotation')"># Quotation</span>
+            <span class="quick-tag-chip" onclick="applyQuickFilter('consignment')"># Consignment</span>
+            <span class="quick-tag-chip" onclick="applyQuickFilter('car')"># Car Rates</span>
+            <span class="quick-tag-chip" onclick="applyQuickFilter('hub')"># Directory</span>
+            <span class="quick-tag-chip" onclick="applyQuickFilter('lite')"># Lite CFT</span>
+            <span class="quick-tag-chip" onclick="applyQuickFilter('packing')"># Packing Standards</span>
+          </div>
         </div>
       </div>
+
     </section>
 
     <!-- OPERATIONS MODULES GRID -->
@@ -1007,90 +1018,7 @@
 
   <script src="common.js?v=21.0"></script>
 
-  <!-- 1. DYNAMIC CANVAS PARTICLE & RADAR ENGINE -->
-  <script>
-    (function initInteractiveParticleCanvas() {
-      const canvas = document.getElementById('particleCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      let width, height;
-      function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      const numPoints = 48;
-      const points = [];
-      for (let i = 0; i < numPoints; i++) {
-        points.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.45,
-          vy: (Math.random() - 0.5) * 0.45,
-          radius: Math.random() * 2 + 1,
-          baseColor: Math.random() > 0.4 ? 'rgba(194, 29, 29,' : 'rgba(59, 130, 246,'
-        });
-      }
-
-      let mouseX = width / 2;
-      let mouseY = height / 3;
-
-      window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
-        document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
-      }, { passive: true });
-
-      function animate() {
-        ctx.clearRect(0, 0, width, height);
-
-        for (let i = 0; i < numPoints; i++) {
-          const p = points[i];
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.x < 0 || p.x > width) p.vx *= -1;
-          if (p.y < 0 || p.y > height) p.vy *= -1;
-
-          // Mouse gravity
-          const dx = mouseX - p.x;
-          const dy = mouseY - p.y;
-          const dist = Math.hypot(dx, dy);
-          if (dist < 180) {
-            p.x += (dx / dist) * 0.5;
-            p.y += (dy / dist) * 0.5;
-          }
-
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `${p.baseColor} 0.5)`;
-          ctx.fill();
-
-          // Connect nearby logistics nodes
-          for (let j = i + 1; j < numPoints; j++) {
-            const p2 = points[j];
-            const d = Math.hypot(p.x - p2.x, p.y - p2.y);
-            if (d < 120) {
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.strokeStyle = `rgba(194, 29, 29, ${0.18 * (1 - d / 120)})`;
-              ctx.lineWidth = 0.8;
-              ctx.stroke();
-            }
-          }
-        }
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
-  </script>
-
-  <!-- 2. INSTANT SEARCH & FILTER SCRIPT -->
+  <!-- 1. INSTANT SEARCH & FILTER SCRIPT -->
   <script>
     const searchInput = document.getElementById('moduleFilterInput');
     const cards = document.querySelectorAll('.module-card');
@@ -1128,7 +1056,7 @@
     }
   </script>
 
-  <!-- 3. PAGE OPEN SLIDE-UP INITIALIZER -->
+  <!-- 2. PAGE OPEN SLIDE-UP INITIALIZER -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
@@ -1139,7 +1067,7 @@
     });
   </script>
 
-  <!-- 4. PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER -->
+  <!-- 3. PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER -->
   <script>
     (function initPureFadeObserver() {
       const fadeElements = document.querySelectorAll('.fade-reveal');
@@ -1166,7 +1094,7 @@
     })();
   </script>
 
-  <!-- 5. SUPPORT FAB SCROLL REVEAL -->
+  <!-- 4. SUPPORT FAB SCROLL REVEAL -->
   <script>
     (function initFABScrollReveal() {
       const bubble = document.querySelector('.support-msg-bubble');
@@ -1222,7 +1150,7 @@
     })();
   </script>
 
-  <!-- 6. FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
+  <!-- 5. FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
