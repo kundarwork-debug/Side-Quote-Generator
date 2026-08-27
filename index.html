@@ -4,79 +4,55 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
-  <!-- PREVENT AGGRESSIVE BROWSER CACHING -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
-  <meta name="keywords" content="APML Portal, Enterprise Logistics, APML Operations Hub, Quotation Studio, Freight Rate Engine">
-  <link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
 
-  <meta property="og:title" content="APML Portal — Enterprise Operations Hub">
-  <meta property="og:description" content="Unified workspace for real-time quotation drafting, logistics telemetry, rate matrices, and nationwide dispatch directories.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/index.html">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.0">
+  <link rel="stylesheet" href="common.css?v=21.0">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=20.0">
-  <link rel="stylesheet" href="common.css?v=20.0">
-
-  <!-- GOOGLE FONTS: Plus Jakarta Sans & Space Grotesk -->
+  <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
-  <!-- GOOGLE MATERIAL SYMBOLS -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <style>
-    /* =========================================================
-       1. LUXURY ENTERPRISE DESIGN TOKENS & SURFACES
-       ========================================================= */
     :root {
       --primary: #c21d1d;
       --primary-dark: #991b1b;
-      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #be123c 100%);
-      --primary-soft: rgba(194, 29, 29, 0.05);
-      --primary-glow: rgba(194, 29, 29, 0.18);
+      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 45%, #f43f5e 100%);
+      --primary-soft: rgba(194, 29, 29, 0.06);
+      --primary-glow: rgba(194, 29, 29, 0.25);
       
-      /* Pure Minimalist Neutral Palette */
-      --bg-base: #fafbfc;
-      --surface-glass: rgba(255, 255, 255, 0.78);
-      --surface-card: rgba(255, 255, 255, 0.88);
-      --surface-solid: #ffffff;
+      --bg-base: #FDF8F5;
+      --surface-glass: rgba(255, 255, 255, 0.82);
+      --surface-card: rgba(255, 255, 255, 0.9);
       
-      /* Subtle Glass & Border Highlights */
-      --border-subtle: rgba(226, 232, 240, 0.8);
-      --border-highlight: rgba(255, 255, 255, 0.9);
-      --border-hover: rgba(194, 29, 29, 0.35);
+      --border-subtle: rgba(237, 228, 222, 0.9);
+      --border-hover: rgba(194, 29, 29, 0.4);
       
-      /* Typography Colors */
-      --text-main: #0b1329;
-      --text-secondary: #334155;
-      --text-muted: #64748b;
-      --text-faint: #94a3b8;
+      --text-main: #1c1917;
+      --text-secondary: #44403c;
+      --text-muted: #78716c;
+      --text-faint: #a8a29e;
       
-      /* Radii & Shadows */
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
       --radius-xl: 24px;
       --radius-pill: 9999px;
       
-      --shadow-ambient: 0 20px 40px -15px rgba(15, 23, 42, 0.03);
-      --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
-      --shadow-float: 0 20px 35px -8px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(194, 29, 29, 0.04);
-      --shadow-glow: 0 0 35px rgba(194, 29, 29, 0.12);
+      --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
+      --shadow-float: 0 24px 48px -12px rgba(194, 29, 29, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
       
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
 
-      /* Dynamic Reactive Mouse Coordinates */
-      --mouse-x: 50%;
-      --mouse-y: 30%;
+      --mouse-x: 50vw;
+      --mouse-y: 35vh;
     }
 
     * {
@@ -91,7 +67,6 @@
       overflow-x: hidden;
       overflow-y: scroll !important;
       height: 100%;
-      touch-action: pan-y pinch-zoom !important;
     }
 
     body {
@@ -103,15 +78,13 @@
       overflow-x: hidden;
       overflow-y: visible !important;
       position: relative;
-      touch-action: pan-y pinch-zoom !important;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     /* =========================================================
-       2. REACTIVE LOGISTICS CORRIDOR NETWORK & AURORA BACKDROP
+       1. INTERACTIVE CANVAS & RADAR BACKDROP
        ========================================================= */
-    .luxury-ambient-backdrop {
+    .visual-stage-backdrop {
       position: fixed;
       inset: 0;
       width: 100vw;
@@ -121,75 +94,44 @@
       overflow: hidden;
     }
 
-    /* Reactive Grid Background */
-    .ambient-grid {
+    #particleCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ambient-mesh-grid {
       position: absolute;
       inset: 0;
       background-image: 
-        radial-gradient(circle at center, rgba(148, 163, 184, 0.18) 1.2px, transparent 1.2px),
-        linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
-      background-size: 32px 32px, 96px 96px, 96px 96px;
-      opacity: 0.75;
-      mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 45%, transparent 85%);
-      -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 45%, transparent 85%);
-      transition: mask-image 0.2s ease, -webkit-mask-image 0.2s ease;
+        radial-gradient(circle at center, rgba(194, 29, 29, 0.12) 1.5px, transparent 1.5px),
+        linear-gradient(to right, rgba(237, 228, 222, 0.4) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(237, 228, 222, 0.4) 1px, transparent 1px);
+      background-size: 36px 36px, 108px 108px, 108px 108px;
+      opacity: 0.8;
+      mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 35%, transparent 75%);
+      -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 35%, transparent 75%);
     }
 
-    /* Interactive Dynamic Cursor Spotlight Glow */
-    .interactive-cursor-glow {
+    .aurora-radial-beam {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 700px;
-      height: 700px;
-      margin-top: -350px;
-      margin-left: -350px;
-      background: radial-gradient(circle, rgba(194, 29, 29, 0.08) 0%, rgba(225, 29, 72, 0.04) 40%, transparent 70%);
-      filter: blur(50px);
-      transform: translate3d(var(--mouse-x), var(--mouse-y), 0);
-      will-change: transform;
-      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Ambient Base Radar Spots */
-    .aurora-glow-top {
-      position: absolute;
-      top: -120px;
+      top: -150px;
       left: 50%;
       transform: translateX(-50%);
-      width: min(1100px, 95vw);
-      height: 520px;
-      background: radial-gradient(50% 50% at 50% 50%, rgba(254, 226, 226, 0.6) 0%, rgba(254, 242, 242, 0.25) 50%, transparent 100%);
+      width: min(1200px, 98vw);
+      height: 650px;
+      background: 
+        radial-gradient(50% 50% at 50% 40%, rgba(254, 215, 202, 0.7) 0%, rgba(254, 226, 226, 0.3) 50%, transparent 100%),
+        radial-gradient(circle at 80% 20%, rgba(225, 29, 72, 0.12) 0%, transparent 50%);
       filter: blur(60px);
-      opacity: 0.85;
+      opacity: 0.95;
+      animation: ambientPulse 8s ease-in-out infinite alternate;
     }
 
-    /* Dynamic SVG Transit Network */
-    .transit-routes-svg {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      opacity: 0.4;
-      will-change: transform;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes routeFlow {
-      from { stroke-dashoffset: 240; }
-      to { stroke-dashoffset: 0; }
-    }
-
-    .flowing-route {
-      stroke-dasharray: 8 14;
-      animation: routeFlow 12s linear infinite;
-    }
-
-    .flowing-route-fast {
-      stroke-dasharray: 6 10;
-      animation: routeFlow 7s linear infinite;
+    @keyframes ambientPulse {
+      0% { transform: translateX(-50%) scale(0.96); opacity: 0.8; }
+      100% { transform: translateX(-50%) scale(1.04); opacity: 1; }
     }
 
     .material-symbols-outlined {
@@ -204,7 +146,7 @@
     }
 
     /* =========================================================
-       3. REFINED CINEMATIC ENTRANCE ANIMATIONS
+       2. REVEAL ANIMATIONS
        ========================================================= */
     .slide-up-intro {
       opacity: 0;
@@ -229,34 +171,8 @@
       opacity: 1;
     }
 
-    @keyframes unifiedLogoSpin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes pulseLiveLight {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
-      70% { box-shadow: 0 0 0 7px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    @keyframes blinkCursor {
-      50% { opacity: 0; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .slide-up-intro, .fade-reveal { 
-        opacity: 1 !important; 
-        transform: none !important; 
-        transition: none !important; 
-      }
-      .hero-logo-emblem img, .flowing-route, .flowing-route-fast {
-        animation: none !important;
-      }
-    }
-
     /* =========================================================
-       4. HERO PROFILE STAGE
+       3. HERO STAGE
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -273,19 +189,18 @@
       position: relative;
     }
 
-    /* Enterprise Pill Tag */
     .hero-enterprise-pill {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 5px 14px 5px 8px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      gap: 8px;
+      padding: 6px 16px 6px 8px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-      margin-bottom: 22px;
+      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.06);
+      margin-bottom: 24px;
       user-select: none;
     }
 
@@ -294,32 +209,36 @@
       color: #ffffff;
       font-size: 10px;
       font-weight: 800;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: var(--radius-pill);
+      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.3);
     }
 
     .hero-pill-text {
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 700;
       color: var(--text-secondary);
       letter-spacing: -0.01em;
     }
 
-    /* Floating Center Emblem */
+    /* Rotating Emblem with Multi-layer Glow */
     .hero-logo-emblem {
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border-radius: 50% !important;
       background: #ffffff;
-      border: 1.5px solid var(--border-subtle);
-      box-shadow: 0 16px 36px -6px rgba(15, 23, 42, 0.08), 0 0 0 6px rgba(255, 255, 255, 0.7);
+      border: 2px solid #ffffff;
+      box-shadow: 
+        0 20px 40px -10px rgba(194, 29, 29, 0.2), 
+        0 0 0 8px rgba(255, 255, 255, 0.8),
+        0 0 35px rgba(254, 215, 202, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 24px auto;
-      padding: 16px;
+      margin: 0 auto 26px auto;
+      padding: 18px;
       overflow: hidden;
       flex-shrink: 0;
       position: relative;
@@ -331,45 +250,49 @@
       border-radius: 50%;
       object-fit: contain;
       display: block;
-      animation: unifiedLogoSpin 12s linear infinite;
+      animation: unifiedLogoSpin 14s linear infinite;
       transform-origin: center center;
-      will-change: transform;
     }
 
-    /* HERO TITLE */
+    @keyframes unifiedLogoSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Grand Hero Title */
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(46px, 7.5vw, 76px);
+      font-size: clamp(48px, 8vw, 82px);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.04em;
-      line-height: 1.05;
-      margin-bottom: 16px;
-      max-width: 1050px;
+      line-height: 1.04;
+      margin-bottom: 18px;
+      max-width: 1100px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.02);
     }
 
     .hero-title span {
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 16px rgba(194, 29, 29, 0.15));
     }
 
     .hero-sub {
-      font-size: clamp(16px, 3.8vw, 20px);
+      font-size: clamp(16px, 4vw, 21px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 560px;
-      line-height: 1.6;
+      max-width: 580px;
+      line-height: 1.55;
       letter-spacing: -0.01em;
     }
 
-    /* =========================================================
-       5. FLOATING GLASS SEARCH MATRIX
-       ========================================================= */
+    /* Floating Glass Search Matrix */
     .search-filter-wrap {
       width: 100%;
-      max-width: 640px;
-      margin: 36px auto 0;
+      max-width: 660px;
+      margin: 38px auto 0;
       padding: 0 16px;
     }
 
@@ -377,21 +300,19 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 14px 26px;
-      box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
-                  border-color 0.25s ease, 
-                  box-shadow 0.25s ease;
+      padding: 16px 28px;
+      box-shadow: 0 16px 36px -4px rgba(120, 113, 108, 0.08), 0 0 0 1px #ffffff inset;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .search-filter-box:focus-within {
-      border-color: rgba(194, 29, 29, 0.45);
-      box-shadow: 0 16px 36px -4px rgba(194, 29, 29, 0.12), 0 0 0 4px rgba(194, 29, 29, 0.05);
+      border-color: rgba(194, 29, 29, 0.5);
+      box-shadow: 0 20px 42px -4px rgba(194, 29, 29, 0.16), 0 0 0 4px rgba(194, 29, 29, 0.08);
       transform: translateY(-2px);
       background: #ffffff;
     }
@@ -399,17 +320,15 @@
     .search-filter-box input {
       border: none;
       outline: none;
-      font-size: 14px;
+      font-size: 14.5px;
       font-weight: 600;
       color: var(--text-main);
       width: 100%;
       background: transparent;
-      letter-spacing: -0.01em;
     }
 
     .search-filter-box input::placeholder {
       color: var(--text-faint);
-      font-weight: 500;
     }
 
     .hero-quick-tags {
@@ -417,35 +336,34 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 18px;
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-subtle);
-      padding: 6px 14px;
+      padding: 7px 15px;
       border-radius: var(--radius-pill);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-secondary);
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      user-select: none;
-      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
+      box-shadow: 0 2px 6px rgba(120, 113, 108, 0.03);
     }
 
     .quick-tag-chip:hover {
       border-color: var(--primary);
       color: var(--primary);
       background: #ffffff;
-      transform: translateY(-1.5px);
-      box-shadow: 0 4px 10px rgba(194, 29, 29, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(194, 29, 29, 0.1);
     }
 
     /* =========================================================
-       6. WORKSPACE SECTION & CARDS
+       4. WORKSPACE SECTION & CARDS
        ========================================================= */
     .workspace-section {
       max-width: 1440px;
@@ -465,25 +383,24 @@
 
     .section-heading {
       font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       color: var(--text-main);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       letter-spacing: -0.02em;
     }
 
     .section-counter {
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--primary);
       background: var(--primary-soft);
       border: 1px solid rgba(194, 29, 29, 0.15);
       padding: 4px 12px;
       border-radius: var(--radius-pill);
-      letter-spacing: -0.01em;
     }
 
     .modules-grid {
@@ -491,6 +408,7 @@
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
       gap: 24px;
       width: 100%;
+      perspective: 1000px;
     }
 
     .module-card {
@@ -499,7 +417,7 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 28px 24px;
+      padding: 30px 26px;
       text-decoration: none;
       color: inherit;
       box-shadow: var(--shadow-card);
@@ -511,13 +429,12 @@
       cursor: pointer !important;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
                   box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 0.25s ease,
-                  opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+                  border-color 0.25s ease;
     }
 
     .module-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(194, 29, 29, 0.35);
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(194, 29, 29, 0.4);
       box-shadow: var(--shadow-float);
       background: #ffffff;
     }
@@ -526,116 +443,110 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
     .card-icon-pill {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
       background: var(--primary-soft);
-      border: 1px solid rgba(194, 29, 29, 0.12);
+      border: 1px solid rgba(194, 29, 29, 0.15);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
-                  background 0.3s ease, 
-                  color 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .module-card:hover .card-icon-pill {
-      transform: scale(1.08);
+      transform: scale(1.1) rotate(-4deg);
       background: var(--primary);
       color: #ffffff;
-      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(194, 29, 29, 0.25);
     }
 
     .card-icon-pill span {
-      font-size: 26px;
+      font-size: 28px;
     }
 
     .status-tag {
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
-      background: rgba(241, 245, 249, 0.8);
+      background: rgba(255, 255, 255, 0.9);
       border: 1px solid var(--border-subtle);
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: var(--radius-pill);
-      letter-spacing: 0.02em;
     }
 
     .card-title {
       font-family: var(--font-display);
-      font-size: 18.5px;
-      font-weight: 700;
+      font-size: 19px;
+      font-weight: 800;
       color: var(--text-main);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       letter-spacing: -0.02em;
     }
 
     .card-description {
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--text-muted);
       line-height: 1.55;
-      margin-bottom: 18px;
-      letter-spacing: -0.005em;
+      margin-bottom: 20px;
     }
 
     .tags-flow {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .micro-tag {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
       padding: 4px 10px;
-      background: rgba(248, 250, 252, 0.8);
+      background: var(--bg-base);
       border: 1px solid var(--border-subtle);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-secondary);
-      letter-spacing: -0.01em;
     }
 
     .card-footer-cta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 14px;
+      padding-top: 16px;
       border-top: 1px solid var(--border-subtle);
-      font-size: 13.5px;
-      font-weight: 700;
+      font-size: 14px;
+      font-weight: 800;
       color: var(--primary);
-      letter-spacing: -0.01em;
     }
 
     .cta-arrow {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       background: var(--primary-soft);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+      transition: all 0.25s ease;
     }
 
     .module-card:hover .cta-arrow {
-      transform: translateX(3px);
+      transform: translateX(4px);
       background: var(--primary);
       color: #ffffff;
     }
 
     /* =========================================================
-       7. IMPACT SECTION & TELEMETRY
+       5. IMPACT SECTION & TELEMETRY
        ========================================================= */
     .impact-section {
       max-width: 1440px;
-      margin: 8px auto 48px;
+      margin: 8px auto 56px;
       padding: 0 32px;
       width: 100%;
     }
@@ -649,7 +560,7 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 26px 20px;
+      padding: 28px 24px;
       box-shadow: var(--shadow-card);
     }
 
@@ -669,7 +580,7 @@
 
     .impact-num {
       font-family: var(--font-display);
-      font-size: clamp(26px, 3.8vw, 34px);
+      font-size: clamp(28px, 4vw, 36px);
       font-weight: 800;
       color: var(--primary);
       letter-spacing: -0.03em;
@@ -679,10 +590,9 @@
     }
 
     .impact-label {
-      font-size: 12.5px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       color: var(--text-muted);
-      letter-spacing: -0.01em;
     }
 
     .pulse-dot-large {
@@ -691,11 +601,11 @@
       background-color: #10b981;
       border-radius: 50%;
       display: inline-block;
-      animation: pulseLiveLight 2s infinite ease-out;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
     }
 
     /* =========================================================
-       8. SUPPORT FAB
+       6. SUPPORT FAB
        ========================================================= */
     .support-fab {
       position: fixed;
@@ -785,23 +695,13 @@
       display: block;
     }
 
-    /* =========================================================
-       9. RESPONSIVE MEDIA QUERIES
-       ========================================================= */
     @media (max-width: 768px) {
-      .hero-stage { 
-        padding: 120px 20px 90px;
-        min-height: 100dvh;
-        justify-content: center;
-      }
-      .hero-logo-emblem { width: 78px; height: 78px; margin-bottom: 20px; }
-      .hero-title { font-size: 38px; }
-      .search-filter-wrap { margin-top: 28px; }
-      .workspace-section { margin-top: 20px; padding: 0 16px; }
+      .hero-stage { padding: 120px 20px 90px; }
+      .hero-logo-emblem { width: 80px; height: 80px; margin-bottom: 20px; }
+      .hero-title { font-size: 40px; }
+      .workspace-section { padding: 0 16px; }
       .impact-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
-      .support-fab { bottom: 20px; right: 20px; }
-      .support-msg-bubble { max-width: 220px; font-size: 12.5px; padding: 10px 14px; }
       .impact-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 10px; }
       .impact-item:nth-child(2) { border-right: none; }
     }
@@ -809,83 +709,25 @@
 </head>
 <body>
 
-  <!-- AUTOMATIC CACHE-CLEANER & SERVICE WORKER REFRESH SCRIPT -->
-  <script>
-    (function clearOldCaches() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          for (let registration of registrations) {
-            registration.unregister();
-          }
-        });
-      }
-      if ('caches' in window) {
-        caches.keys().then(names => {
-          for (let name of names) {
-            caches.delete(name);
-          }
-        });
-      }
-    })();
-  </script>
-
-  <!-- REACTIVE LUXURY LOGISTICS BACKDROP -->
-  <div class="luxury-ambient-backdrop">
-    <div class="ambient-grid"></div>
-    <div class="aurora-glow-top"></div>
-    <div class="interactive-cursor-glow" id="cursorGlow"></div>
-
-    <!-- Animated Transit Routes SVG Reacting to Parallax -->
-    <svg class="transit-routes-svg" id="transitSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="routeGradRed" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#c21d1d" stop-opacity="0.65"/>
-          <stop offset="100%" stop-color="#c21d1d" stop-opacity="0.1"/>
-        </linearGradient>
-        <linearGradient id="routeGradBlue" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1"/>
-          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Highway Route 1 (Diagonal Corridor) -->
-      <path d="M-100 200 C 400 250, 600 600, 1100 550 S 1600 900, 2100 850" fill="none" stroke="url(#routeGradRed)" stroke-width="2" class="flowing-route" />
-      
-      <!-- Highway Route 2 (Cross-Country Corridor) -->
-      <path d="M300 -100 C 450 300, 200 700, 500 1200" fill="none" stroke="url(#routeGradBlue)" stroke-width="1.5" class="flowing-route-fast" />
-
-      <!-- Highway Route 3 (Expressway) -->
-      <path d="M-50 850 C 500 800, 900 350, 1500 400 S 1800 150, 2050 100" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 8" opacity="0.4" />
-
-      <!-- GPS Transit Hub Nodes -->
-      <g opacity="0.75">
-        <circle cx="500" cy="300" r="4.5" fill="#c21d1d" />
-        <circle cx="500" cy="300" r="11" fill="none" stroke="#c21d1d" stroke-width="1" opacity="0.5" />
-        
-        <circle cx="1100" cy="550" r="4.5" fill="#3b82f6" />
-        <circle cx="1100" cy="550" r="13" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.4" />
-
-        <circle cx="1500" cy="400" r="3.5" fill="#64748b" />
-        <circle cx="850" cy="750" r="3.5" fill="#64748b" />
-      </g>
-    </svg>
+  <!-- INTERACTIVE CANVAS PARTICLE RADAR -->
+  <div class="visual-stage-backdrop">
+    <canvas id="particleCanvas"></canvas>
+    <div class="ambient-mesh-grid"></div>
+    <div class="aurora-radial-beam"></div>
   </div>
 
   <div id="header-container"></div>
 
   <main>
     
-    <!-- FULL 16:9 / 100VH HERO STAGE -->
+    <!-- HERO STAGE -->
     <section class="hero-stage">
       
-      <!-- Enterprise Status Capsule -->
       <div class="hero-enterprise-pill slide-up-intro" style="transition-delay: 0.02s;">
-        <span class="hero-pill-badge">v16.0 Enterprise</span>
+        <span class="hero-pill-badge">v21.0 Enterprise</span>
         <span class="hero-pill-text">All-in-One Operations Workspace</span>
       </div>
 
-      <!-- Rotating Logo Emblem with Soft Border Ring -->
       <div class="hero-logo-emblem slide-up-intro" style="transition-delay: 0.08s;">
         <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
       </div>
@@ -898,10 +740,10 @@
         Work Smarter, Move Faster.
       </p>
 
-      <!-- Glassmorphic Search Filter Bar -->
+      <!-- Glassmorphic Search Bar -->
       <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.38s;">
         <div class="search-filter-box">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">search</span>
+          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">search</span>
           <input type="text" id="moduleFilterInput" placeholder="Quick find module: Quotation, Car Rate, Directory, Tracking...">
         </div>
 
@@ -921,7 +763,7 @@
       
       <div class="section-bar fade-reveal">
         <div class="section-heading">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">grid_view</span>
+          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">grid_view</span>
           <span>Operations Modules</span>
         </div>
         <span class="section-counter" id="toolCount">8 Active Tools</span>
@@ -929,7 +771,6 @@
 
       <div class="modules-grid" id="modulesGrid">
         
-        <!-- Module 1: Quotation Studio -->
         <a href="editor.html" class="module-card fade-reveal" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
@@ -954,7 +795,6 @@
           </div>
         </a>
 
-        <!-- Module 2: Consignment Status -->
         <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
@@ -979,7 +819,6 @@
           </div>
         </a>
 
-        <!-- Module 3: Packing Gallery -->
         <a href="gallery.html" class="module-card fade-reveal" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
@@ -1004,7 +843,6 @@
           </div>
         </a>
 
-        <!-- Module 4: Hub Directory -->
         <a href="hub-details.html" class="module-card fade-reveal" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
@@ -1029,7 +867,6 @@
           </div>
         </a>
 
-        <!-- Module 5: Field Officer Directory -->
         <a href="field-officer.html" class="module-card fade-reveal" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
@@ -1054,7 +891,6 @@
           </div>
         </a>
 
-        <!-- Module 6: APML Lite Calculator -->
         <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -1079,7 +915,6 @@
           </div>
         </a>
 
-        <!-- Module 7: Car Rate Calculator -->
         <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -1104,7 +939,6 @@
           </div>
         </a>
 
-        <!-- Module 8: APML Local Rate -->
         <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -1132,7 +966,7 @@
       </div>
     </section>
 
-    <!-- IMPACT SECTION -->
+    <!-- IMPACT METRICS -->
     <section class="impact-section">
       <div class="impact-grid fade-reveal">
         <div class="impact-item">
@@ -1171,40 +1005,92 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=20.0"></script>
+  <script src="common.js?v=21.0"></script>
 
-  <!-- DYNAMIC REACTIVE MOUSE & PARALLAX TRACKER -->
+  <!-- 1. DYNAMIC CANVAS PARTICLE & RADAR ENGINE -->
   <script>
-    (function initReactiveBackdrop() {
-      const root = document.documentElement;
-      const svg = document.getElementById('transitSvg');
-      let ticking = false;
+    (function initInteractiveParticleCanvas() {
+      const canvas = document.getElementById('particleCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      let width, height;
+      function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const numPoints = 48;
+      const points = [];
+      for (let i = 0; i < numPoints; i++) {
+        points.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.45,
+          vy: (Math.random() - 0.5) * 0.45,
+          radius: Math.random() * 2 + 1,
+          baseColor: Math.random() > 0.4 ? 'rgba(194, 29, 29,' : 'rgba(59, 130, 246,'
+        });
+      }
+
+      let mouseX = width / 2;
+      let mouseY = height / 3;
 
       window.addEventListener('mousemove', (e) => {
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            const x = e.clientX;
-            const y = e.clientY;
-            
-            // Update CSS dynamic spotlight variables
-            root.style.setProperty('--mouse-x', `${x}px`);
-            root.style.setProperty('--mouse-y', `${y}px`);
-
-            // Subtle parallax tilt for SVG logistics transit paths
-            if (svg) {
-              const moveX = (x - window.innerWidth / 2) * -0.015;
-              const moveY = (y - window.innerHeight / 2) * -0.015;
-              svg.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        document.documentElement.style.setProperty('--mouse-x', `${mouseX}px`);
+        document.documentElement.style.setProperty('--mouse-y', `${mouseY}px`);
       }, { passive: true });
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < numPoints; i++) {
+          const p = points[i];
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0 || p.x > width) p.vx *= -1;
+          if (p.y < 0 || p.y > height) p.vy *= -1;
+
+          // Mouse gravity
+          const dx = mouseX - p.x;
+          const dy = mouseY - p.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 180) {
+            p.x += (dx / dist) * 0.5;
+            p.y += (dy / dist) * 0.5;
+          }
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `${p.baseColor} 0.5)`;
+          ctx.fill();
+
+          // Connect nearby logistics nodes
+          for (let j = i + 1; j < numPoints; j++) {
+            const p2 = points[j];
+            const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (d < 120) {
+              ctx.beginPath();
+              ctx.moveTo(p.x, p.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.strokeStyle = `rgba(194, 29, 29, ${0.18 * (1 - d / 120)})`;
+              ctx.lineWidth = 0.8;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
     })();
   </script>
 
-  <!-- INSTANT SEARCH & FILTER SCRIPT -->
+  <!-- 2. INSTANT SEARCH & FILTER SCRIPT -->
   <script>
     const searchInput = document.getElementById('moduleFilterInput');
     const cards = document.querySelectorAll('.module-card');
@@ -1242,7 +1128,7 @@
     }
   </script>
 
-  <!-- PAGE OPEN SLIDE-UP INITIALIZER -->
+  <!-- 3. PAGE OPEN SLIDE-UP INITIALIZER -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
@@ -1253,7 +1139,7 @@
     });
   </script>
 
-  <!-- PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER FOR MODULES -->
+  <!-- 4. PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER -->
   <script>
     (function initPureFadeObserver() {
       const fadeElements = document.querySelectorAll('.fade-reveal');
@@ -1280,7 +1166,7 @@
     })();
   </script>
 
-  <!-- SUPPORT FAB SCROLL REVEAL & TYPEWRITER ENGINE -->
+  <!-- 5. SUPPORT FAB SCROLL REVEAL -->
   <script>
     (function initFABScrollReveal() {
       const bubble = document.querySelector('.support-msg-bubble');
@@ -1336,7 +1222,7 @@
     })();
   </script>
 
-  <!-- FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
+  <!-- 6. FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -1362,7 +1248,6 @@
       }
       const db = firebase.database();
 
-      // 1. Live Online Presence Tracker
       const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
       const myPresenceRef = db.ref("presence/" + userSessionId);
       const allPresenceRef = db.ref("presence");
@@ -1380,7 +1265,6 @@
         if (countEl) countEl.textContent = activeCount.toLocaleString();
       });
 
-      // 2. PDF Export Counter
       const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
       totalDownloadsRef.on("value", (snap) => {
         const totalCount = snap.val() || 0;
@@ -1388,7 +1272,6 @@
         if (totalEl) totalEl.textContent = totalCount.toLocaleString();
       });
 
-      // 3. Media Download Counter
       const totalMediaRef = db.ref("analytics/totalMediaDownloads");
       totalMediaRef.on("value", (snap) => {
         const totalCount = snap.val() || 0;
