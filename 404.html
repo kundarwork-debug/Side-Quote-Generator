@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -20,12 +20,32 @@
       --primary-soft: rgba(185, 28, 28, 0.08);
       --primary-glow: rgba(185, 28, 28, 0.28);
       --bg-base: #FDF8F5;
+      --surface-card: rgba(255, 255, 255, 0.95);
+      --surface-card-subtle: #f8fafc;
       --surface-border: rgba(226, 232, 240, 0.9);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --radius-pill: 9999px;
       --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
       --shadow-hover: 0 20px 35px -10px rgba(185, 28, 28, 0.14), 0 1px 3px rgba(0, 0, 0, 0.04);
+      --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* =========================================================
+       PAGE-SPECIFIC DARK MODE TOKENS
+       ========================================================= */
+    html[data-theme="dark"] {
+      --primary: #ef4444;
+      --primary-dark: #dc2626;
+      --primary-soft: rgba(239, 68, 68, 0.12);
+      --primary-glow: rgba(239, 68, 68, 0.35);
+      --bg-base: #090d16;
+      --surface-card: rgba(15, 23, 42, 0.92);
+      --surface-card-subtle: #131b2e;
+      --surface-border: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --shadow-subtle: 0 10px 30px -4px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -47,18 +67,18 @@
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s ease;
+      transition: var(--theme-transition);
     }
 
     /* =========================================================
-       DYNAMIC BLACK THEME ON START GAME
+       HIDE MOUSE COMPLETELY DURING GAMEPLAY
        ========================================================= */
-    body.game-active {
-      background-color: #030305 !important;
-      color: #f8fafc !important;
+    body.game-active, 
+    body.game-active * {
+      cursor: none !important;
     }
 
-    /* FULLSCREEN INTERACTIVE GAME CANVAS */
+    /* FULLSCREEN GAME CANVAS */
     #game-canvas {
       position: fixed;
       inset: 0;
@@ -78,26 +98,17 @@
       margin-top: -12px;
       margin-left: -12px;
       pointer-events: none;
-      z-index: 99999;
+      z-index: 999999;
       will-change: transform, opacity;
       transform: translate3d(-100px, -100px, 0);
       opacity: 0;
       transition: opacity 0.2s ease-out;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      body.game-active, 
-      body.game-active a, 
-      body.game-active button {
-        cursor: none !important;
-      }
-    }
-
     /* Ambient Light Mesh Background */
     .ambient-bg {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
       pointer-events: none;
@@ -105,16 +116,16 @@
       background: 
         radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
         radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
-      transition: opacity 0.8s ease;
+      transition: background 0.6s ease;
     }
 
-    body.game-active .ambient-bg {
+    html[data-theme="dark"] .ambient-bg {
       background: 
-        radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.12) 0%, transparent 65%),
-        radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+        radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.12) 0%, transparent 65%),
+        radial-gradient(circle at 85% 85%, rgba(15, 23, 42, 0.8) 0%, transparent 60%);
     }
 
-    /* 3D PERSPECTIVE MATRIX FLOOR */
+    /* 3D Perspective Matrix Floor */
     .perspective-grid-layer {
       position: fixed;
       inset: 0;
@@ -125,7 +136,7 @@
       perspective: 1000px;
       overflow: hidden;
       opacity: 0.6;
-      transition: opacity 0.8s ease;
+      transition: opacity 0.6s ease;
     }
 
     .matrix-plane {
@@ -140,17 +151,16 @@
       background-size: 50px 50px;
       transform: rotateX(45deg) scale(1.1);
       transform-origin: center top;
-      transition: background-image 0.8s ease;
+      transition: background-image 0.6s ease;
     }
 
-    body.game-active .matrix-plane {
+    html[data-theme="dark"] .matrix-plane {
       background-image: 
-        linear-gradient(to right, rgba(239, 68, 68, 0.12) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(245, 158, 11, 0.06) 1px, transparent 1px);
-      opacity: 0.85;
+        linear-gradient(to right, rgba(239, 68, 68, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    /* HEADER & FOOTER SMOOTH BLAST TRANSITION CONTAINERS */
+    /* HEADER & FOOTER BLAST ANIMATIONS */
     #header-container,
     #footer-container {
       position: relative;
@@ -173,7 +183,7 @@
       pointer-events: none !important;
     }
 
-    /* SCREEN CONTAINERS */
+    /* SCREEN VIEWS */
     .screen-view {
       position: relative;
       z-index: 10;
@@ -193,33 +203,35 @@
       pointer-events: none;
     }
 
-    /* FIXED TOP ARCADE SCOREBOARD (DARK MODE TUNED) */
+    /* =========================================================
+       FIXED TOP ARCADE SCOREBOARD (ALWAYS VISIBLE DURING GAME)
+       ========================================================= */
     .arcade-scoreboard {
       position: fixed;
       top: 18px;
       left: 50%;
-      transform: translateX(-50%) translateY(-24px);
+      transform: translateX(-50%) translateY(-30px);
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 6px 10px 6px 18px;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1.5px solid rgba(239, 68, 68, 0.3);
+      padding: 8px 14px 8px 20px;
+      background: var(--surface-card);
+      border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-pill);
-      box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6), 0 0 15px rgba(239, 68, 68, 0.2);
-      z-index: 1000;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+      z-index: 99999;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      color: #f8fafc;
+      color: var(--text-main);
     }
 
     body.game-active .arcade-scoreboard {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-      pointer-events: auto;
+      opacity: 1 !important;
+      transform: translateX(-50%) translateY(0) !important;
+      pointer-events: auto !important;
     }
 
     .score-item {
@@ -233,52 +245,72 @@
     }
 
     .score-label {
-      color: #94a3b8;
+      color: var(--text-muted);
     }
 
     .score-val {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 800;
-      font-size: 13.5px;
-      color: #f87171;
-      text-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+      font-size: 14px;
+      color: var(--primary);
     }
 
     .score-divider {
       width: 1px;
-      height: 12px;
-      background: rgba(255, 255, 255, 0.15);
+      height: 14px;
+      background: var(--surface-border);
     }
 
     .level-badge {
+      color: #0284c7;
+    }
+
+    html[data-theme="dark"] .level-badge {
       color: #38bdf8;
-      text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
     }
 
     .lives-badge {
       display: inline-flex;
       align-items: center;
       gap: 3px;
-      color: #fb7185;
-      text-shadow: 0 0 8px rgba(251, 113, 133, 0.5);
+      color: #e11d48;
     }
 
     .lives-badge .material-symbols-outlined {
-      font-size: 15px;
+      font-size: 16px;
       font-variation-settings: 'FILL' 1;
     }
 
-    /* LIVE GAME CLOSE / QUIT BUTTON */
+    .btn-scoreboard-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-card-subtle);
+      border: 1px solid var(--surface-border);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-scoreboard-toggle:hover {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
     .btn-quit-game {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 10px;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
+      padding: 5px 12px;
+      background: var(--primary-soft);
+      border: 1px solid rgba(185, 28, 28, 0.3);
+      color: var(--primary);
       border-radius: var(--radius-pill);
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       text-transform: uppercase;
@@ -287,17 +319,14 @@
     }
 
     .btn-quit-game:hover {
-      background: #b91c1c;
-      border-color: #ef4444;
+      background: var(--primary);
       color: #ffffff;
       transform: scale(1.04);
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
     }
 
-    /* LEVEL UP NOTIFICATION TOAST */
     .level-toast {
       position: fixed;
-      top: 68px;
+      top: 72px;
       left: 50%;
       transform: translateX(-50%) translateY(-20px);
       background: linear-gradient(135deg, #b91c1c 0%, #ea580c 100%);
@@ -320,7 +349,7 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* OPEN SPACE VISUAL STAGE */
+    /* OPEN SPACE VISUAL RIG */
     .open-space-stage {
       position: relative;
       width: 250px;
@@ -386,6 +415,12 @@
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    html[data-theme="dark"] .core-main-capsule {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border-color: #334155;
+      box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.4);
+    }
+
     .core-brand-logo {
       width: 38px;
       height: 38px;
@@ -401,7 +436,6 @@
       100% { transform: translateY(2px) scale(1.03); }
     }
 
-    /* COMPACT ORBIT RINGS */
     .orbit-ring {
       position: absolute;
       border-radius: 50%;
@@ -412,7 +446,6 @@
     .orbit-2 { width: 165px; height: 165px; border-color: rgba(225, 29, 72, 0.22); }
     .orbit-3 { width: 220px; height: 220px; border-color: rgba(185, 28, 28, 0.16); }
 
-    /* DRIFT NODES */
     .free-node {
       position: absolute;
       top: 50%;
@@ -432,13 +465,18 @@
       will-change: transform;
       z-index: 10;
     }
+
+    html[data-theme="dark"] .free-node {
+      background: #1e293b;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+    }
+
     .free-node .material-symbols-outlined { font-size: 14px; }
     .node-truck { color: var(--primary); border-color: var(--primary); }
     .node-car { color: #e11d48; border-color: #e11d48; }
     .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
     .node-hub { color: #0284c7; border-color: #0284c7; }
 
-    /* BLAST / VANISH TRANSITION FOR UI ELEMENTS */
     .blast-ui-group {
       display: flex;
       flex-direction: column;
@@ -460,7 +498,7 @@
       align-items: center;
       gap: 5px;
       padding: 4px 12px;
-      background: #ffffff;
+      background: var(--surface-card);
       border: 1px solid var(--surface-border);
       border-radius: var(--radius-pill);
       font-size: 10px;
@@ -534,7 +572,7 @@
     }
 
     .btn-secondary {
-      background: #ffffff;
+      background: var(--surface-card);
       color: var(--text-main);
       border: 1px solid var(--surface-border);
       box-shadow: var(--shadow-subtle);
@@ -547,7 +585,7 @@
       transform: translateY(-2px);
     }
 
-    /* PAGE 2: SCORE & LEADERBOARD */
+    /* SCORE / LEADERBOARD VIEW */
     #scoreView {
       z-index: 1000;
       pointer-events: auto !important;
@@ -556,11 +594,11 @@
     .score-page-container {
       max-width: 520px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.96);
+      background: var(--surface-card);
       border: 1px solid var(--surface-border);
       border-radius: 24px;
       padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.15);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       display: flex;
@@ -601,7 +639,7 @@
     }
 
     .metric-card {
-      background: var(--bg-base);
+      background: var(--surface-card-subtle);
       border: 1px solid var(--surface-border);
       border-radius: 14px;
       padding: 12px 10px;
@@ -622,7 +660,6 @@
       color: var(--text-main);
     }
 
-    /* PILOT SUBMIT FORM */
     .save-score-form {
       display: flex;
       gap: 8px;
@@ -642,12 +679,12 @@
       outline: none;
       transition: border-color 0.2s ease, background-color 0.2s ease;
       color: var(--text-main);
-      background: #ffffff;
+      background: var(--surface-card-subtle);
     }
 
     .pilot-input:focus {
       border-color: var(--primary);
-      background: #ffffff;
+      background: var(--surface-card);
     }
 
     .btn-submit-score {
@@ -684,10 +721,9 @@
       text-align: center;
     }
 
-    /* GLOBAL LEADERBOARD SECTION */
     .leaderboard-wrap {
       width: 100%;
-      background: var(--bg-base);
+      background: var(--surface-card-subtle);
       border: 1px solid var(--surface-border);
       border-radius: 14px;
       padding: 12px 14px;
@@ -743,16 +779,16 @@
 
     .entry-badge {
       font-size: 9.5px;
-      color: #64748b;
+      color: var(--text-muted);
       font-weight: 600;
-      background: rgba(226, 232, 240, 0.6);
+      background: rgba(148, 163, 184, 0.15);
       padding: 1px 6px;
       border-radius: 4px;
     }
 
     .entry-date {
       font-size: 9.5px;
-      color: #94a3b8;
+      color: var(--text-muted);
       font-weight: 600;
       font-family: 'Space Grotesk', monospace;
     }
@@ -772,8 +808,8 @@
       gap: 6px;
       font-size: 11.5px;
       font-weight: 700;
-      color: #0f172a;
-      background: rgba(241, 245, 249, 0.95);
+      color: var(--text-main);
+      background: var(--surface-card-subtle);
       border: 1px solid var(--surface-border);
       padding: 8px 16px;
       border-radius: var(--radius-pill);
@@ -791,24 +827,26 @@
     }
 
     .esc-key {
-      background: #ffffff;
-      border: 1px solid #cbd5e1;
-      border-bottom: 2px solid #94a3b8;
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-bottom: 2px solid var(--text-muted);
       border-radius: 5px;
       padding: 2px 5px;
       font-size: 10px;
       font-family: monospace;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--text-main);
     }
 
     @media (max-width: 768px) {
       .open-space-stage { transform: scale(0.85); margin-bottom: 0; }
       .perspective-grid-layer { opacity: 0.35; }
       #failed-rocket-cursor { display: none !important; }
-      body, a, button { cursor: auto !important; }
+      body.game-active, 
+      body.game-active a, 
+      body.game-active button { cursor: none !important; }
       .error-description { max-width: 270px; }
-      .arcade-scoreboard { gap: 6px; padding: 4px 6px 4px 12px; top: 12px; }
+      .arcade-scoreboard { gap: 6px; padding: 6px 10px; top: 12px; }
       .score-page-container { padding: 18px 16px; }
       .metrics-row { gap: 6px; }
       .leaderboard-wrap { max-height: 200px; }
@@ -820,7 +858,7 @@
   <!-- GAME INTERACTION CANVAS -->
   <canvas id="game-canvas"></canvas>
 
-  <!-- FIXED TOP ARCADE SCOREBOARD -->
+  <!-- FIXED TOP ARCADE SCOREBOARD (ALWAYS VISIBLE DURING GAME) -->
   <div class="arcade-scoreboard">
     <div class="score-item">
       <span class="score-label">Score:</span>
@@ -828,7 +866,7 @@
     </div>
     <div class="score-divider"></div>
     <div class="score-item">
-      <span class="score-label">Global High:</span>
+      <span class="score-label">High:</span>
       <span class="score-val" id="globalHighScore">0</span>
     </div>
     <div class="score-divider"></div>
@@ -845,6 +883,13 @@
       </span>
     </div>
     <div class="score-divider"></div>
+
+    <!-- Mini theme toggle button inside active scoreboard -->
+    <button type="button" class="btn-scoreboard-toggle" id="btnScoreboardThemeToggle" title="Toggle Theme (Light / Dark)">
+      <span class="material-symbols-outlined" style="font-size: 15px;" id="scoreboardThemeIcon">dark_mode</span>
+    </button>
+    <div class="score-divider"></div>
+
     <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
       <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
       <span>Close</span>
@@ -924,11 +969,6 @@
 
     <div class="blast-ui-group" id="blastUiGroup">
       
-      <div class="badge-capsule" id="gameModeBadge">
-        <span class="material-symbols-outlined" style="font-size: 13px;">smart_toy</span>
-        <span id="badgeStatusText">Press Start Game • Defend the Core</span>
-      </div>
-
       <div class="error-code">404</div>
 
       <h1 class="error-title">Signal Lost in Deep Orbit</h1>
@@ -1044,6 +1084,54 @@
 
   <!-- Common Navigation Scripts -->
   <script src="common.js?v=5.0"></script>
+
+  <!-- DIRECT 404 THEME TOGGLE CONTROLLER -->
+  <script>
+    const THEME_STORAGE_KEY = 'apml_404_page_theme';
+    let currentPageTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+
+    function setPageTheme(theme) {
+      currentPageTheme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-theme-mode', theme);
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+      const scoreboardIcon = document.getElementById('scoreboardThemeIcon');
+      if (scoreboardIcon) {
+        scoreboardIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
+      }
+
+      // Sync header toggle if present
+      const headerIcon = document.getElementById('themeToggleIcon');
+      const headerBadge = document.querySelector('.theme-toggle-badge');
+      if (headerIcon) headerIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
+      if (headerBadge) headerBadge.style.display = 'none';
+    }
+
+    setPageTheme(currentPageTheme);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setPageTheme(currentPageTheme);
+
+      const scoreboardToggle = document.getElementById('btnScoreboardThemeToggle');
+      if (scoreboardToggle) {
+        scoreboardToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setPageTheme(currentPageTheme === 'light' ? 'dark' : 'light');
+        });
+      }
+
+      const headerToggle = document.getElementById('themeToggleBtn');
+      if (headerToggle) {
+        const clone = headerToggle.cloneNode(true);
+        headerToggle.parentNode.replaceChild(clone, headerToggle);
+        clone.addEventListener('click', (e) => {
+          e.stopPropagation();
+          setPageTheme(currentPageTheme === 'light' ? 'dark' : 'light');
+        });
+      }
+    });
+  </script>
 
   <!-- PLANET ATTRACTION & ORBIT MOTION RIG -->
   <script>
@@ -1178,10 +1266,13 @@
 
       document.addEventListener('mouseenter', () => { if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1'; });
       document.addEventListener('mouseleave', () => { if (rocket) rocket.style.opacity = '0'; });
+      
       window.addEventListener('mousemove', (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
-        if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1';
+        if (rocket && isGameActive && !isGameOver) {
+          rocket.style.opacity = '1';
+        }
       });
 
       window.addEventListener('mousedown', (e) => {
@@ -1342,7 +1433,6 @@
         if (livesTextEl) livesTextEl.textContent = '5';
         if (levelEl) levelEl.textContent = '1';
 
-        // ACTIVATE IMMERSIVE DEEP SPACE BLACK THEME
         document.body.classList.add('game-active');
         if (rocket) rocket.style.opacity = '1';
 
@@ -1352,7 +1442,7 @@
         flameTrailParticles.length = 0;
 
         resetSpawnTimer();
-        showToast("Deep Space Mode • Defend Against Fire Comets!");
+        showToast("Defense Initialized • Clear Incoming Comets!");
       }
 
       if (btnStartGame) {
@@ -1607,7 +1697,7 @@
         if (newLevel > level) {
           level = newLevel;
           if (levelEl) levelEl.textContent = level;
-          showToast(`Level ${level} • Fire Comet Velocity Surged!`);
+          showToast(`Level ${level} • Comet Velocity Surged!`);
           resetSpawnTimer();
         }
       }
@@ -1784,7 +1874,6 @@
       function gameLoop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // RENDER BLAST / FIRE PARTICLES
         for (let i = blastParticles.length - 1; i >= 0; i--) {
           const bp = blastParticles[i];
           bp.x += bp.vx;
@@ -1809,7 +1898,6 @@
           ctx.restore();
         }
 
-        // RENDER COMET FLAME PARTICLES
         for (let i = flameTrailParticles.length - 1; i >= 0; i--) {
           const fp = flameTrailParticles[i];
           fp.x += fp.vx;
@@ -1879,7 +1967,6 @@
           rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
         }
 
-        // RENDER ROCKET SMOKE & SPARK PARTICLES
         for (let i = smokeParticles.length - 1; i >= 0; i--) {
           const p = smokeParticles[i];
           p.x += p.vx;
@@ -1907,7 +1994,6 @@
           ctx.restore();
         }
 
-        // RENDER PHOTON MISSILES
         for (let i = missiles.length - 1; i >= 0; i--) {
           const m = missiles[i];
           m.x += m.vx;
@@ -1933,20 +2019,15 @@
           }
         }
 
-        // =========================================================
-        // RENDER REALISTIC FIRE-COMET METEORS & FLAME TRAILS
-        // =========================================================
         for (let i = asteroids.length - 1; i >= 0; i--) {
           const a = asteroids[i];
           a.x += a.vx;
           a.y += a.vy;
           a.rot += a.rotSpeed;
 
-          // Track trail coordinates
           a.trailHistory.push({ x: a.x, y: a.y });
           if (a.trailHistory.length > 8) a.trailHistory.shift();
 
-          // Spawn dynamic fiery embers from comet core
           if (Math.random() < 0.6) {
             const oppAngle = a.angle + Math.PI + (Math.random() - 0.5) * 0.8;
             const spd = Math.random() * 2.5 + 1;
@@ -1961,7 +2042,6 @@
             });
           }
 
-          // 1. Draw Fiery Plasma Tail behind comet
           if (a.trailHistory.length > 2) {
             const oppX = Math.cos(a.angle + Math.PI);
             const oppY = Math.sin(a.angle + Math.PI);
@@ -1972,9 +2052,9 @@
               a.x + oppX * tailLength, 
               a.y + oppY * tailLength
             );
-            flameGrad.addColorStop(0, 'rgba(254, 240, 138, 0.85)'); // Yellow hot core
-            flameGrad.addColorStop(0.3, 'rgba(249, 115, 22, 0.65)'); // Fiery orange
-            flameGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.35)');  // Red smoke
+            flameGrad.addColorStop(0, 'rgba(254, 240, 138, 0.85)');
+            flameGrad.addColorStop(0.3, 'rgba(249, 115, 22, 0.65)');
+            flameGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.35)');
             flameGrad.addColorStop(1, 'transparent');
 
             ctx.save();
@@ -1994,7 +2074,6 @@
             ctx.restore();
           }
 
-          // 2. Draw Molten Meteor Rock Body
           ctx.save();
           ctx.translate(a.x, a.y);
           ctx.rotate(a.rot);
@@ -2009,7 +2088,6 @@
           }
           ctx.closePath();
 
-          // Molten rock gradient (dark obsidian + glowing lava fissures)
           const rockGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, a.radius);
           rockGrad.addColorStop(0, '#fef08a');
           rockGrad.addColorStop(0.4, '#dc2626');
@@ -2025,7 +2103,6 @@
           ctx.stroke();
           ctx.restore();
 
-          // Check Rocket Collision (Ramming Defense)
           const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
           if (distToRocket < a.radius + rocketHitRadius && isGameActive && !isGameOver) {
             createExplosion(a.x, a.y, true);
@@ -2034,7 +2111,6 @@
             continue;
           }
 
-          // Check Core Planet Breach
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
             createExplosion(a.x, a.y);
@@ -2043,7 +2119,6 @@
             continue;
           }
 
-          // Check Missile Impact
           let asteroidDestroyed = false;
           for (let k = missiles.length - 1; k >= 0; k--) {
             const m = missiles[k];
@@ -2062,7 +2137,6 @@
             continue;
           }
 
-          // Check Out-of-Bounds Miss
           if (a.x < -90 || a.x > canvas.width + 90 || a.y < -90 || a.y > canvas.height + 90) {
             asteroids.splice(i, 1);
             deductLife("Defense Failed! A Fire Comet slipped past containment!");
