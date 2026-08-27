@@ -73,6 +73,10 @@
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
+
+      /* Dynamic Reactive Mouse Coordinates */
+      --mouse-x: 50%;
+      --mouse-y: 30%;
     }
 
     * {
@@ -105,7 +109,7 @@
     }
 
     /* =========================================================
-       2. AMBIENT LUXURY AURORA & MESH BACKDROP
+       2. REACTIVE LOGISTICS CORRIDOR NETWORK & AURORA BACKDROP
        ========================================================= */
     .luxury-ambient-backdrop {
       position: fixed;
@@ -117,42 +121,75 @@
       overflow: hidden;
     }
 
-    /* Micro-Engineered Grid Background */
+    /* Reactive Grid Background */
     .ambient-grid {
       position: absolute;
       inset: 0;
       background-image: 
-        radial-gradient(circle at center, rgba(148, 163, 184, 0.15) 1px, transparent 1px),
-        linear-gradient(to right, rgba(241, 245, 249, 0.6) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(241, 245, 249, 0.6) 1px, transparent 1px);
+        radial-gradient(circle at center, rgba(148, 163, 184, 0.18) 1.2px, transparent 1.2px),
+        linear-gradient(to right, rgba(226, 232, 240, 0.5) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(226, 232, 240, 0.5) 1px, transparent 1px);
       background-size: 32px 32px, 96px 96px, 96px 96px;
       opacity: 0.75;
-      mask-image: radial-gradient(circle at 50% 35%, black 40%, transparent 80%);
-      -webkit-mask-image: radial-gradient(circle at 50% 35%, black 40%, transparent 80%);
+      mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 45%, transparent 85%);
+      -webkit-mask-image: radial-gradient(circle at var(--mouse-x) var(--mouse-y), black 45%, transparent 85%);
+      transition: mask-image 0.2s ease, -webkit-mask-image 0.2s ease;
     }
 
-    /* Diffuse Top Center Radial Aurora Glow */
+    /* Interactive Dynamic Cursor Spotlight Glow */
+    .interactive-cursor-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 700px;
+      height: 700px;
+      margin-top: -350px;
+      margin-left: -350px;
+      background: radial-gradient(circle, rgba(194, 29, 29, 0.08) 0%, rgba(225, 29, 72, 0.04) 40%, transparent 70%);
+      filter: blur(50px);
+      transform: translate3d(var(--mouse-x), var(--mouse-y), 0);
+      will-change: transform;
+      transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Ambient Base Radar Spots */
     .aurora-glow-top {
       position: absolute;
       top: -120px;
       left: 50%;
       transform: translateX(-50%);
-      width: min(1000px, 95vw);
+      width: min(1100px, 95vw);
       height: 520px;
-      background: radial-gradient(50% 50% at 50% 50%, rgba(254, 226, 226, 0.65) 0%, rgba(254, 242, 242, 0.35) 50%, transparent 100%);
+      background: radial-gradient(50% 50% at 50% 50%, rgba(254, 226, 226, 0.6) 0%, rgba(254, 242, 242, 0.25) 50%, transparent 100%);
       filter: blur(60px);
-      opacity: 0.9;
+      opacity: 0.85;
     }
 
-    .aurora-glow-secondary {
+    /* Dynamic SVG Transit Network */
+    .transit-routes-svg {
       position: absolute;
-      top: 35%;
-      right: -5%;
-      width: 550px;
-      height: 550px;
-      background: radial-gradient(circle, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.3) 60%, transparent 100%);
-      filter: blur(80px);
-      opacity: 0.6;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      opacity: 0.4;
+      will-change: transform;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes routeFlow {
+      from { stroke-dashoffset: 240; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .flowing-route {
+      stroke-dasharray: 8 14;
+      animation: routeFlow 12s linear infinite;
+    }
+
+    .flowing-route-fast {
+      stroke-dasharray: 6 10;
+      animation: routeFlow 7s linear infinite;
     }
 
     .material-symbols-outlined {
@@ -213,7 +250,7 @@
         transform: none !important; 
         transition: none !important; 
       }
-      .hero-logo-emblem img {
+      .hero-logo-emblem img, .flowing-route, .flowing-route-fast {
         animation: none !important;
       }
     }
@@ -299,15 +336,16 @@
       will-change: transform;
     }
 
+    /* HERO TITLE */
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(38px, 6vw, 62px);
+      font-size: clamp(46px, 7.5vw, 76px);
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.035em;
-      line-height: 1.08;
-      margin-bottom: 14px;
-      max-width: 900px;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 16px;
+      max-width: 1050px;
     }
 
     .hero-title span {
@@ -317,10 +355,10 @@
     }
 
     .hero-sub {
-      font-size: clamp(15px, 3.5vw, 18px);
+      font-size: clamp(16px, 3.8vw, 20px);
       font-weight: 500;
       color: var(--text-muted);
-      max-width: 520px;
+      max-width: 560px;
       line-height: 1.6;
       letter-spacing: -0.01em;
     }
@@ -757,7 +795,7 @@
         justify-content: center;
       }
       .hero-logo-emblem { width: 78px; height: 78px; margin-bottom: 20px; }
-      .hero-title { font-size: 34px; }
+      .hero-title { font-size: 38px; }
       .search-filter-wrap { margin-top: 28px; }
       .workspace-section { margin-top: 20px; padding: 0 16px; }
       .impact-section { padding: 0 16px; }
@@ -791,11 +829,47 @@
     })();
   </script>
 
-  <!-- LUXURY AMBIENT AURORA BACKDROP -->
+  <!-- REACTIVE LUXURY LOGISTICS BACKDROP -->
   <div class="luxury-ambient-backdrop">
     <div class="ambient-grid"></div>
     <div class="aurora-glow-top"></div>
-    <div class="aurora-glow-secondary"></div>
+    <div class="interactive-cursor-glow" id="cursorGlow"></div>
+
+    <!-- Animated Transit Routes SVG Reacting to Parallax -->
+    <svg class="transit-routes-svg" id="transitSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id="routeGradRed" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c21d1d" stop-opacity="0.65"/>
+          <stop offset="100%" stop-color="#c21d1d" stop-opacity="0.1"/>
+        </linearGradient>
+        <linearGradient id="routeGradBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.1"/>
+          <stop offset="50%" stop-color="#3b82f6" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.1"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Highway Route 1 (Diagonal Corridor) -->
+      <path d="M-100 200 C 400 250, 600 600, 1100 550 S 1600 900, 2100 850" fill="none" stroke="url(#routeGradRed)" stroke-width="2" class="flowing-route" />
+      
+      <!-- Highway Route 2 (Cross-Country Corridor) -->
+      <path d="M300 -100 C 450 300, 200 700, 500 1200" fill="none" stroke="url(#routeGradBlue)" stroke-width="1.5" class="flowing-route-fast" />
+
+      <!-- Highway Route 3 (Expressway) -->
+      <path d="M-50 850 C 500 800, 900 350, 1500 400 S 1800 150, 2050 100" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 8" opacity="0.4" />
+
+      <!-- GPS Transit Hub Nodes -->
+      <g opacity="0.75">
+        <circle cx="500" cy="300" r="4.5" fill="#c21d1d" />
+        <circle cx="500" cy="300" r="11" fill="none" stroke="#c21d1d" stroke-width="1" opacity="0.5" />
+        
+        <circle cx="1100" cy="550" r="4.5" fill="#3b82f6" />
+        <circle cx="1100" cy="550" r="13" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.4" />
+
+        <circle cx="1500" cy="400" r="3.5" fill="#64748b" />
+        <circle cx="850" cy="750" r="3.5" fill="#64748b" />
+      </g>
+    </svg>
   </div>
 
   <div id="header-container"></div>
@@ -1098,6 +1172,37 @@
   <div id="footer-container"></div>
 
   <script src="common.js?v=20.0"></script>
+
+  <!-- DYNAMIC REACTIVE MOUSE & PARALLAX TRACKER -->
+  <script>
+    (function initReactiveBackdrop() {
+      const root = document.documentElement;
+      const svg = document.getElementById('transitSvg');
+      let ticking = false;
+
+      window.addEventListener('mousemove', (e) => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Update CSS dynamic spotlight variables
+            root.style.setProperty('--mouse-x', `${x}px`);
+            root.style.setProperty('--mouse-y', `${y}px`);
+
+            // Subtle parallax tilt for SVG logistics transit paths
+            if (svg) {
+              const moveX = (x - window.innerWidth / 2) * -0.015;
+              const moveY = (y - window.innerHeight / 2) * -0.015;
+              svg.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+            }
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
+  </script>
 
   <!-- INSTANT SEARCH & FILTER SCRIPT -->
   <script>
