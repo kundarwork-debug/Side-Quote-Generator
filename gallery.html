@@ -14,8 +14,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- SUPABASE JS CLIENT -->
+  <!-- SUPABASE JS CLIENT (FOR STORAGE ASSETS & AUTH) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- FIREBASE JS CLIENT (FOR REALTIME COUNTERS) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <style>
     :root {
@@ -766,6 +770,7 @@
   <script src="common.js?v=21.0"></script>
 
   <script>
+    // 1. SUPABASE CLIENT CONFIGURATION (STORAGE & AUTH)
     const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
     const BUCKET_NAME = "gallery-media";
@@ -789,10 +794,26 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
     
+    // 2. FIREBASE REALTIME DB INITIALIZATION (FOR COUNTERS)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
+    };
+
+    if (typeof firebase !== "undefined" && !firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    
     let currentActiveFolder = '';
     let foldersList = [];
     let currentUser = null;
-    let cachedMediaList = []; // Local cache for instant live search
+    let cachedMediaList = [];
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
@@ -1004,20 +1025,21 @@
       });
     }
 
-    function fetchWithTimeout(folderId, timeoutMs = 2500) {
-      return Promise.race([
-        supabaseClient.storage.from(BUCKET_NAME).list(folderId, {
+    // Direct, Safe Folder Fetcher
+    async function fetchFolderFiles(folderId) {
+      try {
+        const { data, error } = await supabaseClient.storage.from(BUCKET_NAME).list(folderId, {
           limit: 100,
           offset: 0,
           sortBy: { column: 'name', order: 'asc' }
-        }).then(({ data, error }) => {
-          if (error || !data) return [];
-          return data
-            .filter(f => f.name && f.name !== '.emptyFolderPlaceholder')
-            .map(f => ({ ...f, folder: folderId }));
-        }).catch(() => []),
-        new Promise(resolve => setTimeout(() => resolve([]), timeoutMs))
-      ]);
+        });
+        if (error || !data) return [];
+        return data
+          .filter(f => f.name && f.name !== '.emptyFolderPlaceholder')
+          .map(f => ({ ...f, folder: folderId }));
+      } catch (e) {
+        return [];
+      }
     }
 
     async function loadGalleryMedia(folderPath = '') {
@@ -1042,15 +1064,19 @@
         let allMedia = [];
 
         if (folderPath === '') {
-          const promises = foldersList.map(f => fetchWithTimeout(f.id));
-          const rootPromise = fetchWithTimeout('');
-          const results = await Promise.all([...promises, rootPromise]);
-          allMedia = results.flat();
+          const promises = foldersList.map(f => fetchFolderFiles(f.id));
+          const rootPromise = fetchFolderFiles('');
+          
+          const settled = await Promise.allSettled([...promises, rootPromise]);
+          allMedia = settled
+            .filter(res => res.status === 'fulfilled')
+            .map(res => res.value)
+            .flat();
         } else {
-          allMedia = await fetchWithTimeout(folderPath);
+          allMedia = await fetchFolderFiles(folderPath);
         }
 
-        cachedMediaList = allMedia; // Update search cache
+        cachedMediaList = allMedia;
 
         const searchInput = document.getElementById('gallerySearchInput');
         if (searchInput && searchInput.value.trim()) {
@@ -1094,7 +1120,7 @@
         const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);
         const matchedFolder = foldersList.find(f => f.id === file.folder);
         const folderBadge = matchedFolder ? matchedFolder.label : 'General';
-        const displayName = file.name.replace(/^\d+_/, ''); // Clean timestamp prefix for clean reading
+        const displayName = file.name.replace(/^\d+_/, '');
 
         return `
           <div class="media-card">
@@ -1147,7 +1173,7 @@
       }).join('');
     }
 
-    // LIVE SEARCH FUNCTIONALITY
+    // LIVE SEARCH
     function handleSearchMedia(query) {
       const clearBtn = document.getElementById('clearSearchBtn');
       clearBtn.style.display = query.trim() ? 'block' : 'none';
@@ -1174,7 +1200,7 @@
       searchInput.focus();
     }
 
-    // RENAME INDIVIDUAL MEDIA FILE (Using Supabase Storage .move)
+    // RENAME INDIVIDUAL MEDIA FILE
     async function handleRenameMediaFile(folder, oldFileName) {
       if (!isCurrentUserAdmin()) {
         alert("Access Denied: Only administrators can rename media files.");
@@ -1286,11 +1312,16 @@
       }
     }
 
+    // DOWNLOAD ASSET WITH FIREBASE REALTIME INCREMENT
     async function downloadAsset(fileUrl, fileName) {
       try {
-        setTimeout(() => {
-          supabaseClient.rpc('increment_metric', { metric_id: 'media_downloads' }).catch(() => {});
-        }, 0);
+        // Increment Firebase Realtime counter asynchronously
+        if (typeof firebase !== "undefined" && firebase.apps.length) {
+          const db = firebase.database();
+          db.ref("analytics/totalMediaDownloads").transaction((currentCount) => {
+            return (currentCount || 0) + 1;
+          });
+        }
 
         const response = await fetch(fileUrl);
         const blob = await response.blob();
@@ -1304,6 +1335,7 @@
         document.body.removeChild(link);
         window.URL.revokeObjectURL(blobUrl);
       } catch (err) {
+        console.error("Download handling error:", err);
         window.open(fileUrl, '_blank');
       }
     }
