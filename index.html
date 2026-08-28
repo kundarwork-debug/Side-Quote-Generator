@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,7 +17,7 @@
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -79,7 +80,7 @@
     }
 
     /* =========================================================
-       1. HERO VIDEO STAGE BACKDROP (NO AMBIENT RADAR/AURORA)
+       1. HERO VIDEO STAGE BACKDROP (PRECISE 65% SCRIM)
        ========================================================= */
     .hero-video-stage-backdrop {
       position: absolute;
@@ -104,16 +105,15 @@
       z-index: 0;
     }
 
-    /* Subtle left-side scrim to ensure text readability without overpowering video */
     .hero-video-scrim {
       position: absolute;
       inset: 0;
       background: linear-gradient(
         to right,
         rgba(253, 248, 245, 0.98) 0%,
-        rgba(253, 248, 245, 0.92) 36%,
-        rgba(253, 248, 245, 0.5) 62%,
-        rgba(253, 248, 245, 0) 100%
+        rgba(253, 248, 245, 0.94) 42%,
+        rgba(253, 248, 245, 0.55) 56%,
+        transparent 65%
       );
       z-index: 1;
     }
@@ -156,7 +156,7 @@
     }
 
     /* =========================================================
-       3. HERO STAGE (ALL SENTENCES TO LEFT SIDE)
+       3. HERO STAGE (LEFT-ALIGNED CONTENT)
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -174,7 +174,7 @@
     }
 
     .hero-left-content {
-      max-width: 680px;
+      max-width: 620px;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -187,39 +187,6 @@
       align-items: center;
       gap: 16px;
       margin-bottom: 24px;
-    }
-
-    .hero-enterprise-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 16px 6px 8px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-pill);
-      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.08);
-      user-select: none;
-    }
-
-    .hero-pill-badge {
-      background: var(--primary);
-      color: #ffffff;
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.3);
-    }
-
-    .hero-pill-text {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      letter-spacing: -0.01em;
     }
 
     .hero-logo-emblem {
@@ -257,7 +224,7 @@
 
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(44px, 6.2vw, 76px);
+      font-size: clamp(40px, 5.5vw, 68px);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: -0.04em;
@@ -275,18 +242,18 @@
     }
 
     .hero-sub {
-      font-size: clamp(16px, 2.4vw, 21px);
+      font-size: clamp(16px, 2.2vw, 20px);
       font-weight: 500;
       color: var(--text-muted);
       line-height: 1.55;
       letter-spacing: -0.01em;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
       text-align: left;
     }
 
     .search-filter-wrap {
       width: 100%;
-      max-width: 620px;
+      max-width: 520px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -302,7 +269,7 @@
       -webkit-backdrop-filter: blur(20px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      padding: 16px 24px;
+      padding: 15px 22px;
       box-shadow: 0 16px 36px -4px rgba(120, 113, 108, 0.09), 0 0 0 1px #ffffff inset;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -317,7 +284,7 @@
     .search-filter-box input {
       border: none;
       outline: none;
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-main);
       width: 100%;
@@ -333,15 +300,15 @@
       flex-wrap: wrap;
       justify-content: flex-start;
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 14px;
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-subtle);
-      padding: 7px 15px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
       font-size: 12px;
       font-weight: 700;
@@ -699,6 +666,14 @@
     @media (max-width: 768px) {
       .hero-stage { padding: 120px 24px 80px; }
       .hero-title { font-size: 42px; }
+      .hero-video-scrim {
+        background: linear-gradient(
+          to right,
+          rgba(253, 248, 245, 0.95) 0%,
+          rgba(253, 248, 245, 0.85) 65%,
+          transparent 85%
+        );
+      }
       .workspace-section { padding: 0 16px; }
       .impact-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
@@ -731,11 +706,6 @@
       
       <div class="hero-left-content">
         <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
-          <div class="hero-enterprise-pill">
-            <span class="hero-pill-badge">v21.0 Enterprise</span>
-            <span class="hero-pill-text">All-in-One Operations Workspace</span>
-          </div>
-
           <div class="hero-logo-emblem">
             <img src="logo.svg" alt="APML Portal Logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23c21d1d\'><path d=\'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\'/></svg>'">
           </div>
