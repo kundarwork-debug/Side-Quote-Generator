@@ -667,143 +667,147 @@
   <script src="common.js?v=21.0"></script>
 
   <script>
-    // 1. SUPABASE CLIENT & BUCKET CONFIGURATION
-    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
-    const BUCKET_NAME = "gallery-media";
+    // 1. SUPABASE CLIENT & BUCKET CONFIGURATION[cite: 3]
+    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";[cite: 3]
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";[cite: 3]
+    const BUCKET_NAME = "gallery-media";[cite: 3]
 
-    // ONLY THIS ACCOUNT HAS ADMIN ACCESS
+    // AUTHORIZED ADMIN ACCOUNTS[cite: 3]
     const AUTHORIZED_ADMIN_EMAILS = [
       "kundar.work@gmail.com",
       "kundar701@gmail.com"
-    ];
+    ];[cite: 3]
 
     const DEFAULT_FOLDERS = [
-      { id: 'truck', label: 'Truck & Fleet', icon: 'local_shipping' },
-      { id: 'packing-images', label: 'Packing Images', icon: 'inventory_2' },
-      { id: 'bike-packing', label: 'Bike Packing', icon: 'two_wheeler' },
-      { id: 'car-transportation', label: 'Car Transportation', icon: 'directions_car' },
-      { id: 'solid-box', label: 'Solid Box', icon: 'package_2' },
-      { id: 'tv-box', label: 'TV Box', icon: 'tv' },
-      { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' }
-    ];
+      { id: 'truck', label: 'Truck & Fleet', icon: 'local_shipping' },[cite: 3]
+      { id: 'packing-images', label: 'Packing Images', icon: 'inventory_2' },[cite: 3]
+      { id: 'bike-packing', label: 'Bike Packing', icon: 'two_wheeler' },[cite: 3]
+      { id: 'car-transportation', label: 'Car Transportation', icon: 'directions_car' },[cite: 3]
+      { id: 'solid-box', label: 'Solid Box', icon: 'package_2' },[cite: 3]
+      { id: 'tv-box', label: 'TV Box', icon: 'tv' },[cite: 3]
+      { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' }[cite: 3]
+    ];[cite: 3]
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentActiveFolder = '';
-    let foldersList = [];
-    let currentUser = null;
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);[cite: 3]
+    let currentActiveFolder = '';[cite: 3]
+    let foldersList = [];[cite: 3]
+    let currentUser = null;[cite: 3]
 
-    // 2. GOOGLE ADMIN AUTHENTICATION & WARNING POPUP
+    // 2. GOOGLE ADMIN AUTHENTICATION & WARNING POPUP[cite: 3]
     async function initAuthListener() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      handleUserSession(session?.user || null);
+      try {
+        const { data } = await supabaseClient.auth.getSession();[cite: 3]
+        if (data && data.session) {
+          handleUserSession(data.session.user);[cite: 3]
+        }
+      } catch (err) {
+        console.warn("Session check error:", err);
+      }
 
-      supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        handleUserSession(session?.user || null);
+      supabaseClient.auth.onAuthStateChange((_event, session) => {[cite: 3]
+        handleUserSession(session ? session.user : null);[cite: 3]
       });
     }
 
     function isCurrentUserAdmin() {
-      if (!currentUser || !currentUser.email) return false;
-      const userEmail = currentUser.email.trim().toLowerCase();
-      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === userEmail);
+      if (!currentUser || !currentUser.email) return false;[cite: 3]
+      const userEmail = currentUser.email.trim().toLowerCase();[cite: 3]
+      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === userEmail);[cite: 3]
     }
 
     function showUnauthorizedWarning(email) {
-      document.getElementById('unauthorizedEmailDisplay').textContent = email;
-      document.getElementById('authWarningModal').classList.add('active');
+      document.getElementById('unauthorizedEmailDisplay').textContent = email;[cite: 3]
+      document.getElementById('authWarningModal').classList.add('active');[cite: 3]
     }
 
     async function dismissWarningModal() {
-      document.getElementById('authWarningModal').classList.remove('active');
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      handleUserSession(null);
+      document.getElementById('authWarningModal').classList.remove('active');[cite: 3]
+      await supabaseClient.auth.signOut();[cite: 3]
+      currentUser = null;[cite: 3]
+      handleUserSession(null);[cite: 3]
     }
 
     function handleUserSession(user) {
-      currentUser = user;
-      const authBtn = document.getElementById('adminAuthBtn');
-      const authLabel = document.getElementById('adminBtnLabel');
-      const authContainer = document.getElementById('adminAuthContainer');
+      currentUser = user;[cite: 3]
+      const authBtn = document.getElementById('adminAuthBtn');[cite: 3]
+      const authLabel = document.getElementById('adminBtnLabel');[cite: 3]
+      const authContainer = document.getElementById('adminAuthContainer');[cite: 3]
 
-      const existingBadge = document.getElementById('adminStatusBadge');
-      if (existingBadge) existingBadge.remove();
+      const existingBadge = document.getElementById('adminStatusBadge');[cite: 3]
+      if (existingBadge) existingBadge.remove();[cite: 3]
 
-      if (user) {
-        if (isCurrentUserAdmin()) {
-          authBtn.classList.add('logged-in');
-          authLabel.textContent = "Sign Out";
+      if (user) {[cite: 3]
+        if (isCurrentUserAdmin()) {[cite: 3]
+          authBtn.classList.add('logged-in');[cite: 3]
+          authLabel.textContent = "Sign Out";[cite: 3]
 
-          const badge = document.createElement('span');
-          badge.id = 'adminStatusBadge';
-          badge.className = 'admin-status-badge badge-authorized';
-          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
-          authContainer.insertBefore(badge, authBtn);
-        } else {
-          // Trigger Popup Warning for unauthorized IDs
-          showUnauthorizedWarning(user.email);
+          const badge = document.createElement('span');[cite: 3]
+          badge.id = 'adminStatusBadge';[cite: 3]
+          badge.className = 'admin-status-badge badge-authorized';[cite: 3]
+          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;[cite: 3]
+          authContainer.insertBefore(badge, authBtn);[cite: 3]
+        } else {[cite: 3]
+          showUnauthorizedWarning(user.email);[cite: 3]
         }
-      } else {
-        authBtn.classList.remove('logged-in');
-        authLabel.textContent = "Admin Login";
+      } else {[cite: 3]
+        authBtn.classList.remove('logged-in');[cite: 3]
+        authLabel.textContent = "Admin Login";[cite: 3]
       }
 
-      renderFolderControls();
-      loadGalleryMedia(currentActiveFolder);
+      renderFolderControls();[cite: 3]
     }
 
     async function handleGoogleAdminAuth() {
-      if (currentUser) {
-        await supabaseClient.auth.signOut();
-        currentUser = null;
-        handleUserSession(null);
-      } else {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: window.location.origin + window.location.pathname
-          }
-        });
-        if (error) {
-          alert(`Google login error: ${error.message}`);
+      if (currentUser) {[cite: 3]
+        await supabaseClient.auth.signOut();[cite: 3]
+        currentUser = null;[cite: 3]
+        handleUserSession(null);[cite: 3]
+      } else {[cite: 3]
+        const { error } = await supabaseClient.auth.signInWithOAuth({[cite: 3]
+          provider: 'google',[cite: 3]
+          options: {[cite: 3]
+            redirectTo: window.location.origin + window.location.pathname[cite: 3]
+          }[cite: 3]
+        });[cite: 3]
+        if (error) {[cite: 3]
+          alert(`Google login error: ${error.message}`);[cite: 3]
         }
       }
     }
 
-    // 3. FOLDER STATE MANAGEMENT
+    // 3. FOLDER STATE MANAGEMENT[cite: 3]
     function loadFolderState() {
-      const stored = localStorage.getItem('apml_gallery_folders');
-      if (stored) {
-        try {
-          foldersList = JSON.parse(stored);
-          if (!foldersList.some(f => f.id === 'miscellaneous')) {
-            foldersList.push({ id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' });
-            localStorage.setItem('apml_gallery_folders', JSON.stringify(foldersList));
+      const stored = localStorage.getItem('apml_gallery_folders');[cite: 3]
+      if (stored) {[cite: 3]
+        try {[cite: 3]
+          foldersList = JSON.parse(stored);[cite: 3]
+          if (!foldersList.some(f => f.id === 'miscellaneous')) {[cite: 3]
+            foldersList.push({ id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' });[cite: 3]
+            localStorage.setItem('apml_gallery_folders', JSON.stringify(foldersList));[cite: 3]
           }
-        } catch (e) {
-          foldersList = [...DEFAULT_FOLDERS];
+        } catch (e) {[cite: 3]
+          foldersList = [...DEFAULT_FOLDERS];[cite: 3]
         }
-      } else {
-        foldersList = [...DEFAULT_FOLDERS];
+      } else {[cite: 3]
+        foldersList = [...DEFAULT_FOLDERS];[cite: 3]
       }
-      renderFolderControls();
+      renderFolderControls();[cite: 3]
     }
 
     function saveFolderState() {
-      localStorage.setItem('apml_gallery_folders', JSON.stringify(foldersList));
-      renderFolderControls();
+      localStorage.setItem('apml_gallery_folders', JSON.stringify(foldersList));[cite: 3]
+      renderFolderControls();[cite: 3]
     }
 
     function renderFolderControls() {
-      const filterBar = document.getElementById('filterBar');
+      const filterBar = document.getElementById('filterBar');[cite: 3]
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
           <button type="button" class="filter-btn-text" onclick="loadGalleryMedia('')">
             <span class="material-symbols-outlined" style="font-size: 17px;">grid_view</span> All Media
           </button>
         </div>
-      `;
+      `;[cite: 3]
 
       tabsHtml += foldersList.map(folder => `
         <div class="filter-item-wrapper ${currentActiveFolder === folder.id ? 'active' : ''}">
@@ -816,169 +820,160 @@
             </button>
           ` : ''}
         </div>
-      `).join('');
+      `).join('');[cite: 3]
 
-      filterBar.innerHTML = tabsHtml;
+      filterBar.innerHTML = tabsHtml;[cite: 3]
 
-      const uploadSelect = document.getElementById('uploadFolderSelect');
-      const prevVal = uploadSelect.value;
+      const uploadSelect = document.getElementById('uploadFolderSelect');[cite: 3]
+      const prevVal = uploadSelect.value;[cite: 3]
 
-      let selectOptions = `<option value="" disabled ${!prevVal ? 'selected' : ''}>-- Select Folder (Compulsory) * --</option>`;
+      let selectOptions = `<option value="" disabled ${!prevVal ? 'selected' : ''}>-- Select Folder (Compulsory) * --</option>`;[cite: 3]
       selectOptions += foldersList.map(f => `
         <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
-      `).join('');
+      `).join('');[cite: 3]
 
-      uploadSelect.innerHTML = selectOptions;
+      uploadSelect.innerHTML = selectOptions;[cite: 3]
     }
 
-    // 4. COMPULSORY FOLDER VALIDATION BEFORE UPLOAD
+    // 4. COMPULSORY FOLDER VALIDATION BEFORE UPLOAD[cite: 3]
     function triggerCompulsoryUpload() {
-      const uploadSelect = document.getElementById('uploadFolderSelect');
-      const statusText = document.getElementById('uploadStatusText');
+      const uploadSelect = document.getElementById('uploadFolderSelect');[cite: 3]
+      const statusText = document.getElementById('uploadStatusText');[cite: 3]
 
-      if (!uploadSelect.value) {
-        uploadSelect.classList.add('select-highlight-error');
-        uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first before uploading!</span>`;
-        return;
+      if (!uploadSelect.value) {[cite: 3]
+        uploadSelect.classList.add('select-highlight-error');[cite: 3]
+        uploadSelect.focus();[cite: 3]
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first before uploading!</span>`;[cite: 3]
+        return;[cite: 3]
       }
 
-      uploadSelect.classList.remove('select-highlight-error');
-      document.getElementById('mediaFileInput').click();
+      uploadSelect.classList.remove('select-highlight-error');[cite: 3]
+      document.getElementById('mediaFileInput').click();[cite: 3]
     }
 
-    // 5. RENAME FOLDER DISPLAY LABEL
+    // 5. RENAME FOLDER DISPLAY LABEL[cite: 3]
     function handleRenameFolder(folderId, evt) {
-      evt.stopPropagation();
-      if (!isCurrentUserAdmin()) return;
+      evt.stopPropagation();[cite: 3]
+      if (!isCurrentUserAdmin()) return;[cite: 3]
 
-      const folder = foldersList.find(f => f.id === folderId);
-      if (!folder) return;
+      const folder = foldersList.find(f => f.id === folderId);[cite: 3]
+      if (!folder) return;[cite: 3]
 
-      const newLabel = prompt(`Rename display label for folder "${folder.label}":`, folder.label);
-      if (newLabel && newLabel.trim() && newLabel.trim() !== folder.label) {
-        folder.label = newLabel.trim();
-        saveFolderState();
-        if (currentActiveFolder === folderId) {
-          loadGalleryMedia(folderId);
+      const newLabel = prompt(`Rename display label for folder "${folder.label}":`, folder.label);[cite: 3]
+      if (newLabel && newLabel.trim() && newLabel.trim() !== folder.label) {[cite: 3]
+        folder.label = newLabel.trim();[cite: 3]
+        saveFolderState();[cite: 3]
+        if (currentActiveFolder === folderId) {[cite: 3]
+          loadGalleryMedia(folderId);[cite: 3]
         }
       }
     }
 
-    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES
+    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES[cite: 3]
     async function compressImage(file, maxWidth = 1000, quality = 0.55) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (e) => {
-          const img = new Image();
-          img.src = e.target.result;
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
+      return new Promise((resolve) => {[cite: 3]
+        const reader = new FileReader();[cite: 3]
+        reader.readAsDataURL(file);[cite: 3]
+        reader.onload = (e) => {[cite: 3]
+          const img = new Image();[cite: 3]
+          img.src = e.target.result;[cite: 3]
+          img.onload = () => {[cite: 3]
+            let width = img.width;[cite: 3]
+            let height = img.height;[cite: 3]
 
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
+            if (width > maxWidth) {[cite: 3]
+              height = Math.round((height * maxWidth) / width);[cite: 3]
+              width = maxWidth;[cite: 3]
             }
 
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+            const canvas = document.createElement('canvas');[cite: 3]
+            canvas.width = width;[cite: 3]
+            canvas.height = height;[cite: 3]
+            const ctx = canvas.getContext('2d');[cite: 3]
+            ctx.drawImage(img, 0, 0, width, height);[cite: 3]
 
-            canvas.toBlob(
-              (blob) => {
-                if (blob) {
-                  const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), {
-                    type: 'image/jpeg',
-                    lastModified: Date.now()
-                  });
-                  resolve(compressedFile);
-                } else {
-                  resolve(file);
+            canvas.toBlob([cite: 3]
+              (blob) => {[cite: 3]
+                if (blob) {[cite: 3]
+                  const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.jpg'), {[cite: 3]
+                    type: 'image/jpeg',[cite: 3]
+                    lastModified: Date.now()[cite: 3]
+                  });[cite: 3]
+                  resolve(compressedFile);[cite: 3]
+                } else {[cite: 3]
+                  resolve(file);[cite: 3]
                 }
-              },
-              'image/jpeg',
-              quality
+              },[cite: 3]
+              'image/jpeg',[cite: 3]
+              quality[cite: 3]
             );
-          };
-          img.onerror = () => resolve(file);
-        };
-        reader.onerror = () => resolve(file);
-      });
+          };[cite: 3]
+          img.onerror = () => resolve(file);[cite: 3]
+        };[cite: 3]
+        reader.onerror = () => resolve(file);[cite: 3]
+      });[cite: 3]
     }
 
-    // 7. FETCH AND RENDER MEDIA ASSETS
+    // 7. SAFE ASSET FETCHING (Direct, Non-Blocking)
+    async function fetchFolderFiles(folderId) {
+      try {
+        const { data, error } = await supabaseClient.storage.from(BUCKET_NAME).list(folderId, {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: 'name', order: 'asc' }
+        });
+        if (error || !data) return [];
+        return data
+          .filter(f => f.name && f.name !== '.emptyFolderPlaceholder')
+          .map(f => ({ ...f, folder: folderId }));
+      } catch {
+        return [];
+      }
+    }
+
     async function loadGalleryMedia(folderPath = '') {
-      currentActiveFolder = folderPath;
-      renderFolderControls();
+      currentActiveFolder = folderPath;[cite: 3]
+      renderFolderControls();[cite: 3]
       
-      const uploadSelect = document.getElementById('uploadFolderSelect');
-      if (folderPath && uploadSelect) {
-        uploadSelect.value = folderPath;
-        uploadSelect.classList.remove('select-highlight-error');
+      const uploadSelect = document.getElementById('uploadFolderSelect');[cite: 3]
+      if (folderPath && uploadSelect) {[cite: 3]
+        uploadSelect.value = folderPath;[cite: 3]
+        uploadSelect.classList.remove('select-highlight-error');[cite: 3]
       }
 
-      const grid = document.getElementById('mediaGrid');
+      const grid = document.getElementById('mediaGrid');[cite: 3]
       grid.innerHTML = `
         <div class="state-msg">
           <div class="spinner"></div>
-          Loading assets...
+          Fetching storage bucket assets...
         </div>
-      `;
+      `;[cite: 3]
 
       try {
         let allMedia = [];
 
         if (folderPath === '') {
-          const promises = foldersList.map(f => 
-            supabaseClient.storage.from(BUCKET_NAME).list(f.id, {
-              limit: 100,
-              offset: 0,
-              sortBy: { column: 'created_at', order: 'desc' }
-            }).then(({ data, error }) => {
-              if (error || !data) return [];
-              return data
-                .filter(file => file.name !== '.emptyFolderPlaceholder')
-                .map(file => ({ ...file, folder: f.id }));
-            })
-          );
-
+          const promises = foldersList.map(f => fetchFolderFiles(f.id));
           const results = await Promise.all(promises);
           allMedia = results.flat();
         } else {
-          const { data: files, error } = await supabaseClient
-            .storage
-            .from(BUCKET_NAME)
-            .list(folderPath, {
-              limit: 100,
-              offset: 0,
-              sortBy: { column: 'created_at', order: 'desc' }
-            });
-
-          if (error) throw error;
-
-          allMedia = (files || [])
-            .filter(f => f.name !== '.emptyFolderPlaceholder')
-            .map(f => ({ ...f, folder: folderPath }));
+          allMedia = await fetchFolderFiles(folderPath);
         }
 
-        if (!allMedia.length) {
-          grid.innerHTML = `<div class="state-msg">No media files found in this category.</div>`;
+        if (!allMedia || allMedia.length === 0) {
+          grid.innerHTML = `<div class="state-msg">No media files found in this category.</div>`;[cite: 3]
           return;
         }
 
-        const adminGranted = isCurrentUserAdmin();
+        const adminGranted = isCurrentUserAdmin();[cite: 3]
 
         grid.innerHTML = allMedia.map(file => {
           const filePath = file.folder ? `${file.folder}/${file.name}` : file.name;
-          const { data: { publicUrl } } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(filePath);
+          const { data: { publicUrl } } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(filePath);[cite: 3]
           
-          const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);
-          const matchedFolder = foldersList.find(f => f.id === file.folder);
-          const folderBadge = matchedFolder ? matchedFolder.label : 'Standard';
+          const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);[cite: 3]
+          const matchedFolder = foldersList.find(f => f.id === file.folder);[cite: 3]
+          const folderBadge = matchedFolder ? matchedFolder.label : 'General';
 
           return `
             <div class="media-card">
@@ -1008,7 +1003,7 @@
                   <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderBadge}</span>
                 </div>
                 <div class="card-actions-group">
-                  <button type="button" class="btn-download" onclick="downloadAsset('${publicUrl}', '${file.name}')">
+                  <button type="button" class="btn-download" onclick="downloadAsset('${publicUrl}', '${file.name}', '${folderBadge}')">
                     <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
                     Download
                   </button>
@@ -1025,121 +1020,138 @@
         }).join('');
 
       } catch (err) {
-        console.error("Supabase Storage Error:", err);
+        console.error("Supabase Storage Error:", err);[cite: 3]
         grid.innerHTML = `
           <div class="state-msg" style="color: var(--primary);">
             Unable to fetch storage assets (${BUCKET_NAME}).<br>
             <small style="color: var(--text-muted);">Please verify that your Supabase Storage bucket <strong>"${BUCKET_NAME}"</strong> is public with SELECT RLS policies enabled.</small>
           </div>
-        `;
+        `;[cite: 3]
       }
     }
 
-    // 8. ADMIN DELETE ASSET HANDLER
+    // 8. ADMIN DELETE ASSET HANDLER[cite: 3]
     async function handleDeleteMedia(fullFilePath) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only the authorized administrator account can delete files.");
-        return;
+      if (!isCurrentUserAdmin()) {[cite: 3]
+        alert("Access Denied: Only the authorized administrator account can delete files.");[cite: 3]
+        return;[cite: 3]
       }
 
-      const confirmed = confirm("Are you sure you want to permanently delete this media file from Supabase storage?");
-      if (!confirmed) return;
+      const confirmed = confirm("Are you sure you want to permanently delete this media file from Supabase storage?");[cite: 3]
+      if (!confirmed) return;[cite: 3]
 
       try {
-        const { error } = await supabaseClient
-          .storage
-          .from(BUCKET_NAME)
-          .remove([fullFilePath]);
+        const { error } = await supabaseClient[cite: 3]
+          .storage[cite: 3]
+          .from(BUCKET_NAME)[cite: 3]
+          .remove([fullFilePath]);[cite: 3]
 
-        if (error) throw error;
+        if (error) throw error;[cite: 3]
 
-        loadGalleryMedia(currentActiveFolder);
+        loadGalleryMedia(currentActiveFolder);[cite: 3]
       } catch (err) {
-        console.error("Delete failed:", err);
-        alert(`Failed to delete: ${err.message || 'Check storage delete policies'}`);
+        console.error("Delete failed:", err);[cite: 3]
+        alert(`Failed to delete: ${err.message || 'Check storage delete policies'}`);[cite: 3]
       }
     }
 
-    // 9. DIRECT FILE UPLOAD HANDLER WITH AUTO COMPRESSION
+    // 9. DIRECT FILE UPLOAD HANDLER WITH AUTO COMPRESSION[cite: 3]
     async function handleDirectUpload(files) {
-      if (!files || !files.length) return;
+      if (!files || !files.length) return;[cite: 3]
 
-      const folderSelect = document.getElementById('uploadFolderSelect');
-      const folder = folderSelect.value;
-      const statusText = document.getElementById('uploadStatusText');
-      const uploadBtn = document.getElementById('uploadTriggerBtn');
+      const folderSelect = document.getElementById('uploadFolderSelect');[cite: 3]
+      const folder = folderSelect.value;[cite: 3]
+      const statusText = document.getElementById('uploadStatusText');[cite: 3]
+      const uploadBtn = document.getElementById('uploadTriggerBtn');[cite: 3]
 
-      if (!folder) {
-        folderSelect.classList.add('select-highlight-error');
-        folderSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first before uploading!</span>`;
-        document.getElementById('mediaFileInput').value = '';
-        return;
+      if (!folder) {[cite: 3]
+        folderSelect.classList.add('select-highlight-error');[cite: 3]
+        folderSelect.focus();[cite: 3]
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first before uploading!</span>`;[cite: 3]
+        document.getElementById('mediaFileInput').value = '';[cite: 3]
+        return;[cite: 3]
       }
 
-      let file = files[0];
-      uploadBtn.disabled = true;
+      let file = files[0];[cite: 3]
+      uploadBtn.disabled = true;[cite: 3]
 
-      if (file.type.startsWith('image/')) {
-        statusText.innerHTML = `<span style="color: var(--primary);">Compressing image for fast loading...</span>`;
-        file = await compressImage(file, 1000, 0.55);
+      if (file.type.startsWith('image/')) {[cite: 3]
+        statusText.innerHTML = `<span style="color: var(--primary);">Compressing image for fast loading...</span>`;[cite: 3]
+        file = await compressImage(file, 1000, 0.55);[cite: 3]
       }
 
-      const cleanFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-      const filePath = `${folder}/${cleanFileName}`;
+      const cleanFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;[cite: 3]
+      const filePath = `${folder}/${cleanFileName}`;[cite: 3]
 
-      statusText.innerHTML = `<span style="color: var(--primary);">Uploading optimized file to <strong>${folder}</strong>...</span>`;
+      statusText.innerHTML = `<span style="color: var(--primary);">Uploading optimized file to <strong>${folder}</strong>...</span>`;[cite: 3]
 
       try {
-        const { error } = await supabaseClient
-          .storage
-          .from(BUCKET_NAME)
-          .upload(filePath, file, {
-            cacheControl: '3600',
-            upsert: false
-          });
+        const { error } = await supabaseClient[cite: 3]
+          .storage[cite: 3]
+          .from(BUCKET_NAME)[cite: 3]
+          .upload(filePath, file, {[cite: 3]
+            cacheControl: '3600',[cite: 3]
+            upsert: false[cite: 3]
+          });[cite: 3]
 
-        if (error) throw error;
+        if (error) throw error;[cite: 3]
 
-        statusText.innerHTML = `<span style="color: #10b981;">Uploaded successfully!</span>`;
-        document.getElementById('mediaFileInput').value = '';
+        statusText.innerHTML = `<span style="color: #10b981;">Uploaded successfully!</span>`;[cite: 3]
+        document.getElementById('mediaFileInput').value = '';[cite: 3]
         
-        setTimeout(() => {
-          statusText.textContent = "Select destination category and upload image/video";
-          loadGalleryMedia(currentActiveFolder || folder);
-        }, 1200);
+        setTimeout(() => {[cite: 3]
+          statusText.textContent = "Select destination category and upload image/video";[cite: 3]
+          loadGalleryMedia(currentActiveFolder || folder);[cite: 3]
+        }, 1200);[cite: 3]
 
       } catch (err) {
-        console.error("Upload failed:", err);
-        statusText.innerHTML = `<span style="color: var(--primary);">Upload failed: ${err.message || 'Check RLS insert policy'}</span>`;
+        console.error("Upload failed:", err);[cite: 3]
+        statusText.innerHTML = `<span style="color: var(--primary);">Upload failed: ${err.message || 'Check RLS insert policy'}</span>`;[cite: 3]
       } finally {
-        uploadBtn.disabled = false;
+        uploadBtn.disabled = false;[cite: 3]
       }
     }
 
-    // 10. SECURE DIRECT DOWNLOAD HANDLER
-    async function downloadAsset(fileUrl, fileName) {
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (err) {
-        window.open(fileUrl, '_blank');
+    // 10. REAL-TIME LOGGED SECURE DIRECT DOWNLOAD HANDLER[cite: 3]
+    async function downloadAsset(fileUrl, fileName, folder = 'Standard') {[cite: 3]
+      try {[cite: 3]
+        const isVideo = fileName.match(/\.(mp4|webm|ogg|mov)$/i);[cite: 3]
+
+        supabaseClient[cite: 3]
+          .from('media_downloads')[cite: 3]
+          .insert([[cite: 3]
+            {[cite: 3]
+              file_name: fileName,[cite: 3]
+              file_url: fileUrl,[cite: 3]
+              folder_category: folder,[cite: 3]
+              media_type: isVideo ? 'video' : 'image'[cite: 3]
+            }[cite: 3]
+          ])[cite: 3]
+          .then(({ error }) => {[cite: 3]
+            if (error) console.error("Download logging error:", error);[cite: 3]
+          });[cite: 3]
+
+        const response = await fetch(fileUrl);[cite: 3]
+        const blob = await response.blob();[cite: 3]
+        const blobUrl = window.URL.createObjectURL(blob);[cite: 3]
+
+        const link = document.createElement('a');[cite: 3]
+        link.href = blobUrl;[cite: 3]
+        link.download = fileName;[cite: 3]
+        document.body.appendChild(link);[cite: 3]
+        link.click();[cite: 3]
+        document.body.removeChild(link);[cite: 3]
+        window.URL.revokeObjectURL(blobUrl);[cite: 3]
+      } catch (err) {[cite: 3]
+        window.open(fileUrl, '_blank');[cite: 3]
       }
     }
 
-    // Initialize gallery & auth listener on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      loadFolderState();
-      initAuthListener();
+    // Initialize gallery sequentially[cite: 3]
+    document.addEventListener('DOMContentLoaded', () => {[cite: 3]
+      loadFolderState();[cite: 3]
+      loadGalleryMedia('');[cite: 3]
+      initAuthListener();[cite: 3]
     });
   </script>
 </body>
