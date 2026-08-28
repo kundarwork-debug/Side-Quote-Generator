@@ -62,11 +62,14 @@
       pointer-events: none;
     }
 
+    /* Fixed top padding clearance below sticky header */
     .gallery-container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 36px 24px 80px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
 
     .gallery-head-bar {
@@ -84,6 +87,7 @@
       font-weight: 800;
       letter-spacing: -0.03em;
       margin-bottom: 6px;
+      line-height: 1.2;
     }
 
     .gallery-title span {
@@ -331,7 +335,6 @@
       display: block;
     }
 
-    /* Optimized Low-Data Footprint Styling */
     .video-optimized {
       background-color: #050811;
     }
@@ -410,6 +413,9 @@
     }
 
     @media (max-width: 900px) {
+      .gallery-container {
+        padding-top: 24px;
+      }
       .unified-panel-grid {
         grid-template-columns: 1fr;
         gap: 24px;
@@ -664,7 +670,7 @@
       }
     }
 
-    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES (REDUCES DIMENSIONS & QUALITY TO ~50-60%)
+    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES
     async function compressImage(file, maxWidth = 1000, quality = 0.55) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -709,7 +715,7 @@
       });
     }
 
-    // 7. FETCH AND RENDER MEDIA ASSETS (OPTIMIZED LOW DATA FOOTPRINT)
+    // 7. FETCH AND RENDER MEDIA ASSETS
     async function loadGalleryMedia(folderPath = '') {
       currentActiveFolder = folderPath;
       renderFolderControls();
@@ -844,7 +850,6 @@
       let file = files[0];
       uploadBtn.disabled = true;
 
-      // Automatically compress images before cloud transfer to save bandwidth and storage
       if (file.type.startsWith('image/')) {
         statusText.innerHTML = `<span style="color: var(--primary);">Compressing image for fast loading...</span>`;
         file = await compressImage(file, 1000, 0.55);
