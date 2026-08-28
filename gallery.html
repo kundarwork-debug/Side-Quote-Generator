@@ -62,7 +62,6 @@
       pointer-events: none;
     }
 
-    /* Fixed top clearance below sticky header */
     .gallery-container {
       max-width: 1400px;
       margin: 0 auto;
@@ -421,7 +420,7 @@
     .card-actions-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-download {
@@ -445,20 +444,22 @@
     .btn-delete-media {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
+      gap: 4px;
       color: #dc2626;
-      background: rgba(220, 38, 38, 0.08);
-      padding: 5px 10px;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      padding: 6px 12px;
       border-radius: var(--radius-pill);
-      border: none;
       cursor: pointer;
       font-size: 12px;
       font-weight: 700;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
     }
 
     .btn-delete-media:hover {
-      background: rgba(220, 38, 38, 0.16);
+      background: #dc2626;
+      color: #ffffff;
+      border-color: #dc2626;
     }
 
     /* STATE SPINNER */
@@ -576,8 +577,11 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
     const BUCKET_NAME = "gallery-media";
 
-    // ONLY THIS GOOGLE ID HAS PERMISSION TO DELETE ASSETS
-    const AUTHORIZED_ADMIN_EMAIL = "Kundar701@gmail.com";
+    // AUTHORIZED ADMIN EMAILS (Checked case-insensitively)
+    const AUTHORIZED_ADMIN_EMAILS = [
+      "kundar.work@gmail.com",
+      "kundar701@gmail.com"
+    ];
 
     const DEFAULT_FOLDERS = [
       { id: 'truck', label: 'Truck & Fleet', icon: 'local_shipping' },
@@ -594,18 +598,22 @@
     let foldersList = [];
     let currentUser = null;
 
-    // 2. GOOGLE ADMIN AUTHENTICATION
+    // 2. GOOGLE ADMIN AUTHENTICATION & SESSION HANDLING
     async function initAuthListener() {
+      // 1. Check for initial session in memory/storage
       const { data: { session } } = await supabaseClient.auth.getSession();
       handleUserSession(session?.user || null);
 
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
+      // 2. Listen to subsequent auth changes (OAuth redirects, tokens, signouts)
+      supabaseClient.auth.onAuthStateChange(async (event, session) => {
         handleUserSession(session?.user || null);
       });
     }
 
     function isCurrentUserAdmin() {
-      return currentUser && currentUser.email && currentUser.email.toLowerCase() === AUTHORIZED_ADMIN_EMAIL.toLowerCase();
+      if (!currentUser || !currentUser.email) return false;
+      const userEmail = currentUser.email.trim().toLowerCase();
+      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === userEmail);
     }
 
     function handleUserSession(user) {
@@ -626,9 +634,9 @@
         badge.className = 'admin-status-badge ' + (isCurrentUserAdmin() ? 'badge-authorized' : 'badge-standard');
         
         if (isCurrentUserAdmin()) {
-          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
+          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin (${user.email})`;
         } else {
-          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">person</span> ${user.email}`;
+          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">person</span> Logged In (${user.email})`;
         }
         
         authContainer.insertBefore(badge, authBtn);
@@ -644,11 +652,13 @@
     async function handleGoogleAdminAuth() {
       if (currentUser) {
         await supabaseClient.auth.signOut();
+        currentUser = null;
+        handleUserSession(null);
       } else {
         const { error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: window.location.href
+            redirectTo: window.location.origin + window.location.pathname
           }
         });
         if (error) {
