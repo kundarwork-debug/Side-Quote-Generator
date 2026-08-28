@@ -62,12 +62,12 @@
       pointer-events: none;
     }
 
-    /* Clear margin space strictly below sticky/fixed header */
+    /* Fixed top padding clearance below sticky header */
     .gallery-container {
       max-width: 1400px;
       margin: 0 auto;
       padding: 0 24px 80px;
-      margin-top: 110px !important; /* Forces title safely below header */
+      margin-top: 110px !important;
       width: 100%;
       position: relative;
       z-index: 1;
@@ -101,7 +101,7 @@
       font-weight: 500;
     }
 
-    /* UNIFIED SINGLE PANEL */
+    /* UPLOAD ACTION PANEL */
     .unified-action-panel {
       background: var(--surface-card);
       border: 1.5px dashed rgba(194, 29, 29, 0.35);
@@ -111,33 +111,18 @@
       box-shadow: var(--shadow-card);
     }
 
-    .unified-panel-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 32px;
-      position: relative;
-    }
-
-    .unified-panel-col {
+    .upload-action-content {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
+      align-items: center;
       justify-content: space-between;
-    }
-
-    .unified-panel-divider {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: var(--border-subtle);
+      gap: 20px;
     }
 
     .panel-head {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
     }
 
     .panel-icon-badge {
@@ -167,9 +152,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex: 1;
+      max-width: 520px;
     }
 
-    .folder-select, .input-text {
+    .folder-select {
       background: #ffffff;
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
@@ -195,7 +182,7 @@
       75% { transform: translateX(4px); }
     }
 
-    .input-text:focus, .folder-select:focus {
+    .folder-select:focus {
       border-color: var(--primary);
     }
 
@@ -205,7 +192,7 @@
       gap: 6px;
       background: var(--primary);
       color: #ffffff;
-      padding: 10px 20px;
+      padding: 10px 22px;
       border-radius: var(--radius-pill);
       font-size: 13.5px;
       font-weight: 700;
@@ -228,7 +215,7 @@
       transform: none;
     }
 
-    /* FILTER TABS & FOLDER MANAGEMENT */
+    /* FILTER TABS */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -417,12 +404,13 @@
       .gallery-container {
         margin-top: 95px !important;
       }
-      .unified-panel-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
+      .upload-action-content {
+        flex-direction: column;
+        align-items: flex-start;
       }
-      .unified-panel-divider {
-        display: none;
+      .panel-row {
+        width: 100%;
+        max-width: 100%;
       }
     }
   </style>
@@ -440,55 +428,29 @@
       </div>
     </div>
 
-    <!-- MERGED SINGLE PANEL (UPLOAD + FOLDER CREATOR) -->
+    <!-- CLEAN UPLOAD PANEL -->
     <div class="unified-action-panel">
-      <div class="unified-panel-grid">
+      <div class="upload-action-content">
         
-        <!-- LEFT: UPLOAD MEDIA ASSET -->
-        <div class="unified-panel-col">
-          <div class="panel-head">
-            <div class="panel-icon-badge">
-              <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
-            </div>
-            <div>
-              <h3>Upload Media Asset</h3>
-              <p id="uploadStatusText">Select destination category and upload image/video</p>
-            </div>
+        <div class="panel-head">
+          <div class="panel-icon-badge">
+            <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
           </div>
-
-          <div class="panel-row">
-            <select id="uploadFolderSelect" class="folder-select" required onchange="this.classList.remove('select-highlight-error')">
-              <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
-            </select>
-            <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm,video/quicktime" style="display: none;" onchange="handleDirectUpload(this.files)">
-            <button type="button" class="btn-action-primary" id="uploadTriggerBtn" onclick="triggerCompulsoryUpload()">
-              <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
-              <span>Upload</span>
-            </button>
+          <div>
+            <h3>Upload Media Asset</h3>
+            <p id="uploadStatusText">Select destination category and upload image/video</p>
           </div>
         </div>
 
-        <div class="unified-panel-divider"></div>
-
-        <!-- RIGHT: ADD NEW FOLDER -->
-        <div class="unified-panel-col">
-          <div class="panel-head">
-            <div class="panel-icon-badge">
-              <span class="material-symbols-outlined" style="font-size: 24px;">create_new_folder</span>
-            </div>
-            <div>
-              <h3>Add New Folder</h3>
-              <p id="folderStatusText">Create custom storage category folders</p>
-            </div>
-          </div>
-
-          <div class="panel-row">
-            <input type="text" id="newFolderNameInput" class="input-text" placeholder="Folder label (e.g., Furniture, Fragile)">
-            <button type="button" class="btn-action-primary" id="createFolderBtn" onclick="handleCreateFolder()">
-              <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
-              <span>Create Folder</span>
-            </button>
-          </div>
+        <div class="panel-row">
+          <select id="uploadFolderSelect" class="folder-select" required onchange="this.classList.remove('select-highlight-error')">
+            <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
+          </select>
+          <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm,video/quicktime" style="display: none;" onchange="handleDirectUpload(this.files)">
+          <button type="button" class="btn-action-primary" id="uploadTriggerBtn" onclick="triggerCompulsoryUpload()">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
+            <span>Upload</span>
+          </button>
         </div>
 
       </div>
@@ -523,7 +485,8 @@
       { id: 'bike-packing', label: 'Bike Packing', icon: 'two_wheeler' },
       { id: 'car-transportation', label: 'Car Transportation', icon: 'directions_car' },
       { id: 'solid-box', label: 'Solid Box', icon: 'package_2' },
-      { id: 'tv-box', label: 'TV Box', icon: 'tv' }
+      { id: 'tv-box', label: 'TV Box', icon: 'tv' },
+      { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' }
     ];
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -536,6 +499,10 @@
       if (stored) {
         try {
           foldersList = JSON.parse(stored);
+          if (!foldersList.some(f => f.id === 'miscellaneous')) {
+            foldersList.push({ id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' });
+            localStorage.setItem('apml_gallery_folders', JSON.stringify(foldersList));
+          }
         } catch (e) {
           foldersList = [...DEFAULT_FOLDERS];
         }
@@ -600,62 +567,7 @@
       document.getElementById('mediaFileInput').click();
     }
 
-    // 4. CREATE NEW FOLDER
-    async function handleCreateFolder() {
-      const input = document.getElementById('newFolderNameInput');
-      const label = input.value.trim();
-      const statusText = document.getElementById('folderStatusText');
-      const btn = document.getElementById('createFolderBtn');
-
-      if (!label) {
-        input.focus();
-        return;
-      }
-
-      const folderId = label.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
-
-      if (foldersList.some(f => f.id === folderId)) {
-        statusText.innerHTML = `<span style="color: var(--primary);">Folder with this name already exists!</span>`;
-        return;
-      }
-
-      btn.disabled = true;
-      statusText.innerHTML = `<span style="color: var(--primary);">Creating folder placeholder...</span>`;
-
-      try {
-        const { error } = await supabaseClient
-          .storage
-          .from(BUCKET_NAME)
-          .upload(`${folderId}/.emptyFolderPlaceholder`, new Blob(['']), {
-            upsert: true
-          });
-
-        if (error) throw error;
-
-        foldersList.push({ id: folderId, label: label, icon: 'folder' });
-        saveFolderState();
-
-        input.value = '';
-        statusText.innerHTML = `<span style="color: #10b981;">Folder "${label}" created successfully!</span>`;
-        
-        const uploadSelect = document.getElementById('uploadFolderSelect');
-        if (uploadSelect) uploadSelect.value = folderId;
-
-        loadGalleryMedia(folderId);
-
-        setTimeout(() => {
-          statusText.textContent = "Create custom storage category folders";
-        }, 2000);
-
-      } catch (err) {
-        console.error("Create folder error:", err);
-        statusText.innerHTML = `<span style="color: var(--primary);">${err.message || 'Failed to create folder.'}</span>`;
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    // 5. RENAME FOLDER DISPLAY LABEL
+    // 4. RENAME FOLDER DISPLAY LABEL
     function handleRenameFolder(folderId, evt) {
       evt.stopPropagation();
       const folder = foldersList.find(f => f.id === folderId);
@@ -671,7 +583,7 @@
       }
     }
 
-    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES
+    // 5. CLIENT-SIDE COMPRESSION FOR IMAGES
     async function compressImage(file, maxWidth = 1000, quality = 0.55) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -716,7 +628,7 @@
       });
     }
 
-    // 7. FETCH AND RENDER MEDIA ASSETS
+    // 6. FETCH AND RENDER MEDIA ASSETS
     async function loadGalleryMedia(folderPath = '') {
       currentActiveFolder = folderPath;
       renderFolderControls();
@@ -831,7 +743,7 @@
       }
     }
 
-    // 8. DIRECT FILE UPLOAD HANDLER WITH AUTO COMPRESSION
+    // 7. DIRECT FILE UPLOAD HANDLER WITH AUTO COMPRESSION
     async function handleDirectUpload(files) {
       if (!files || !files.length) return;
 
@@ -888,7 +800,7 @@
       }
     }
 
-    // 9. SECURE DIRECT DOWNLOAD HANDLER
+    // 8. SECURE DIRECT DOWNLOAD HANDLER
     async function downloadAsset(fileUrl, fileName) {
       try {
         const response = await fetch(fileUrl);
