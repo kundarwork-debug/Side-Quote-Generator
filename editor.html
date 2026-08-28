@@ -28,18 +28,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<!-- SUPABASE JS CLIENT -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  /* =========================================================
-     MATCHED WARM CREAM / MAIN PAGE COLOR SYSTEM
-     ========================================================= */
   :root {
     --primary: #b91c1c;
     --primary-dark: #881337;
     --primary-soft: rgba(185, 28, 28, 0.06);
-    --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+    --bg-base: #FDF8F5;
     --surface-card: #ffffff;
     --surface-border: #ede4de;
     --surface-subtle: #f7ede6;
@@ -51,7 +48,6 @@
     --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
     --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 
-    /* Legacy bindings */
     --accent-exact: #b91c1c;
     --accent-exact-dark: #881337;
     --accent-max-blue: #1e40af;
@@ -88,7 +84,6 @@
     vertical-align: middle;
   }
 
-  /* ---------- MAIN APP LAYOUT ---------- */
   .app {
     display: grid;
     grid-template-columns: 460px 1fr;
@@ -99,7 +94,6 @@
     z-index: 1;
   }
 
-  /* ---------- LEFT: CONTROL PANEL ---------- */
   .panel {
     background: rgba(255, 255, 255, 0.95);
     border-right: 1px solid var(--surface-border);
@@ -136,7 +130,6 @@
     border: 1px solid rgba(185, 28, 28, 0.15);
   }
 
-  /* Segmented Buttons / Tabs */
   .tabs {
     display: flex;
     gap: 6px;
@@ -174,14 +167,8 @@
     box-shadow: var(--shadow-soft);
   }
 
-  /* Form Field Groups */
-  .field-group {
-    margin-bottom: 24px;
-  }
+  .field-group { margin-bottom: 24px; }
 
-  /* =========================================================
-     HIGHLIGHTED CUSTOMER & DETAILS CARD
-     ========================================================= */
   #sharedFieldGroup {
     background: linear-gradient(135deg, rgba(254, 242, 242, 0.85) 0%, #ffffff 100%);
     border: 1.5px solid rgba(185, 28, 28, 0.28);
@@ -198,9 +185,7 @@
     margin-bottom: 16px;
   }
 
-  #sharedFieldGroup h2::after {
-    background: rgba(185, 28, 28, 0.2);
-  }
+  #sharedFieldGroup h2::after { background: rgba(185, 28, 28, 0.2); }
 
   #sharedFieldGroup input {
     background: #ffffff;
@@ -212,7 +197,6 @@
     box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
   }
 
-  /* QUICK PRICING CONTAINER */
   .quick-pricing-card {
     background: linear-gradient(135deg, rgba(254, 242, 242, 0.9) 0%, #ffffff 100%);
     border: 1.5px solid rgba(185, 28, 28, 0.25);
@@ -300,7 +284,6 @@
   .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
   .term-row textarea { flex: 1; min-height: 42px; resize: vertical; }
 
-  /* Icon Buttons */
   .icon-btn {
     width: 36px;
     height: 36px;
@@ -347,7 +330,6 @@
     background: var(--primary-soft);
   }
 
-  /* Totals Container */
   .totals-box {
     background: #ffffff;
     border: 1.5px solid var(--surface-border);
@@ -393,7 +375,6 @@
     background: var(--surface-subtle);
   }
 
-  /* Download Toolbar */
   .download-bar {
     position: sticky;
     bottom: -1px;
@@ -434,7 +415,6 @@
     min-height: 14px;
   }
 
-  /* ---------- RIGHT: PREVIEW STAGE ---------- */
   .stage {
     padding: 40px;
     display: flex;
@@ -455,7 +435,6 @@
     overflow: hidden;
   }
 
-  /* PDF Preview Page */
   #previewA4 {
     width: 794px;
     min-height: 1123px;
@@ -467,7 +446,6 @@
     transform-origin: top left;
   }
 
-  /* ===== PDF TEMPLATE STYLES ===== */
   .doc-exact {
     font-family: Calibri, Carlito, Arial, sans-serif;
     color: #111;
@@ -508,7 +486,6 @@
   .doc-exact .footer { margin-top: 12px; font-size: 10pt; line-height: 1.5; }
   .doc-exact .footer b { font-weight: 700; }
 
-  /* MAXCARE PACKERS LETTERHEAD STYLING (COMPANY NAME TOP, ADDRESS DOWN) */
   .doc-max {
     font-family: Arial, Helvetica, sans-serif;
     color: #141414;
@@ -565,7 +542,6 @@
   .doc-max .footer { margin-top: 18px; font-size: 10pt; line-height: 1.6; }
   .doc-max .footer .sign { margin-top: 14px; font-weight: 700; }
 
-  /* ---------- RESPONSIVE MEDIA QUERIES (MOBILE) ---------- */
   @media (max-width: 768px) {
     .app {
       grid-template-columns: 1fr !important;
@@ -721,29 +697,18 @@
 
 <script>
 // =========================================================
-// FIREBASE REALTIME INITIALIZATION
+// SUPABASE REALTIME CLIENT INITIALIZATION
 // =========================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-  authDomain: "apml-portal.firebaseapp.com",
-  databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-  projectId: "apml-portal",
-  storageBucket: "apml-portal.firebasestorage.app",
-  messagingSenderId: "479017159240",
-  appId: "1:479017159240:web:0853422718e6195b74a67d",
-  measurementId: "G-4H1HT31DYB"
-};
+const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.database();
+const supabaseEditorClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function incrementPdfDownloadCount() {
-  if (typeof db !== "undefined") {
-    db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
-      return (currentCount || 0) + 1;
-    });
+async function incrementPdfDownloadCount() {
+  try {
+    await supabaseEditorClient.rpc('increment_metric', { metric_id: 'pdf_downloads' });
+  } catch (e) {
+    console.error("PDF count increment failed:", e);
   }
 }
 
@@ -1283,6 +1248,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
     pdf.save(filename);
 
+    // Increment Supabase PDF metric
     incrementPdfDownloadCount();
 
     status.textContent = 'Downloaded ✓';
