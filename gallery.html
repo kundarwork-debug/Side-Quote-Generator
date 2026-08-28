@@ -542,7 +542,7 @@
       border-color: #dc2626;
     }
 
-    /* STATE SPINNER */
+    /* STATE SPINNER & RETRY BUTTON */
     .state-msg {
       grid-column: 1 / -1;
       text-align: center;
@@ -559,6 +559,18 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin: 0 auto 16px;
+    }
+
+    .btn-retry {
+      margin-top: 14px;
+      padding: 8px 18px;
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
     }
 
     @keyframes spin {
@@ -667,12 +679,10 @@
   <script src="common.js?v=21.0"></script>
 
   <script>
-    // 1. SUPABASE CLIENT & BUCKET CONFIGURATION
     const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
     const BUCKET_NAME = "gallery-media";
 
-    // ONLY THIS ACCOUNT HAS ADMIN ACCESS
     const AUTHORIZED_ADMIN_EMAILS = [
       "kundar.work@gmail.com",
       "kundar701@gmail.com"
@@ -688,20 +698,13 @@
       { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' }
     ];
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+    
     let currentActiveFolder = '';
     let foldersList = [];
     let currentUser = null;
-
-    // 2. GOOGLE ADMIN AUTHENTICATION & WARNING POPUP
-    async function initAuthListener() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      handleUserSession(session?.user || null);
-
-      supabaseClient.auth.onAuthStateChange(async (event, session) => {
-        handleUserSession(session?.user || null);
-      });
-    }
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
@@ -741,7 +744,6 @@
           badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
           authContainer.insertBefore(badge, authBtn);
         } else {
-          // Trigger Popup Warning for unauthorized IDs
           showUnauthorizedWarning(user.email);
         }
       } else {
@@ -750,7 +752,14 @@
       }
 
       renderFolderControls();
-      loadGalleryMedia(currentActiveFolder);
+      renderAdminDeleteButtons();
+    }
+
+    function renderAdminDeleteButtons() {
+      const adminGranted = isCurrentUserAdmin();
+      document.querySelectorAll('.btn-delete-media').forEach(btn => {
+        btn.style.display = adminGranted ? 'inline-flex' : 'none';
+      });
     }
 
     async function handleGoogleAdminAuth() {
@@ -765,13 +774,10 @@
             redirectTo: window.location.origin + window.location.pathname
           }
         });
-        if (error) {
-          alert(`Google login error: ${error.message}`);
-        }
+        if (error) alert(`Google login error: ${error.message}`);
       }
     }
 
-    // 3. FOLDER STATE MANAGEMENT
     function loadFolderState() {
       const stored = localStorage.getItem('apml_gallery_folders');
       if (stored) {
@@ -831,7 +837,6 @@
       uploadSelect.innerHTML = selectOptions;
     }
 
-    // 4. COMPULSORY FOLDER VALIDATION BEFORE UPLOAD
     function triggerCompulsoryUpload() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
@@ -847,7 +852,6 @@
       document.getElementById('mediaFileInput').click();
     }
 
-    // 5. RENAME FOLDER DISPLAY LABEL
     function handleRenameFolder(folderId, evt) {
       evt.stopPropagation();
       if (!isCurrentUserAdmin()) return;
@@ -865,7 +869,6 @@
       }
     }
 
-    // 6. CLIENT-SIDE COMPRESSION FOR IMAGES
     async function compressImage(file, maxWidth = 1000, quality = 0.55) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -910,7 +913,23 @@
       });
     }
 
-    // 7. FETCH AND RENDER MEDIA ASSETS
+    // Direct List Query with Promise Timeout Wrapper
+    function fetchWithTimeout(folderId, timeoutMs = 2500) {
+      return Promise.race([
+        supabaseClient.storage.from(BUCKET_NAME).list(folderId, {
+          limit: 100,
+          offset: 0,
+          sortBy: { column: 'name', order: 'asc' }
+        }).then(({ data, error }) => {
+          if (error || !data) return [];
+          return data
+            .filter(f => f.name && f.name !== '.emptyFolderPlaceholder')
+            .map(f => ({ ...f, folder: folderId }));
+        }).catch(() => []),
+        new Promise(resolve => setTimeout(() => resolve([]), timeoutMs))
+      ]);
+    }
+
     async function loadGalleryMedia(folderPath = '') {
       currentActiveFolder = folderPath;
       renderFolderControls();
@@ -925,7 +944,7 @@
       grid.innerHTML = `
         <div class="state-msg">
           <div class="spinner"></div>
-          Loading assets...
+          Fetching storage bucket assets...
         </div>
       `;
 
@@ -933,40 +952,22 @@
         let allMedia = [];
 
         if (folderPath === '') {
-          const promises = foldersList.map(f => 
-            supabaseClient.storage.from(BUCKET_NAME).list(f.id, {
-              limit: 100,
-              offset: 0,
-              sortBy: { column: 'created_at', order: 'desc' }
-            }).then(({ data, error }) => {
-              if (error || !data) return [];
-              return data
-                .filter(file => file.name !== '.emptyFolderPlaceholder')
-                .map(file => ({ ...file, folder: f.id }));
-            })
-          );
-
-          const results = await Promise.all(promises);
+          // Query all known categories + root in parallel with strict timeout
+          const promises = foldersList.map(f => fetchWithTimeout(f.id));
+          const rootPromise = fetchWithTimeout('');
+          const results = await Promise.all([...promises, rootPromise]);
           allMedia = results.flat();
         } else {
-          const { data: files, error } = await supabaseClient
-            .storage
-            .from(BUCKET_NAME)
-            .list(folderPath, {
-              limit: 100,
-              offset: 0,
-              sortBy: { column: 'created_at', order: 'desc' }
-            });
-
-          if (error) throw error;
-
-          allMedia = (files || [])
-            .filter(f => f.name !== '.emptyFolderPlaceholder')
-            .map(f => ({ ...f, folder: folderPath }));
+          allMedia = await fetchWithTimeout(folderPath);
         }
 
-        if (!allMedia.length) {
-          grid.innerHTML = `<div class="state-msg">No media files found in this category.</div>`;
+        if (!allMedia || allMedia.length === 0) {
+          grid.innerHTML = `
+            <div class="state-msg">
+              No media files found in this category.
+              <br><button class="btn-retry" onclick="loadGalleryMedia('${folderPath}')">Reload</button>
+            </div>
+          `;
           return;
         }
 
@@ -974,11 +975,12 @@
 
         grid.innerHTML = allMedia.map(file => {
           const filePath = file.folder ? `${file.folder}/${file.name}` : file.name;
-          const { data: { publicUrl } } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(filePath);
+          const { data } = supabaseClient.storage.from(BUCKET_NAME).getPublicUrl(filePath);
+          const publicUrl = data ? data.publicUrl : '';
           
           const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);
           const matchedFolder = foldersList.find(f => f.id === file.folder);
-          const folderBadge = matchedFolder ? matchedFolder.label : 'Standard';
+          const folderBadge = matchedFolder ? matchedFolder.label : 'General';
 
           return `
             <div class="media-card">
@@ -1012,12 +1014,10 @@
                     <span class="material-symbols-outlined" style="font-size: 18px;">download</span>
                     Download
                   </button>
-                  ${adminGranted ? `
-                    <button type="button" class="btn-delete-media" onclick="handleDeleteMedia('${filePath}')" title="Delete Asset">
-                      <span class="material-symbols-outlined" style="font-size: 15px;">delete</span>
-                      Delete
-                    </button>
-                  ` : ''}
+                  <button type="button" class="btn-delete-media" onclick="handleDeleteMedia('${filePath}')" title="Delete Asset" style="display: ${adminGranted ? 'inline-flex' : 'none'};">
+                    <span class="material-symbols-outlined" style="font-size: 15px;">delete</span>
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>
@@ -1025,17 +1025,16 @@
         }).join('');
 
       } catch (err) {
-        console.error("Supabase Storage Error:", err);
+        console.error("Storage Error:", err);
         grid.innerHTML = `
           <div class="state-msg" style="color: var(--primary);">
-            Unable to fetch storage assets (${BUCKET_NAME}).<br>
-            <small style="color: var(--text-muted);">Please verify that your Supabase Storage bucket <strong>"${BUCKET_NAME}"</strong> is public with SELECT RLS policies enabled.</small>
+            Unable to connect to Supabase Storage.<br>
+            <button class="btn-retry" onclick="loadGalleryMedia('${folderPath}')">Retry Connection</button>
           </div>
         `;
       }
     }
 
-    // 8. ADMIN DELETE ASSET HANDLER
     async function handleDeleteMedia(fullFilePath) {
       if (!isCurrentUserAdmin()) {
         alert("Access Denied: Only the authorized administrator account can delete files.");
@@ -1060,7 +1059,6 @@
       }
     }
 
-    // 9. DIRECT FILE UPLOAD HANDLER WITH AUTO COMPRESSION
     async function handleDirectUpload(files) {
       if (!files || !files.length) return;
 
@@ -1117,13 +1115,18 @@
       }
     }
 
-    // 10. SECURE DIRECT DOWNLOAD HANDLER
+    // Injected non-blocking metric counter download handler
     async function downloadAsset(fileUrl, fileName) {
       try {
+        // Non-blocking fire-and-forget metric increment
+        setTimeout(() => {
+          supabaseClient.rpc('increment_metric', { metric_id: 'media_downloads' }).catch(() => {});
+        }, 0);
+
         const response = await fetch(fileUrl);
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
-        
+
         const link = document.createElement('a');
         link.href = blobUrl;
         link.download = fileName;
@@ -1136,10 +1139,19 @@
       }
     }
 
-    // Initialize gallery & auth listener on page load
     document.addEventListener('DOMContentLoaded', () => {
       loadFolderState();
-      initAuthListener();
+      loadGalleryMedia('');
+      
+      supabaseClient.auth.getSession().then(({ data }) => {
+        if (data && data.session) {
+          handleUserSession(data.session.user);
+        }
+      }).catch(() => {});
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        handleUserSession(session ? session.user : null);
+      });
     });
   </script>
 </body>
