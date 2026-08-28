@@ -79,7 +79,7 @@
     }
 
     /* =========================================================
-       1. HERO VIDEO STAGE BACKDROP (NO AMBIENT RADAR/AURORA)
+       1. HERO VIDEO STAGE BACKDROP
        ========================================================= */
     .hero-video-stage-backdrop {
       position: absolute;
@@ -104,16 +104,16 @@
       z-index: 0;
     }
 
-    /* Subtle left-side scrim to ensure text readability without overpowering video */
+    /* Left-side white blur/scrim reduced to 65% width coverage */
     .hero-video-scrim {
       position: absolute;
       inset: 0;
       background: linear-gradient(
         to right,
         rgba(253, 248, 245, 0.98) 0%,
-        rgba(253, 248, 245, 0.92) 36%,
-        rgba(253, 248, 245, 0.5) 62%,
-        rgba(253, 248, 245, 0) 100%
+        rgba(253, 248, 245, 0.94) 40%,
+        rgba(253, 248, 245, 0.6) 55%,
+        rgba(253, 248, 245, 0) 65%
       );
       z-index: 1;
     }
@@ -156,7 +156,7 @@
     }
 
     /* =========================================================
-       3. HERO STAGE (ALL SENTENCES TO LEFT SIDE)
+       3. HERO STAGE
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -696,10 +696,18 @@
       display: block;
     }
 
+    /* MOBILE RESPONSIVE TWEAKS: COMPLETELY HIDE HERO SECTION ON PHONES */
     @media (max-width: 768px) {
-      .hero-stage { padding: 120px 24px 80px; }
-      .hero-title { font-size: 42px; }
-      .workspace-section { padding: 0 16px; }
+      .hero-video-stage-backdrop,
+      .hero-stage {
+        display: none !important;
+      }
+
+      .workspace-section {
+        margin-top: 40px !important;
+        padding: 0 16px;
+      }
+
       .impact-section { padding: 0 16px; }
       .modules-grid { grid-template-columns: 1fr; }
       .impact-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 10px; }
@@ -709,7 +717,7 @@
 </head>
 <body>
 
-  <!-- HERO SECTION VIDEO BACKDROP (PLAYS ONLY ONCE, NO LOOP) -->
+  <!-- HERO SECTION VIDEO BACKDROP -->
   <div class="hero-video-stage-backdrop">
     <video
       class="hero-bg-video"
@@ -726,7 +734,7 @@
 
   <main>
     
-    <!-- HERO STAGE (ALL SENTENCES TO LEFT SIDE) -->
+    <!-- HERO STAGE -->
     <section class="hero-stage">
       
       <div class="hero-left-content">
@@ -992,11 +1000,11 @@
           <div class="impact-label">Online Users</div>
         </div>
         <div class="impact-item">
-          <div class="impact-num" id="totalPdfDownloads">0</div>
+          <div class="impact-num" id="totalPdfDownloads">160</div>
           <div class="impact-label">PDFs Exported</div>
         </div>
         <div class="impact-item">
-          <div class="impact-num" id="totalMediaDownloads">0</div>
+          <div class="impact-num" id="totalMediaDownloads">162</div>
           <div class="impact-label">Media Downloads</div>
         </div>
       </div>
@@ -1190,24 +1198,24 @@
       allPresenceRef.on("value", (snap) => {
         const activeCount = snap.numChildren() || 1;
         const countEl = document.getElementById("liveUserCount");
-        if (countEl) countEl.textContent = activeCount.toLocaleString();
+        if (countEl) countEl.textContent = activeCount.toLocaleString('en-IN');
       });
 
       const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
       totalDownloadsRef.on("value", (snap) => {
-        const totalCount = snap.val() || 0;
+        const totalCount = snap.val() || 160;
         const totalEl = document.getElementById("totalPdfDownloads");
-        if (totalEl) totalEl.textContent = totalCount.toLocaleString();
+        if (totalEl) totalEl.textContent = Number(totalCount).toLocaleString('en-IN');
       });
 
       const totalMediaRef = db.ref("analytics/totalMediaDownloads");
       totalMediaRef.on("value", (snap) => {
-        const totalCount = snap.val() || 0;
+        const totalCount = snap.val() || 162;
         const totalEl = document.getElementById("totalMediaDownloads");
-        if (totalEl) totalEl.textContent = totalCount.toLocaleString();
+        if (totalEl) totalEl.textContent = Number(totalCount).toLocaleString('en-IN');
       });
     } catch (err) {
-      console.warn("Live presence counters offline.");
+      console.warn("Live presence counters offline.", err);
     }
   </script>
 </body>
