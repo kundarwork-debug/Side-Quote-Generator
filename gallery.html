@@ -62,11 +62,11 @@
       pointer-events: none;
     }
 
-    /* Generous top clearance ensuring zero header overlap */
+    /* Fixed top padding clearance below sticky header */
     .gallery-container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 85px 24px 80px;
+      padding: 36px 24px 80px;
       width: 100%;
       position: relative;
       z-index: 1;
@@ -78,7 +78,7 @@
       align-items: flex-end;
       justify-content: space-between;
       gap: 20px;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .gallery-title {
@@ -414,7 +414,7 @@
 
     @media (max-width: 900px) {
       .gallery-container {
-        padding-top: 70px;
+        padding-top: 24px;
       }
       .unified-panel-grid {
         grid-template-columns: 1fr;
@@ -767,7 +767,7 @@
 
           allMedia = (files || [])
             .filter(f => f.name !== '.emptyFolderPlaceholder')
-            .map(f => ({ ...file, folder: folderPath }));
+            .map(f => ({ ...f, folder: folderPath }));
         }
 
         if (!allMedia.length) {
