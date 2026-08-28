@@ -48,7 +48,7 @@
     }
 
     #header-container {
-      position: sticky;
+      position: sticky !important;
       top: 0;
       left: 0;
       width: 100%;
@@ -62,11 +62,12 @@
       pointer-events: none;
     }
 
-    /* Fixed top padding clearance below sticky header */
+    /* Clear margin space strictly below sticky/fixed header */
     .gallery-container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 36px 24px 80px;
+      padding: 0 24px 80px;
+      margin-top: 110px !important; /* Forces title safely below header */
       width: 100%;
       position: relative;
       z-index: 1;
@@ -100,7 +101,7 @@
       font-weight: 500;
     }
 
-    /* UNIFIED CONTROLS PANEL */
+    /* UNIFIED SINGLE PANEL */
     .unified-action-panel {
       background: var(--surface-card);
       border: 1.5px dashed rgba(194, 29, 29, 0.35);
@@ -414,7 +415,7 @@
 
     @media (max-width: 900px) {
       .gallery-container {
-        padding-top: 24px;
+        margin-top: 95px !important;
       }
       .unified-panel-grid {
         grid-template-columns: 1fr;
