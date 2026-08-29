@@ -26,7 +26,7 @@
       document.documentElement.classList.remove("is-home-page");
     }
 
-    // 1. INJECT HEADER (Rotating Hub Logo + Quick Links + Navigation)
+    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -39,26 +39,12 @@
               <div class="logo-text">APML <span>Portal</span></div>
             </a>
 
-            <!-- Header Right Action Group (Quick Links + Hamburger) -->
-            <div class="header-actions-right">
-              <div class="header-quick-links">
-                <a href="editor.html" class="header-shortcut-btn ${currentPage === 'editor.html' ? 'active' : ''}" title="Quotation Editor">
-                  <span class="material-symbols-outlined">edit_note</span>
-                  <span class="shortcut-label">Quotation</span>
-                </a>
-                <a href="gallery.html" class="header-shortcut-btn ${currentPage === 'gallery.html' ? 'active' : ''}" title="Gallery">
-                  <span class="material-symbols-outlined">photo_library</span>
-                  <span class="shortcut-label">Gallery</span>
-                </a>
-              </div>
-
-              <!-- Animated Rotating Hamburger Button -->
-              <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-              </button>
-            </div>
+            <!-- Animated Rotating Hamburger Button -->
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </button>
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
