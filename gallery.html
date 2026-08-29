@@ -17,6 +17,10 @@
   <!-- SUPABASE JS CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <style>
     :root {
       --primary: #c21d1d;
@@ -763,6 +767,23 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
     const BUCKET_NAME = "gallery-media";
 
+    // FIREBASE CONFIGURATION (For Global Media Download Counter)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const totalMediaDownloadsRef = firebase.database().ref('analytics/totalMediaDownloads');
+
     const AUTHORIZED_ADMIN_EMAILS = [
       "kundar.work@gmail.com",
       "kundar701@gmail.com"
@@ -912,7 +933,6 @@
         </div>
       `).join('');
 
-      // Add Folder button is now visible to ALL users
       tabsHtml += `
         <button type="button" class="btn-add-folder-chip" onclick="handleCreateFolder()">
           <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span> Add Folder
@@ -1163,7 +1183,7 @@
                   <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderBadge}</span>
                 </div>
                 <div class="card-actions-row">
-                  <button type="button" class="btn-download" onclick="event.stopPropagation(); downloadAsset('${publicUrl}', '${file.name}')">
+                  <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${publicUrl}', '${file.name}')">
                     <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                   </button>
                   <button type="button" class="btn-delete-media" onclick="event.stopPropagation(); handleDeleteMedia('${filePath}')" title="Delete Asset" style="display: ${adminGranted ? 'inline-flex' : 'none'};">
@@ -1184,6 +1204,14 @@
           </div>
         `;
       }
+    }
+
+    // Increment global media download counter in Firebase and download asset
+    function incrementGlobalMediaDownloadAndDownload(fileUrl, fileName) {
+      totalMediaDownloadsRef.transaction((currentValue) => {
+        return (currentValue || 0) + 1;
+      });
+      downloadAsset(fileUrl, fileName);
     }
 
     // LIGHTBOX VIEWER CONTROLS
