@@ -353,7 +353,7 @@
       transform: none;
     }
 
-    /* FILTER TABS */
+    /* FILTER TABS & ADD FOLDER CHIP */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -429,6 +429,27 @@
     .filter-item-wrapper.active .btn-inline-delete:hover {
       background: rgba(255, 255, 255, 0.25);
       color: #ffffff;
+    }
+
+    .btn-add-folder-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1.5px dashed var(--primary);
+      color: var(--primary);
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.06);
+    }
+
+    .btn-add-folder-chip:hover {
+      background: var(--primary-soft);
+      transform: translateY(-1px);
     }
 
     /* MEDIA GRID */
@@ -891,6 +912,13 @@
         </div>
       `).join('');
 
+      // Add Folder button is now visible to ALL users
+      tabsHtml += `
+        <button type="button" class="btn-add-folder-chip" onclick="handleCreateFolder()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span> Add Folder
+        </button>
+      `;
+
       filterBar.innerHTML = tabsHtml;
 
       const uploadSelect = document.getElementById('uploadFolderSelect');
@@ -917,6 +945,26 @@
 
       uploadSelect.classList.remove('select-highlight-error');
       document.getElementById('mediaFileInput').click();
+    }
+
+    function handleCreateFolder() {
+      const folderName = prompt("Enter new folder name (e.g. 'Fragile Items'):");
+      if (!folderName || !folderName.trim()) return;
+
+      const cleanId = folderName.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
+      if (foldersList.some(f => f.id === cleanId)) {
+        alert("A folder with this ID or name already exists.");
+        return;
+      }
+
+      foldersList.push({
+        id: cleanId,
+        label: folderName.trim(),
+        icon: 'folder_open'
+      });
+
+      saveFolderState();
+      loadGalleryMedia(cleanId);
     }
 
     function handleRenameFolder(folderId, evt) {
@@ -1085,7 +1133,7 @@
           
           const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);
           const matchedFolder = foldersList.find(f => f.id === file.folder);
-          const folderBadge = matchedFolder ? matchedFolder.label : 'General';
+          const folderBadge = matchedFolder ? matchedFolder.label : 'Standard';
 
           return `
             <div class="media-card">
