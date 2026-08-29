@@ -78,9 +78,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* =========================================================
-       1. HERO VIDEO STAGE BACKDROP
-       ========================================================= */
     .hero-video-stage-backdrop {
       position: absolute;
       top: 0;
@@ -104,7 +101,6 @@
       z-index: 0;
     }
 
-    /* Left-side white blur/scrim reduced to 65% width coverage */
     .hero-video-scrim {
       position: absolute;
       inset: 0;
@@ -129,9 +125,6 @@
       width: 100%;
     }
 
-    /* =========================================================
-       2. REVEAL ANIMATIONS
-       ========================================================= */
     .slide-up-intro {
       opacity: 0;
       transform: translateY(32px);
@@ -155,9 +148,6 @@
       opacity: 1;
     }
 
-    /* =========================================================
-       3. HERO STAGE
-       ========================================================= */
     .hero-stage {
       max-width: 1440px;
       margin: 0 auto;
@@ -359,9 +349,6 @@
       box-shadow: 0 6px 16px rgba(194, 29, 29, 0.1);
     }
 
-    /* =========================================================
-       4. WORKSPACE SECTION & CARDS
-       ========================================================= */
     .workspace-section {
       max-width: 1440px;
       margin: 40px auto 60px;
@@ -540,9 +527,6 @@
       color: #ffffff;
     }
 
-    /* =========================================================
-       5. IMPACT SECTION & TELEMETRY
-       ========================================================= */
     .impact-section {
       max-width: 1440px;
       margin: 8px auto 56px;
@@ -605,9 +589,6 @@
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
     }
 
-    /* =========================================================
-       6. SUPPORT FAB
-       ========================================================= */
     .support-fab {
       position: fixed;
       bottom: 32px;
@@ -696,7 +677,6 @@
       display: block;
     }
 
-    /* MOBILE RESPONSIVE TWEAKS: COMPLETELY HIDE HERO SECTION ON PHONES */
     @media (max-width: 768px) {
       .hero-video-stage-backdrop,
       .hero-stage {
@@ -1026,7 +1006,6 @@
 
   <script src="common.js?v=21.0"></script>
 
-  <!-- 1. INSTANT SEARCH & FILTER SCRIPT -->
   <script>
     const searchInput = document.getElementById('moduleFilterInput');
     const cards = document.querySelectorAll('.module-card');
@@ -1064,7 +1043,6 @@
     }
   </script>
 
-  <!-- 2. PAGE OPEN SLIDE-UP INITIALIZER -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
@@ -1075,7 +1053,6 @@
     });
   </script>
 
-  <!-- 3. PURE INVISIBLE-TO-VISIBLE SCROLL OBSERVER -->
   <script>
     (function initPureFadeObserver() {
       const fadeElements = document.querySelectorAll('.fade-reveal');
@@ -1102,7 +1079,6 @@
     })();
   </script>
 
-  <!-- 4. SUPPORT FAB SCROLL REVEAL -->
   <script>
     (function initFABScrollReveal() {
       const bubble = document.querySelector('.support-msg-bubble');
@@ -1158,7 +1134,7 @@
     })();
   </script>
 
-  <!-- 5. FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
+  <!-- FIREBASE REALTIME PRESENCE & LIVE COUNTERS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
