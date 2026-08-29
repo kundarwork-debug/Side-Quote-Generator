@@ -366,10 +366,11 @@
       display: inline-flex;
       align-items: center;
       background: #ffffff;
-      border: 1px solid var(--border-subtle);
+      border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       padding: 3px 6px 3px 14px;
       transition: all 0.2s ease;
+      gap: 4px;
     }
 
     .filter-item-wrapper.active {
@@ -388,14 +389,14 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 4px 5px 0;
+      padding: 5px 2px 5px 0;
     }
 
     .filter-item-wrapper.active .filter-btn-text {
       color: #ffffff;
     }
 
-    .btn-inline-rename {
+    .btn-inline-rename, .btn-inline-delete {
       background: transparent;
       border: none;
       color: var(--text-muted);
@@ -403,8 +404,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       transition: background 0.2s ease, color 0.2s ease;
     }
@@ -414,12 +415,19 @@
       color: var(--primary);
     }
 
-    .filter-item-wrapper.active .btn-inline-rename {
-      color: rgba(255, 255, 255, 0.8);
+    .btn-inline-delete:hover {
+      background: rgba(220, 38, 38, 0.12);
+      color: #dc2626;
     }
 
-    .filter-item-wrapper.active .btn-inline-rename:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .filter-item-wrapper.active .btn-inline-rename,
+    .filter-item-wrapper.active .btn-inline-delete {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .filter-item-wrapper.active .btn-inline-rename:hover,
+    .filter-item-wrapper.active .btn-inline-delete:hover {
+      background: rgba(255, 255, 255, 0.25);
       color: #ffffff;
     }
 
@@ -452,6 +460,7 @@
       background: #0f172a;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
 
     .media-preview-wrap img, .media-preview-wrap video {
@@ -461,12 +470,64 @@
       display: block;
     }
 
-    .video-optimized {
-      background-color: #050811;
+    /* LIGHTBOX MODAL VIEWER */
+    .media-lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
     }
 
-    .img-optimized {
-      content-visibility: auto;
+    .media-lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-content-box {
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .lightbox-content-box img, .lightbox-content-box video {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .btn-lightbox-close {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-lightbox-close:hover {
+      background: var(--primary);
     }
 
     .media-info {
@@ -593,9 +654,19 @@
       <h3>Access Denied</h3>
       <p>
         The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
-        Only authorized admin accounts can delete media assets.
+        Only authorized admin accounts can delete folders or media assets.
       </p>
       <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
+    </div>
+  </div>
+
+  <!-- MEDIA LIGHTBOX MODAL VIEWER -->
+  <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
+    <div class="lightbox-content-box" id="lightboxContainer">
+      <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div id="lightboxMediaSlot" style="width: 100%; display: flex; justify-content: center;"></div>
     </div>
   </div>
 
@@ -794,6 +865,8 @@
 
     function renderFolderControls() {
       const filterBar = document.getElementById('filterBar');
+      const adminGranted = isCurrentUserAdmin();
+
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
           <button type="button" class="filter-btn-text" onclick="loadGalleryMedia('')">
@@ -807,9 +880,14 @@
           <button type="button" class="filter-btn-text" onclick="loadGalleryMedia('${folder.id}')">
             <span class="material-symbols-outlined" style="font-size: 17px;">${folder.icon || 'folder'}</span> ${folder.label}
           </button>
-          <button type="button" class="btn-inline-rename" title="Rename Folder Label" onclick="handleRenameFolder('${folder.id}', event)">
-            <span class="material-symbols-outlined" style="font-size: 15px;">edit</span>
-          </button>
+          ${adminGranted ? `
+            <button type="button" class="btn-inline-rename" title="Rename Folder" onclick="handleRenameFolder('${folder.id}', event)">
+              <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+            </button>
+            <button type="button" class="btn-inline-delete" title="Delete Folder" onclick="handleDeleteFolder('${folder.id}', event)">
+              <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+            </button>
+          ` : ''}
         </div>
       `).join('');
 
@@ -843,6 +921,11 @@
 
     function handleRenameFolder(folderId, evt) {
       evt.stopPropagation();
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only administrators can rename folders.");
+        return;
+      }
+
       const folder = foldersList.find(f => f.id === folderId);
       if (!folder) return;
 
@@ -853,6 +936,38 @@
         if (currentActiveFolder === folderId) {
           loadGalleryMedia(folderId);
         }
+      }
+    }
+
+    async function handleDeleteFolder(folderId, evt) {
+      evt.stopPropagation();
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only authorized administrators can delete folders.");
+        return;
+      }
+
+      const folder = foldersList.find(f => f.id === folderId);
+      if (!folder) return;
+
+      const confirmed = confirm(`Are you sure you want to delete folder "${folder.label}" and all files inside it?`);
+      if (!confirmed) return;
+
+      try {
+        const { data: files } = await supabaseClient.storage.from(BUCKET_NAME).list(folderId, { limit: 500 });
+        if (files && files.length > 0) {
+          const filePaths = files.map(f => `${folderId}/${f.name}`);
+          await supabaseClient.storage.from(BUCKET_NAME).remove(filePaths);
+        }
+
+        foldersList = foldersList.filter(f => f.id !== folderId);
+        saveFolderState();
+
+        if (currentActiveFolder === folderId) {
+          loadGalleryMedia('');
+        }
+      } catch (err) {
+        console.error("Folder deletion error:", err);
+        alert(`Failed to delete folder: ${err.message || 'Network error'}`);
       }
     }
 
@@ -971,28 +1086,26 @@
           const isVideo = file.name.match(/\.(mp4|webm|ogg|mov)$/i);
           const matchedFolder = foldersList.find(f => f.id === file.folder);
           const folderBadge = matchedFolder ? matchedFolder.label : 'General';
-          const displayName = file.name.replace(/^\d+_/, '');
 
           return `
             <div class="media-card">
-              <div class="media-preview-wrap">
+              <div class="media-preview-wrap" onclick="openLightbox('${publicUrl}', ${isVideo})">
                 ${isVideo 
                   ? `<video 
-                       class="video-optimized"
+                       class="video-optimized" 
                        src="${publicUrl}" 
-                       autoplay
-                       loop
-                       muted
-                       playsinline
-                       controls 
+                       autoplay 
+                       loop 
+                       muted 
+                       playsinline 
                        preload="auto">
                      </video>` 
                   : `<img 
-                       class="img-optimized"
+                       class="img-optimized" 
                        src="${publicUrl}" 
                        alt="${file.name}" 
                        loading="lazy" 
-                       decoding="async"
+                       decoding="async" 
                        onerror="this.src='logo.svg'">`
                 }
               </div>
@@ -1022,6 +1135,29 @@
             <button class="btn-retry" onclick="loadGalleryMedia('${folderPath}')">Retry Connection</button>
           </div>
         `;
+      }
+    }
+
+    // LIGHTBOX VIEWER CONTROLS
+    function openLightbox(url, isVideo) {
+      const overlay = document.getElementById('mediaLightboxModal');
+      const slot = document.getElementById('lightboxMediaSlot');
+
+      if (isVideo) {
+        slot.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
+      } else {
+        slot.innerHTML = `<img src="${url}" alt="Expanded Media View" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">`;
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeLightbox(evt) {
+      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
+        const overlay = document.getElementById('mediaLightboxModal');
+        const slot = document.getElementById('lightboxMediaSlot');
+        overlay.classList.remove('active');
+        slot.innerHTML = '';
       }
     }
 
