@@ -54,7 +54,7 @@
     }
 
     button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
-    .hamburger-btn, .support-btn, .cta-arrow {
+    .hamburger-btn, .support-btn, .cta-arrow, .header-shortcut-btn {
       touch-action: manipulation !important;
     }
 
@@ -63,7 +63,8 @@
     .module-card:active, 
     .tech-chip:active, 
     .nav-link:active,
-    .m3-about-btn:active {
+    .m3-about-btn:active,
+    .header-shortcut-btn:active {
       transform: scale(0.96) !important;
       transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
       filter: brightness(0.92) !important;
@@ -106,7 +107,8 @@
 .is-native-apk .m3-about-btn,
 .is-native-apk .hamburger-btn,
 .is-native-apk .support-btn,
-.is-native-apk .cta-arrow {
+.is-native-apk .cta-arrow,
+.is-native-apk .header-shortcut-btn {
   touch-action: manipulation !important;
 }
 
@@ -115,7 +117,8 @@
 .is-native-apk .module-card:active, 
 .is-native-apk .tech-chip:active, 
 .is-native-apk .nav-link:active,
-.is-native-apk .m3-about-btn:active {
+.is-native-apk .m3-about-btn:active,
+.is-native-apk .header-shortcut-btn:active {
   transform: scale(0.96) !important;
   transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
   filter: brightness(0.92) !important;
@@ -219,6 +222,53 @@
 
 .logo-text span {
   color: var(--md-sys-color-primary);
+}
+
+/* Header Right Actions Container */
+.header-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Quick Links Shortcut Buttons (Quotation & Gallery) */
+.header-quick-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-shortcut-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--md-sys-color-surface-container-low);
+  border: 1px solid var(--md-sys-color-outline-variant);
+  color: var(--md-sys-color-on-surface);
+  text-decoration: none;
+  padding: 7px 14px;
+  border-radius: var(--md-sys-shape-corner-full);
+  font-size: 13px;
+  font-weight: 700;
+  transition: var(--transition-m3);
+}
+
+.header-shortcut-btn:hover {
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-primary);
+  border-color: rgba(185, 28, 28, 0.3);
+  transform: translateY(-1px);
+}
+
+.header-shortcut-btn.active {
+  background: var(--md-sys-color-primary);
+  color: #ffffff;
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 3px 10px rgba(185, 28, 28, 0.2);
+}
+
+.header-shortcut-btn .material-symbols-outlined {
+  font-size: 18px;
 }
 
 /* =========================================================
@@ -406,7 +456,7 @@
   transition: var(--transition-m3);
 }
 
-.about-github-avatar {
+about-github-avatar {
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -429,6 +479,16 @@
   .footer-inner {
     padding: 0 16px;
   }
+  
+  /* Hide shortcut text labels on smaller screens to save space, keeping only icons */
+  .header-shortcut-btn .shortcut-label {
+    display: none;
+  }
+  .header-shortcut-btn {
+    padding: 8px;
+    border-radius: 50%;
+  }
+
   .nav-menu {
     right: 16px;
     width: calc(100vw - 32px);
