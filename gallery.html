@@ -243,7 +243,7 @@
       background: #b91c1c;
     }
 
-    /* UPLOAD ACTION PANEL */
+    /* UPLOAD ACTION PANEL (ADMIN ONLY) */
     .unified-action-panel {
       background: var(--surface-card);
       border: 1.5px dashed rgba(194, 29, 29, 0.35);
@@ -251,6 +251,26 @@
       padding: 24px 28px;
       margin-bottom: 32px;
       box-shadow: var(--shadow-card);
+      display: none; /* Hidden by default for normal/unauthorized users */
+    }
+
+    .unified-action-panel.visible-admin {
+      display: block; /* Shown only for authorized admins */
+    }
+
+    /* GENERAL DUMP REDIRECT PANEL (FOR ALL USERS) */
+    .general-upload-panel {
+      background: var(--surface-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 22px 28px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
     }
 
     .upload-action-content {
@@ -259,6 +279,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 20px;
+      width: 100%;
     }
 
     .panel-head {
@@ -294,8 +315,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      flex: 1;
-      max-width: 520px;
     }
 
     .folder-select {
@@ -344,6 +363,7 @@
       box-shadow: 0 4px 14px rgba(194, 29, 29, 0.2);
       flex-shrink: 0;
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .btn-action-primary:hover {
@@ -717,8 +737,8 @@
       </div>
     </div>
 
-    <!-- CLEAN UPLOAD PANEL -->
-    <div class="unified-action-panel">
+    <!-- ADMIN-ONLY DIRECT UPLOAD PANEL -->
+    <div class="unified-action-panel" id="adminUploadPanel">
       <div class="upload-action-content">
         
         <div class="panel-head">
@@ -726,7 +746,7 @@
             <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
           </div>
           <div>
-            <h3>Upload Media Asset</h3>
+            <h3>Upload Media Asset (Admin)</h3>
             <p id="uploadStatusText">Select destination category and upload image/video</p>
           </div>
         </div>
@@ -742,6 +762,27 @@
           </button>
         </div>
 
+      </div>
+    </div>
+
+    <!-- GENERAL ARCHIVE GALLERY BUTTON (REDIRECTS TO dump.html FOR ALL USERS) -->
+    <div class="general-upload-panel">
+      <div class="upload-action-content">
+        <div class="panel-head">
+          <div class="panel-icon-badge">
+            <span class="material-symbols-outlined" style="font-size: 24px;">folder_open</span>
+          </div>
+          <div>
+            <h3>Archive Gallery Repository</h3>
+            <p>Access and upload files directly to the archive gallery repository.</p>
+          </div>
+        </div>
+        <div>
+          <a href="dump.html" class="btn-action-primary">
+            <span class="material-symbols-outlined" style="font-size: 18px;">inventory_2</span>
+            <span>Archive Gallery</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -830,6 +871,7 @@
       const authBtn = document.getElementById('adminAuthBtn');
       const authLabel = document.getElementById('adminBtnLabel');
       const authContainer = document.getElementById('adminAuthContainer');
+      const adminUploadPanel = document.getElementById('adminUploadPanel');
 
       const existingBadge = document.getElementById('adminStatusBadge');
       if (existingBadge) existingBadge.remove();
@@ -838,6 +880,7 @@
         if (isCurrentUserAdmin()) {
           authBtn.classList.add('logged-in');
           authLabel.textContent = "Sign Out";
+          if (adminUploadPanel) adminUploadPanel.classList.add('visible-admin');
 
           const badge = document.createElement('span');
           badge.id = 'adminStatusBadge';
@@ -845,11 +888,13 @@
           badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
           authContainer.insertBefore(badge, authBtn);
         } else {
+          if (adminUploadPanel) adminUploadPanel.classList.remove('visible-admin');
           showUnauthorizedWarning(user.email);
         }
       } else {
         authBtn.classList.remove('logged-in');
         authLabel.textContent = "Admin Login";
+        if (adminUploadPanel) adminUploadPanel.classList.remove('visible-admin');
       }
 
       renderFolderControls();
@@ -933,23 +978,25 @@
         </div>
       `).join('');
 
-      tabsHtml += `
-        <button type="button" class="btn-add-folder-chip" onclick="handleCreateFolder()">
-          <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span> Add Folder
-        </button>
-      `;
+      if (adminGranted) {
+        tabsHtml += `
+          <button type="button" class="btn-add-folder-chip" onclick="handleCreateFolder()">
+            <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span> Add Folder
+          </button>
+        `;
+      }
 
       filterBar.innerHTML = tabsHtml;
 
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      const prevVal = uploadSelect.value;
-
-      let selectOptions = `<option value="" disabled ${!prevVal ? 'selected' : ''}>-- Select Folder (Compulsory) * --</option>`;
-      selectOptions += foldersList.map(f => `
-        <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
-      `).join('');
-
-      uploadSelect.innerHTML = selectOptions;
+      if (uploadSelect) {
+        const prevVal = uploadSelect.value;
+        let selectOptions = `<option value="" disabled ${!prevVal ? 'selected' : ''}>-- Select Folder (Compulsory) * --</option>`;
+        selectOptions += foldersList.map(f => `
+          <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
+        `).join('');
+        uploadSelect.innerHTML = selectOptions;
+      }
     }
 
     function triggerCompulsoryUpload() {
@@ -1344,12 +1391,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadFolderState();
       
-      supabaseClient.auth.getSession().then(({ data }) => {
-        if (data && data.session) {
-          handleUserSession(data.session.user);
-        } else {
-          handleUserSession(null);
-        }
+      supabaseClient.auth.getSession().then(() => {
+        // Initial state handled via listener
       }).catch(() => {
         handleUserSession(null);
       });
