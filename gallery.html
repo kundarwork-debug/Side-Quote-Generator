@@ -52,6 +52,50 @@
       position: relative;
     }
 
+    /* FULL PAGE SMOOTH LOADING OVERLAY */
+    .app-loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-base);
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .app-loading-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-pulse-ring {
+      width: 64px;
+      height: 64px;
+      border: 4px solid var(--border-subtle);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.9s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+      margin-bottom: 20px;
+    }
+
+    .loading-brand-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .loading-sub-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
     /* VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
     body::before {
       content: "";
@@ -838,6 +882,13 @@
 </head>
 <body>
 
+  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
+  <div class="app-loading-overlay" id="appLoadingOverlay">
+    <div class="loading-pulse-ring"></div>
+    <div class="loading-brand-text">APML Portal</div>
+    <div class="loading-sub-text">Loading standards &amp; media assets...</div>
+  </div>
+
   <div id="header-container"></div>
 
   <!-- CENTERED TYPE "delete" CONFIRMATION MODAL -->
@@ -1010,9 +1061,18 @@
     let currentUser = null;
     let pendingDeleteKey = null;
 
-    // Pagination limit configuration
     let displayedItemsCount = 12;
     const ITEMS_PER_PAGE = 12;
+
+    const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v1';
+    const CACHE_KEY_FOLDERS = 'apml_gallery_folders_cache_v1';
+
+    function hidePageLoader() {
+      const overlay = document.getElementById('appLoadingOverlay');
+      if (overlay && !overlay.classList.contains('fade-out')) {
+        overlay.classList.add('fade-out');
+      }
+    }
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
@@ -1158,7 +1218,7 @@
         return;
       }
       currentActiveFolder = folderId;
-      displayedItemsCount = ITEMS_PER_PAGE; // Reset pagination limit on folder switch
+      displayedItemsCount = ITEMS_PER_PAGE;
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
@@ -1291,6 +1351,15 @@
       }, 4000);
     }
 
+    const cachedMedia = localStorage.getItem(CACHE_KEY_MEDIA);
+    if (cachedMedia) {
+      try {
+        liveMediaItems = JSON.parse(cachedMedia);
+        renderGallery();
+        hidePageLoader();
+      } catch (e) {}
+    }
+
     mediaRef.on('value', (snapshot) => {
       const data = snapshot.val();
       liveMediaItems = [];
@@ -1301,7 +1370,12 @@
         });
       }
 
+      try {
+        localStorage.setItem(CACHE_KEY_MEDIA, JSON.stringify(liveMediaItems));
+      } catch (e) {}
+
       renderGallery();
+      hidePageLoader();
     });
 
     function promptDeleteConfirmation(firebaseKey, fileName) {
@@ -1436,7 +1510,6 @@
         return;
       }
 
-      // Slice items according to current pagination limit
       const paginatedItems = filteredItems.slice(0, displayedItemsCount);
 
       grid.innerHTML = paginatedItems.map(item => {
@@ -1480,14 +1553,12 @@
         `;
       }).join('');
 
-      // Show or hide the "Show More" button based on remaining items
       if (displayedItemsCount < filteredItems.length) {
         showMoreWrap.style.display = 'flex';
       } else {
         showMoreWrap.style.display = 'none';
       }
 
-      // Asynchronously compress image elements to low quality for fast rendering
       paginatedItems.forEach(async item => {
         if (!item.isVideo) {
           const lowQualThumb = await createOptimizedThumbnailUrl(item.url, false);
@@ -1529,6 +1600,9 @@
       supabaseClient.auth.onAuthStateChange((_event, session) => {
         handleUserSession(session ? session.user : null);
       });
+
+      // Fallback timer to hide loader if connection is slow
+      setTimeout(hidePageLoader, 3000);
     });
   </script>
 </body>
