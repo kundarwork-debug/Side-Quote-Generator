@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>APML Media Drop — Telegram Cloud</title>
+  <title>APML Unlimited Media — Cloud Storage &amp; Archive</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -84,6 +84,7 @@
 
     .dump-main-wrap {
       margin-top: 40px !important;
+      margin-bottom: 60px !important;
     }
   </style>
 </head>
@@ -96,10 +97,10 @@
     
     <div class="text-center max-w-2xl mx-auto mb-8">
       <h1 class="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-        Archive Gallery Drop
+        APML Unlimited Media Upload
       </h1>
       <p class="text-sm text-slate-500 mt-2">
-        Upload operational media to the shared archive. Files are safely stored and synced across all devices in real-time.
+        Upload and store unlimited operational photos and videos. Files are instantly backed up and synced across all devices in real-time.
       </p>
     </div>
 
@@ -109,14 +110,14 @@
       onclick="document.getElementById('fileInput').click()"
     >
       <div class="w-14 h-14 rounded-2xl bg-red-50 text-[#c21d1d] flex items-center justify-center mx-auto mb-4">
-        <span class="material-symbols-outlined text-3xl">upload_file</span>
+        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
       </div>
       
       <p class="text-base font-bold text-slate-900">
-        Drag &amp; drop files here, or <span class="text-[#c21d1d] underline">browse files</span>
+        Drag &amp; drop files here to upload, or <span class="text-[#c21d1d] underline">browse files</span>
       </p>
       <p class="text-xs text-slate-500 mt-1 font-medium">
-        Images (PNG, JPG, WEBP) &bull; Videos (MP4, MOV, WEBM)
+        Unlimited Images (PNG, JPG, WEBP) &bull; Videos (MP4, MOV, WEBM)
       </p>
 
       <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFiles(event.target.files)">
@@ -134,7 +135,7 @@
 
     <div class="flex items-center justify-between mt-16 pb-4 border-b border-slate-200">
       <div class="flex items-center gap-2">
-        <h2 class="font-bold text-xl text-slate-900">Archive Gallery Feed</h2>
+        <h2 class="font-bold text-xl text-slate-900">Uploaded Media Feed</h2>
         <span id="totalCount" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 items</span>
       </div>
       <button onclick="location.reload()" class="px-3 py-1.5 rounded-xl glass-panel text-xs font-bold flex items-center gap-1.5 hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
@@ -143,7 +144,7 @@
     </div>
 
     <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-      <div class="col-span-full py-12 text-center text-xs font-mono text-slate-400">Loading gallery feed...</div>
+      <div class="col-span-full py-12 text-center text-xs font-mono text-slate-400">Loading media feed...</div>
     </div>
 
     <div id="emptyState" class="hidden py-16 text-center">
@@ -151,7 +152,7 @@
         <span class="material-symbols-outlined text-3xl">photo_library</span>
       </div>
       <p class="text-sm font-bold text-slate-900">No media uploaded yet</p>
-      <p class="text-xs text-slate-500 mt-0.5">Drop files above to start populating the shared gallery archive.</p>
+      <p class="text-xs text-slate-500 mt-0.5">Drop files above to start populating the unlimited media upload repository.</p>
     </div>
 
   </main>
