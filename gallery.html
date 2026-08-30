@@ -178,6 +178,133 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
+    /* CENTERED CONFIRMATION / TYPE-DELETE MODAL */
+    .delete-confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .delete-confirm-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .delete-confirm-modal {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid #fee2e2;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .delete-confirm-overlay.active .delete-confirm-modal {
+      transform: scale(1);
+    }
+
+    .delete-warning-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .delete-confirm-modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .delete-confirm-modal p {
+      font-size: 13.5px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .delete-confirm-modal strong {
+      color: #111827;
+    }
+
+    .delete-input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease;
+    }
+
+    .delete-input-field:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    }
+
+    .delete-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modal-cancel, .btn-modal-confirm {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-modal-cancel {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-modal-confirm {
+      background: #dc2626;
+      color: #ffffff;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .btn-modal-confirm.enabled {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .btn-modal-confirm.enabled:hover {
+      background: #b91c1c;
+    }
+
     /* POPUP WARNING MODAL */
     .auth-warning-overlay {
       position: fixed;
@@ -679,6 +806,22 @@
 
   <div id="header-container"></div>
 
+  <!-- CENTERED TYPE "delete" CONFIRMATION MODAL -->
+  <div class="delete-confirm-overlay" id="deleteConfirmModal">
+    <div class="delete-confirm-modal">
+      <div class="delete-warning-icon">
+        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
+      </div>
+      <h3>Are you sure?</h3>
+      <p>This will move <strong id="deleteItemNameDisplay">this file</strong> to the Deleted folder. Type <strong>delete</strong> below to confirm.</p>
+      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type delete to confirm" oninput="checkDeleteKeyword(this)">
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
+      </div>
+    </div>
+  </div>
+
   <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
   <div class="auth-warning-overlay" id="authWarningModal">
     <div class="auth-warning-modal">
@@ -735,8 +878,8 @@
             <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
           </div>
           <div>
-            <h3>Upload Media Asset</h3>
-            <p id="uploadStatusText">Select destination category and upload image/video</p>
+            <h3>Upload Multiple Media Assets</h3>
+            <p id="uploadStatusText">Select destination category and choose multiple images or videos</p>
           </div>
         </div>
 
@@ -744,10 +887,10 @@
           <select id="uploadFolderSelect" class="folder-select" required onchange="this.classList.remove('select-highlight-error')">
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
-          <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm,video/quicktime" style="display: none;" onchange="handleTelegramUpload(this.files)">
+          <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm,video/quicktime" multiple style="display: none;" onchange="handleTelegramUpload(this.files)">
           <button type="button" class="btn-action-primary" id="uploadTriggerBtn" onclick="triggerCompulsoryUpload()">
             <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
-            <span>Upload</span>
+            <span>Upload Files</span>
           </button>
         </div>
 
@@ -824,6 +967,7 @@
     let foldersList = [];
     let liveMediaItems = [];
     let currentUser = null;
+    let pendingDeleteKey = null;
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
@@ -1046,10 +1190,11 @@
       }
 
       uploadBtn.disabled = true;
+      let successCount = 0;
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        statusText.innerHTML = `<span style="color: var(--primary);">Uploading ${file.name} to <strong>${folder}</strong>...</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary);">Uploading file ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
           let data = await uploadToTelegram(file, PRIMARY_CHAT_ID);
@@ -1080,18 +1225,19 @@
             timestamp: Date.now()
           });
 
-          statusText.innerHTML = `<span style="color: #10b981;">Uploaded successfully to ${folder}!</span>`;
+          successCount++;
         } catch (err) {
-          alert(`Error uploading "${file.name}":\n${err.message}`);
-          statusText.innerHTML = `<span style="color: var(--primary);">Upload failed.</span>`;
+          console.error(`Error uploading "${file.name}":`, err.message);
         }
       }
 
       document.getElementById('mediaFileInput').value = '';
       uploadBtn.disabled = false;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} of ${files.length} files to ${folder}!</span>`;
+      
       setTimeout(() => {
-        statusText.textContent = "Select destination category and upload image/video";
-      }, 2000);
+        statusText.textContent = "Select destination category and choose multiple images or videos";
+      }, 4000);
     }
 
     mediaRef.on('value', (snapshot) => {
@@ -1107,11 +1253,37 @@
       renderGallery();
     });
 
-    // Move media item to "deleted" folder
-    async function moveToDeleted(firebaseKey) {
-      if (!confirm("Are you sure you want to move this media to the Deleted folder?")) return;
+    // Prompt centered confirmation modal to type "delete"
+    function promptDeleteConfirmation(firebaseKey, fileName) {
+      pendingDeleteKey = firebaseKey;
+      document.getElementById('deleteItemNameDisplay').textContent = fileName || 'this file';
+      document.getElementById('deleteInputKeyword').value = '';
+      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
+      document.getElementById('deleteConfirmModal').classList.add('active');
+      document.getElementById('deleteInputKeyword').focus();
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteKey = null;
+      document.getElementById('deleteConfirmModal').classList.remove('active');
+    }
+
+    function checkDeleteKeyword(input) {
+      const btn = document.getElementById('btnConfirmDeleteAction');
+      if (input.value.trim().toLowerCase() === 'delete') {
+        btn.classList.add('enabled');
+      } else {
+        btn.classList.remove('enabled');
+      }
+    }
+
+    async function executePendingDelete() {
+      if (!pendingDeleteKey) return;
+      const keyToMove = pendingDeleteKey;
+      closeDeleteModal();
+
       try {
-        await mediaRef.child(firebaseKey).update({ folder: 'deleted' });
+        await mediaRef.child(keyToMove).update({ folder: 'deleted' });
       } catch (err) {
         alert("Failed to move item: " + err.message);
       }
@@ -1198,6 +1370,7 @@
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const isDeletedFolder = item.folder === 'deleted';
+        const safeName = (item.name || 'file').replace(/'/g, "\\'");
 
         return `
           <div class="media-card">
@@ -1224,7 +1397,7 @@
                     <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
                   </button>
                 ` : '') : `
-                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); moveToDeleted('${item.key}')" title="Delete">
+                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); promptDeleteConfirmation('${item.key}', '${safeName}')" title="Delete">
                     <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
                   </button>
                 `}
