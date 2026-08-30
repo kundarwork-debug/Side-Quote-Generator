@@ -49,6 +49,28 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+    }
+
+    /* VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 100vh;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(194, 29, 29, 0.15) 0%, rgba(225, 29, 72, 0.1) 40%, rgba(245, 158, 11, 0.06) 70%, rgba(253, 248, 245, 0.95) 100%);
+      background-size: 300% 300%;
+      animation: liveThemeShift 14s ease infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes liveThemeShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     #header-container {
@@ -765,22 +787,22 @@
       </div>
     </div>
 
-    <!-- GENERAL ARCHIVE GALLERY BUTTON (REDIRECTS TO dump.html FOR ALL USERS) -->
+    <!-- GENERAL UNLIMITED MEDIA UPLOAD PANEL (FOR ALL USERS) -->
     <div class="general-upload-panel">
       <div class="upload-action-content">
         <div class="panel-head">
           <div class="panel-icon-badge">
-            <span class="material-symbols-outlined" style="font-size: 24px;">folder_open</span>
+            <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
           </div>
           <div>
-            <h3>Archive Gallery Repository</h3>
-            <p>Access and upload files directly to the archive gallery repository.</p>
+            <h3>APML Unlimited Media Upload</h3>
+            <p>Upload and share your operational photos and videos instantly with the team.</p>
           </div>
         </div>
         <div>
           <a href="dump.html" class="btn-action-primary">
-            <span class="material-symbols-outlined" style="font-size: 18px;">inventory_2</span>
-            <span>Archive Gallery</span>
+            <span class="material-symbols-outlined" style="font-size: 18px;">add_box</span>
+            <span>Upload Media Now</span>
           </a>
         </div>
       </div>
