@@ -14,6 +14,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+  <!-- SUPABASE JS CLIENT -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -120,6 +123,145 @@
       color: var(--text-muted);
       font-size: 15px;
       font-weight: 500;
+    }
+
+    /* ADMIN AUTH BUTTON STYLES */
+    .admin-action-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-admin-auth {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+    }
+
+    .btn-admin-auth:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-admin-auth.logged-in {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #1e293b;
+      box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+    }
+
+    .admin-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-authorized {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* POPUP WARNING MODAL */
+    .auth-warning-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .auth-warning-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .auth-warning-modal {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 20px 40px -8px rgba(0,0,0,0.25);
+      border: 1.5px solid #fee2e2;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .auth-warning-overlay.active .auth-warning-modal {
+      transform: scale(1);
+    }
+
+    .warning-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .auth-warning-modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .auth-warning-modal p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .auth-warning-modal strong {
+      color: #dc2626;
+      word-break: break-all;
+    }
+
+    .btn-warning-dismiss {
+      background: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s ease;
+    }
+
+    .btn-warning-dismiss:hover {
+      background: #b91c1c;
     }
 
     /* UPLOAD ACTION PANEL */
@@ -366,25 +508,74 @@
     .card-actions-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
+    /* Big Download Button */
     .btn-download {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      color: var(--text-muted);
-      background: transparent;
+      gap: 6px;
+      color: #ffffff;
+      background: var(--primary);
       border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
       cursor: pointer;
       text-decoration: none;
       font-size: 13px;
       font-weight: 700;
-      transition: color 0.2s ease;
+      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.2);
+      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .btn-download:hover {
-      color: var(--primary);
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Small Delete / Action Buttons */
+    .btn-delete, .btn-restore, .btn-perm-delete {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+    }
+
+    .btn-delete {
+      color: #dc2626;
+      background: #fee2e2;
+    }
+
+    .btn-delete:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .btn-restore {
+      color: #059669;
+      background: #d1fae5;
+    }
+
+    .btn-restore:hover {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .btn-perm-delete {
+      color: #991b1b;
+      background: #f87171;
+    }
+
+    .btn-perm-delete:hover {
+      background: #991b1b;
+      color: #ffffff;
     }
 
     /* LIGHTBOX MODAL VIEWER */
@@ -488,6 +679,21 @@
 
   <div id="header-container"></div>
 
+  <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
+  <div class="auth-warning-overlay" id="authWarningModal">
+    <div class="auth-warning-modal">
+      <div class="warning-icon-wrap">
+        <span class="material-symbols-outlined" style="font-size: 32px;">gpp_bad</span>
+      </div>
+      <h3>Access Denied</h3>
+      <p>
+        The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
+        Only authorized admin accounts (`kundar.work@gmail.com`, `kundar701@gmail.com`) can access the Deleted folder and admin controls.
+      </p>
+      <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
+    </div>
+  </div>
+
   <!-- MEDIA LIGHTBOX MODAL VIEWER -->
   <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
     <div class="lightbox-content-box" id="lightboxContainer">
@@ -504,6 +710,19 @@
       <div class="gallery-header">
         <h1 class="gallery-title">Standards &amp; Media <span>Gallery</span></h1>
         <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation.</p>
+      </div>
+
+      <!-- GOOGLE ADMIN AUTH BUTTON -->
+      <div class="admin-action-wrap" id="adminAuthContainer">
+        <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="adminBtnLabel">Admin Login</span>
+        </button>
       </div>
     </div>
 
@@ -539,12 +758,12 @@
     <div class="filter-bar" id="filterBar"></div>
 
     <!-- MEDIA GRID -->
-    <div class="media-grid" id="mediaGrid">
+    <main class="media-grid" id="mediaGrid">
       <div class="state-msg">
         <div class="spinner"></div>
         Syncing live cloud storage feed...
       </div>
-    </div>
+    </main>
 
   </main>
 
@@ -557,6 +776,13 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
+    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+
     const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
     const PRIMARY_CHAT_ID = "-1004302268775";
     const FALLBACK_CHAT_ID = "-4302268775";
@@ -575,6 +801,11 @@
     const mediaRef = db.ref("telegram_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
+    const AUTHORIZED_ADMIN_EMAILS = [
+      "kundar.work@gmail.com",
+      "kundar701@gmail.com"
+    ];
+
     const DEFAULT_FOLDERS = [
       { id: 'truck', label: 'Truck & Fleet', icon: 'local_shipping' },
       { id: 'packing-images', label: 'Packing Images', icon: 'inventory_2' },
@@ -585,28 +816,92 @@
       { id: 'electronic', label: 'Electronic', icon: 'devices' },
       { id: 'furniture', label: 'Furniture', icon: 'chair' },
       { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' },
-      { id: 'others', label: 'Others', icon: 'folder_special' }
+      { id: 'others', label: 'Others', icon: 'folder_special' },
+      { id: 'deleted', label: 'Deleted', icon: 'delete_sweep' }
     ];
 
     let currentActiveFolder = '';
     let foldersList = [];
     let liveMediaItems = [];
+    let currentUser = null;
+
+    function isCurrentUserAdmin() {
+      if (!currentUser || !currentUser.email) return false;
+      const email = currentUser.email.trim().toLowerCase();
+      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === email);
+    }
+
+    function showUnauthorizedWarning(email) {
+      document.getElementById('unauthorizedEmailDisplay').textContent = email;
+      document.getElementById('authWarningModal').classList.add('active');
+    }
+
+    async function dismissWarningModal() {
+      document.getElementById('authWarningModal').classList.remove('active');
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      handleUserSession(null);
+    }
+
+    async function handleGoogleAdminAuth() {
+      if (currentUser) {
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        handleUserSession(null);
+      } else {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + window.location.pathname
+          }
+        });
+        if (error) alert(`Google login error: ${error.message}`);
+      }
+    }
+
+    function handleUserSession(user) {
+      currentUser = user;
+      const authBtn = document.getElementById('adminAuthBtn');
+      const authLabel = document.getElementById('adminBtnLabel');
+      const authContainer = document.getElementById('adminAuthContainer');
+
+      const existingBadge = document.getElementById('adminStatusBadge');
+      if (existingBadge) existingBadge.remove();
+
+      if (user) {
+        if (isCurrentUserAdmin()) {
+          authBtn.classList.add('logged-in');
+          authLabel.textContent = "Sign Out";
+
+          const badge = document.createElement('span');
+          badge.id = 'adminStatusBadge';
+          badge.className = 'admin-status-badge badge-authorized';
+          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
+          authContainer.insertBefore(badge, authBtn);
+        } else {
+          showUnauthorizedWarning(user.email);
+        }
+      } else {
+        authBtn.classList.remove('logged-in');
+        authLabel.textContent = "Admin Login";
+      }
+
+      loadFolderState();
+    }
 
     function loadFolderState() {
-      const stored = localStorage.getItem('apml_unlimited_gallery_folders_v4');
+      const stored = localStorage.getItem('apml_unlimited_gallery_folders_v7');
       if (stored) {
         try {
           foldersList = JSON.parse(stored);
-          // Remove legacy duplicate 'electronics' if present
-          foldersList = foldersList.filter(f => f.id !== 'electronics');
-          const requiredIds = ['electronic', 'furniture', 'others'];
+          const requiredIds = ['electronic', 'furniture', 'others', 'deleted'];
           requiredIds.forEach(reqId => {
             if (!foldersList.some(f => f.id === reqId)) {
               const def = DEFAULT_FOLDERS.find(d => d.id === reqId);
               if (def) foldersList.push(def);
             }
           });
-          localStorage.setItem('apml_unlimited_gallery_folders_v4', JSON.stringify(foldersList));
+          localStorage.setItem('apml_unlimited_gallery_folders_v7', JSON.stringify(foldersList));
         } catch (e) {
           foldersList = [...DEFAULT_FOLDERS];
         }
@@ -617,12 +912,21 @@
     }
 
     function saveFolderState() {
-      localStorage.setItem('apml_unlimited_gallery_folders_v4', JSON.stringify(foldersList));
+      localStorage.setItem('apml_unlimited_gallery_folders_v7', JSON.stringify(foldersList));
       renderFolderControls();
     }
 
     function renderFolderControls() {
       const filterBar = document.getElementById('filterBar');
+      const adminAuthenticated = isCurrentUserAdmin();
+
+      let visibleFolders = foldersList;
+      if (!adminAuthenticated) {
+        visibleFolders = foldersList.filter(f => f.id !== 'deleted');
+        if (currentActiveFolder === 'deleted') {
+          currentActiveFolder = '';
+        }
+      }
 
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
@@ -632,7 +936,7 @@
         </div>
       `;
 
-      tabsHtml += foldersList.map(folder => `
+      tabsHtml += visibleFolders.map(folder => `
         <div class="filter-item-wrapper ${currentActiveFolder === folder.id ? 'active' : ''}">
           <button type="button" class="filter-btn-text" onclick="switchFolder('${folder.id}')">
             <span class="material-symbols-outlined" style="font-size: 17px;">${folder.icon || 'folder'}</span> ${folder.label}
@@ -651,8 +955,8 @@
       const uploadSelect = document.getElementById('uploadFolderSelect');
       if (uploadSelect) {
         const prevVal = uploadSelect.value;
-        let selectOptions = `<option value="" disabled ${!prevVal ? 'selected' : ''}>-- Select Folder (Compulsory) * --</option>`;
-        selectOptions += foldersList.map(f => `
+        let selectOptions = `<option value="" disabled selected>-- Select Folder (Compulsory) * --</option>`;
+        selectOptions += visibleFolders.filter(f => f.id !== 'deleted').map(f => `
           <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
         `).join('');
         uploadSelect.innerHTML = selectOptions;
@@ -660,11 +964,15 @@
     }
 
     function switchFolder(folderId) {
+      if (folderId === 'deleted' && !isCurrentUserAdmin()) {
+        alert("Access Denied: Only authorized admins can view the Deleted folder.");
+        return;
+      }
       currentActiveFolder = folderId;
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      if (uploadSelect && folderId) {
+      if (uploadSelect && folderId && folderId !== 'deleted') {
         uploadSelect.value = folderId;
         uploadSelect.classList.remove('select-highlight-error');
       }
@@ -694,10 +1002,10 @@
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
 
-      if (!uploadSelect.value) {
+      if (!uploadSelect.value || uploadSelect.value === 'deleted') {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first before uploading!</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder before uploading!</span>`;
         return;
       }
 
@@ -729,10 +1037,10 @@
       const statusText = document.getElementById('uploadStatusText');
       const uploadBtn = document.getElementById('uploadTriggerBtn');
 
-      if (!folder) {
+      if (!folder || folder === 'deleted') {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a folder first!</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
         document.getElementById('mediaFileInput').value = '';
         return;
       }
@@ -799,6 +1107,46 @@
       renderGallery();
     });
 
+    // Move media item to "deleted" folder
+    async function moveToDeleted(firebaseKey) {
+      if (!confirm("Are you sure you want to move this media to the Deleted folder?")) return;
+      try {
+        await mediaRef.child(firebaseKey).update({ folder: 'deleted' });
+      } catch (err) {
+        alert("Failed to move item: " + err.message);
+      }
+    }
+
+    // Restore media item back to a default folder
+    async function restoreMedia(firebaseKey) {
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only admins can restore media.");
+        return;
+      }
+      const targetFolder = prompt("Enter target folder ID to restore to (e.g., packing-images, truck, miscellaneous):", "packing-images");
+      if (!targetFolder || !targetFolder.trim()) return;
+
+      try {
+        await mediaRef.child(firebaseKey).update({ folder: targetFolder.trim().toLowerCase() });
+      } catch (err) {
+        alert("Failed to restore item: " + err.message);
+      }
+    }
+
+    // Permanently delete item from Firebase database
+    async function permanentDelete(firebaseKey) {
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only admins can permanently delete records.");
+        return;
+      }
+      if (!confirm("Permanently delete this record? This action cannot be undone.")) return;
+      try {
+        await mediaRef.child(firebaseKey).remove();
+      } catch (err) {
+        alert("Failed to permanently delete: " + err.message);
+      }
+    }
+
     function incrementGlobalMediaDownloadAndDownload(fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -826,13 +1174,19 @@
 
     function renderGallery() {
       const grid = document.getElementById('mediaGrid');
+      const adminAuthenticated = isCurrentUserAdmin();
       
       let filteredItems = [];
       if (currentActiveFolder === '') {
-        // Exclude "others" folder items when viewing "All Media"
-        filteredItems = liveMediaItems.filter(item => item.folder !== 'others');
+        // Exclude both "others" and "deleted" folder items when viewing "All Media"
+        filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
       } else {
-        filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder);
+        if (currentActiveFolder === 'deleted' && !adminAuthenticated) {
+          currentActiveFolder = '';
+          filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
+        } else {
+          filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder);
+        }
       }
 
       if (!filteredItems.length) {
@@ -843,6 +1197,7 @@
       grid.innerHTML = filteredItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
+        const isDeletedFolder = item.folder === 'deleted';
 
         return `
           <div class="media-card">
@@ -858,9 +1213,21 @@
                 <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderLabel}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')">
+                <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
+                ${isDeletedFolder ? (adminAuthenticated ? `
+                  <button type="button" class="btn-restore" onclick="event.stopPropagation(); restoreMedia('${item.key}')" title="Restore">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">restore</span>
+                  </button>
+                  <button type="button" class="btn-perm-delete" onclick="event.stopPropagation(); permanentDelete('${item.key}')" title="Delete Permanently">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
+                  </button>
+                ` : '') : `
+                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); moveToDeleted('${item.key}')" title="Delete">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                  </button>
+                `}
               </div>
             </div>
           </div>
@@ -891,7 +1258,15 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      loadFolderState();
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        handleUserSession(session ? session.user : null);
+      }).catch(() => {
+        handleUserSession(null);
+      });
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        handleUserSession(session ? session.user : null);
+      });
     });
   </script>
 </body>
