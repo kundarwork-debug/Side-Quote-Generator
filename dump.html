@@ -16,24 +16,72 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <style>
+    :root {
+      --primary: #c21d1d;
+      --primary-dark: #991b1b;
+      --primary-soft: rgba(194, 29, 29, 0.08);
+      --bg-base: #FDF8F5;
+      --surface-card: rgba(255, 255, 255, 0.95);
+      --border-subtle: rgba(237, 228, 222, 0.9);
+      --text-main: #1c1917;
+      --text-muted: #78716c;
+      --radius-xl: 20px;
+      --radius-pill: 9999px;
+      --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.06);
+    }
+
+    * {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 100vh;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(194, 29, 29, 0.15) 0%, rgba(225, 29, 72, 0.1) 40%, rgba(245, 158, 11, 0.06) 70%, rgba(253, 248, 245, 0.95) 100%);
+      background-size: 300% 300%;
+      animation: liveThemeShift 14s ease infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    @keyframes liveThemeShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     .glass-panel {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(226, 232, 240, 0.9);
+      border: 1px solid var(--border-subtle);
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+<body class="min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-[#c21d1d] selection:text-white">
 
   <header class="sticky top-0 z-40 glass-panel border-b border-slate-200 px-6 lg:px-16 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+      <div class="w-10 h-10 rounded-xl bg-[#c21d1d] flex items-center justify-center text-white shadow-md shadow-[#c21d1d]/20">
         <span class="material-symbols-outlined text-2xl">cloud_upload</span>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="font-bold text-lg">APML Drop</span>
+          <span class="font-bold text-lg text-slate-900">APML Drop</span>
           <span id="syncBadge" class="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             Live Cloud Sync
@@ -43,12 +91,12 @@
       </div>
     </div>
 
-    <button onclick="location.reload()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-blue-600 transition-colors text-slate-700" title="Refresh Feed">
+    <button onclick="location.reload()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
       <span class="material-symbols-outlined text-[18px]">refresh</span>
     </button>
   </header>
 
-  <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1">
+  <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1 relative z-10">
     
     <div class="text-center max-w-2xl mx-auto mb-8">
       <h1 class="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
@@ -61,15 +109,15 @@
 
     <div 
       id="dropZone" 
-      class="max-w-3xl mx-auto border-2 border-dashed border-slate-300 hover:border-blue-600 rounded-3xl p-10 text-center transition-all bg-white/70 shadow-sm cursor-pointer"
+      class="max-w-3xl mx-auto border-2 border-dashed border-slate-300 hover:border-[#c21d1d] rounded-3xl p-10 text-center transition-all bg-white/70 shadow-sm cursor-pointer"
       onclick="document.getElementById('fileInput').click()"
     >
-      <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
+      <div class="w-14 h-14 rounded-2xl bg-red-50 text-[#c21d1d] flex items-center justify-center mx-auto mb-4">
         <span class="material-symbols-outlined text-3xl">upload_file</span>
       </div>
       
       <p class="text-base font-bold text-slate-900">
-        Drag &amp; drop files here, or <span class="text-blue-600 underline">browse files</span>
+        Drag &amp; drop files here, or <span class="text-[#c21d1d] underline">browse files</span>
       </p>
       <p class="text-xs text-slate-500 mt-1 font-medium">
         Images (PNG, JPG, WEBP) &bull; Videos (MP4, MOV, WEBM)
@@ -80,10 +128,10 @@
       <div id="progressBox" class="hidden mt-6 max-w-sm mx-auto p-4 bg-slate-50 border border-slate-200 rounded-2xl">
         <div class="flex items-center justify-between text-xs font-bold mb-1.5">
           <span id="statusLabel" class="text-slate-800 truncate max-w-[220px]">Uploading...</span>
-          <span id="progressPct" class="font-mono text-blue-600">0%</span>
+          <span id="progressPct" class="font-mono text-[#c21d1d]">0%</span>
         </div>
         <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-          <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-150"></div>
+          <div id="progressBar" class="bg-[#c21d1d] h-full w-0 transition-all duration-150"></div>
         </div>
       </div>
     </div>
@@ -109,7 +157,7 @@
 
   </main>
 
-  <footer class="glass-panel border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500 font-medium">
+  <footer class="glass-panel border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500 font-medium relative z-10">
     APML Portal &bull; Telegram Cloud Backend &bull; Live Shared Feed
   </footer>
 
@@ -263,7 +311,7 @@
               <span class="text-xs font-bold text-slate-900 block truncate" title="${item.name}">${item.name}</span>
               <span class="text-[10px] font-mono text-slate-500">${(item.size / (1024 * 1024)).toFixed(2)} MB</span>
             </div>
-            <a href="${item.url}" download="${item.name}" target="_blank" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
+            <a href="${item.url}" download="${item.name}" target="_blank" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#c21d1d] hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
               <span class="material-symbols-outlined text-[16px]">download</span>
             </a>
           </div>
@@ -277,14 +325,14 @@
     ['dragenter', 'dragover'].forEach(n => {
       dropZone.addEventListener(n, e => {
         e.preventDefault();
-        dropZone.classList.add('border-blue-600', 'bg-blue-50/40');
+        dropZone.classList.add('border-[#c21d1d]', 'bg-red-50/40');
       });
     });
 
     ['dragleave', 'drop'].forEach(n => {
       dropZone.addEventListener(n, e => {
         e.preventDefault();
-        dropZone.classList.remove('border-blue-600', 'bg-blue-50/40');
+        dropZone.classList.remove('border-[#c21d1d]', 'bg-red-50/40');
       });
     });
 
