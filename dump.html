@@ -12,6 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.0">
+  <link rel="stylesheet" href="common.css?v=21.0">
+
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -43,11 +46,11 @@
       position: relative;
     }
 
-    /* VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
+    /* VIBRANT LIVE ANIMATED BACKGROUND THEME MATCHING INDEX & GALLERY PAGES */
     body::before {
       content: "";
       position: absolute;
-      top: 100vh;
+      top: 0;
       left: 0;
       right: 0;
       bottom: 0;
@@ -70,40 +73,33 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border-subtle);
     }
+
+    #header-container {
+      position: sticky !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .dump-main-wrap {
+      margin-top: 40px !important;
+    }
   </style>
 </head>
 <body class="min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-[#c21d1d] selection:text-white">
 
-  <header class="sticky top-0 z-40 glass-panel border-b border-slate-200 px-6 lg:px-16 py-4 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[#c21d1d] flex items-center justify-center text-white shadow-md shadow-[#c21d1d]/20">
-        <span class="material-symbols-outlined text-2xl">cloud_upload</span>
-      </div>
-      <div>
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-lg text-slate-900">APML Drop</span>
-          <span id="syncBadge" class="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Live Cloud Sync
-          </span>
-        </div>
-        <p class="text-[11px] text-slate-500 font-medium">Synced via @apmlportal_bot</p>
-      </div>
-    </div>
+  <!-- COMMON HEADER CONTAINER -->
+  <div id="header-container"></div>
 
-    <button onclick="location.reload()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
-      <span class="material-symbols-outlined text-[18px]">refresh</span>
-    </button>
-  </header>
-
-  <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1 relative z-10">
+  <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1 relative z-10 dump-main-wrap">
     
     <div class="text-center max-w-2xl mx-auto mb-8">
       <h1 class="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-        Drop Photos &amp; Videos
+        Archive Gallery Drop
       </h1>
       <p class="text-sm text-slate-500 mt-2">
-        Upload operational media. Files are backed up to Telegram and synced across all devices in real-time.
+        Upload operational media to the shared archive. Files are safely stored and synced across all devices in real-time.
       </p>
     </div>
 
@@ -138,9 +134,12 @@
 
     <div class="flex items-center justify-between mt-16 pb-4 border-b border-slate-200">
       <div class="flex items-center gap-2">
-        <h2 class="font-bold text-xl text-slate-900">Uploaded Gallery</h2>
+        <h2 class="font-bold text-xl text-slate-900">Archive Gallery Feed</h2>
         <span id="totalCount" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 items</span>
       </div>
+      <button onclick="location.reload()" class="px-3 py-1.5 rounded-xl glass-panel text-xs font-bold flex items-center gap-1.5 hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
+        <span class="material-symbols-outlined text-[16px]">refresh</span> Refresh Feed
+      </button>
     </div>
 
     <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
@@ -152,14 +151,15 @@
         <span class="material-symbols-outlined text-3xl">photo_library</span>
       </div>
       <p class="text-sm font-bold text-slate-900">No media uploaded yet</p>
-      <p class="text-xs text-slate-500 mt-0.5">Drop files above to start populating the shared gallery.</p>
+      <p class="text-xs text-slate-500 mt-0.5">Drop files above to start populating the shared gallery archive.</p>
     </div>
 
   </main>
 
-  <footer class="glass-panel border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500 font-medium relative z-10">
-    APML Portal &bull; Telegram Cloud Backend &bull; Live Shared Feed
-  </footer>
+  <!-- COMMON FOOTER CONTAINER -->
+  <div id="footer-container"></div>
+
+  <script src="common.js?v=21.0"></script>
 
   <script>
     const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
@@ -186,7 +186,6 @@
       return /\.(mp4|webm|ogg|mov|m4v)$/i.test(filename);
     }
 
-    // 1. Upload to Telegram with Auto-Fallback Chat IDs
     async function uploadToTelegram(file, chatId) {
       const formData = new FormData();
       formData.append('chat_id', chatId);
@@ -218,21 +217,18 @@
         progressPct.textContent = `${pct}%`;
 
         try {
-          // Attempt upload with primary ID
           let data = await uploadToTelegram(file, PRIMARY_CHAT_ID);
 
-          // If failed, retry with fallback ID
           if (!data.ok) {
             data = await uploadToTelegram(file, FALLBACK_CHAT_ID);
           }
 
           if (!data.ok) {
-            throw new Error(data.description || 'Telegram rejected upload. Ensure @apmlportal_bot is an Admin in your channel.');
+            throw new Error(data.description || 'Telegram rejected upload.');
           }
 
           const fileId = data.result.document.file_id;
 
-          // Fetch fresh CDN download path
           const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
           const pathData = await pathRes.json();
 
@@ -241,7 +237,6 @@
             directUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
           }
 
-          // Push record to shared Firebase Realtime Database
           await mediaRef.push({
             fileId: fileId,
             name: file.name,
@@ -263,7 +258,6 @@
       }, 400);
     }
 
-    // 2. Real-Time Listener: Displays uploads from all visitors automatically
     mediaRef.on('value', (snapshot) => {
       const data = snapshot.val();
       liveMediaItems = [];
@@ -320,7 +314,6 @@
       });
     }
 
-    // Drag & Drop Listeners
     const dropZone = document.getElementById('dropZone');
     ['dragenter', 'dragover'].forEach(n => {
       dropZone.addEventListener(n, e => {
