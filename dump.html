@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Public Media Dump — Powered by Telegram Cloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>APML Media Drop — Telegram Cloud</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -21,26 +21,26 @@
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col justify-between">
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
   <header class="sticky top-0 z-40 glass-panel border-b border-slate-200 px-6 lg:px-16 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-        <span class="material-symbols-outlined text-2xl">send</span>
+        <span class="material-symbols-outlined text-2xl">cloud_upload</span>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="font-bold text-lg">Telegram Media Dump</span>
-          <span id="serverBadge" class="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Server Ready
+          <span class="font-bold text-lg">APML Drop</span>
+          <span class="text-[10px] font-mono uppercase bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+            @apmlportal_bot
           </span>
         </div>
-        <p class="text-[11px] text-slate-500 font-medium">Free unlimited cloud storage backed by Telegram</p>
+        <p class="text-[11px] text-slate-500 font-medium">Serverless Telegram Cloud Uploads</p>
       </div>
     </div>
 
-    <button onclick="fetchMedia()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-blue-600 transition-colors text-slate-700" title="Refresh Media Grid">
+    <button onclick="renderGallery()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-blue-600 transition-colors text-slate-700" title="Refresh Media Grid">
       <span class="material-symbols-outlined text-[18px]">refresh</span>
     </button>
   </header>
@@ -52,7 +52,7 @@
         Drop Photos &amp; Videos
       </h1>
       <p class="text-sm text-slate-500 mt-2">
-        Upload unlimited media assets directly to Telegram storage. View and stream them instantly below.
+        Upload operational media directly to Telegram without size restrictions.
       </p>
     </div>
 
@@ -62,14 +62,14 @@
       onclick="document.getElementById('fileInput').click()"
     >
       <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
-        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+        <span class="material-symbols-outlined text-3xl">upload_file</span>
       </div>
       
       <p class="text-base font-bold text-slate-900">
-        Drag &amp; drop files here, or <span class="text-blue-600 underline">browse files</span>
+        Drag &amp; drop files here, or <span class="text-blue-600 underline">browse local files</span>
       </p>
       <p class="text-xs text-slate-500 mt-1 font-medium">
-        Images (PNG, JPG, WEBP, GIF) &bull; Videos (MP4, WEBM, MOV) up to 50MB
+        Images (PNG, JPG, WEBP) &bull; Videos (MP4, MOV, WEBM)
       </p>
 
       <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFiles(event.target.files)">
@@ -87,119 +87,49 @@
 
     <div class="flex items-center justify-between mt-16 pb-4 border-b border-slate-200">
       <div class="flex items-center gap-2">
-        <h2 class="font-bold text-xl text-slate-900">Stored Telegram Assets</h2>
+        <h2 class="font-bold text-xl text-slate-900">Uploaded Gallery</h2>
         <span id="totalCount" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 items</span>
       </div>
+      <button onclick="clearHistory()" class="text-xs font-bold text-red-600 hover:underline">Clear Feed</button>
     </div>
 
-    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-      </div>
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8"></div>
 
     <div id="emptyState" class="hidden py-16 text-center">
       <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
-        <span class="material-symbols-outlined text-3xl">folder_open</span>
+        <span class="material-symbols-outlined text-3xl">photo_library</span>
       </div>
-      <p class="text-sm font-bold text-slate-900">No media stored yet</p>
-      <p class="text-xs text-slate-500 mt-0.5">Drop files in the box above to start uploading.</p>
+      <p class="text-sm font-bold text-slate-900">No media uploaded yet</p>
+      <p class="text-xs text-slate-500 mt-0.5">Drop files above to send them directly to Telegram.</p>
     </div>
 
   </main>
 
-  <div id="previewModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4" onclick="closePreview()">
-    <div class="max-w-4xl w-full flex flex-col items-end gap-3" onclick="event.stopPropagation()">
-      <div class="flex items-center gap-3">
-        <button id="modalDownloadBtn" class="px-4 py-2 rounded-full bg-white text-slate-900 font-bold text-xs flex items-center gap-2 shadow hover:bg-slate-100 transition-colors">
-          <span class="material-symbols-outlined text-sm">download</span>
-          <span>Download</span>
-        </button>
-        <button onclick="closePreview()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center">
-          <span class="material-symbols-outlined text-lg">close</span>
-        </button>
-      </div>
-
-      <img id="previewImg" src="" alt="Enlarged asset" class="w-full max-h-[75vh] object-contain rounded-2xl border border-white/10 shadow-2xl hidden">
-      <video id="previewVid" controls playsinline class="w-full max-h-[75vh] rounded-2xl border border-white/10 shadow-2xl hidden bg-black"></video>
-    </div>
-  </div>
-
   <footer class="glass-panel border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500 font-medium">
-    Media Storage Server &bull; Backed by Telegram Bot Engine
+    APML Portal &bull; Serverless Storage via Telegram API &bull; GitHub Pages
   </footer>
 
   <script>
-    const API_BASE = "http://localhost:8080";
+    // --------------------------------------------------------------------------
+    // 1. TELEGRAM CONFIGURATION
+    // --------------------------------------------------------------------------
+    // Paste your bot token from @BotFather below (keep the quotes):
+    const BOT_TOKEN = "PASTE_YOUR_BOT_TOKEN_HERE"; 
+    const CHAT_ID = "-1004302268775";
 
-    async function fetchMedia() {
-      const grid = document.getElementById('mediaGrid');
-      const emptyState = document.getElementById('emptyState');
-      const countLabel = document.getElementById('totalCount');
-      const badge = document.getElementById('serverBadge');
+    let mediaList = JSON.parse(localStorage.getItem('apml_tg_dump') || '[]');
 
-      grid.innerHTML = `<div class="col-span-full py-12 text-center text-xs font-mono text-slate-500">Loading Telegram media...</div>`;
-
-      try {
-        const res = await fetch(`${API_BASE}/files`);
-        if (!res.ok) throw new Error("Failed to reach server");
-
-        const files = await res.json();
-        countLabel.textContent = `${files.length} items`;
-
-        badge.className = "text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5";
-        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Connected`;
-
-        if (!files.length) {
-          grid.innerHTML = '';
-          emptyState.classList.remove('hidden');
-          return;
-        }
-
-        emptyState.classList.add('hidden');
-        grid.innerHTML = '';
-
-        files.forEach(file => {
-          const fileUrl = `${API_BASE}/file/${file.file_id}`;
-          const isVid = file.is_video;
-
-          const card = document.createElement('div');
-          card.className = "glass-panel rounded-2xl overflow-hidden border border-slate-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group";
-          
-          card.innerHTML = `
-            <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" onclick="openPreview('${fileUrl}', ${isVid}, '${file.file_name}')">
-              ${isVid ? `
-                <video src="${fileUrl}" class="w-full h-full object-cover" muted preload="metadata"></video>
-                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white">
-                  <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <span class="material-symbols-outlined text-xl">play_arrow</span>
-                  </div>
-                </div>
-              ` : `
-                <img src="${fileUrl}" alt="${file.file_name}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-              `}
-            </div>
-
-            <div class="p-3.5 flex items-center justify-between gap-2 bg-white/80 border-t border-slate-200">
-              <div class="truncate">
-                <span class="text-xs font-bold text-slate-900 block truncate" title="${file.file_name}">${file.file_name}</span>
-                <span class="text-[10px] font-mono text-slate-500">${(file.size / (1024 * 1024)).toFixed(2)} MB</span>
-              </div>
-              <button onclick="downloadFile('${fileUrl}', '${file.file_name}')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
-                <span class="material-symbols-outlined text-[16px]">download</span>
-              </button>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-
-      } catch (err) {
-        badge.className = "text-[10px] font-mono uppercase bg-red-100 text-red-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5";
-        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Server Offline`;
-
-        grid.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-red-600 font-bold bg-red-50 rounded-2xl p-4">Go server is offline. Run 'go run main.go' in your terminal.</div>`;
-      }
+    function isVideo(filename) {
+      return /\.(mp4|webm|ogg|mov|m4v)$/i.test(filename);
     }
 
     async function handleFiles(files) {
       if (!files || !files.length) return;
+
+      if (!BOT_TOKEN || BOT_TOKEN === "PASTE_YOUR_BOT_TOKEN_HERE") {
+        alert("Please edit index.html and paste your Telegram Bot Token from @BotFather in the BOT_TOKEN variable!");
+        return;
+      }
 
       const progressBox = document.getElementById('progressBox');
       const progressBar = document.getElementById('progressBar');
@@ -217,19 +147,44 @@
         progressPct.textContent = `${pct}%`;
 
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('chat_id', CHAT_ID);
+        formData.append('document', file);
 
         try {
-          const res = await fetch(`${API_BASE}/upload`, {
+          // 1. Post document directly to Telegram channel via @apmlportal_bot
+          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
             method: 'POST',
             body: formData
           });
-          if (!res.ok) {
-            const errText = await res.text();
-            throw new Error(errText);
+
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.description || 'Upload rejected by Telegram');
+
+          const fileId = data.result.document.file_id;
+
+          // 2. Fetch direct CDN file stream path
+          const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
+          const pathData = await pathRes.json();
+
+          let directUrl = '';
+          if (pathData.ok && pathData.result.file_path) {
+            directUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
           }
+
+          const record = {
+            id: fileId,
+            name: file.name,
+            size: file.size,
+            url: directUrl,
+            isVideo: isVideo(file.name),
+            timestamp: Date.now()
+          };
+
+          mediaList.unshift(record);
+          localStorage.setItem('apml_tg_dump', JSON.stringify(mediaList));
+
         } catch (err) {
-          alert(`Failed to upload ${file.name}: ${err.message}`);
+          alert(`Error uploading "${file.name}":\n${err.message}`);
         }
       }
 
@@ -237,59 +192,62 @@
         progressBox.classList.add('hidden');
         progressBar.style.width = '0%';
         document.getElementById('fileInput').value = '';
-        fetchMedia();
-      }, 500);
+        renderGallery();
+      }, 400);
     }
 
-    async function downloadFile(url, name) {
-      try {
-        const res = await fetch(url);
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (e) {
-        window.open(url, '_blank');
+    function renderGallery() {
+      const grid = document.getElementById('mediaGrid');
+      const emptyState = document.getElementById('emptyState');
+      const countLabel = document.getElementById('totalCount');
+
+      countLabel.textContent = `${mediaList.length} items`;
+
+      if (!mediaList.length) {
+        grid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.innerHTML = '';
+
+      mediaList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "glass-panel rounded-2xl overflow-hidden border border-slate-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all";
+        
+        card.innerHTML = `
+          <div class="relative aspect-video bg-slate-900 overflow-hidden">
+            ${item.isVideo ? `
+              <video src="${item.url}" class="w-full h-full object-cover" controls playsinline preload="metadata"></video>
+            ` : `
+              <img src="${item.url}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover">
+            `}
+          </div>
+
+          <div class="p-3.5 flex items-center justify-between gap-2 bg-white/80 border-t border-slate-200">
+            <div class="truncate">
+              <span class="text-xs font-bold text-slate-900 block truncate" title="${item.name}">${item.name}</span>
+              <span class="text-[10px] font-mono text-slate-500">${(item.size / (1024 * 1024)).toFixed(2)} MB</span>
+            </div>
+            <a href="${item.url}" download="${item.name}" target="_blank" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
+              <span class="material-symbols-outlined text-[16px]">download</span>
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function clearHistory() {
+      if (confirm("Clear local gallery items? (Files will stay permanently saved in your Telegram channel)")) {
+        mediaList = [];
+        localStorage.removeItem('apml_tg_dump');
+        renderGallery();
       }
     }
 
-    function openPreview(url, isVid, name) {
-      const img = document.getElementById('previewImg');
-      const video = document.getElementById('previewVid');
-      const dl = document.getElementById('modalDownloadBtn');
-
-      dl.onclick = () => downloadFile(url, name);
-
-      if (isVid) {
-        img.classList.add('hidden');
-        video.classList.remove('hidden');
-        video.src = url;
-        video.play();
-      } else {
-        video.pause();
-        video.classList.add('hidden');
-        img.classList.remove('hidden');
-        img.src = url;
-      }
-
-      document.getElementById('previewModal').classList.remove('hidden');
-      document.getElementById('previewModal').classList.add('flex');
-    }
-
-    function closePreview() {
-      const video = document.getElementById('previewVid');
-      video.pause();
-      video.src = '';
-      document.getElementById('previewModal').classList.add('hidden');
-      document.getElementById('previewModal').classList.remove('flex');
-    }
-
-    // Drag & Drop
+    // Drag & Drop Handlers
     const dropZone = document.getElementById('dropZone');
     ['dragenter', 'dragover'].forEach(n => {
       dropZone.addEventListener(n, e => {
@@ -311,7 +269,7 @@
       }
     });
 
-    window.addEventListener('DOMContentLoaded', fetchMedia);
+    window.addEventListener('DOMContentLoaded', renderGallery);
   </script>
 </body>
 </html>
