@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -106,10 +107,10 @@
       inset: 0;
       background: linear-gradient(
         to right,
-        rgba(253, 248, 245, 0.98) 0%,
-        rgba(253, 248, 245, 0.94) 40%,
-        rgba(253, 248, 245, 0.6) 55%,
-        rgba(253, 248, 245, 0) 65%
+        rgba(253, 248, 245, 0.92) 0%,
+        rgba(253, 248, 245, 0.75) 35%,
+        rgba(253, 248, 245, 0.2) 60%,
+        transparent 100%
       );
       z-index: 1;
     }
@@ -170,13 +171,19 @@
       flex-direction: column;
       align-items: flex-start;
       text-align: left;
+      background: transparent;
+      padding: 0;
+      border: none;
+      box-shadow: none;
     }
 
     .hero-top-row {
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 16px;
       margin-bottom: 24px;
+      width: 100%;
     }
 
     .hero-enterprise-pill {
@@ -289,7 +296,7 @@
       gap: 14px;
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       padding: 16px 24px;
@@ -312,6 +319,7 @@
       color: var(--text-main);
       width: 100%;
       background: transparent;
+      text-align: left;
     }
 
     .search-filter-box input::placeholder {
@@ -347,6 +355,38 @@
       background: #ffffff;
       transform: translateY(-2px);
       box-shadow: 0 6px 16px rgba(194, 29, 29, 0.1);
+    }
+
+    /* HIGHLY VISIBLE VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 100vh;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(194, 29, 29, 0.16) 0%, rgba(245, 158, 11, 0.12) 40%, rgba(225, 29, 72, 0.10) 70%, rgba(253, 248, 245, 0.92) 100%);
+      background-size: 300% 300%;
+      animation: liveThemeShift 10s ease infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* INTERACTIVE MOUSE HOVER GRADIENT SPOTLIGHT */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(700px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(194, 29, 29, 0.15), transparent 65%);
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.3s ease;
+    }
+
+    @keyframes liveThemeShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .workspace-section {
@@ -1005,6 +1045,16 @@
   <div id="footer-container"></div>
 
   <script src="common.js?v=21.0"></script>
+
+  <script>
+    // INTERACTIVE MOUSE HOVER GRADIENT TRACKER
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty('--mouse-x', `${x}%`);
+      document.documentElement.style.setProperty('--mouse-y', `${y}%`);
+    });
+  </script>
 
   <script>
     const searchInput = document.getElementById('moduleFilterInput');
