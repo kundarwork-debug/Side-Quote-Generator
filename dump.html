@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Public Media Dump — Powered by Telegram Cloud</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <style>
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen font-sans antialiased flex flex-col justify-between">
+
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-200 px-6 lg:px-16 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+        <span class="material-symbols-outlined text-2xl">send</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-lg">Telegram Media Dump</span>
+          <span id="serverBadge" class="text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            Server Ready
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-500 font-medium">Free unlimited cloud storage backed by Telegram</p>
+      </div>
+    </div>
+
+    <button onclick="fetchMedia()" class="w-9 h-9 rounded-xl glass-panel flex items-center justify-center hover:border-blue-600 transition-colors text-slate-700" title="Refresh Media Grid">
+      <span class="material-symbols-outlined text-[18px]">refresh</span>
+    </button>
+  </header>
+
+  <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1">
+    
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <h1 class="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+        Drop Photos &amp; Videos
+      </h1>
+      <p class="text-sm text-slate-500 mt-2">
+        Upload unlimited media assets directly to Telegram storage. View and stream them instantly below.
+      </p>
+    </div>
+
+    <div 
+      id="dropZone" 
+      class="max-w-3xl mx-auto border-2 border-dashed border-slate-300 hover:border-blue-600 rounded-3xl p-10 text-center transition-all bg-white/70 shadow-sm cursor-pointer"
+      onclick="document.getElementById('fileInput').click()"
+    >
+      <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
+        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+      </div>
+      
+      <p class="text-base font-bold text-slate-900">
+        Drag &amp; drop files here, or <span class="text-blue-600 underline">browse files</span>
+      </p>
+      <p class="text-xs text-slate-500 mt-1 font-medium">
+        Images (PNG, JPG, WEBP, GIF) &bull; Videos (MP4, WEBM, MOV) up to 50MB
+      </p>
+
+      <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFiles(event.target.files)">
+
+      <div id="progressBox" class="hidden mt-6 max-w-sm mx-auto p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
+          <span id="statusLabel" class="text-slate-800 truncate max-w-[220px]">Uploading...</span>
+          <span id="progressPct" class="font-mono text-blue-600">0%</span>
+        </div>
+        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+          <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-150"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-16 pb-4 border-b border-slate-200">
+      <div class="flex items-center gap-2">
+        <h2 class="font-bold text-xl text-slate-900">Stored Telegram Assets</h2>
+        <span id="totalCount" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 items</span>
+      </div>
+    </div>
+
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
+      </div>
+
+    <div id="emptyState" class="hidden py-16 text-center">
+      <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+        <span class="material-symbols-outlined text-3xl">folder_open</span>
+      </div>
+      <p class="text-sm font-bold text-slate-900">No media stored yet</p>
+      <p class="text-xs text-slate-500 mt-0.5">Drop files in the box above to start uploading.</p>
+    </div>
+
+  </main>
+
+  <div id="previewModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4" onclick="closePreview()">
+    <div class="max-w-4xl w-full flex flex-col items-end gap-3" onclick="event.stopPropagation()">
+      <div class="flex items-center gap-3">
+        <button id="modalDownloadBtn" class="px-4 py-2 rounded-full bg-white text-slate-900 font-bold text-xs flex items-center gap-2 shadow hover:bg-slate-100 transition-colors">
+          <span class="material-symbols-outlined text-sm">download</span>
+          <span>Download</span>
+        </button>
+        <button onclick="closePreview()" class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <img id="previewImg" src="" alt="Enlarged asset" class="w-full max-h-[75vh] object-contain rounded-2xl border border-white/10 shadow-2xl hidden">
+      <video id="previewVid" controls playsinline class="w-full max-h-[75vh] rounded-2xl border border-white/10 shadow-2xl hidden bg-black"></video>
+    </div>
+  </div>
+
+  <footer class="glass-panel border-t border-slate-200 px-6 py-4 text-center text-xs text-slate-500 font-medium">
+    Media Storage Server &bull; Backed by Telegram Bot Engine
+  </footer>
+
+  <script>
+    const API_BASE = "http://localhost:8080";
+
+    async function fetchMedia() {
+      const grid = document.getElementById('mediaGrid');
+      const emptyState = document.getElementById('emptyState');
+      const countLabel = document.getElementById('totalCount');
+      const badge = document.getElementById('serverBadge');
+
+      grid.innerHTML = `<div class="col-span-full py-12 text-center text-xs font-mono text-slate-500">Loading Telegram media...</div>`;
+
+      try {
+        const res = await fetch(`${API_BASE}/files`);
+        if (!res.ok) throw new Error("Failed to reach server");
+
+        const files = await res.json();
+        countLabel.textContent = `${files.length} items`;
+
+        badge.className = "text-[10px] font-mono uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5";
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Connected`;
+
+        if (!files.length) {
+          grid.innerHTML = '';
+          emptyState.classList.remove('hidden');
+          return;
+        }
+
+        emptyState.classList.add('hidden');
+        grid.innerHTML = '';
+
+        files.forEach(file => {
+          const fileUrl = `${API_BASE}/file/${file.file_id}`;
+          const isVid = file.is_video;
+
+          const card = document.createElement('div');
+          card.className = "glass-panel rounded-2xl overflow-hidden border border-slate-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all group";
+          
+          card.innerHTML = `
+            <div class="relative aspect-video bg-slate-900 overflow-hidden cursor-pointer" onclick="openPreview('${fileUrl}', ${isVid}, '${file.file_name}')">
+              ${isVid ? `
+                <video src="${fileUrl}" class="w-full h-full object-cover" muted preload="metadata"></video>
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center text-white">
+                  <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-xl">play_arrow</span>
+                  </div>
+                </div>
+              ` : `
+                <img src="${fileUrl}" alt="${file.file_name}" loading="lazy" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+              `}
+            </div>
+
+            <div class="p-3.5 flex items-center justify-between gap-2 bg-white/80 border-t border-slate-200">
+              <div class="truncate">
+                <span class="text-xs font-bold text-slate-900 block truncate" title="${file.file_name}">${file.file_name}</span>
+                <span class="text-[10px] font-mono text-slate-500">${(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+              </div>
+              <button onclick="downloadFile('${fileUrl}', '${file.file_name}')" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
+                <span class="material-symbols-outlined text-[16px]">download</span>
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        badge.className = "text-[10px] font-mono uppercase bg-red-100 text-red-800 px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1.5";
+        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Server Offline`;
+
+        grid.innerHTML = `<div class="col-span-full py-8 text-center text-xs text-red-600 font-bold bg-red-50 rounded-2xl p-4">Go server is offline. Run 'go run main.go' in your terminal.</div>`;
+      }
+    }
+
+    async function handleFiles(files) {
+      if (!files || !files.length) return;
+
+      const progressBox = document.getElementById('progressBox');
+      const progressBar = document.getElementById('progressBar');
+      const progressPct = document.getElementById('progressPct');
+      const statusLabel = document.getElementById('statusLabel');
+
+      progressBox.classList.remove('hidden');
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const pct = Math.round(((i + 1) / files.length) * 100);
+
+        statusLabel.textContent = `Uploading ${i + 1}/${files.length}: ${file.name}`;
+        progressBar.style.width = `${pct}%`;
+        progressPct.textContent = `${pct}%`;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const res = await fetch(`${API_BASE}/upload`, {
+            method: 'POST',
+            body: formData
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText);
+          }
+        } catch (err) {
+          alert(`Failed to upload ${file.name}: ${err.message}`);
+        }
+      }
+
+      setTimeout(() => {
+        progressBox.classList.add('hidden');
+        progressBar.style.width = '0%';
+        document.getElementById('fileInput').value = '';
+        fetchMedia();
+      }, 500);
+    }
+
+    async function downloadFile(url, name) {
+      try {
+        const res = await fetch(url);
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (e) {
+        window.open(url, '_blank');
+      }
+    }
+
+    function openPreview(url, isVid, name) {
+      const img = document.getElementById('previewImg');
+      const video = document.getElementById('previewVid');
+      const dl = document.getElementById('modalDownloadBtn');
+
+      dl.onclick = () => downloadFile(url, name);
+
+      if (isVid) {
+        img.classList.add('hidden');
+        video.classList.remove('hidden');
+        video.src = url;
+        video.play();
+      } else {
+        video.pause();
+        video.classList.add('hidden');
+        img.classList.remove('hidden');
+        img.src = url;
+      }
+
+      document.getElementById('previewModal').classList.remove('hidden');
+      document.getElementById('previewModal').classList.add('flex');
+    }
+
+    function closePreview() {
+      const video = document.getElementById('previewVid');
+      video.pause();
+      video.src = '';
+      document.getElementById('previewModal').classList.add('hidden');
+      document.getElementById('previewModal').classList.remove('flex');
+    }
+
+    // Drag & Drop
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover'].forEach(n => {
+      dropZone.addEventListener(n, e => {
+        e.preventDefault();
+        dropZone.classList.add('border-blue-600', 'bg-blue-50/40');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(n => {
+      dropZone.addEventListener(n, e => {
+        e.preventDefault();
+        dropZone.classList.remove('border-blue-600', 'bg-blue-50/40');
+      });
+    });
+
+    dropZone.addEventListener('drop', e => {
+      if (e.dataTransfer && e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', fetchMedia);
+  </script>
+</body>
+</html>
