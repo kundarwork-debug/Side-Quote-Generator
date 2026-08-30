@@ -565,11 +565,45 @@
       transform: translateY(-1px);
     }
 
-    /* MEDIA GRID */
+    /* MEDIA GRID & SHOW MORE CONTAINER */
+    .media-grid-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
     .media-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 24px;
+    }
+
+    .show-more-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .btn-show-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 12px 28px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+      transition: all 0.2s ease;
+    }
+
+    .btn-show-more:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
     }
 
     .media-card {
@@ -900,13 +934,20 @@
     <!-- DYNAMIC FOLDER FILTER TABS -->
     <div class="filter-bar" id="filterBar"></div>
 
-    <!-- MEDIA GRID -->
-    <main class="media-grid" id="mediaGrid">
-      <div class="state-msg">
-        <div class="spinner"></div>
-        Syncing live cloud storage feed...
+    <!-- MEDIA GRID WRAPPER WITH SHOW MORE -->
+    <div class="media-grid-wrapper">
+      <main class="media-grid" id="mediaGrid">
+        <div class="state-msg">
+          <div class="spinner"></div>
+          Syncing live cloud storage feed...
+        </div>
+      </main>
+      <div class="show-more-wrap" id="showMoreWrap" style="display: none;">
+        <button type="button" class="btn-show-more" onclick="loadMoreMedia()">
+          <span class="material-symbols-outlined" style="font-size: 20px;">expand_more</span> Show More Media
+        </button>
       </div>
-    </main>
+    </div>
 
   </main>
 
@@ -968,6 +1009,10 @@
     let liveMediaItems = [];
     let currentUser = null;
     let pendingDeleteKey = null;
+
+    // Pagination limit configuration
+    let displayedItemsCount = 12;
+    const ITEMS_PER_PAGE = 12;
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
@@ -1113,6 +1158,7 @@
         return;
       }
       currentActiveFolder = folderId;
+      displayedItemsCount = ITEMS_PER_PAGE; // Reset pagination limit on folder switch
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
@@ -1120,6 +1166,11 @@
         uploadSelect.value = folderId;
         uploadSelect.classList.remove('select-highlight-error');
       }
+    }
+
+    function loadMoreMedia() {
+      displayedItemsCount += ITEMS_PER_PAGE;
+      renderGallery();
     }
 
     function handleCreateFolder() {
@@ -1253,7 +1304,6 @@
       renderGallery();
     });
 
-    // Prompt centered confirmation modal to type "delete"
     function promptDeleteConfirmation(firebaseKey, fileName) {
       pendingDeleteKey = firebaseKey;
       document.getElementById('deleteItemNameDisplay').textContent = fileName || 'this file';
@@ -1289,7 +1339,6 @@
       }
     }
 
-    // Restore media item back to a default folder
     async function restoreMedia(firebaseKey) {
       if (!isCurrentUserAdmin()) {
         alert("Access Denied: Only admins can restore media.");
@@ -1305,7 +1354,6 @@
       }
     }
 
-    // Permanently delete item from Firebase database
     async function permanentDelete(firebaseKey) {
       if (!isCurrentUserAdmin()) {
         alert("Access Denied: Only admins can permanently delete records.");
@@ -1344,13 +1392,34 @@
       }
     }
 
-    function renderGallery() {
+    function createOptimizedThumbnailUrl(originalUrl, isVideo) {
+      if (isVideo) return originalUrl;
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 400;
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.5));
+        };
+        img.onerror = () => resolve(originalUrl);
+        img.src = originalUrl;
+      });
+    }
+
+    async function renderGallery() {
       const grid = document.getElementById('mediaGrid');
+      const showMoreWrap = document.getElementById('showMoreWrap');
       const adminAuthenticated = isCurrentUserAdmin();
       
       let filteredItems = [];
       if (currentActiveFolder === '') {
-        // Exclude both "others" and "deleted" folder items when viewing "All Media"
         filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
       } else {
         if (currentActiveFolder === 'deleted' && !adminAuthenticated) {
@@ -1363,21 +1432,25 @@
 
       if (!filteredItems.length) {
         grid.innerHTML = `<div class="state-msg">No media files found in this category. Upload items above.</div>`;
+        showMoreWrap.style.display = 'none';
         return;
       }
 
-      grid.innerHTML = filteredItems.map(item => {
+      // Slice items according to current pagination limit
+      const paginatedItems = filteredItems.slice(0, displayedItemsCount);
+
+      grid.innerHTML = paginatedItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const isDeletedFolder = item.folder === 'deleted';
         const safeName = (item.name || 'file').replace(/'/g, "\\'");
 
         return `
-          <div class="media-card">
+          <div class="media-card" id="card-${item.key}">
             <div class="media-preview-wrap" onclick="openLightbox('${item.url}', ${item.isVideo})">
               ${item.isVideo 
                 ? `<video src="${item.url}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata"></video>` 
-                : `<img src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.src='logo.svg'">`
+                : `<img id="img-${item.key}" src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.src='logo.svg'">`
               }
             </div>
             <div class="media-info">
@@ -1386,7 +1459,7 @@
                 <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderLabel}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download">
+                <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
                 ${isDeletedFolder ? (adminAuthenticated ? `
@@ -1406,6 +1479,22 @@
           </div>
         `;
       }).join('');
+
+      // Show or hide the "Show More" button based on remaining items
+      if (displayedItemsCount < filteredItems.length) {
+        showMoreWrap.style.display = 'flex';
+      } else {
+        showMoreWrap.style.display = 'none';
+      }
+
+      // Asynchronously compress image elements to low quality for fast rendering
+      paginatedItems.forEach(async item => {
+        if (!item.isVideo) {
+          const lowQualThumb = await createOptimizedThumbnailUrl(item.url, false);
+          const imgEl = document.getElementById(`img-${item.key}`);
+          if (imgEl) imgEl.src = lowQualThumb;
+        }
+      });
     }
 
     function openLightbox(url, isVideo) {
