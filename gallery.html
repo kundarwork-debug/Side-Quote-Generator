@@ -284,7 +284,7 @@
       inset: 0;
       background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(6px);
-      z-index: 99999;
+      z-index: 999999;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -538,7 +538,7 @@
       color: var(--text-muted);
     }
 
-    /* TELEGRAM STORAGE NOTE (SHORT & DIRECT) */
+    /* TELEGRAM STORAGE NOTE */
     .telegram-storage-note {
       display: flex;
       align-items: center;
@@ -990,11 +990,11 @@
         <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
       </div>
       <h3>Are you sure?</h3>
-      <p>This will move <strong id="deleteItemNameDisplay">this file</strong> to the Deleted folder. Type <strong>delete</strong> below to confirm.</p>
+      <p>This file will be deleted. This action is not reversible. Type <strong>delete</strong> below to confirm.</p>
       <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type delete to confirm" oninput="checkDeleteKeyword(this)">
       <div class="delete-modal-actions">
         <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
+        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePermanentDelete()">Delete File</button>
       </div>
     </div>
   </div>
@@ -1008,7 +1008,7 @@
       <h3>Access Denied</h3>
       <p>
         The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
-        Only authorized admin accounts (`kundar.work@gmail.com`, `kundar701@gmail.com`) can access the Deleted folder and admin controls.
+        Only authorized admin accounts (`kundar.work@gmail.com`, `kundar701@gmail.com`) can access admin controls.
       </p>
       <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
     </div>
@@ -1078,7 +1078,7 @@
 
       </div>
 
-      <!-- TELEGRAM STORAGE NOTE (SHORT & DIRECT) -->
+      <!-- TELEGRAM STORAGE NOTE -->
       <div class="telegram-storage-note">
         <span class="material-symbols-outlined">info</span>
         Files uploaded here are securely stored via Telegram cloud storage. By uploading, you confirm these are authorized operational assets.
@@ -1124,6 +1124,7 @@
     const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
     const PRIMARY_CHAT_ID = "-1004302268775";
     const FALLBACK_CHAT_ID = "-4302268775";
+    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1154,8 +1155,7 @@
       { id: 'electronic', label: 'Electronic', icon: 'devices' },
       { id: 'furniture', label: 'Furniture', icon: 'chair' },
       { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' },
-      { id: 'others', label: 'Others', icon: 'folder_special' },
-      { id: 'deleted', label: 'Deleted', icon: 'delete_sweep' }
+      { id: 'others', label: 'Others', icon: 'folder_special' }
     ];
 
     let currentActiveFolder = '';
@@ -1168,7 +1168,6 @@
     const ITEMS_PER_PAGE = 12;
 
     const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v1';
-    const CACHE_KEY_FOLDERS = 'apml_gallery_folders_cache_v1';
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1246,7 +1245,7 @@
       if (stored) {
         try {
           foldersList = JSON.parse(stored);
-          const requiredIds = ['electronic', 'furniture', 'others', 'deleted'];
+          const requiredIds = ['electronic', 'furniture', 'others'];
           requiredIds.forEach(reqId => {
             if (!foldersList.some(f => f.id === reqId)) {
               const def = DEFAULT_FOLDERS.find(d => d.id === reqId);
@@ -1270,15 +1269,8 @@
 
     function renderFolderControls() {
       const filterBar = document.getElementById('filterBar');
-      const adminAuthenticated = isCurrentUserAdmin();
 
       let visibleFolders = foldersList;
-      if (!adminAuthenticated) {
-        visibleFolders = foldersList.filter(f => f.id !== 'deleted');
-        if (currentActiveFolder === 'deleted') {
-          currentActiveFolder = '';
-        }
-      }
 
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
@@ -1308,7 +1300,7 @@
       if (uploadSelect) {
         const prevVal = uploadSelect.value;
         let selectOptions = `<option value="" disabled selected>-- Select Folder (Compulsory) * --</option>`;
-        selectOptions += visibleFolders.filter(f => f.id !== 'deleted').map(f => `
+        selectOptions += visibleFolders.map(f => `
           <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
         `).join('');
         uploadSelect.innerHTML = selectOptions;
@@ -1316,16 +1308,12 @@
     }
 
     function switchFolder(folderId) {
-      if (folderId === 'deleted' && !isCurrentUserAdmin()) {
-        alert("Access Denied: Only authorized admins can view the Deleted folder.");
-        return;
-      }
       currentActiveFolder = folderId;
       displayedItemsCount = ITEMS_PER_PAGE;
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      if (uploadSelect && folderId && folderId !== 'deleted') {
+      if (uploadSelect && folderId) {
         uploadSelect.value = folderId;
         uploadSelect.classList.remove('select-highlight-error');
       }
@@ -1360,7 +1348,7 @@
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
 
-      if (!uploadSelect.value || uploadSelect.value === 'deleted') {
+      if (!uploadSelect.value) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder before uploading!</span>`;
@@ -1416,7 +1404,7 @@
       const statusText = document.getElementById('uploadStatusText');
       const uploadBtn = document.getElementById('uploadTriggerBtn');
 
-      if (!folder || folder === 'deleted') {
+      if (!folder) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
@@ -1429,6 +1417,12 @@
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
+
+        if (file.size > MAX_FILE_SIZE_BYTES) {
+          alert(`File size exceeds the 50MB limit. Please choose a smaller file or compress it before uploading (${file.name}).`);
+          continue;
+        }
+
         statusText.innerHTML = `<span style="color: var(--primary);">Uploading file ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
@@ -1535,43 +1529,15 @@
       }
     }
 
-    async function executePendingDelete() {
+    async function executePermanentDelete() {
       if (!pendingDeleteKey) return;
-      const keyToMove = pendingDeleteKey;
+      const keyToDelete = pendingDeleteKey;
       closeDeleteModal();
 
       try {
-        await mediaRef.child(keyToMove).update({ folder: 'deleted' });
+        await mediaRef.child(keyToDelete).remove();
       } catch (err) {
-        alert("Failed to move item: " + err.message);
-      }
-    }
-
-    async function restoreMedia(firebaseKey) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only admins can restore media.");
-        return;
-      }
-      const targetFolder = prompt("Enter target folder ID to restore to (e.g., packing-images, truck, miscellaneous):", "packing-images");
-      if (!targetFolder || !targetFolder.trim()) return;
-
-      try {
-        await mediaRef.child(firebaseKey).update({ folder: targetFolder.trim().toLowerCase() });
-      } catch (err) {
-        alert("Failed to restore item: " + err.message);
-      }
-    }
-
-    async function permanentDelete(firebaseKey) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only admins can permanently delete records.");
-        return;
-      }
-      if (!confirm("Permanently delete this record? This action cannot be undone.")) return;
-      try {
-        await mediaRef.child(firebaseKey).remove();
-      } catch (err) {
-        alert("Failed to permanently delete: " + err.message);
+        alert("Failed to delete record: " + err.message);
       }
     }
 
@@ -1624,18 +1590,12 @@
     async function renderGallery() {
       const grid = document.getElementById('mediaGrid');
       const showMoreWrap = document.getElementById('showMoreWrap');
-      const adminAuthenticated = isCurrentUserAdmin();
       
       let filteredItems = [];
       if (currentActiveFolder === '') {
-        filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
+        filteredItems = liveMediaItems.filter(item => item.folder !== 'others');
       } else {
-        if (currentActiveFolder === 'deleted' && !adminAuthenticated) {
-          currentActiveFolder = '';
-          filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
-        } else {
-          filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder);
-        }
+        filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder);
       }
 
       if (!filteredItems.length) {
@@ -1649,7 +1609,6 @@
       grid.innerHTML = paginatedItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
-        const isDeletedFolder = item.folder === 'deleted';
         const safeName = (item.name || 'file').replace(/'/g, "\\'");
         const formattedSize = formatBytes(item.size);
 
@@ -1673,18 +1632,9 @@
                 <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
-                ${isDeletedFolder ? (adminAuthenticated ? `
-                  <button type="button" class="btn-restore" onclick="event.stopPropagation(); restoreMedia('${item.key}')" title="Restore">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">restore</span>
-                  </button>
-                  <button type="button" class="btn-perm-delete" onclick="event.stopPropagation(); permanentDelete('${item.key}')" title="Delete Permanently">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
-                  </button>
-                ` : '') : `
-                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); promptDeleteConfirmation('${item.key}', '${safeName}')" title="Delete">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
-                  </button>
-                `}
+                <button type="button" class="btn-delete" onclick="event.stopPropagation(); promptDeleteConfirmation('${item.key}', '${safeName}')" title="Delete">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                </button>
               </div>
             </div>
           </div>
