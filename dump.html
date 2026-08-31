@@ -136,13 +136,36 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
       transition: all 0.2s ease;
-      margin-top: 24px;
+      margin-top: 20px;
     }
 
     .btn-google-login:hover {
       border-color: #c21d1d;
       box-shadow: 0 4px 12px rgba(194, 29, 29, 0.15);
       transform: translateY(-1px);
+    }
+
+    .btn-gateway-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: #f3f4f6;
+      border: none;
+      padding: 11px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #374151;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin-top: 10px;
+      text-decoration: none;
+    }
+
+    .btn-gateway-back:hover {
+      background: #e5e7eb;
     }
   </style>
 </head>
@@ -168,6 +191,13 @@
         </svg>
         Sign in with Google
       </button>
+
+      <!-- GO BACK TO GALLERY BUTTON -->
+      <a href="gallery.html" class="btn-gateway-back">
+        <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span>Go Back to Gallery</span>
+      </a>
+
       <div id="loginErrorMsg" class="text-xs text-red-600 font-bold mt-3 hidden"></div>
     </div>
   </div>
@@ -185,7 +215,7 @@
         Trash Bin &amp; Archive
       </h1>
       <p class="text-sm text-slate-500 mt-2">
-        Review items deleted from the gallery. Admins can restore files back to their original folders[cite: 1] or delete them permanently.
+        Review items deleted from the gallery. Admins can restore files back to their original folders or delete them permanently.
       </p>
     </div>
 
@@ -211,7 +241,7 @@
         <span class="material-symbols-outlined text-3xl">delete_outline</span>
       </div>
       <p class="text-sm font-bold text-slate-900">Trash Bin is Empty</p>
-      <p class="text-xs text-slate-500 mt-0.5">Items deleted from gallery.html will appear here for review and recovery[cite: 1].</p>
+      <p class="text-xs text-slate-500 mt-0.5">Items deleted from gallery.html will appear here for review and recovery.</p>
     </div>
 
   </main>
@@ -234,7 +264,6 @@
       "kundar701@gmail.com"
     ];
 
-    // Initialize Firebase for Realtime Multi-User Feed Sync
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
