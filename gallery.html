@@ -747,6 +747,13 @@
 
     .media-badges-group {
       display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+    }
+
+    .media-badges-row {
+      display: flex;
       gap: 6px;
       align-items: center;
     }
@@ -755,7 +762,7 @@
       font-size: 11px;
       font-weight: 700;
       text-transform: uppercase;
-      padding: 5px 10px;
+      padding: 3px 8px;
       border-radius: 6px;
       background: var(--primary-soft);
       color: var(--primary);
@@ -764,6 +771,13 @@
     .media-badge.video-tag {
       background: rgba(15, 23, 42, 0.08);
       color: #0f172a;
+    }
+
+    .media-size-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
     }
 
     .card-actions-row {
@@ -1335,12 +1349,33 @@
       return /\.(mp4|webm|ogg|mov|m4v)$/i.test(filename);
     }
 
+    function formatBytes(bytes, decimals = 1) {
+      if (!bytes || bytes === 0) return '0 KB';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
     async function uploadToTelegram(file, chatId) {
       const formData = new FormData();
       formData.append('chat_id', chatId);
-      formData.append('document', file);
 
-      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+      let endpoint = 'sendDocument';
+      let fileField = 'document';
+
+      if (file.type.startsWith('image/')) {
+        endpoint = 'sendPhoto';
+        fileField = 'photo';
+      } else if (file.type.startsWith('video/')) {
+        endpoint = 'sendVideo';
+        fileField = 'video';
+      }
+
+      formData.append(fileField, file);
+
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${endpoint}`, {
         method: 'POST',
         body: formData
       });
@@ -1380,7 +1415,17 @@
             throw new Error(data.description || 'Telegram rejected upload.');
           }
 
-          const fileId = data.result.document.file_id;
+          let fileId = '';
+          if (data.result.document) {
+            fileId = data.result.document.file_id;
+          } else if (data.result.video) {
+            fileId = data.result.video.file_id;
+          } else if (data.result.photo && data.result.photo.length > 0) {
+            fileId = data.result.photo[data.result.photo.length - 1].file_id;
+          }
+
+          if (!fileId) throw new Error('Could not extract file ID from Telegram response.');
+
           const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
           const pathData = await pathRes.json();
 
@@ -1393,7 +1438,7 @@
             fileId: fileId,
             folder: folder,
             name: file.name,
-            size: file.size,
+            size: file.size || 0,
             url: directUrl,
             isVideo: isVideo(file.name),
             timestamp: Date.now()
@@ -1580,6 +1625,7 @@
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const isDeletedFolder = item.folder === 'deleted';
         const safeName = (item.name || 'file').replace(/'/g, "\\'");
+        const formattedSize = formatBytes(item.size);
 
         return `
           <div class="media-card" id="card-${item.key}">
@@ -1591,8 +1637,11 @@
             </div>
             <div class="media-info">
               <div class="media-badges-group">
-                <span class="media-badge ${item.isVideo ? 'video-tag' : ''}">${item.isVideo ? 'SD Video' : 'Image'}</span>
-                <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderLabel}</span>
+                <div class="media-badges-row">
+                  <span class="media-badge ${item.isVideo ? 'video-tag' : ''}">${item.isVideo ? 'SD Video' : 'Image'}</span>
+                  <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderLabel}</span>
+                </div>
+                <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
                 <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download Original Quality">
