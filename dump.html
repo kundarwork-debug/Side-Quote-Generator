@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>APML Unlimited Media — Cloud Storage &amp; Archive</title>
+  <title>APML Trash Bin — Deleted Archive &amp; Recovery</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -14,6 +14,9 @@
 
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.0">
   <link rel="stylesheet" href="common.css?v=21.0">
+
+  <!-- SUPABASE JS CLIENT FOR GOOGLE OAUTH -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -46,7 +49,6 @@
       position: relative;
     }
 
-    /* VIBRANT LIVE ANIMATED BACKGROUND THEME MATCHING INDEX & GALLERY PAGES */
     body::before {
       content: "";
       position: absolute;
@@ -86,73 +88,130 @@
       margin-top: 40px !important;
       margin-bottom: 60px !important;
     }
+
+    /* GATEWAY LOGIN OVERLAY */
+    .auth-gateway-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .auth-gateway-overlay.hidden-gateway {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .auth-gateway-card {
+      background: #ffffff;
+      max-width: 420px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 36px 30px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid #fee2e2;
+    }
+
+    .btn-google-login {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+      margin-top: 24px;
+    }
+
+    .btn-google-login:hover {
+      border-color: #c21d1d;
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.15);
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body class="min-h-screen font-sans antialiased flex flex-col justify-between selection:bg-[#c21d1d] selection:text-white">
+
+  <!-- MANDATORY LOGIN GATEWAY OVERLAY -->
+  <div class="auth-gateway-overlay" id="authGatewayOverlay">
+    <div class="auth-gateway-card">
+      <div class="w-16 h-16 rounded-3xl bg-red-50 text-[#c21d1d] flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <span class="material-symbols-outlined text-3xl">lock</span>
+      </div>
+      <h2 class="font-extrabold text-2xl text-slate-900 tracking-tight">Admin Authentication</h2>
+      <p class="text-xs text-slate-500 mt-2 leading-relaxed">
+        Access to the Trash Bin &amp; Archive is restricted. Please sign in with an authorized Google administrator account to proceed.
+      </p>
+      
+      <button type="button" class="btn-google-login" onclick="triggerGoogleLogin()">
+        <svg width="20" height="20" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+        Sign in with Google
+      </button>
+      <div id="loginErrorMsg" class="text-xs text-red-600 font-bold mt-3 hidden"></div>
+    </div>
+  </div>
 
   <!-- COMMON HEADER CONTAINER -->
   <div id="header-container"></div>
 
   <main class="max-w-[1400px] w-full mx-auto px-6 lg:px-12 py-10 flex-1 relative z-10 dump-main-wrap">
     
-    <div class="text-center max-w-2xl mx-auto mb-8">
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <div class="w-16 h-16 rounded-3xl bg-red-50 text-[#c21d1d] flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <span class="material-symbols-outlined text-3xl">delete_sweep</span>
+      </div>
       <h1 class="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-        APML Unlimited Media Upload
+        Trash Bin &amp; Archive
       </h1>
       <p class="text-sm text-slate-500 mt-2">
-        Upload and store unlimited operational photos and videos. Files are instantly backed up and synced across all devices in real-time.
+        Review items deleted from the gallery. Admins can restore files back to their original folders[cite: 1] or delete them permanently.
       </p>
     </div>
 
-    <div 
-      id="dropZone" 
-      class="max-w-3xl mx-auto border-2 border-dashed border-slate-300 hover:border-[#c21d1d] rounded-3xl p-10 text-center transition-all bg-white/70 shadow-sm cursor-pointer"
-      onclick="document.getElementById('fileInput').click()"
-    >
-      <div class="w-14 h-14 rounded-2xl bg-red-50 text-[#c21d1d] flex items-center justify-center mx-auto mb-4">
-        <span class="material-symbols-outlined text-3xl">cloud_upload</span>
-      </div>
-      
-      <p class="text-base font-bold text-slate-900">
-        Drag &amp; drop files here to upload, or <span class="text-[#c21d1d] underline">browse files</span>
-      </p>
-      <p class="text-xs text-slate-500 mt-1 font-medium">
-        Unlimited Images (PNG, JPG, WEBP) &bull; Videos (MP4, MOV, WEBM)
-      </p>
-
-      <input type="file" id="fileInput" class="hidden" accept="image/*,video/*" multiple onchange="handleFiles(event.target.files)">
-
-      <div id="progressBox" class="hidden mt-6 max-w-sm mx-auto p-4 bg-slate-50 border border-slate-200 rounded-2xl">
-        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
-          <span id="statusLabel" class="text-slate-800 truncate max-w-[220px]">Uploading...</span>
-          <span id="progressPct" class="font-mono text-[#c21d1d]">0%</span>
-        </div>
-        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-          <div id="progressBar" class="bg-[#c21d1d] h-full w-0 transition-all duration-150"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex items-center justify-between mt-16 pb-4 border-b border-slate-200">
+    <div class="flex items-center justify-between pb-4 border-b border-slate-200">
       <div class="flex items-center gap-2">
-        <h2 class="font-bold text-xl text-slate-900">Uploaded Media Feed</h2>
+        <h2 class="font-bold text-xl text-slate-900">Deleted Items Feed</h2>
         <span id="totalCount" class="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">0 items</span>
       </div>
-      <button onclick="location.reload()" class="px-3 py-1.5 rounded-xl glass-panel text-xs font-bold flex items-center gap-1.5 hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
-        <span class="material-symbols-outlined text-[16px]">refresh</span> Refresh Feed
-      </button>
+      <div class="flex items-center gap-3">
+        <button onclick="handleSignOut()" class="px-3 py-1.5 rounded-xl bg-slate-100 text-xs font-bold text-slate-700 hover:bg-slate-200 transition-colors">Sign Out</button>
+        <button onclick="location.reload()" class="px-3 py-1.5 rounded-xl glass-panel text-xs font-bold flex items-center gap-1.5 hover:border-[#c21d1d] transition-colors text-slate-700" title="Refresh Feed">
+          <span class="material-symbols-outlined text-[16px]">refresh</span> Refresh Trash
+        </button>
+      </div>
     </div>
 
     <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-8">
-      <div class="col-span-full py-12 text-center text-xs font-mono text-slate-400">Loading media feed...</div>
+      <div class="col-span-full py-12 text-center text-xs font-mono text-slate-400">Loading deleted items...</div>
     </div>
 
     <div id="emptyState" class="hidden py-16 text-center">
       <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
-        <span class="material-symbols-outlined text-3xl">photo_library</span>
+        <span class="material-symbols-outlined text-3xl">delete_outline</span>
       </div>
-      <p class="text-sm font-bold text-slate-900">No media uploaded yet</p>
-      <p class="text-xs text-slate-500 mt-0.5">Drop files above to start populating the unlimited media upload repository.</p>
+      <p class="text-sm font-bold text-slate-900">Trash Bin is Empty</p>
+      <p class="text-xs text-slate-500 mt-0.5">Items deleted from gallery.html will appear here for review and recovery[cite: 1].</p>
     </div>
 
   </main>
@@ -163,9 +222,17 @@
   <script src="common.js?v=21.0"></script>
 
   <script>
-    const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
-    const PRIMARY_CHAT_ID = "-1004302268775";
-    const FALLBACK_CHAT_ID = "-4302268775";
+    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
+
+    const AUTHORIZED_ADMIN_EMAILS = [
+      "kundar.work@gmail.com",
+      "kundar701@gmail.com"
+    ];
 
     // Initialize Firebase for Realtime Multi-User Feed Sync
     const firebaseConfig = {
@@ -179,107 +246,96 @@
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.database();
-    const mediaRef = db.ref("telegram_dump_gallery");
+    const mediaRef = db.ref("telegram_dump_gallery_folders");
 
-    let liveMediaItems = [];
+    let deletedMediaItems = [];
 
-    function isVideo(filename) {
-      return /\.(mp4|webm|ogg|mov|m4v)$/i.test(filename);
+    function isAuthorizedAdmin(email) {
+      if (!email) return false;
+      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === email.trim().toLowerCase());
     }
 
-    async function uploadToTelegram(file, chatId) {
-      const formData = new FormData();
-      formData.append('chat_id', chatId);
-      formData.append('document', file);
-
-      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-        method: 'POST',
-        body: formData
-      });
-      return await res.json();
-    }
-
-    async function handleFiles(files) {
-      if (!files || !files.length) return;
-
-      const progressBox = document.getElementById('progressBox');
-      const progressBar = document.getElementById('progressBar');
-      const progressPct = document.getElementById('progressPct');
-      const statusLabel = document.getElementById('statusLabel');
-
-      progressBox.classList.remove('hidden');
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const pct = Math.round(((i + 1) / files.length) * 100);
-
-        statusLabel.textContent = `Uploading ${i + 1}/${files.length}: ${file.name}`;
-        progressBar.style.width = `${pct}%`;
-        progressPct.textContent = `${pct}%`;
-
-        try {
-          let data = await uploadToTelegram(file, PRIMARY_CHAT_ID);
-
-          if (!data.ok) {
-            data = await uploadToTelegram(file, FALLBACK_CHAT_ID);
-          }
-
-          if (!data.ok) {
-            throw new Error(data.description || 'Telegram rejected upload.');
-          }
-
-          const fileId = data.result.document.file_id;
-
-          const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
-          const pathData = await pathRes.json();
-
-          let directUrl = '';
-          if (pathData.ok && pathData.result.file_path) {
-            directUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
-          }
-
-          await mediaRef.push({
-            fileId: fileId,
-            name: file.name,
-            size: file.size,
-            url: directUrl,
-            isVideo: isVideo(file.name),
-            timestamp: Date.now()
-          });
-
-        } catch (err) {
-          alert(`Error uploading "${file.name}":\n${err.message}`);
+    async function triggerGoogleLogin() {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + window.location.pathname
         }
+      });
+      if (error) {
+        const errBox = document.getElementById('loginErrorMsg');
+        errBox.textContent = `Login error: ${error.message}`;
+        errBox.classList.remove('hidden');
       }
-
-      setTimeout(() => {
-        progressBox.classList.add('hidden');
-        progressBar.style.width = '0%';
-        document.getElementById('fileInput').value = '';
-      }, 400);
     }
 
-    mediaRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      liveMediaItems = [];
+    async function handleSignOut() {
+      await supabaseClient.auth.signOut();
+      location.reload();
+    }
 
-      if (data) {
-        Object.keys(data).forEach((key) => {
-          liveMediaItems.unshift({ key, ...data[key] });
-        });
+    async function checkUserSession() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      const gatewayOverlay = document.getElementById('authGatewayOverlay');
+
+      if (session && session.user && isAuthorizedAdmin(session.user.email)) {
+        gatewayOverlay.classList.add('hidden-gateway');
+        fetchDeletedItems();
+      } else {
+        if (session && session.user) {
+          const errBox = document.getElementById('loginErrorMsg');
+          errBox.textContent = `Access Denied: ${session.user.email} is not an authorized administrator.`;
+          errBox.classList.remove('hidden');
+          await supabaseClient.auth.signOut();
+        }
+        gatewayOverlay.classList.remove('hidden-gateway');
       }
+    }
 
-      renderGallery();
-    });
+    function fetchDeletedItems() {
+      mediaRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        deletedMediaItems = [];
 
-    function renderGallery() {
+        if (data) {
+          Object.keys(data).forEach((key) => {
+            const item = data[key];
+            if (item.folder === 'deleted') {
+              deletedMediaItems.unshift({ key, ...item });
+            }
+          });
+        }
+
+        renderTrashBin();
+      });
+    }
+
+    async function restoreItem(firebaseKey, originalFolder) {
+      const targetFolder = originalFolder && originalFolder !== 'deleted' ? originalFolder : 'packing-images';
+      try {
+        await mediaRef.child(firebaseKey).update({ folder: targetFolder });
+      } catch (err) {
+        alert("Failed to restore file: " + err.message);
+      }
+    }
+
+    async function permanentDelete(firebaseKey) {
+      if (!confirm("Permanently delete this file from storage? This action cannot be undone.")) return;
+      try {
+        await mediaRef.child(firebaseKey).remove();
+      } catch (err) {
+        alert("Failed to delete record: " + err.message);
+      }
+    }
+
+    function renderTrashBin() {
       const grid = document.getElementById('mediaGrid');
       const emptyState = document.getElementById('emptyState');
       const countLabel = document.getElementById('totalCount');
 
-      countLabel.textContent = `${liveMediaItems.length} items`;
+      countLabel.textContent = `${deletedMediaItems.length} items`;
 
-      if (!liveMediaItems.length) {
+      if (!deletedMediaItems.length) {
         grid.innerHTML = '';
         emptyState.classList.remove('hidden');
         return;
@@ -288,52 +344,50 @@
       emptyState.classList.add('hidden');
       grid.innerHTML = '';
 
-      liveMediaItems.forEach(item => {
+      deletedMediaItems.forEach(item => {
         const card = document.createElement('div');
         card.className = "glass-panel rounded-2xl overflow-hidden border border-slate-200 flex flex-col justify-between shadow-sm hover:shadow-md transition-all";
         
         card.innerHTML = `
           <div class="relative aspect-video bg-slate-900 overflow-hidden">
             ${item.isVideo ? `
-              <video src="${item.url}" class="w-full h-full object-cover" controls playsinline preload="metadata"></video>
+              <video src="${item.url}" class="w-full h-full object-cover" muted playsinline preload="metadata"></video>
             ` : `
               <img src="${item.url}" alt="${item.name}" loading="lazy" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/600x400?text=Preview+Expired';">
             `}
+            <span class="absolute top-2 left-2 px-2 py-0.5 rounded bg-black/60 text-white text-[10px] font-bold uppercase tracking-wider backdrop-blur-sm">
+              Deleted
+            </span>
           </div>
 
-          <div class="p-3.5 flex items-center justify-between gap-2 bg-white/80 border-t border-slate-200">
+          <div class="p-3.5 flex flex-col gap-2.5 bg-white/80 border-t border-slate-200">
             <div class="truncate">
               <span class="text-xs font-bold text-slate-900 block truncate" title="${item.name}">${item.name}</span>
-              <span class="text-[10px] font-mono text-slate-500">${(item.size / (1024 * 1024)).toFixed(2)} MB</span>
+              <span class="text-[10px] font-mono text-slate-500">${item.size ? (item.size / (1024 * 1024)).toFixed(2) + ' MB' : '0 MB'}</span>
             </div>
-            <a href="${item.url}" download="${item.name}" target="_blank" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#c21d1d] hover:text-white flex items-center justify-center transition-colors shrink-0" title="Download">
-              <span class="material-symbols-outlined text-[16px]">download</span>
-            </a>
+            
+            <div class="flex items-center gap-2 pt-1 border-t border-slate-100">
+              <button onclick="restoreItem('${item.key}', '${item.prevFolder}')" class="flex-1 py-1.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-xs font-bold transition-colors flex items-center justify-center gap-1" title="Restore to original folder">
+                <span class="material-symbols-outlined text-[16px]">restore</span> Restore
+              </button>
+              <button onclick="permanentDelete('${item.key}')" class="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-600 hover:text-white text-red-600 flex items-center justify-center transition-colors shrink-0" title="Delete Permanently">
+                <span class="material-symbols-outlined text-[16px]">delete_forever</span>
+              </button>
+            </div>
           </div>
         `;
         grid.appendChild(card);
       });
     }
 
-    const dropZone = document.getElementById('dropZone');
-    ['dragenter', 'dragover'].forEach(n => {
-      dropZone.addEventListener(n, e => {
-        e.preventDefault();
-        dropZone.classList.add('border-[#c21d1d]', 'bg-red-50/40');
+    document.addEventListener('DOMContentLoaded', () => {
+      checkUserSession();
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        if (session && session.user && isAuthorizedAdmin(session.user.email)) {
+          document.getElementById('authGatewayOverlay').classList.add('hidden-gateway');
+          fetchDeletedItems();
+        }
       });
-    });
-
-    ['dragleave', 'drop'].forEach(n => {
-      dropZone.addEventListener(n, e => {
-        e.preventDefault();
-        dropZone.classList.remove('border-[#c21d1d]', 'bg-red-50/40');
-      });
-    });
-
-    dropZone.addEventListener('drop', e => {
-      if (e.dataTransfer && e.dataTransfer.files.length) {
-        handleFiles(e.dataTransfer.files);
-      }
     });
   </script>
 </body>
