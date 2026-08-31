@@ -206,7 +206,7 @@
       font-weight: 500;
     }
 
-    /* SUBTITLE UNLIMITED STORAGE BADGE/SYMBOL */
+    /* CLICKABLE UNLIMITED STORAGE BADGE LINK */
     .storage-symbol-badge {
       display: inline-flex;
       align-items: center;
@@ -219,6 +219,16 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .storage-symbol-badge:hover {
+      background: var(--primary);
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
     }
 
     .storage-symbol-badge .material-symbols-outlined {
@@ -856,8 +866,8 @@
       transform: translateY(-1px);
     }
 
-    /* Small Delete / Action Buttons */
-    .btn-delete, .btn-restore, .btn-perm-delete {
+    /* Small Delete Button */
+    .btn-delete {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -868,35 +878,12 @@
       cursor: pointer;
       transition: all 0.2s ease;
       padding: 0;
-    }
-
-    .btn-delete {
       color: #dc2626;
       background: #fee2e2;
     }
 
     .btn-delete:hover {
       background: #dc2626;
-      color: #ffffff;
-    }
-
-    .btn-restore {
-      color: #059669;
-      background: #d1fae5;
-    }
-
-    .btn-restore:hover {
-      background: #059669;
-      color: #ffffff;
-    }
-
-    .btn-perm-delete {
-      color: #991b1b;
-      background: #f87171;
-    }
-
-    .btn-perm-delete:hover {
-      background: #991b1b;
       color: #ffffff;
     }
 
@@ -1010,7 +997,7 @@
 
   <div id="header-container"></div>
 
-  <!-- DELETE CONFIRMATION MODAL (FOR REGULAR USERS) -->
+  <!-- DELETE CONFIRMATION MODAL -->
   <div class="delete-confirm-overlay" id="deleteConfirmModal">
     <div class="delete-confirm-modal">
       <div class="delete-warning-icon">
@@ -1058,9 +1045,10 @@
         <h1 class="gallery-title">Standards &amp; Media <span>Gallery</span></h1>
         <div class="gallery-sub-row">
           <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation.</p>
-          <span class="storage-symbol-badge" title="Unlimited Storage">
+          <!-- CLICKABLE UNLIMITED STORAGE BADGE LAUNCHING DUMP.HTML -->
+          <a href="dump.html" class="storage-symbol-badge" title="Open Unlimited Storage Archive">
             <span class="material-symbols-outlined">all_inclusive</span> Unlimited Storage
-          </span>
+          </a>
         </div>
       </div>
 
@@ -1182,8 +1170,7 @@
       { id: 'electronic', label: 'Electronic', icon: 'devices' },
       { id: 'furniture', label: 'Furniture', icon: 'chair' },
       { id: 'miscellaneous', label: 'Miscellaneous', icon: 'category' },
-      { id: 'others', label: 'Others', icon: 'folder_special' },
-      { id: 'deleted', label: 'Deleted', icon: 'delete_sweep' }
+      { id: 'others', label: 'Others', icon: 'folder_special' }
     ];
 
     let currentActiveFolder = '';
@@ -1273,7 +1260,7 @@
       if (stored) {
         try {
           foldersList = JSON.parse(stored);
-          const requiredIds = ['electronic', 'furniture', 'others', 'deleted'];
+          const requiredIds = ['electronic', 'furniture', 'others'];
           requiredIds.forEach(reqId => {
             if (!foldersList.some(f => f.id === reqId)) {
               const def = DEFAULT_FOLDERS.find(d => d.id === reqId);
@@ -1297,15 +1284,7 @@
 
     function renderFolderControls() {
       const filterBar = document.getElementById('filterBar');
-      const adminAuthenticated = isCurrentUserAdmin();
-
       let visibleFolders = foldersList;
-      if (!adminAuthenticated) {
-        visibleFolders = foldersList.filter(f => f.id !== 'deleted');
-        if (currentActiveFolder === 'deleted') {
-          currentActiveFolder = '';
-        }
-      }
 
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
@@ -1316,7 +1295,8 @@
       `;
 
       tabsHtml += visibleFolders.map(folder => {
-        const isProtectedFolder = ['truck', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others', 'deleted'].includes(folder.id);
+        const isProtectedFolder = ['truck', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others'].includes(folder.id);
+        const adminAuthenticated = isCurrentUserAdmin();
         const adminActions = adminAuthenticated && !isProtectedFolder ? `
           <span class="folder-admin-actions" onclick="event.stopPropagation()">
             <button type="button" class="btn-folder-edit" onclick="editFolder('${folder.id}')" title="Edit Folder Name">
@@ -1350,7 +1330,7 @@
       if (uploadSelect) {
         const prevVal = uploadSelect.value;
         let selectOptions = `<option value="" disabled selected>-- Select Folder (Compulsory) * --</option>`;
-        selectOptions += visibleFolders.filter(f => f.id !== 'deleted').map(f => `
+        selectOptions += visibleFolders.map(f => `
           <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
         `).join('');
         uploadSelect.innerHTML = selectOptions;
@@ -1358,16 +1338,12 @@
     }
 
     function switchFolder(folderId) {
-      if (folderId === 'deleted' && !isCurrentUserAdmin()) {
-        alert("Access Denied: Only authorized admins can view the Deleted folder.");
-        return;
-      }
       currentActiveFolder = folderId;
       displayedItemsCount = ITEMS_PER_PAGE;
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      if (uploadSelect && folderId && folderId !== 'deleted') {
+      if (uploadSelect && folderId) {
         uploadSelect.value = folderId;
         uploadSelect.classList.remove('select-highlight-error');
       }
@@ -1422,7 +1398,7 @@
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
 
-      if (!uploadSelect.value || uploadSelect.value === 'deleted') {
+      if (!uploadSelect.value) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder before uploading!</span>`;
@@ -1478,7 +1454,7 @@
       const statusText = document.getElementById('uploadStatusText');
       const uploadBtn = document.getElementById('uploadTriggerBtn');
 
-      if (!folder || folder === 'deleted') {
+      if (!folder) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
@@ -1581,17 +1557,11 @@
     });
 
     function handleDeleteAction(firebaseKey) {
-      if (isCurrentUserAdmin()) {
-        // Admin deletes directly without warning
-        moveToDeletedFolder(firebaseKey);
-      } else {
-        // Regular user gets warning modal requiring 'yes'
-        pendingDeleteKey = firebaseKey;
-        document.getElementById('deleteInputKeyword').value = '';
-        document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
-        document.getElementById('deleteConfirmModal').classList.add('active');
-        document.getElementById('deleteInputKeyword').focus();
-      }
+      pendingDeleteKey = firebaseKey;
+      document.getElementById('deleteInputKeyword').value = '';
+      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
+      document.getElementById('deleteConfirmModal').classList.add('active');
+      document.getElementById('deleteInputKeyword').focus();
     }
 
     function closeDeleteModal() {
@@ -1612,42 +1582,17 @@
       if (!pendingDeleteKey) return;
       const keyToMove = pendingDeleteKey;
       closeDeleteModal();
-      await moveToDeletedFolder(keyToMove);
-    }
-
-    async function moveToDeletedFolder(firebaseKey) {
-      try {
-        await mediaRef.child(firebaseKey).update({ folder: 'deleted' });
-      } catch (err) {
-        alert("Failed to move item to deleted folder: " + err.message);
-      }
-    }
-
-    async function restoreMedia(firebaseKey) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only admins can restore media.");
-        return;
-      }
-      const targetFolder = prompt("Enter target folder ID to restore to (e.g., packing-images, truck, miscellaneous):", "packing-images");
-      if (!targetFolder || !targetFolder.trim()) return;
+      
+      const itemToMove = liveMediaItems.find(i => i.key === keyToMove);
+      const originalFolder = itemToMove ? itemToMove.folder : 'packing-images';
 
       try {
-        await mediaRef.child(firebaseKey).update({ folder: targetFolder.trim().toLowerCase() });
+        await mediaRef.child(keyToMove).update({ 
+          folder: 'deleted',
+          prevFolder: originalFolder 
+        });
       } catch (err) {
-        alert("Failed to restore item: " + err.message);
-      }
-    }
-
-    async function permanentDelete(firebaseKey) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only admins can permanently delete records.");
-        return;
-      }
-      if (!confirm("Permanently delete this record? This action cannot be undone.")) return;
-      try {
-        await mediaRef.child(firebaseKey).remove();
-      } catch (err) {
-        alert("Failed to permanently delete: " + err.message);
+        alert("Failed to move item to deleted bin: " + err.message);
       }
     }
 
@@ -1700,18 +1645,12 @@
     async function renderGallery() {
       const grid = document.getElementById('mediaGrid');
       const showMoreWrap = document.getElementById('showMoreWrap');
-      const adminAuthenticated = isCurrentUserAdmin();
       
       let filteredItems = [];
       if (currentActiveFolder === '') {
         filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
       } else {
-        if (currentActiveFolder === 'deleted' && !adminAuthenticated) {
-          currentActiveFolder = '';
-          filteredItems = liveMediaItems.filter(item => item.folder !== 'others' && item.folder !== 'deleted');
-        } else {
-          filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder);
-        }
+        filteredItems = liveMediaItems.filter(item => item.folder === currentActiveFolder && item.folder !== 'deleted');
       }
 
       if (!filteredItems.length) {
@@ -1725,7 +1664,6 @@
       grid.innerHTML = paginatedItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
-        const isDeletedFolder = item.folder === 'deleted';
         const formattedSize = formatBytes(item.size);
 
         return `
@@ -1748,18 +1686,9 @@
                 <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
-                ${isDeletedFolder ? (adminAuthenticated ? `
-                  <button type="button" class="btn-restore" onclick="event.stopPropagation(); restoreMedia('${item.key}')" title="Restore">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">restore</span>
-                  </button>
-                  <button type="button" class="btn-perm-delete" onclick="event.stopPropagation(); permanentDelete('${item.key}')" title="Delete Permanently">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
-                  </button>
-                ` : '') : `
-                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
-                  </button>
-                `}
+                <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                </button>
               </div>
             </div>
           </div>
