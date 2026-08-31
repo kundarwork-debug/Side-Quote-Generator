@@ -538,6 +538,26 @@
       color: var(--text-muted);
     }
 
+    /* TELEGRAM STORAGE NOTE (SHORT & DIRECT) */
+    .telegram-storage-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(194, 29, 29, 0.04);
+      border-left: 3px solid var(--primary);
+      padding: 10px 14px;
+      border-radius: 0 10px 10px 0;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .telegram-storage-note span {
+      color: var(--primary);
+      font-size: 18px;
+    }
+
     .panel-row {
       display: flex;
       align-items: center;
@@ -1056,6 +1076,12 @@
           </button>
         </div>
 
+      </div>
+
+      <!-- TELEGRAM STORAGE NOTE (SHORT & DIRECT) -->
+      <div class="telegram-storage-note">
+        <span class="material-symbols-outlined">info</span>
+        Files uploaded here are securely stored via Telegram cloud storage. By uploading, you confirm these are authorized operational assets.
       </div>
     </div>
 
