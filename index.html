@@ -11,8 +11,8 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.0">
-  <link rel="stylesheet" href="common.css?v=21.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.10">
+  <link rel="stylesheet" href="common.css?v=21.10">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,27 +25,26 @@
     :root {
       --primary: #c21d1d;
       --primary-dark: #991b1b;
-      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 45%, #f43f5e 100%);
-      --primary-soft: rgba(194, 29, 29, 0.06);
-      --primary-glow: rgba(194, 29, 29, 0.25);
+      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
+      --primary-soft: rgba(194, 29, 29, 0.08);
       
-      --bg-base: #FDF8F5;
+      --bg-base: #F5EFEB;
       --surface-glass: rgba(255, 255, 255, 0.88);
-      --surface-card: rgba(255, 255, 255, 0.94);
+      --surface-card: rgba(255, 255, 255, 0.95);
       
-      --border-subtle: rgba(237, 228, 222, 0.9);
-      --border-hover: rgba(194, 29, 29, 0.4);
+      --border-subtle: rgba(225, 212, 204, 0.85);
+      --border-hover: rgba(194, 29, 29, 0.35);
       
-      --text-main: #1c1917;
-      --text-secondary: #44403c;
-      --text-muted: #78716c;
+      --text-main: #141210;
+      --text-secondary: #3d3835;
+      --text-muted: #736b66;
       --text-faint: #a8a29e;
       
-      --radius-xl: 24px;
+      --radius-xl: 18px;
       --radius-pill: 9999px;
       
-      --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
-      --shadow-float: 0 24px 48px -12px rgba(194, 29, 29, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
+      --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.03);
+      --shadow-float: 0 20px 40px -12px rgba(194, 29, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.02);
       
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
@@ -67,7 +66,10 @@
     }
 
     body {
-      background-color: var(--bg-base);
+      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
+                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
+                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
+      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100%;
       display: flex;
@@ -76,6 +78,44 @@
       overflow-y: visible !important;
       position: relative;
       -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logistics-bg-animation {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .floating-ops-icon {
+      position: absolute;
+      color: rgba(194, 29, 29, 0.07);
+      font-size: 48px;
+      user-select: none;
+      animation: floatOperationsIcon 18s linear infinite;
+    }
+
+    @keyframes floatOperationsIcon {
+      0% {
+        transform: translateY(110vh) translateX(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% {
+        transform: translateY(-10vh) translateX(80px) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
     }
 
     .hero-video-stage-backdrop {
@@ -88,7 +128,7 @@
       pointer-events: none !important;
       z-index: 0;
       overflow: hidden;
-      background-color: #FDF8F5;
+      background: transparent;
     }
 
     .hero-bg-video {
@@ -99,16 +139,18 @@
       object-fit: cover;
       object-position: right center;
       z-index: 0;
+      opacity: 1;
+      filter: saturate(1.25) contrast(1.15) brightness(1.02);
     }
 
     .hero-video-scrim {
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        to right,
-        rgba(253, 248, 245, 0.92) 0%,
-        rgba(253, 248, 245, 0.75) 35%,
-        rgba(253, 248, 245, 0.2) 60%,
+        90deg,
+        rgba(242, 236, 228, 0.95) 0%,
+        rgba(242, 236, 228, 0.75) 42%,
+        rgba(242, 236, 228, 0.15) 70%,
         transparent 100%
       );
       z-index: 1;
@@ -127,9 +169,9 @@
 
     .slide-up-intro {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 1.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                  transform 1.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(28px);
+      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity, transform;
     }
 
@@ -140,7 +182,7 @@
 
     .fade-reveal {
       opacity: 0;
-      transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
       will-change: opacity;
     }
 
@@ -164,7 +206,7 @@
     }
 
     .hero-left-content {
-      max-width: 680px;
+      max-width: 760px;
       width: 100%;
       display: flex;
       flex-direction: column;
@@ -188,27 +230,26 @@
     .hero-enterprise-pill {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 16px 6px 8px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      gap: 10px;
+      padding: 5px 16px 5px 6px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-pill);
-      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.08);
+      box-shadow: 0 2px 8px rgba(28, 25, 23, 0.04);
       user-select: none;
     }
 
     .hero-pill-badge {
-      background: var(--primary);
+      background: #1c1917;
       color: #ffffff;
       font-size: 10px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       padding: 4px 10px;
       border-radius: var(--radius-pill);
-      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.3);
     }
 
     .hero-pill-text {
@@ -219,14 +260,12 @@
     }
 
     .hero-logo-emblem {
-      width: 58px;
-      height: 58px;
+      width: 56px;
+      height: 56px;
       border-radius: 50% !important;
       background: #ffffff;
-      border: 2px solid #ffffff;
-      box-shadow: 
-        0 12px 28px -6px rgba(194, 29, 29, 0.25), 
-        0 0 0 4px rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 8px 20px -4px rgba(194, 29, 29, 0.12), 0 0 0 3px rgba(255, 255, 255, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -242,7 +281,7 @@
       border-radius: 50%;
       object-fit: contain;
       display: block;
-      animation: unifiedLogoSpin 14s linear infinite;
+      animation: unifiedLogoSpin 16s linear infinite;
       transform-origin: center center;
     }
 
@@ -256,10 +295,9 @@
       font-size: clamp(44px, 6.2vw, 76px);
       font-weight: 800;
       color: var(--text-main);
-      letter-spacing: -0.04em;
-      line-height: 1.05;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
       margin-bottom: 18px;
-      text-shadow: 0 2px 20px rgba(0,0,0,0.02);
       text-align: left;
     }
 
@@ -267,22 +305,22 @@
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 4px 16px rgba(194, 29, 29, 0.15));
     }
 
     .hero-sub {
-      font-size: clamp(16px, 2.4vw, 21px);
+      font-size: clamp(16px, 2.2vw, 20px);
       font-weight: 500;
       color: var(--text-muted);
-      line-height: 1.55;
+      line-height: 1.5;
       letter-spacing: -0.01em;
       margin-bottom: 32px;
       text-align: left;
+      min-height: 1.5em;
     }
 
     .search-filter-wrap {
       width: 100%;
-      max-width: 620px;
+      max-width: 640px;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -293,20 +331,20 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      background: rgba(255, 255, 255, 0.94);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-pill);
-      padding: 16px 24px;
-      box-shadow: 0 16px 36px -4px rgba(120, 113, 108, 0.09), 0 0 0 1px #ffffff inset;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px 22px;
+      box-shadow: 0 12px 32px -4px rgba(28, 25, 23, 0.05);
+      transition: all 0.2s ease;
     }
 
     .search-filter-box:focus-within {
-      border-color: rgba(194, 29, 29, 0.5);
-      box-shadow: 0 20px 42px -4px rgba(194, 29, 29, 0.16), 0 0 0 4px rgba(194, 29, 29, 0.08);
-      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 16px 36px -4px rgba(194, 29, 29, 0.12), 0 0 0 3px rgba(194, 29, 29, 0.06);
+      transform: translateY(-1px);
       background: #ffffff;
     }
 
@@ -334,47 +372,35 @@
     }
 
     .quick-tag-chip {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--border-subtle);
-      padding: 7px 15px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 600;
       color: var(--text-secondary);
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 2px 6px rgba(120, 113, 108, 0.03);
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 2px rgba(28, 25, 23, 0.02);
+      opacity: 0;
+      transform: translateY(10px);
+      animation: chipPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes chipPopIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .quick-tag-chip:hover {
-      border-color: var(--primary);
-      color: var(--primary);
+      border-color: var(--text-main);
+      color: var(--text-main);
       background: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(194, 29, 29, 0.1);
-    }
-
-    /* HIGHLY VISIBLE VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 100vh;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(194, 29, 29, 0.16) 0%, rgba(245, 158, 11, 0.12) 40%, rgba(225, 29, 72, 0.10) 70%, rgba(253, 248, 245, 0.92) 100%);
-      background-size: 300% 300%;
-      animation: liveThemeShift 10s ease infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes liveThemeShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+      transform: translateY(-1px);
     }
 
     .workspace-section {
@@ -420,16 +446,15 @@
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-      gap: 24px;
+      gap: 22px;
       width: 100%;
-      perspective: 1000px;
     }
 
     .module-card {
       background: var(--surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 30px 26px;
       text-decoration: none;
@@ -441,14 +466,14 @@
       position: relative;
       overflow: hidden;
       cursor: pointer !important;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                  box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+      transition: transform 0.25s ease,
+                  box-shadow 0.25s ease,
                   border-color 0.25s ease;
     }
 
     .module-card:hover {
-      transform: translateY(-8px) scale(1.01);
-      border-color: rgba(194, 29, 29, 0.4);
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
       box-shadow: var(--shadow-float);
       background: #ffffff;
     }
@@ -461,34 +486,35 @@
     }
 
     .card-icon-pill {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
       background: var(--primary-soft);
-      border: 1px solid rgba(194, 29, 29, 0.15);
+      border: 1px solid rgba(194, 29, 29, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       color: var(--primary);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s ease;
     }
 
     .module-card:hover .card-icon-pill {
-      transform: scale(1.1) rotate(-4deg);
       background: var(--primary);
       color: #ffffff;
-      box-shadow: 0 6px 18px rgba(194, 29, 29, 0.25);
+      box-shadow: 0 6px 16px rgba(194, 29, 29, 0.2);
     }
 
     .card-icon-pill span {
-      font-size: 28px;
+      font-size: 24px;
     }
 
     .status-tag {
       font-size: 11px;
       font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
       color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.8);
       border: 1px solid var(--border-subtle);
       padding: 4px 12px;
       border-radius: var(--radius-pill);
@@ -497,7 +523,7 @@
     .card-title {
       font-family: var(--font-display);
       font-size: 19px;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
       letter-spacing: -0.02em;
@@ -518,12 +544,12 @@
     }
 
     .micro-tag {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 4px 10px;
-      background: var(--bg-base);
+      padding: 3px 10px;
+      background: rgba(255, 255, 255, 0.7);
       border: 1px solid var(--border-subtle);
-      border-radius: 8px;
+      border-radius: 6px;
       color: var(--text-secondary);
     }
 
@@ -533,8 +559,8 @@
       justify-content: space-between;
       padding-top: 16px;
       border-top: 1px solid var(--border-subtle);
-      font-size: 14px;
-      font-weight: 800;
+      font-size: 13.5px;
+      font-weight: 700;
       color: var(--primary);
     }
 
@@ -546,18 +572,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
     }
 
     .module-card:hover .cta-arrow {
-      transform: translateX(4px);
+      transform: translateX(3px);
       background: var(--primary);
       color: #ffffff;
     }
 
     .impact-section {
       max-width: 1440px;
-      margin: 8px auto 56px;
+      margin: 8px auto 60px;
       padding: 0 32px;
       width: 100%;
       position: relative;
@@ -571,7 +597,7 @@
       background: var(--surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
+      border: 1px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 28px 24px;
       box-shadow: var(--shadow-card);
@@ -593,7 +619,7 @@
 
     .impact-num {
       font-family: var(--font-display);
-      font-size: clamp(28px, 4vw, 36px);
+      font-size: clamp(26px, 3.5vw, 34px);
       font-weight: 800;
       color: var(--primary);
       letter-spacing: -0.03em;
@@ -646,14 +672,16 @@
     }
 
     .support-msg-bubble {
-      background-color: #ffffff; 
-      color: #0F172A;
-      border: 2px solid #0F172A;
-      box-shadow: 4px 4px 0px #0F172A;
+      background-color: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-float);
       padding: 14px 20px;
-      border-radius: 20px 20px 0 20px;
-      font-size: 14px;
-      font-weight: 700;
+      border-radius: 16px 16px 0 16px;
+      font-size: 13.5px;
+      font-weight: 600;
       max-width: 270px;
       opacity: 0;
       transform: translateY(10px) scale(0.95);
@@ -672,19 +700,21 @@
     .cursor {
       display: inline-block;
       width: 2px;
-      background-color: #0F172A;
+      background-color: var(--primary);
       margin-left: 2px;
       animation: blinkCursor 1s step-end infinite;
     }
 
     .support-btn {
-      width: 56px;
-      height: 56px;
+      width: 54px;
+      height: 54px;
       border-radius: 50%;
-      background-color: #ffffff;
-      border: 2px solid #0F172A;
-      box-shadow: 4px 4px 0px #0F172A;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background-color: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-float);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -694,8 +724,9 @@
     }
 
     .support-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 5px 5px 0px #0F172A;
+      transform: translateY(-2px) scale(1.04);
+      border-color: var(--primary);
+      box-shadow: 0 16px 36px -4px rgba(194, 29, 29, 0.18);
     }
 
     .support-avatar {
@@ -725,7 +756,7 @@
 </head>
 <body>
 
-  <!-- HERO SECTION VIDEO BACKDROP -->
+  <!-- RICH WARM STATIC HERO BACKDROP WITH INCREASED VIDEO CLARITY -->
   <div class="hero-video-stage-backdrop">
     <video
       class="hero-bg-video"
@@ -735,6 +766,16 @@
       playsinline
       preload="auto"
     ></video>
+    
+    <div class="logistics-bg-animation">
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 10%; animation-delay: 0s; animation-duration: 14s;">local_shipping</span>
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 28%; animation-delay: 3s; animation-duration: 18s;">inventory_2</span>
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 45%; animation-delay: 1s; animation-duration: 16s;">package_2</span>
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 65%; animation-delay: 4s; animation-duration: 20s;">directions_car</span>
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 82%; animation-delay: 2s; animation-duration: 15s;">description</span>
+      <span class="material-symbols-outlined floating-ops-icon" style="left: 92%; animation-delay: 5s; animation-duration: 22s;">warehouse</span>
+    </div>
+
     <div class="hero-video-scrim"></div>
   </div>
 
@@ -748,8 +789,8 @@
       <div class="hero-left-content">
         <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
           <div class="hero-enterprise-pill">
-            <span class="hero-pill-badge">v21.0 Enterprise</span>
-            <span class="hero-pill-text">All-in-One Operations Workspace</span>
+            <span class="hero-pill-badge">v21.10</span>
+            <span class="hero-pill-text">Enterprise Operations Workspace</span>
           </div>
 
           <div class="hero-logo-emblem">
@@ -757,28 +798,27 @@
           </div>
         </div>
 
-        <h1 class="hero-title slide-up-intro" style="transition-delay: 0.18s;">
+        <h1 class="hero-title slide-up-intro" style="transition-delay: 0.15s;">
           One Portal for <span>All Solutions</span>
         </h1>
 
-        <p class="hero-sub slide-up-intro" style="transition-delay: 0.28s;">
-          Work Smarter, Move Faster.
-        </p>
+        <!-- TYPING ANIMATION SUBTITLE -->
+        <p class="hero-sub slide-up-intro" style="transition-delay: 0.25s;" id="typedSub"></p>
 
-        <!-- Left-Aligned Search Bar -->
-        <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.38s;">
+        <!-- Left-Aligned Search Bar with Typing Placeholder -->
+        <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.35s;">
           <div class="search-filter-box">
             <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">search</span>
-            <input type="text" id="moduleFilterInput" placeholder="Quick find module: Quotation, Car Rate, Directory, Tracking...">
+            <input type="text" id="moduleFilterInput" placeholder="">
           </div>
 
-          <div class="hero-quick-tags">
-            <span class="quick-tag-chip" onclick="applyQuickFilter('quotation')"># Quotation</span>
-            <span class="quick-tag-chip" onclick="applyQuickFilter('consignment')"># Consignment</span>
-            <span class="quick-tag-chip" onclick="applyQuickFilter('car')"># Car Rates</span>
-            <span class="quick-tag-chip" onclick="applyQuickFilter('hub')"># Directory</span>
-            <span class="quick-tag-chip" onclick="applyQuickFilter('lite')"># Lite CFT</span>
-            <span class="quick-tag-chip" onclick="applyQuickFilter('packing')"># Packing Standards</span>
+          <div class="hero-quick-tags" id="quickTagsContainer">
+            <span class="quick-tag-chip" style="animation-delay: 0.1s;" onclick="applyQuickFilter('quotation')">Quotation</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.2s;" onclick="applyQuickFilter('gallery')">Gallery</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.3s;" onclick="applyQuickFilter('hub')">Hub Details</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.4s;" onclick="applyQuickFilter('field officer')">Field Officer</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.5s;" onclick="applyQuickFilter('consignment')">Consignment</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.6s;" onclick="applyQuickFilter('car')">Car Rates</span>
           </div>
         </div>
       </div>
@@ -798,6 +838,7 @@
 
       <div class="modules-grid" id="modulesGrid">
         
+        <!-- 1. QUOTATION (Priority 1) -->
         <a href="editor.html" class="module-card fade-reveal" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
@@ -809,9 +850,9 @@
             <h2 class="card-title">Quotation Drafting Studio</h2>
             <p class="card-description">Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.</p>
             <div class="tags-flow">
-              <span class="micro-tag">📄 A4 PDF Export</span>
-              <span class="micro-tag">⚙️ Freight Matrix</span>
-              <span class="micro-tag">🔒 Local Save</span>
+              <span class="micro-tag">A4 PDF Export</span>
+              <span class="micro-tag">Freight Matrix</span>
+              <span class="micro-tag">Local Save</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -822,30 +863,7 @@
           </div>
         </a>
 
-        <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">local_shipping</span>
-              </div>
-              <span class="status-tag">Live Tracker</span>
-            </div>
-            <h2 class="card-title">WCRO Consignment Status</h2>
-            <p class="card-description">Real-time consignment tracking synced from Google Sheets with secure persistent access and dynamic tab filters.</p>
-            <div class="tags-flow">
-              <span class="micro-tag">📦 Live Consignment</span>
-              <span class="micro-tag">📊 Google Sheets Sync</span>
-              <span class="micro-tag">🔒 One-Time Login</span>
-            </div>
-          </div>
-          <div class="card-footer-cta">
-            <span>View Status</span>
-            <div class="cta-arrow">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </a>
-
+        <!-- 2. GALLERY (Priority 2) -->
         <a href="gallery.html" class="module-card fade-reveal" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
@@ -857,9 +875,9 @@
             <h2 class="card-title">Packing Standards Gallery</h2>
             <p class="card-description">High-definition media library with video demonstrations and official packaging standards for nationwide consignments.</p>
             <div class="tags-flow">
-              <span class="micro-tag">🚚 Fleet Logistics</span>
-              <span class="micro-tag">🏍️ Bike Packaging</span>
-              <span class="micro-tag">🚗 Car Carriers</span>
+              <span class="micro-tag">Fleet Logistics</span>
+              <span class="micro-tag">Bike Packaging</span>
+              <span class="micro-tag">Car Carriers</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -870,6 +888,7 @@
           </div>
         </a>
 
+        <!-- 3. HUB DETAILS (Priority 3) -->
         <a href="hub-details.html" class="module-card fade-reveal" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
@@ -881,9 +900,9 @@
             <h2 class="card-title">Hub &amp; Branch Directory</h2>
             <p class="card-description">Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.</p>
             <div class="tags-flow">
-              <span class="micro-tag">📍 Pan-India Hubs</span>
-              <span class="micro-tag">📞 HOD Contacts</span>
-              <span class="micro-tag">🗺️ Map Navigation</span>
+              <span class="micro-tag">Pan-India Hubs</span>
+              <span class="micro-tag">HOD Contacts</span>
+              <span class="micro-tag">Map Navigation</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -894,6 +913,7 @@
           </div>
         </a>
 
+        <!-- 4. FIELD OFFICER (Priority 4) -->
         <a href="field-officer.html" class="module-card fade-reveal" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
@@ -905,9 +925,9 @@
             <h2 class="card-title">Field Officer Directory WCRO</h2>
             <p class="card-description">Western Central Regional Office field officers directory with direct WhatsApp contact, mobile numbers, and designated areas.</p>
             <div class="tags-flow">
-              <span class="micro-tag">🏢 WCRO Region</span>
-              <span class="micro-tag">📞 Officer Contacts</span>
-              <span class="micro-tag">💬 Direct WhatsApp</span>
+              <span class="micro-tag">WCRO Region</span>
+              <span class="micro-tag">Officer Contacts</span>
+              <span class="micro-tag">Direct WhatsApp</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -918,6 +938,32 @@
           </div>
         </a>
 
+        <!-- 5. WCRO CONSIGNMENT STATUS -->
+        <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <span class="status-tag">Live Tracker</span>
+            </div>
+            <h2 class="card-title">WCRO Consignment Status</h2>
+            <p class="card-description">Real-time consignment tracking synced from Google Sheets with secure persistent access and dynamic tab filters.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Live Consignment</span>
+              <span class="micro-tag">Google Sheets Sync</span>
+              <span class="micro-tag">One-Time Login</span>
+            </div>
+          </div>
+          <div class="card-footer-cta">
+            <span>View Status</span>
+            <div class="cta-arrow">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 6. APML LITE RATE CALCULATOR -->
         <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -929,9 +975,9 @@
             <h2 class="card-title">APML Lite Rate Calculator</h2>
             <p class="card-description">Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.</p>
             <div class="tags-flow">
-              <span class="micro-tag">📦 450 CFT Limit</span>
-              <span class="micro-tag">🏙️ 4 Major Hubs</span>
-              <span class="micro-tag">₹5,000 Base Floor</span>
+              <span class="micro-tag">450 CFT Limit</span>
+              <span class="micro-tag">4 Major Hubs</span>
+              <span class="micro-tag">Base Floor</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -942,6 +988,7 @@
           </div>
         </a>
 
+        <!-- 7. CAR RATE CALCULATOR -->
         <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -953,9 +1000,9 @@
             <h2 class="card-title">Car Rate Calculator</h2>
             <p class="card-description">Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.</p>
             <div class="tags-flow">
-              <span class="micro-tag">🚗 Model Detection</span>
-              <span class="micro-tag">📏 600 KM Base</span>
-              <span class="micro-tag">⚡ Per-KM Slabs</span>
+              <span class="micro-tag">Model Detection</span>
+              <span class="micro-tag">600 KM Base</span>
+              <span class="micro-tag">Per-KM Slabs</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -966,6 +1013,7 @@
           </div>
         </a>
 
+        <!-- 8. LOCAL RATE -->
         <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -977,9 +1025,9 @@
             <h2 class="card-title">APML Local Rate</h2>
             <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.</p>
             <div class="tags-flow">
-              <span class="micro-tag">🚛 Intra-City</span>
-              <span class="micro-tag">📦 ₹25 / ₹20 CFT</span>
-              <span class="micro-tag">₹5,000 Minimum</span>
+              <span class="micro-tag">Intra-City</span>
+              <span class="micro-tag">CFT Slabs</span>
+              <span class="micro-tag">Minimum Floor</span>
             </div>
           </div>
           <div class="card-footer-cta">
@@ -1032,7 +1080,65 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.0"></script>
+  <script src="common.js?v=21.10"></script>
+
+  <!-- FORCE SAME EXPERIENCE FOR EVERYONE -->
+  <script>
+    (function forceLatestVersion() {
+      const CURRENT_VERSION = '21.10';
+      const VERSION_KEY = 'apml-portal-version';
+      const storedVersion = localStorage.getItem(VERSION_KEY);
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(reg => reg.update());
+        }).catch(() => {});
+      }
+
+      if (storedVersion !== CURRENT_VERSION) {
+        localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+
+        if (storedVersion !== null && 'caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          }).catch(() => {});
+        }
+      }
+    })();
+  </script>
+
+  <!-- TYPING ANIMATION FOR SUBTITLE & SEARCH PLACEHOLDER -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const subEl = document.getElementById('typedSub');
+      const inputEl = document.getElementById('moduleFilterInput');
+
+      const subText = "Work Smarter, Move Faster.";
+      const placeholderText = "Search operations module: Quotation, Gallery, Hubs, Field Officer...";
+
+      let i = 0;
+      function typeSub() {
+        if (i < subText.length) {
+          subEl.textContent = subText.substring(0, i + 1);
+          i++;
+          setTimeout(typeSub, 35);
+        } else {
+          i = 0;
+          setTimeout(typePlaceholder, 200);
+        }
+      }
+
+      function typePlaceholder() {
+        if (i < placeholderText.length) {
+          inputEl.setAttribute('placeholder', placeholderText.substring(0, i + 1));
+          i++;
+          setTimeout(typePlaceholder, 20);
+        }
+      }
+
+      setTimeout(typeSub, 300);
+    });
+  </script>
 
   <script>
     const searchInput = document.getElementById('moduleFilterInput');
@@ -1100,7 +1206,7 @@
 
       fadeElements.forEach((el, idx) => {
         if (el.classList.contains('module-card')) {
-          el.style.transitionDelay = `${(idx % 3) * 0.14}s`;
+          el.style.transitionDelay = `${(idx % 4) * 0.1}s`;
         }
         observer.observe(el);
       });
