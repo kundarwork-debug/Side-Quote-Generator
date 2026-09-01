@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Enterprise Cloud Drive</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.26">
-  <link rel="stylesheet" href="common.css?v=21.26">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.33">
+  <link rel="stylesheet" href="common.css?v=21.33">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <!-- SUPABASE JS CLIENT -->
@@ -200,6 +200,8 @@
     }
 
     .drive-title span {
+      font-family: var(--font-display);
+      font-weight: 800;
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -326,8 +328,64 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* CENTERED CONFIRMATION MODAL */
-    .delete-confirm-overlay {
+    /* MULTI-SELECTION FLOATING ACTION BAR */
+    .multi-select-toolbar {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      z-index: 99999;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .multi-select-toolbar.active {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .multi-select-count {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .multi-toolbar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-toolbar {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-toolbar:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .btn-toolbar.danger:hover {
+      background: #dc2626;
+    }
+
+    /* FOLDER SELECTION MODAL */
+    .folder-select-overlay {
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.7);
@@ -342,114 +400,48 @@
       transition: opacity 0.25s ease;
     }
 
-    .delete-confirm-overlay.active {
+    .folder-select-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .delete-confirm-modal {
+    .folder-select-modal {
       background: #ffffff;
-      max-width: 440px;
+      max-width: 400px;
       width: 100%;
       border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
     }
 
-    .delete-confirm-overlay.active .delete-confirm-modal {
-      transform: scale(1);
-    }
-
-    .delete-warning-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .delete-confirm-modal h3 {
-      font-size: 20px;
+    .folder-select-modal h3 {
+      font-size: 18px;
       font-weight: 800;
       color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .delete-confirm-modal p {
-      font-size: 13.5px;
-      color: #6b7280;
-      line-height: 1.5;
       margin-bottom: 16px;
     }
 
-    .delete-input-field {
-      width: 100%;
+    .folder-option-item {
       padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
+      border: 1px solid var(--border-subtle);
       border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-      margin-bottom: 20px;
-      transition: border-color 0.2s ease;
-    }
-
-    .delete-input-field:focus {
-      border-color: #dc2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-    }
-
-    .delete-modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-modal-cancel, .btn-modal-confirm {
-      flex: 1;
-      padding: 11px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
+      margin-bottom: 8px;
       cursor: pointer;
-      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       transition: all 0.2s ease;
     }
 
-    .btn-modal-cancel {
-      background: #f3f4f6;
-      color: #374151;
+    .folder-option-item:hover {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
-    .btn-modal-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-modal-confirm {
-      background: #dc2626;
-      color: #ffffff;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .btn-modal-confirm.enabled {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .btn-modal-confirm.enabled:hover {
-      background: #b91c1c;
-    }
-
-    /* POPUP WARNING MODAL */
+    /* POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS */
     .auth-warning-overlay {
       position: fixed;
       inset: 0;
@@ -691,11 +683,11 @@
       color: #dc2626;
     }
 
-    /* FILES GRID VIEW */
+    /* FILES GRID VIEW WITH CHECKBOX */
     .drive-files-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
     }
 
     .drive-file-grid-card {
@@ -704,62 +696,103 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
-      padding: 20px;
+      overflow: hidden;
       box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 16px;
+      position: relative;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .drive-file-grid-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-float);
-      background: #ffffff;
+    .drive-file-grid-card.selected {
+      border-color: var(--primary);
+      background: rgba(194, 29, 29, 0.03);
+      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.15);
     }
 
-    .grid-card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .file-info-left {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .file-type-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--primary-soft);
-      color: var(--primary);
+    .file-checkbox-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border-subtle);
+      background: rgba(255,255,255,0.9);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
     }
 
-    .file-type-icon .material-symbols-outlined {
-      font-size: 24px;
+    .drive-file-grid-card.selected .file-checkbox-overlay {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
     }
 
-    .file-meta-box {
+    .file-checkbox-overlay .material-symbols-outlined {
+      font-size: 16px;
+      opacity: 0;
+    }
+
+    .drive-file-grid-card.selected .file-checkbox-overlay .material-symbols-outlined {
+      opacity: 1;
+    }
+
+    .grid-preview-box {
+      width: 100%;
+      height: 110px;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .grid-preview-box img, .grid-preview-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .grid-preview-placeholder {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 4px;
-      min-width: 0;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .grid-preview-placeholder span.material-symbols-outlined {
+      font-size: 36px;
+      color: #f43f5e;
+    }
+
+    .grid-preview-placeholder span.ext-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .grid-card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .file-name {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 700;
       color: var(--text-main);
       white-space: nowrap;
@@ -767,36 +800,47 @@
       text-overflow: ellipsis;
     }
 
-    .file-details-sub {
+    .file-details-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 12px;
+      justify-content: space-between;
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 600;
     }
 
-    .file-actions-right {
+    .file-type-pill {
+      background: rgba(194, 29, 29, 0.08);
+      color: var(--primary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .grid-card-footer {
+      padding: 0 14px 14px 14px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
+      justify-content: flex-end;
+      gap: 6px;
     }
 
     .btn-download-file {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       color: #ffffff;
       background: var(--primary);
       border: none;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: var(--radius-pill);
       cursor: pointer;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      box-shadow: 0 2px 8px rgba(194, 29, 29, 0.2);
+      box-shadow: 0 2px 6px rgba(194, 29, 29, 0.2);
       transition: background 0.2s ease, transform 0.2s ease;
     }
 
@@ -809,8 +853,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
@@ -823,6 +867,69 @@
     .btn-delete-file:hover {
       background: #dc2626;
       color: #ffffff;
+    }
+
+    /* LIGHTBOX MODAL VIEWER FOR PREVIEWS */
+    .media-lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .media-lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-content-box {
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .lightbox-content-box img, .lightbox-content-box video, .lightbox-content-box iframe {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      background: #ffffff;
+      width: 100%;
+      height: 80vh;
+    }
+
+    .btn-lightbox-close {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-lightbox-close:hover {
+      background: var(--primary);
     }
 
     .state-msg {
@@ -877,19 +984,28 @@
 
   <div id="header-container"></div>
 
-  <!-- DELETE CONFIRMATION MODAL -->
-  <div class="delete-confirm-overlay" id="deleteConfirmModal">
-    <div class="delete-confirm-modal">
-      <div class="delete-warning-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
-      </div>
-      <h3>Are you sure?</h3>
-      <p>Once deleted, this action is not reversible. Type <strong>yes</strong> below to confirm.</p>
-      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type yes to confirm" oninput="checkDeleteKeyword(this)">
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete Item</button>
-      </div>
+  <!-- MULTI-SELECTION FLOATING ACTION BAR -->
+  <div class="multi-select-toolbar" id="multiSelectToolbar">
+    <span class="multi-select-count" id="selectedCountText">0 selected</span>
+    <div class="multi-toolbar-actions">
+      <button type="button" class="btn-toolbar" onclick="promptMoveSelected()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">drive_file_move</span> Move
+      </button>
+      <button type="button" class="btn-toolbar" onclick="promptCopySelected()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">content_copy</span> Copy
+      </button>
+      <button type="button" class="btn-toolbar danger" onclick="deleteSelectedFiles()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">delete</span> Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- FOLDER SELECTION MODAL FOR MOVE / COPY -->
+  <div class="folder-select-overlay" id="folderSelectModal">
+    <div class="folder-select-modal">
+      <h3 id="folderModalTitle">Select Destination Folder</h3>
+      <div id="folderModalList" style="max-height: 250px; overflow-y: auto;"></div>
+      <button type="button" class="btn-toolbar" style="background:#f3f4f6; color:#374151; width:100%; justify-content:center; margin-top:12px;" onclick="closeFolderModal()">Cancel</button>
     </div>
   </div>
 
@@ -905,6 +1021,16 @@
         Only authorized admin accounts can access admin controls.
       </p>
       <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX PREVIEW MODAL -->
+  <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
+    <div class="lightbox-content-box" id="lightboxContainer">
+      <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div id="lightboxMediaSlot" style="width: 100%; display: flex; justify-content: center;"></div>
     </div>
   </div>
 
@@ -981,7 +1107,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.26"></script>
+  <script src="common.js?v=21.33"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1013,6 +1139,7 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("telegram_gdrive_files");
     const driveFoldersRef = db.ref("telegram_gdrive_folders");
+    const dumpBinRef = db.ref("telegram_dump_gallery_folders");
 
     const AUTHORIZED_ADMIN_EMAILS = [
       "kundar.work@gmail.com",
@@ -1023,7 +1150,8 @@
     let liveFolders = [];
     let liveFiles = [];
     let currentUser = null;
-    let pendingDeleteTarget = null;
+    let selectedFileKeys = new Set();
+    let folderActionType = 'move';
 
     const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
     const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
@@ -1148,6 +1276,8 @@
     // --- FOLDER NAVIGATION & CREATION ---
     function navigateToFolder(folderId) {
       currentParentId = folderId;
+      selectedFileKeys.clear();
+      updateMultiSelectToolbar();
       renderUI();
     }
 
@@ -1160,6 +1290,192 @@
         parentId: currentParentId,
         timestamp: Date.now()
       }).catch(err => alert("Failed to create folder: " + err.message));
+    }
+
+    // --- MULTI-SELECTION LOGIC ---
+    function toggleFileSelection(event, fileKey) {
+      event.stopPropagation();
+      if (selectedFileKeys.has(fileKey)) {
+        selectedFileKeys.delete(fileKey);
+      } else {
+        selectedFileKeys.add(fileKey);
+      }
+      updateMultiSelectToolbar();
+      
+      const card = document.getElementById(`file-card-${fileKey}`);
+      if (card) {
+        if (selectedFileKeys.has(fileKey)) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      }
+    }
+
+    function updateMultiSelectToolbar() {
+      const toolbar = document.getElementById('multiSelectToolbar');
+      const countText = document.getElementById('selectedCountText');
+      const count = selectedFileKeys.size;
+
+      if (count > 0) {
+        countText.textContent = `${count} selected`;
+        toolbar.classList.add('active');
+      } else {
+        toolbar.classList.remove('active');
+      }
+    }
+
+    // --- MOVE / COPY SELECTED FILES ---
+    function promptMoveSelected() {
+      if (selectedFileKeys.size === 0) return;
+      folderActionType = 'move';
+      document.getElementById('folderModalTitle').textContent = "Move Selected Files To...";
+      openFolderModal();
+    }
+
+    function promptCopySelected() {
+      if (selectedFileKeys.size === 0) return;
+      folderActionType = 'copy';
+      document.getElementById('folderModalTitle').textContent = "Copy Selected Files To...";
+      openFolderModal();
+    }
+
+    function openFolderModal() {
+      const listContainer = document.getElementById('folderModalList');
+      let optionsHtml = `
+        <div class="folder-option-item" onclick="executeFolderAction('root')">
+          <span class="material-symbols-outlined">folder</span> My Drive (Root)
+        </div>
+      `;
+
+      liveFolders.forEach(f => {
+        optionsHtml += `
+          <div class="folder-option-item" onclick="executeFolderAction('${f.key}')">
+            <span class="material-symbols-outlined">folder</span> ${f.name}
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = optionsHtml;
+      document.getElementById('folderSelectModal').classList.add('active');
+    }
+
+    function closeFolderModal() {
+      document.getElementById('folderSelectModal').classList.remove('active');
+    }
+
+    async function executeFolderAction(targetParentId) {
+      closeFolderModal();
+      const keys = Array.from(selectedFileKeys);
+
+      try {
+        if (folderActionType === 'move') {
+          for (const key of keys) {
+            await driveFilesRef.child(key).update({ parentId: targetParentId });
+          }
+          alert(`Successfully moved ${keys.length} files!`);
+        } else if (folderActionType === 'copy') {
+          for (const key of keys) {
+            const fileItem = liveFiles.find(f => f.key === key);
+            if (fileItem) {
+              await driveFilesRef.push({
+                fileId: fileItem.fileId,
+                parentId: targetParentId,
+                name: fileItem.name,
+                size: fileItem.size || 0,
+                timestamp: Date.now()
+              });
+            }
+          }
+          alert(`Successfully copied ${keys.length} files!`);
+        }
+        selectedFileKeys.clear();
+        updateMultiSelectToolbar();
+        renderUI();
+      } catch (err) {
+        alert("Operation failed: " + err.message);
+      }
+    }
+
+    // --- DELETION: RECURSIVELY SENDS FOLDER & ITS FILES TO DUMP ARCHIVE ---
+    async function deleteSelectedFiles() {
+      if (selectedFileKeys.size === 0) return;
+      if (!confirm(`Are you sure you want to send ${selectedFileKeys.size} selected files to dump storage?`)) return;
+
+      try {
+        const keys = Array.from(selectedFileKeys);
+        for (const key of keys) {
+          const fileItem = liveFiles.find(f => f.key === key);
+          if (fileItem) {
+            await dumpBinRef.push({
+              fileId: fileItem.fileId,
+              name: fileItem.name,
+              size: fileItem.size || 0,
+              folder: fileItem.parentId || 'root',
+              timestamp: fileItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            await driveFilesRef.child(key).remove();
+          }
+        }
+        selectedFileKeys.clear();
+        updateMultiSelectToolbar();
+        renderUI();
+      } catch (err) {
+        alert("Failed to move files to dump: " + err.message);
+      }
+    }
+
+    async function moveToDump(type, key) {
+      try {
+        if (type === 'file') {
+          const fileItem = liveFiles.find(f => f.key === key);
+          if (fileItem) {
+            await dumpBinRef.push({
+              fileId: fileItem.fileId,
+              name: fileItem.name,
+              size: fileItem.size || 0,
+              folder: fileItem.parentId || 'root',
+              timestamp: fileItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            await driveFilesRef.child(key).remove();
+          }
+        } else if (type === 'folder') {
+          const folderItem = liveFolders.find(f => f.key === key);
+          if (folderItem) {
+            // 1. Send folder itself to dump with metadata
+            const dumpFolderRef = await dumpBinRef.push({
+              name: folderItem.name,
+              folder: folderItem.parentId || 'root',
+              isFolder: true,
+              timestamp: folderItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            
+            const dumpFolderKey = dumpFolderRef.key;
+
+            // 2. Find all sub-files directly inside this folder and move them to dump with path pointing to dumpFolderKey
+            const childFiles = liveFiles.filter(f => f.parentId === key);
+            for (const cFile of childFiles) {
+              await dumpBinRef.push({
+                fileId: cFile.fileId,
+                name: cFile.name,
+                size: cFile.size || 0,
+                folder: dumpFolderKey, // Links child files to this dumped folder path
+                timestamp: cFile.timestamp || Date.now(),
+                originalKey: cFile.key
+              });
+              await driveFilesRef.child(cFile.key).remove();
+            }
+
+            // Remove folder from live drive
+            await driveFoldersRef.child(key).remove();
+          }
+        }
+      } catch (err) {
+        alert("Failed to move item to dump: " + err.message);
+      }
     }
 
     // --- FILE UPLOAD LOGIC ---
@@ -1218,46 +1534,7 @@
       alert(`Successfully uploaded ${successCount} of ${files.length} files!`);
     }
 
-    // --- DELETION HANDLING ---
-    function promptDelete(type, key) {
-      pendingDeleteTarget = { type, key };
-      document.getElementById('deleteInputKeyword').value = '';
-      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
-      document.getElementById('deleteConfirmModal').classList.add('active');
-      document.getElementById('deleteInputKeyword').focus();
-    }
-
-    function closeDeleteModal() {
-      pendingDeleteTarget = null;
-      document.getElementById('deleteConfirmModal').classList.remove('active');
-    }
-
-    function checkDeleteKeyword(input) {
-      const btn = document.getElementById('btnConfirmDeleteAction');
-      if (input.value.trim().toLowerCase() === 'yes') {
-        btn.classList.add('enabled');
-      } else {
-        btn.classList.remove('enabled');
-      }
-    }
-
-    async function executePendingDelete() {
-      if (!pendingDeleteTarget) return;
-      const { type, key } = pendingDeleteTarget;
-      closeDeleteModal();
-
-      try {
-        if (type === 'folder') {
-          await driveFoldersRef.child(key).remove();
-        } else if (type === 'file') {
-          await driveFilesRef.child(key).remove();
-        }
-      } catch (err) {
-        alert("Deletion failed: " + err.message);
-      }
-    }
-
-    // --- TELEGRAM URL RESOLUTION & DOWNLOAD ---
+    // --- TELEGRAM URL RESOLUTION & DOWNLOAD / PREVIEW ---
     async function resolveFileUrl(fileId, legacyUrl) {
       if (!fileId) return legacyUrl || '';
       if (fileUrlCache.has(fileId)) return fileUrlCache.get(fileId);
@@ -1294,7 +1571,40 @@
       }
     }
 
-    // --- RENDER UI (BREADCRUMBS, FOLDERS, FILES) ---
+    async function openFilePreview(fileId, legacyUrl, fileName) {
+      const freshUrl = await resolveFileUrl(fileId, legacyUrl);
+      const overlay = document.getElementById('mediaLightboxModal');
+      const slot = document.getElementById('lightboxMediaSlot');
+
+      const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName);
+      const isPdf = /\.pdf$/i.test(fileName);
+
+      if (isImage) {
+        slot.innerHTML = `<img src="${freshUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
+      } else if (isPdf) {
+        slot.innerHTML = `<iframe src="${freshUrl}" style="width:100%; height:80vh; border:none; border-radius:12px;"></iframe>`;
+      } else {
+        slot.innerHTML = `
+          <div style="text-align:center; padding:40px; color:#ffffff;">
+            <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
+            <a href="${freshUrl}" download="${fileName}" class="btn-download-file">Download File</a>
+          </div>
+        `;
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeLightbox(evt) {
+      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
+        const overlay = document.getElementById('mediaLightboxModal');
+        const slot = document.getElementById('lightboxMediaSlot');
+        overlay.classList.remove('active');
+        slot.innerHTML = '';
+      }
+    }
+
+    // --- RENDER UI ---
     function renderBreadcrumb() {
       const nav = document.getElementById('breadcrumbNav');
       if (currentParentId === 'root') {
@@ -1328,11 +1638,17 @@
       nav.innerHTML = html;
     }
 
+    function getFileExtension(filename) {
+      const parts = filename.split('.');
+      return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
+    }
+
     function getFileIcon(filename) {
       if (/\.pdf$/i.test(filename)) return 'picture_as_pdf';
       if (/\.(xls|xlsx|csv)$/i.test(filename)) return 'table_chart';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'folder_zip';
       if (/\.(doc|docx)$/i.test(filename)) return 'article';
+      if (/\.(jpg|jpeg|png|webp|gif)$/i.test(filename)) return 'image';
       return 'insert_drive_file';
     }
 
@@ -1366,7 +1682,7 @@
               <span class="material-symbols-outlined">folder</span>
               <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
             </div>
-            <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); promptDelete('folder', '${folder.key}')" title="Delete Folder">
+            <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); moveToDump('folder', '${folder.key}')" title="Delete Folder">
               <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
             </button>
           </div>
@@ -1376,44 +1692,62 @@
         foldersGrid.innerHTML = '';
       }
 
-      // Render Files in Grid View exclusively
+      // Render Files in Small Grid View with Checkboxes
       if (currentFiles.length > 0) {
         filesContainerWrapper.innerHTML = `
           <div class="drive-files-grid">
             ${currentFiles.map(file => {
               const iconName = getFileIcon(file.name);
+              const extName = getFileExtension(file.name);
               const formattedSize = formatBytes(file.size);
+              const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
+              const isSelected = selectedFileKeys.has(file.key);
 
               return `
-                <div class="drive-file-grid-card">
-                  <div class="grid-card-top">
-                    <div class="file-info-left">
-                      <div class="file-type-icon">
-                        <span class="material-symbols-outlined">${iconName}</span>
-                      </div>
-                      <div class="file-meta-box">
-                        <div class="file-name" title="${file.name}">${file.name}</div>
-                        <div class="file-details-sub">
-                          <span>${formattedSize}</span>
-                        </div>
-                      </div>
+                <div class="drive-file-grid-card ${isSelected ? 'selected' : ''}" id="file-card-${file.key}">
+                  <!-- MULTI-SELECT CHECKBOX -->
+                  <div class="file-checkbox-overlay" onclick="toggleFileSelection(event, '${file.key}')" title="Select File">
+                    <span class="material-symbols-outlined">check</span>
+                  </div>
+
+                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.url || ''}', '${file.name}')" title="Click to preview">
+                    ${isImage 
+                      ? `<img id="preview-img-${file.key}" src="" alt="${file.name}">` 
+                      : `<div class="grid-preview-placeholder">
+                           <span class="material-symbols-outlined">${iconName}</span>
+                           <span class="ext-badge">${extName}</span>
+                         </div>`
+                    }
+                  </div>
+                  <div class="grid-card-body">
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    <div class="file-details-row">
+                      <span class="file-type-pill">${extName}</span>
+                      <span>${formattedSize}</span>
                     </div>
                   </div>
-                  <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 10px; border-top: 1px solid var(--border-subtle); padding-top: 10px;">
-                    <div class="file-actions-right">
-                      <button type="button" class="btn-download-file" style="padding: 6px 12px; font-size: 12px;" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
-                        <span class="material-symbols-outlined" style="font-size: 16px;">download</span> Download
-                      </button>
-                      <button type="button" class="btn-delete-file" style="width: 30px; height: 30px;" onclick="promptDelete('file', '${file.key}')" title="Delete">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>
-                    </div>
+                  <div class="grid-card-footer">
+                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
+                      <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
+                    </button>
+                    <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
+                      <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                    </button>
                   </div>
                 </div>
               `;
             }).join('')}
           </div>
         `;
+
+        currentFiles.forEach(async file => {
+          if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
+            const freshUrl = await resolveFileUrl(file.fileId, file.url);
+            const imgEl = document.getElementById(`preview-img-${file.key}`);
+            if (imgEl) imgEl.src = freshUrl;
+          }
+        });
+
       } else if (currentFolders.length === 0) {
         filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
       } else {
