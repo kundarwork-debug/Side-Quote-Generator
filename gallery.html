@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.0">
-  <link rel="stylesheet" href="common.css?v=21.0">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.12">
+  <link rel="stylesheet" href="common.css?v=21.12">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,31 +25,68 @@
     :root {
       --primary: #c21d1d;
       --primary-dark: #991b1b;
+      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
       --primary-soft: rgba(194, 29, 29, 0.08);
-      --bg-base: #FDF8F5;
+      
+      --bg-base: #F5EFEB;
+      --surface-glass: rgba(255, 255, 255, 0.88);
       --surface-card: rgba(255, 255, 255, 0.95);
-      --border-subtle: rgba(237, 228, 222, 0.9);
-      --text-main: #1c1917;
-      --text-muted: #78716c;
-      --radius-xl: 20px;
+      
+      --border-subtle: rgba(225, 212, 204, 0.85);
+      --border-hover: rgba(194, 29, 29, 0.35);
+      
+      --text-main: #141210;
+      --text-secondary: #3d3835;
+      --text-muted: #736b66;
+      --text-faint: #a8a29e;
+      
+      --radius-xl: 18px;
       --radius-pill: 9999px;
-      --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.06);
+      
+      --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.03);
+      --shadow-float: 0 20px 40px -12px rgba(194, 29, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.02);
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: var(--font-sans);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll !important;
+      height: 100%;
     }
 
     body {
-      background-color: var(--bg-base);
+      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
+                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
+                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
+      background-attachment: fixed;
       color: var(--text-main);
-      min-height: 100vh;
+      min-height: 100%;
       display: flex;
       flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: visible !important;
       position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* FULL PAGE SMOOTH LOADING OVERLAY */
@@ -112,7 +149,7 @@
     }
 
     .loading-brand-text {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: 18px;
       font-weight: 700;
       color: var(--text-main);
@@ -124,33 +161,6 @@
       color: var(--text-muted);
       margin-top: 6px;
       font-weight: 500;
-    }
-
-    /* VIBRANT LIVE ANIMATED BACKGROUND THEME STARTING FROM PAGE 2 */
-    body::before {
-      content: "";
-      position: absolute;
-      top: 100vh;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(194, 29, 29, 0.15) 0%,
-        rgba(225, 29, 72, 0.1) 40%,
-        rgba(245, 158, 11, 0.06) 70%,
-        rgba(253, 248, 245, 0.95) 100%
-      );
-      background-size: 300% 300%;
-      animation: liveThemeShift 14s ease infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    @keyframes liveThemeShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     #header-container {
@@ -181,7 +191,7 @@
     }
 
     .gallery-title {
-      font-family: 'Space Grotesk', sans-serif;
+      font-family: var(--font-display);
       font-size: clamp(30px, 4vw, 42px);
       font-weight: 800;
       letter-spacing: -0.03em;
@@ -190,7 +200,9 @@
     }
 
     .gallery-title span {
-      color: var(--primary);
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .gallery-sub-row {
@@ -246,7 +258,9 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #ffffff;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       padding: 9px 18px;
       border-radius: var(--radius-pill);
@@ -500,6 +514,8 @@
     /* UPLOAD ACTION PANEL */
     .unified-action-panel {
       background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px dashed rgba(194, 29, 29, 0.35);
       border-radius: var(--radius-xl);
       padding: 24px 28px;
@@ -573,7 +589,9 @@
     }
 
     .folder-select {
-      background: #ffffff;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       padding: 10px 16px;
@@ -639,7 +657,9 @@
     .filter-item-wrapper {
       display: inline-flex;
       align-items: center;
-      background: #ffffff;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-pill);
       padding: 3px 6px 3px 14px;
@@ -705,7 +725,9 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: #ffffff;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px dashed var(--primary);
       color: var(--primary);
       padding: 8px 16px;
@@ -722,7 +744,7 @@
       transform: translateY(-1px);
     }
 
-    /* MEDIA GRID & SHOW MORE CONTAINER */
+    /* MEDIA GRID & PAGINATION CONTAINER */
     .media-grid-wrapper {
       display: flex;
       flex-direction: column;
@@ -735,48 +757,71 @@
       gap: 24px;
     }
 
-    .show-more-wrap {
+    /* NUMERIC PAGINATION CONTROLS (8 ITEMS PER PAGE) */
+    .pagination-bar {
       display: flex;
+      align-items: center;
       justify-content: center;
-      margin-top: 12px;
+      gap: 8px;
+      margin-top: 24px;
     }
 
-    .btn-show-more {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #ffffff;
+    .btn-page {
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       color: var(--text-main);
-      padding: 12px 28px;
-      border-radius: var(--radius-pill);
+      min-width: 40px;
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: var(--shadow-card);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
       transition: all 0.2s ease;
     }
 
-    .btn-show-more:hover {
+    .btn-page:hover:not(:disabled) {
       border-color: var(--primary);
       color: var(--primary);
       transform: translateY(-1px);
     }
 
+    .btn-page.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+    }
+
+    .btn-page:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
     .media-card {
       background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       overflow: hidden;
       box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .media-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 16px 32px -6px rgba(194, 29, 29, 0.12);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-float);
+      background: #ffffff;
     }
 
     .media-preview-wrap {
@@ -1075,7 +1120,7 @@
           </div>
           <div>
             <h3>Upload Multiple Media Assets</h3>
-            <p id="uploadStatusText">Select destination category and choose multiple images or videos</p>
+            <p id="uploadStatusText">Select destination category and choose multiple images or videos (auto-compressed)</p>
           </div>
         </div>
 
@@ -1095,14 +1140,14 @@
       <!-- TELEGRAM STORAGE NOTE -->
       <div class="telegram-storage-note">
         <span class="material-symbols-outlined">info</span>
-        Files uploaded here are securely stored via Telegram cloud storage. By uploading, you confirm these are authorized operational assets.
+        Files are automatically resized and compressed client-side before permanent Telegram storage upload to maximize storage efficiency.
       </div>
     </div>
 
     <!-- DYNAMIC FOLDER FILTER TABS -->
     <div class="filter-bar" id="filterBar"></div>
 
-    <!-- MEDIA GRID WRAPPER WITH SHOW MORE -->
+    <!-- MEDIA GRID WRAPPER WITH PAGINATION -->
     <div class="media-grid-wrapper">
       <main class="media-grid" id="mediaGrid">
         <div class="state-msg">
@@ -1110,18 +1155,16 @@
           Syncing live cloud storage feed...
         </div>
       </main>
-      <div class="show-more-wrap" id="showMoreWrap" style="display: none;">
-        <button type="button" class="btn-show-more" onclick="loadMoreMedia()">
-          <span class="material-symbols-outlined" style="font-size: 20px;">expand_more</span> Show More Media
-        </button>
-      </div>
+      
+      <!-- NUMERIC PAGINATION CONTROLS -->
+      <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </div>
 
   </main>
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.0"></script>
+  <script src="common.js?v=21.12"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1178,10 +1221,11 @@
     let currentUser = null;
     let pendingDeleteKey = null;
 
-    let displayedItemsCount = 12;
-    const ITEMS_PER_PAGE = 12;
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 8; // Exactly 8 grids per page
 
-    const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v1';
+    const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v2';
+    const fileUrlCache = new Map();
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1338,7 +1382,7 @@
 
     function switchFolder(folderId) {
       currentActiveFolder = folderId;
-      displayedItemsCount = ITEMS_PER_PAGE;
+      currentPage = 1;
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
@@ -1348,9 +1392,10 @@
       }
     }
 
-    function loadMoreMedia() {
-      displayedItemsCount += ITEMS_PER_PAGE;
+    function goToPage(pageNum) {
+      currentPage = pageNum;
       renderGallery();
+      window.scrollTo({ top: 300, behavior: 'smooth' });
     }
 
     function handleCreateFolder() {
@@ -1429,6 +1474,54 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
+    async function compressImageFile(file, maxWidth = 1600, quality = 0.8) {
+      if (!file.type.startsWith('image/') || file.type === 'image/gif') {
+        return file;
+      }
+
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              if (!blob) {
+                resolve(file);
+                return;
+              }
+              const compressedFile = new File([blob], file.name, {
+                type: 'image/jpeg',
+                lastModified: Date.now()
+              });
+              if (compressedFile.size < file.size) {
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            }, 'image/jpeg', quality);
+          };
+          img.onerror = () => resolve(file);
+        };
+        reader.onerror = () => resolve(file);
+      });
+    }
+
     async function uploadToTelegram(file, chatId) {
       const formData = new FormData();
       formData.append('chat_id', chatId);
@@ -1473,16 +1566,18 @@
       let successCount = 0;
 
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
+        let file = files[i];
 
-        if (file.size > MAX_FILE_SIZE_BYTES) {
-          alert(`File size exceeds the 50MB limit. Please choose a smaller file or compress it before uploading (${file.name}).`);
-          continue;
-        }
-
-        statusText.innerHTML = `<span style="color: var(--primary);">Uploading file ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary);">Compressing & uploading ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
+          file = await compressImageFile(file);
+
+          if (file.size > MAX_FILE_SIZE_BYTES) {
+            alert(`File size exceeds the 50MB limit after compression (${file.name}). Skipping.`);
+            continue;
+          }
+
           let data = await uploadToTelegram(file, PRIMARY_CHAT_ID);
           if (!data.ok) {
             data = await uploadToTelegram(file, FALLBACK_CHAT_ID);
@@ -1503,20 +1598,11 @@
 
           if (!fileId) throw new Error('Could not extract file ID from Telegram response.');
 
-          const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
-          const pathData = await pathRes.json();
-
-          let directUrl = '';
-          if (pathData.ok && pathData.result.file_path) {
-            directUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
-          }
-
           await mediaRef.push({
             fileId: fileId,
             folder: folder,
             name: file.name,
             size: file.size || 0,
-            url: directUrl,
             isVideo: isVideo(file.name),
             timestamp: Date.now()
           });
@@ -1529,10 +1615,10 @@
 
       document.getElementById('mediaFileInput').value = '';
       uploadBtn.disabled = false;
-      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} of ${files.length} files to ${folder}!</span>`;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully compressed and uploaded ${successCount} of ${files.length} files!</span>`;
       
       setTimeout(() => {
-        statusText.textContent = "Select destination category and choose multiple images or videos";
+        statusText.textContent = "Select destination category and choose multiple images or videos (auto-compressed)";
       }, 4000);
     }
 
@@ -1565,10 +1651,8 @@
 
     function handleDeleteAction(firebaseKey) {
       if (isCurrentUserAdmin()) {
-        // Admin deletes directly without warning, sending to dump.html trash bin with path preservation
         moveToDeletedFolder(firebaseKey);
       } else {
-        // Regular user gets warning modal requiring 'yes'
         pendingDeleteKey = firebaseKey;
         document.getElementById('deleteInputKeyword').value = '';
         document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
@@ -1612,6 +1696,27 @@
       }
     }
 
+    async function resolveFileUrl(fileId, legacyUrl) {
+      if (!fileId) return legacyUrl || '';
+      if (fileUrlCache.has(fileId)) {
+        return fileUrlCache.get(fileId);
+      }
+
+      try {
+        const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
+        const pathData = await pathRes.json();
+        if (pathData.ok && pathData.result.file_path) {
+          const freshUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
+          fileUrlCache.set(fileId, freshUrl);
+          return freshUrl;
+        }
+      } catch (err) {
+        console.error("Failed to resolve fileId:", fileId, err);
+      }
+
+      return legacyUrl || '';
+    }
+
     function incrementGlobalMediaDownloadAndDownload(fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -1637,30 +1742,9 @@
       }
     }
 
-    function createOptimizedThumbnailUrl(originalUrl, isVideo) {
-      if (isVideo) return originalUrl;
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 400;
-          const scaleSize = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scaleSize;
-
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          resolve(canvas.toDataURL('image/jpeg', 0.5));
-        };
-        img.onerror = () => resolve(originalUrl);
-        img.src = originalUrl;
-      });
-    }
-
     async function renderGallery() {
       const grid = document.getElementById('mediaGrid');
-      const showMoreWrap = document.getElementById('showMoreWrap');
+      const paginationBar = document.getElementById('paginationBar');
       
       let filteredItems = [];
       if (currentActiveFolder === '') {
@@ -1671,23 +1755,29 @@
 
       if (!filteredItems.length) {
         grid.innerHTML = `<div class="state-msg">No media files found in this category. Upload items above.</div>`;
-        showMoreWrap.style.display = 'none';
+        paginationBar.style.display = 'none';
         return;
       }
 
-      const paginatedItems = filteredItems.slice(0, displayedItemsCount);
+      const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const paginatedItems = filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
       grid.innerHTML = paginatedItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const formattedSize = formatBytes(item.size);
+        const cachedUrl = (item.fileId && fileUrlCache.get(item.fileId)) || item.url || '';
 
         return `
           <div class="media-card" id="card-${item.key}">
-            <div class="media-preview-wrap" onclick="openLightbox('${item.url}', ${item.isVideo})">
+            <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
               ${item.isVideo 
-                ? `<video src="${item.url}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata"></video>` 
-                : `<img id="img-${item.key}" src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.src='logo.svg'">`
+                ? `<video id="media-el-${item.key}" src="${cachedUrl}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata"></video>` 
+                : `<img id="media-el-${item.key}" src="${cachedUrl || 'logo.svg'}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.src='logo.svg'">`
               }
             </div>
             <div class="media-info">
@@ -1699,7 +1789,7 @@
                 <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.url}', '${item.name}')" title="Download Original Quality">
+                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleItemDownload('${item.key}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
                 <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
@@ -1711,19 +1801,52 @@
         `;
       }).join('');
 
-      if (displayedItemsCount < filteredItems.length) {
-        showMoreWrap.style.display = 'flex';
+      if (totalPages > 1) {
+        paginationBar.style.display = 'flex';
+        let paginationHtml = `
+          <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
+            <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+          </button>
+        `;
+
+        for (let p = 1; p <= totalPages; p++) {
+          paginationHtml += `
+            <button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>
+          `;
+        }
+
+        paginationHtml += `
+          <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
+            <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+          </button>
+        `;
+
+        paginationBar.innerHTML = paginationHtml;
       } else {
-        showMoreWrap.style.display = 'none';
+        paginationBar.style.display = 'none';
       }
 
       paginatedItems.forEach(async item => {
-        if (!item.isVideo) {
-          const lowQualThumb = await createOptimizedThumbnailUrl(item.url, false);
-          const imgEl = document.getElementById(`img-${item.key}`);
-          if (imgEl) imgEl.src = lowQualThumb;
+        const freshUrl = await resolveFileUrl(item.fileId, item.url);
+        const mediaEl = document.getElementById(`media-el-${item.key}`);
+        if (mediaEl) {
+          mediaEl.src = freshUrl;
         }
       });
+    }
+
+    async function handleItemDownload(firebaseKey) {
+      const item = liveMediaItems.find(i => i.key === firebaseKey);
+      if (!item) return;
+      const freshUrl = await resolveFileUrl(item.fileId, item.url);
+      incrementGlobalMediaDownloadAndDownload(freshUrl, item.name);
+    }
+
+    async function openItemLightbox(firebaseKey, isVideo) {
+      const item = liveMediaItems.find(i => i.key === firebaseKey);
+      if (!item) return;
+      const freshUrl = await resolveFileUrl(item.fileId, item.url);
+      openLightbox(freshUrl, isVideo);
     }
 
     function openLightbox(url, isVideo) {
