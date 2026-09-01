@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.13">
-  <link rel="stylesheet" href="common.css?v=21.13">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.14">
+  <link rel="stylesheet" href="common.css?v=21.14">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- SUPABASE JS CLIENT -->
+  <!-- SUPABASE JS CLIENT (FIXED CDN ENDPOINT) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- FIREBASE SDKs -->
+  <!-- FIREBASE SDKs (SINGLE SOURCE COMPAT) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -1164,7 +1164,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.13"></script>
+  <script src="common.js?v=21.14"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1234,7 +1234,7 @@
       }
     }
 
-    // FAILSAFE: Automatically dismiss loading overlay after 1.5s if Firebase snapshot is delayed in Incognito
+    // FAILSAFE: Automatically dismiss loading overlay after 1.5s if Firebase snapshot is delayed
     setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
