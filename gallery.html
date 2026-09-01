@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.12">
-  <link rel="stylesheet" href="common.css?v=21.12">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.13">
+  <link rel="stylesheet" href="common.css?v=21.13">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -814,7 +814,7 @@
       box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
-      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
     }
 
     .media-card:hover {
@@ -1031,7 +1031,7 @@
 </head>
 <body>
 
-  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
+  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY WITH FAILSAFE -->
   <div class="app-loading-overlay" id="appLoadingOverlay">
     <div class="glowing-infinity-wrapper">
       <span class="material-symbols-outlined glowing-infinity-icon">all_inclusive</span>
@@ -1042,7 +1042,7 @@
 
   <div id="header-container"></div>
 
-  <!-- DELETE CONFIRMATION MODAL (REGULAR USERS ONLY) -->
+  <!-- DELETE CONFIRMATION MODAL -->
   <div class="delete-confirm-overlay" id="deleteConfirmModal">
     <div class="delete-confirm-modal">
       <div class="delete-warning-icon">
@@ -1067,7 +1067,7 @@
       <h3>Access Denied</h3>
       <p>
         The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
-        Only authorized admin accounts (`kundar.work@gmail.com`, `kundar701@gmail.com`) can access admin controls.
+        Only authorized admin accounts can access admin controls.
       </p>
       <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
     </div>
@@ -1164,7 +1164,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.12"></script>
+  <script src="common.js?v=21.13"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1233,6 +1233,9 @@
         overlay.classList.add('fade-out');
       }
     }
+
+    // FAILSAFE: Automatically dismiss loading overlay after 1.5s if Firebase snapshot is delayed in Incognito
+    setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
       if (!currentUser || !currentUser.email) return false;
