@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.19">
-  <link rel="stylesheet" href="common.css?v=21.19">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.20">
+  <link rel="stylesheet" href="common.css?v=21.20">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1207,7 +1207,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.19"></script>
+  <script src="common.js?v=21.20"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1267,7 +1267,7 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 8; // Exactly 8 grids per page
 
-    const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v2';
+    const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v3';
     const fileUrlCache = new Map();
     const lowQualityThumbCache = new Map();
 
@@ -1650,6 +1650,8 @@
             name: file.name,
             size: file.size || 0,
             isVideo: isVideo(file.name),
+            viewsCount: 0,
+            downloadsCount: 0,
             timestamp: Date.now()
           });
 
@@ -1672,6 +1674,7 @@
     if (cachedMedia) {
       try {
         liveMediaItems = JSON.parse(cachedMedia);
+        sortMediaItems();
         updateGalleryStats(liveMediaItems);
         renderGallery();
         hidePageLoader();
@@ -1684,9 +1687,11 @@
 
       if (data) {
         Object.keys(data).forEach((key) => {
-          liveMediaItems.unshift({ key, ...data[key] });
+          liveMediaItems.push({ key, ...data[key] });
         });
       }
+
+      sortMediaItems();
 
       try {
         localStorage.setItem(CACHE_KEY_MEDIA, JSON.stringify(liveMediaItems));
@@ -1696,6 +1701,27 @@
       renderGallery();
       hidePageLoader();
     });
+
+    // Smart Ranking: Sort by combined views + downloads descending, then fallback to newest timestamp
+    function sortMediaItems() {
+      liveMediaItems.sort((a, b) => {
+        const scoreA = (a.viewsCount || 0) + (a.downloadsCount || 0);
+        const scoreB = (b.viewsCount || 0) + (b.downloadsCount || 0);
+        if (scoreB !== scoreA) {
+          return scoreB - scoreA;
+        }
+        return (b.timestamp || 0) - (a.timestamp || 0);
+      });
+    }
+
+    async function recordInteraction(firebaseKey, metricField) {
+      try {
+        const ref = db.ref(`telegram_dump_gallery_folders/${firebaseKey}/${metricField}`);
+        await ref.transaction((currentVal) => (currentVal || 0) + 1);
+      } catch (err) {
+        console.error("Failed to record metric:", err);
+      }
+    }
 
     function updateGalleryStats(items) {
       const activeItems = items.filter(item => item.folder !== 'deleted');
@@ -1805,10 +1831,11 @@
       });
     }
 
-    function incrementGlobalMediaDownloadAndDownload(fileUrl, fileName) {
+    function incrementGlobalMediaDownloadAndDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
+      recordInteraction(firebaseKey, 'downloadsCount');
       downloadAsset(fileUrl, fileName);
     }
 
@@ -1881,7 +1908,7 @@
                 <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleItemDownload('${item.key}')" title="Download Original Quality">
+                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.key}', '${(item.fileId && fileUrlCache.get(item.fileId)) || item.url || ''}', '${item.name}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
                 <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
@@ -1942,16 +1969,10 @@
       }
     }
 
-    async function handleItemDownload(firebaseKey) {
-      const item = liveMediaItems.find(i => i.key === firebaseKey);
-      if (!item) return;
-      const freshUrl = await resolveFileUrl(item.fileId, item.url);
-      incrementGlobalMediaDownloadAndDownload(freshUrl, item.name);
-    }
-
     async function openItemLightbox(firebaseKey, isVideo) {
       const item = liveMediaItems.find(i => i.key === firebaseKey);
       if (!item) return;
+      recordInteraction(firebaseKey, 'viewsCount');
       const freshUrl = await resolveFileUrl(item.fileId, item.url);
       openLightbox(freshUrl, isVideo);
     }
