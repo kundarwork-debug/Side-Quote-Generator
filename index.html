@@ -11,8 +11,8 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.12">
-  <link rel="stylesheet" href="common.css?v=21.12">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.13">
+  <link rel="stylesheet" href="common.css?v=21.13">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,6 +56,7 @@
       margin: 0;
       padding: 0;
       font-family: var(--font-sans);
+      touch-action: manipulation;
     }
 
     html {
@@ -748,7 +749,7 @@
         display: none !important;
       }
 
-      /* DIFFERENT HERO PAGE FOR MOBILE WITH "APML Portal" HEADING */
+      /* MOBILE-ONLY HERO BANNER */
       .mobile-only-hero {
         display: flex;
         flex-direction: column;
@@ -850,7 +851,7 @@
       <div class="hero-left-content">
         <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
           <div class="hero-enterprise-pill">
-            <span class="hero-pill-badge">v21.11</span>
+            <span class="hero-pill-badge">v21.13</span>
             <span class="hero-pill-text">Enterprise Operations Workspace</span>
           </div>
 
@@ -1138,7 +1139,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.12"></script>
+  <script src="common.js?v=21.13"></script>
 
   <!-- TYPING ANIMATION FOR SUBTITLE & SEARCH PLACEHOLDER -->
   <script>
@@ -1182,7 +1183,6 @@
     function syncSearch(query) {
       const cleanQuery = query.toLowerCase().trim();
       
-      // Sync both input fields if one is typed into
       const desktopInput = document.getElementById('moduleFilterInput');
       const mobileInput = document.getElementById('mobileModuleFilterInput');
       if (desktopInput && desktopInput.value !== query) desktopInput.value = query;
