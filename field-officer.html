@@ -367,12 +367,6 @@
             display: block;
         }
 
-        .role-phone-text {
-            font-size: 12px;
-            color: var(--md-sys-color-on-surface-variant);
-            font-weight: 600;
-        }
-
         .btn-call-mini {
             display: inline-flex;
             align-items: center;
@@ -909,9 +903,12 @@
             let rawList = [];
 
             if (!data || Object.keys(data).length === 0) {
-                initialExcelOfficers.forEach(officer => {
-                    officersRef.push({ ...officer, timestamp: Date.now() });
+                const updates = {};
+                initialExcelOfficers.forEach((officer, index) => {
+                    const newKey = officersRef.push().key;
+                    updates[newKey] = { ...officer, timestamp: Date.now() + index };
                 });
+                officersRef.update(updates).catch(err => console.error("Seeding error:", err));
                 return;
             } else {
                 if (Array.isArray(data)) {
