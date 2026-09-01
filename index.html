@@ -11,8 +11,8 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.10">
-  <link rel="stylesheet" href="common.css?v=21.10">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.12">
+  <link rel="stylesheet" href="common.css?v=21.12">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -203,6 +203,11 @@
       justify-content: center;
       text-align: left;
       position: relative;
+    }
+
+    /* MOBILE-ONLY ALTERNATE HERO BANNER (HIDDEN ON DESKTOP) */
+    .mobile-only-hero {
+      display: none;
     }
 
     .hero-left-content {
@@ -736,14 +741,50 @@
       display: block;
     }
 
+    /* MEDIA QUERY FOR MOBILE VIEW ONLY */
     @media (max-width: 768px) {
       .hero-video-stage-backdrop,
       .hero-stage {
         display: none !important;
       }
 
+      /* DIFFERENT HERO PAGE FOR MOBILE WITH "APML Portal" HEADING */
+      .mobile-only-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 60px 20px 30px;
+        background: linear-gradient(135deg, rgba(194, 29, 29, 0.08) 0%, rgba(245, 239, 235, 0.95) 100%);
+        border-bottom: 1.5px solid var(--border-subtle);
+        margin-bottom: 10px;
+      }
+
+      .mobile-hero-title {
+        font-family: var(--font-display);
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.03em;
+        margin-bottom: 10px;
+      }
+
+      .mobile-hero-title span {
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .mobile-hero-sub {
+        font-size: 15px;
+        color: var(--text-muted);
+        font-weight: 500;
+        margin-bottom: 24px;
+        line-height: 1.4;
+      }
+
       .workspace-section {
-        margin-top: 40px !important;
+        margin-top: 20px !important;
         padding: 0 16px;
       }
 
@@ -751,12 +792,20 @@
       .modules-grid { grid-template-columns: 1fr; }
       .impact-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 10px; }
       .impact-item:nth-child(2) { border-right: none; }
+
+      /* Hide specific modules on mobile view */
+      .module-card[href="wcro-consignment-status.html"],
+      .module-card[href="APML-Lite.html"],
+      .module-card[href="car-rate.html"],
+      .module-card[href="local-rate.html"] {
+        display: none !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- RICH WARM STATIC HERO BACKDROP WITH INCREASED VIDEO CLARITY -->
+  <!-- DESKTOP HERO VIDEO BACKDROP -->
   <div class="hero-video-stage-backdrop">
     <video
       class="hero-bg-video"
@@ -783,13 +832,25 @@
 
   <main>
     
-    <!-- HERO STAGE -->
-    <section class="hero-stage">
+    <!-- MOBILE-ONLY ALTERNATE HERO PAGE WITH APML PORTAL HEADING -->
+    <section class="mobile-only-hero">
+      <h1 class="mobile-hero-title">APML <span>Portal</span></h1>
+      <p class="mobile-hero-sub">Enterprise Operations Workspace &amp; Solutions Hub</p>
       
+      <div class="search-filter-wrap" style="width: 100%; max-width: 100%;">
+        <div class="search-filter-box" style="padding: 12px 18px;">
+          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">search</span>
+          <input type="text" id="mobileModuleFilterInput" placeholder="Quick find module..." oninput="syncSearch(this.value)">
+        </div>
+      </div>
+    </section>
+
+    <!-- DESKTOP HERO STAGE -->
+    <section class="hero-stage">
       <div class="hero-left-content">
         <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
           <div class="hero-enterprise-pill">
-            <span class="hero-pill-badge">v21.10</span>
+            <span class="hero-pill-badge">v21.11</span>
             <span class="hero-pill-text">Enterprise Operations Workspace</span>
           </div>
 
@@ -802,14 +863,12 @@
           One Portal for <span>All Solutions</span>
         </h1>
 
-        <!-- TYPING ANIMATION SUBTITLE -->
         <p class="hero-sub slide-up-intro" style="transition-delay: 0.25s;" id="typedSub"></p>
 
-        <!-- Left-Aligned Search Bar with Typing Placeholder -->
         <div class="search-filter-wrap slide-up-intro" style="transition-delay: 0.35s;">
           <div class="search-filter-box">
             <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">search</span>
-            <input type="text" id="moduleFilterInput" placeholder="">
+            <input type="text" id="moduleFilterInput" placeholder="" oninput="syncSearch(this.value)">
           </div>
 
           <div class="hero-quick-tags" id="quickTagsContainer">
@@ -822,7 +881,6 @@
           </div>
         </div>
       </div>
-
     </section>
 
     <!-- OPERATIONS MODULES GRID -->
@@ -838,7 +896,7 @@
 
       <div class="modules-grid" id="modulesGrid">
         
-        <!-- 1. QUOTATION (Priority 1) -->
+        <!-- 1. QUOTATION -->
         <a href="editor.html" class="module-card fade-reveal" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
@@ -863,7 +921,7 @@
           </div>
         </a>
 
-        <!-- 2. GALLERY (Priority 2) -->
+        <!-- 2. GALLERY -->
         <a href="gallery.html" class="module-card fade-reveal" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
@@ -888,7 +946,7 @@
           </div>
         </a>
 
-        <!-- 3. HUB DETAILS (Priority 3) -->
+        <!-- 3. HUB DETAILS -->
         <a href="hub-details.html" class="module-card fade-reveal" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
@@ -913,7 +971,7 @@
           </div>
         </a>
 
-        <!-- 4. FIELD OFFICER (Priority 4) -->
+        <!-- 4. FIELD OFFICER -->
         <a href="field-officer.html" class="module-card fade-reveal" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
@@ -938,7 +996,7 @@
           </div>
         </a>
 
-        <!-- 5. WCRO CONSIGNMENT STATUS -->
+        <!-- 5. WCRO CONSIGNMENT STATUS (Hidden on mobile) -->
         <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
@@ -963,7 +1021,7 @@
           </div>
         </a>
 
-        <!-- 6. APML LITE RATE CALCULATOR -->
+        <!-- 6. APML LITE RATE CALCULATOR (Hidden on mobile) -->
         <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -988,7 +1046,7 @@
           </div>
         </a>
 
-        <!-- 7. CAR RATE CALCULATOR -->
+        <!-- 7. CAR RATE CALCULATOR (Hidden on mobile) -->
         <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -1013,7 +1071,7 @@
           </div>
         </a>
 
-        <!-- 8. LOCAL RATE -->
+        <!-- 8. LOCAL RATE (Hidden on mobile) -->
         <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -1080,45 +1138,21 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.10"></script>
-
-  <!-- FORCE SAME EXPERIENCE FOR EVERYONE -->
-  <script>
-    (function forceLatestVersion() {
-      const CURRENT_VERSION = '21.10';
-      const VERSION_KEY = 'apml-portal-version';
-      const storedVersion = localStorage.getItem(VERSION_KEY);
-
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          regs.forEach(reg => reg.update());
-        }).catch(() => {});
-      }
-
-      if (storedVersion !== CURRENT_VERSION) {
-        localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-
-        if (storedVersion !== null && 'caches' in window) {
-          caches.keys().then(names => {
-            names.forEach(name => caches.delete(name));
-          }).catch(() => {});
-        }
-      }
-    })();
-  </script>
+  <script src="common.js?v=21.12"></script>
 
   <!-- TYPING ANIMATION FOR SUBTITLE & SEARCH PLACEHOLDER -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       const subEl = document.getElementById('typedSub');
       const inputEl = document.getElementById('moduleFilterInput');
+      const mobileInputEl = document.getElementById('mobileModuleFilterInput');
 
       const subText = "Work Smarter, Move Faster.";
       const placeholderText = "Search operations module: Quotation, Gallery, Hubs, Field Officer...";
 
       let i = 0;
       function typeSub() {
-        if (i < subText.length) {
+        if (subEl && i < subText.length) {
           subEl.textContent = subText.substring(0, i + 1);
           i++;
           setTimeout(typeSub, 35);
@@ -1130,7 +1164,8 @@
 
       function typePlaceholder() {
         if (i < placeholderText.length) {
-          inputEl.setAttribute('placeholder', placeholderText.substring(0, i + 1));
+          if (inputEl) inputEl.setAttribute('placeholder', placeholderText.substring(0, i + 1));
+          if (mobileInputEl) mobileInputEl.setAttribute('placeholder', placeholderText.substring(0, i + 1));
           i++;
           setTimeout(typePlaceholder, 20);
         }
@@ -1141,15 +1176,22 @@
   </script>
 
   <script>
-    const searchInput = document.getElementById('moduleFilterInput');
     const cards = document.querySelectorAll('.module-card');
     const toolCount = document.getElementById('toolCount');
 
-    function filterModules(query) {
+    function syncSearch(query) {
+      const cleanQuery = query.toLowerCase().trim();
+      
+      // Sync both input fields if one is typed into
+      const desktopInput = document.getElementById('moduleFilterInput');
+      const mobileInput = document.getElementById('mobileModuleFilterInput');
+      if (desktopInput && desktopInput.value !== query) desktopInput.value = query;
+      if (mobileInput && mobileInput.value !== query) mobileInput.value = query;
+
       let visibleCount = 0;
       cards.forEach(card => {
         const text = (card.textContent + ' ' + (card.dataset.tags || '')).toLowerCase();
-        if (text.includes(query)) {
+        if (text.includes(cleanQuery)) {
           card.style.display = 'flex';
           visibleCount++;
         } else {
@@ -1162,18 +1204,10 @@
       }
     }
 
-    if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
-        filterModules(e.target.value.toLowerCase().trim());
-      });
-    }
-
     function applyQuickFilter(tag) {
-      if (searchInput) {
-        searchInput.value = tag;
-        filterModules(tag.toLowerCase().trim());
-        searchInput.focus();
-      }
+      syncSearch(tag);
+      const desktopInput = document.getElementById('moduleFilterInput');
+      if (desktopInput) desktopInput.focus();
     }
   </script>
 
