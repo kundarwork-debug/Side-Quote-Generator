@@ -879,6 +879,7 @@
             <span class="quick-tag-chip" style="animation-delay: 0.4s;" onclick="applyQuickFilter('field officer')">Field Officer</span>
             <span class="quick-tag-chip" style="animation-delay: 0.5s;" onclick="applyQuickFilter('consignment')">Consignment</span>
             <span class="quick-tag-chip" style="animation-delay: 0.6s;" onclick="applyQuickFilter('car')">Car Rates</span>
+            <span class="quick-tag-chip" style="animation-delay: 0.7s;" onclick="applyQuickFilter('drive')">Drive</span>
           </div>
         </div>
       </div>
@@ -892,7 +893,7 @@
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">grid_view</span>
           <span>Operations Modules</span>
         </div>
-        <span class="section-counter" id="toolCount">8 Active Tools</span>
+        <span class="section-counter" id="toolCount">9 Active Tools</span>
       </div>
 
       <div class="modules-grid" id="modulesGrid">
@@ -997,7 +998,32 @@
           </div>
         </a>
 
-        <!-- 5. WCRO CONSIGNMENT STATUS (Hidden on mobile) -->
+        <!-- 5. APML CLOUD DRIVE (NEW) -->
+        <a href="drive.html" class="module-card fade-reveal" data-tags="drive cloud folder upload storage telegram apml documents files">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">cloud_queue</span>
+              </div>
+              <span class="status-tag">Cloud Storage</span>
+            </div>
+            <h2 class="card-title">APML Cloud Drive</h2>
+            <p class="card-description">Enterprise cloud workspace for directory folder management, file uploads up to 50MB, and secure document sharing.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Folder Navigation</span>
+              <span class="micro-tag">Telegram Hosting</span>
+              <span class="micro-tag">50MB Limit</span>
+            </div>
+          </div>
+          <div class="card-footer-cta">
+            <span>Open Drive</span>
+            <div class="cta-arrow">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </a>
+
+        <!-- 6. WCRO CONSIGNMENT STATUS (Hidden on mobile) -->
         <a href="wcro-consignment-status.html" class="module-card fade-reveal" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
@@ -1022,7 +1048,7 @@
           </div>
         </a>
 
-        <!-- 6. APML LITE RATE CALCULATOR (Hidden on mobile) -->
+        <!-- 7. APML LITE RATE CALCULATOR (Hidden on mobile) -->
         <a href="APML-Lite.html" class="module-card fade-reveal" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -1047,7 +1073,7 @@
           </div>
         </a>
 
-        <!-- 7. CAR RATE CALCULATOR (Hidden on mobile) -->
+        <!-- 8. CAR RATE CALCULATOR (Hidden on mobile) -->
         <a href="car-rate.html" class="module-card fade-reveal" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -1072,7 +1098,7 @@
           </div>
         </a>
 
-        <!-- 8. LOCAL RATE (Hidden on mobile) -->
+        <!-- 9. LOCAL RATE (Hidden on mobile) -->
         <a href="local-rate.html" class="module-card fade-reveal" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -1104,7 +1130,7 @@
     <section class="impact-section">
       <div class="impact-grid fade-reveal">
         <div class="impact-item">
-          <div class="impact-num">8</div>
+          <div class="impact-num">9</div>
           <div class="impact-label">Active Modules</div>
         </div>
         <div class="impact-item">
@@ -1149,7 +1175,7 @@
       const mobileInputEl = document.getElementById('mobileModuleFilterInput');
 
       const subText = "Work Smarter, Move Faster.";
-      const placeholderText = "Search operations module: Quotation, Gallery, Hubs, Field Officer...";
+      const placeholderText = "Search operations module: Quotation, Gallery, Hubs, Drive...";
 
       let i = 0;
       function typeSub() {
