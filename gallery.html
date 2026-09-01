@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.14">
-  <link rel="stylesheet" href="common.css?v=21.14">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.16">
+  <link rel="stylesheet" href="common.css?v=21.16">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- SUPABASE JS CLIENT (FIXED CDN ENDPOINT) -->
+  <!-- SUPABASE JS CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- FIREBASE SDKs (SINGLE SOURCE COMPAT) -->
+  <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -840,6 +840,44 @@
       display: block;
     }
 
+    /* PER-CARD INDIVIDUAL LOADING OVERLAY */
+    .card-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      gap: 10px;
+      z-index: 10;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .card-loading-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .card-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid rgba(255,255,255,0.25);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .card-loading-text {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: rgba(255,255,255,0.9);
+    }
+
     .media-info {
       padding: 16px 18px;
       display: flex;
@@ -1164,7 +1202,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.14"></script>
+  <script src="common.js?v=21.16"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1226,6 +1264,7 @@
 
     const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v2';
     const fileUrlCache = new Map();
+    const lowQualityThumbCache = new Map();
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1234,7 +1273,6 @@
       }
     }
 
-    // FAILSAFE: Automatically dismiss loading overlay after 1.5s if Firebase snapshot is delayed
     setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
@@ -1720,6 +1758,35 @@
       return legacyUrl || '';
     }
 
+    // Creates an ultra-low quality compressed data-URL thumbnail for lightning-fast preview loading
+    async function getLowQualityThumbnail(fullUrl, isVideo) {
+      if (isVideo || !fullUrl) return '';
+      if (lowQualityThumbCache.has(fullUrl)) {
+        return lowQualityThumbCache.get(fullUrl);
+      }
+
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const width = 120; // Tiny width for instant load
+          const height = Math.round((img.height * width) / img.width);
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const lowQualityDataUrl = canvas.toDataURL('image/jpeg', 0.35);
+          lowQualityThumbCache.set(fullUrl, lowQualityDataUrl);
+          resolve(lowQualityDataUrl);
+        };
+        img.onerror = () => resolve(fullUrl);
+        img.src = fullUrl;
+      });
+    }
+
     function incrementGlobalMediaDownloadAndDownload(fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -1773,21 +1840,25 @@
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const formattedSize = formatBytes(item.size);
-        const cachedUrl = (item.fileId && fileUrlCache.get(item.fileId)) || item.url || '';
 
         return `
           <div class="media-card" id="card-${item.key}">
             <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
+              <!-- INDIVIDUAL PER-CARD LOADING OVERLAY -->
+              <div class="card-loading-overlay" id="card-loader-${item.key}">
+                <div class="card-spinner"></div>
+                <div class="card-loading-text">Loading file...</div>
+              </div>
+
               ${item.isVideo 
-                ? `<video id="media-el-${item.key}" src="${cachedUrl}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata"></video>` 
-                : `<img id="media-el-${item.key}" src="${cachedUrl || 'logo.svg'}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.src='logo.svg'">`
+                ? `<video id="media-el-${item.key}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata" onloadeddata="dismissCardLoader('${item.key}')"></video>` 
+                : `<img id="media-el-${item.key}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="dismissCardLoader('${item.key}')" onerror="this.src='logo.svg'; dismissCardLoader('${item.key}');">`
               }
             </div>
             <div class="media-info">
               <div class="media-badges-group">
                 <div class="media-badges-row">
                   <span class="media-badge ${item.isVideo ? 'video-tag' : ''}">${item.isVideo ? 'SD Video' : 'Image'}</span>
-                  <span class="media-badge" style="background: rgba(0,0,0,0.05); color: var(--text-muted);">${folderLabel}</span>
                 </div>
                 <span class="media-size-label">${formattedSize}</span>
               </div>
@@ -1829,13 +1900,28 @@
         paginationBar.style.display = 'none';
       }
 
+      // Resolve permanent fileId, show low-quality thumbnail first, then upgrade to full asset
       paginatedItems.forEach(async item => {
         const freshUrl = await resolveFileUrl(item.fileId, item.url);
         const mediaEl = document.getElementById(`media-el-${item.key}`);
-        if (mediaEl) {
-          mediaEl.src = freshUrl;
+        if (!mediaEl) return;
+
+        if (!item.isVideo && freshUrl) {
+          const lowQualThumb = await getLowQualityThumbnail(freshUrl, false);
+          if (mediaEl.src !== freshUrl) {
+            mediaEl.src = lowQualThumb || freshUrl;
+          }
         }
+
+        mediaEl.src = freshUrl;
       });
+    }
+
+    function dismissCardLoader(key) {
+      const loader = document.getElementById(`card-loader-${key}`);
+      if (loader) {
+        loader.classList.add('fade-out');
+      }
     }
 
     async function handleItemDownload(firebaseKey) {
