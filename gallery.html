@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.16">
-  <link rel="stylesheet" href="common.css?v=21.16">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.19">
+  <link rel="stylesheet" href="common.css?v=21.19">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,33 +218,58 @@
       font-weight: 500;
     }
 
-    /* CLICKABLE UNLIMITED STORAGE BADGE LINK */
-    .storage-symbol-badge {
+    /* LIVE COUNTERS & UNLIMITED STORAGE SUMMARY PILLS MATCHING THE SAME STYLE */
+    .gallery-stats-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: rgba(194, 29, 29, 0.08);
-      border: 1px solid rgba(194, 29, 29, 0.25);
-      color: var(--primary);
-      padding: 4px 12px;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
       border-radius: var(--radius-pill);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
-      letter-spacing: 0.02em;
+      color: var(--text-muted);
+    }
+
+    .stat-pill strong {
+      color: var(--primary);
+    }
+
+    /* UNLIMITED STORAGE PILL MATCHING EXACT STAT PILL STYLE */
+    .storage-pill-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
       text-decoration: none;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    .storage-symbol-badge:hover {
+    .storage-pill-link:hover {
       background: var(--primary);
       color: #ffffff;
+      border-color: var(--primary);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
     }
 
-    .storage-symbol-badge .material-symbols-outlined {
-      font-size: 16px;
+    .storage-pill-link .material-symbols-outlined {
+      font-size: 14px;
     }
 
     /* ADMIN AUTH BUTTON STYLES */
@@ -558,26 +583,6 @@
     .panel-head p {
       font-size: 12.5px;
       color: var(--text-muted);
-    }
-
-    /* TELEGRAM STORAGE NOTE */
-    .telegram-storage-note {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(194, 29, 29, 0.04);
-      border-left: 3px solid var(--primary);
-      padding: 10px 14px;
-      border-radius: 0 10px 10px 0;
-      font-size: 12.5px;
-      color: var(--text-muted);
-      margin-top: 20px;
-      width: 100%;
-    }
-
-    .telegram-storage-note span {
-      color: var(--primary);
-      font-size: 18px;
     }
 
     .panel-row {
@@ -1128,7 +1133,13 @@
         <h1 class="gallery-title">Standards &amp; Media <span>Gallery</span></h1>
         <div class="gallery-sub-row">
           <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation.</p>
-          <a href="dump.html" class="storage-symbol-badge" title="Open Unlimited Storage Archive">
+        </div>
+        <!-- LIVE MEDIA BREAKDOWN PILLS WITH UNLIMITED STORAGE BUTTON ON RIGHT -->
+        <div class="gallery-stats-pills" id="galleryStatsPills">
+          <span class="stat-pill">Total: <strong id="statTotalCount">0</strong></span>
+          <span class="stat-pill">Photos: <strong id="statPhotoCount">0</strong></span>
+          <span class="stat-pill">Videos: <strong id="statVideoCount">0</strong></span>
+          <a href="dump.html" class="storage-pill-link" title="Open Unlimited Storage Archive">
             <span class="material-symbols-outlined">all_inclusive</span> Unlimited Storage
           </a>
         </div>
@@ -1174,12 +1185,6 @@
         </div>
 
       </div>
-
-      <!-- TELEGRAM STORAGE NOTE -->
-      <div class="telegram-storage-note">
-        <span class="material-symbols-outlined">info</span>
-        Files are automatically resized and compressed client-side before permanent Telegram storage upload to maximize storage efficiency.
-      </div>
     </div>
 
     <!-- DYNAMIC FOLDER FILTER TABS -->
@@ -1202,7 +1207,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.16"></script>
+  <script src="common.js?v=21.19"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1667,6 +1672,7 @@
     if (cachedMedia) {
       try {
         liveMediaItems = JSON.parse(cachedMedia);
+        updateGalleryStats(liveMediaItems);
         renderGallery();
         hidePageLoader();
       } catch (e) {}
@@ -1686,9 +1692,21 @@
         localStorage.setItem(CACHE_KEY_MEDIA, JSON.stringify(liveMediaItems));
       } catch (e) {}
 
+      updateGalleryStats(liveMediaItems);
       renderGallery();
       hidePageLoader();
     });
+
+    function updateGalleryStats(items) {
+      const activeItems = items.filter(item => item.folder !== 'deleted');
+      const totalCount = activeItems.length;
+      const videoCount = activeItems.filter(item => item.isVideo).length;
+      const photoCount = totalCount - videoCount;
+
+      document.getElementById('statTotalCount').textContent = totalCount;
+      document.getElementById('statPhotoCount').textContent = photoCount;
+      document.getElementById('statVideoCount').textContent = videoCount;
+    }
 
     function handleDeleteAction(firebaseKey) {
       if (isCurrentUserAdmin()) {
