@@ -726,6 +726,7 @@
 const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
 const PRIMARY_CHAT_ID = "-1004302268775";
 const FALLBACK_CHAT_ID = "-4302268775";
+const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
 
 function saveQuotationInBackground(pdfBlob, clientName, companyName) {
   setTimeout(async () => {
@@ -759,34 +760,14 @@ function saveQuotationInBackground(pdfBlob, clientName, companyName) {
         
         if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
           const db = firebase.database();
-          const foldersRef = db.ref("telegram_gdrive_folders");
           const filesRef = db.ref("telegram_gdrive_files");
 
-          foldersRef.orderByChild("name").equalTo("Quotations Archive").once("value", (snapshot) => {
-            let quotationsFolderKey = "";
-            if (snapshot.exists()) {
-              quotationsFolderKey = Object.keys(snapshot.val())[0];
-              filesRef.push({
-                fileId: fileId,
-                parentId: quotationsFolderKey,
-                name: fileName,
-                size: pdfBlob.size || 0,
-                timestamp: Date.now()
-              });
-            } else {
-              const newFolderRef = foldersRef.push({
-                name: "Quotations Archive",
-                parentId: "root",
-                timestamp: Date.now()
-              });
-              filesRef.push({
-                fileId: fileId,
-                parentId: newFolderRef.key,
-                name: fileName,
-                size: pdfBlob.size || 0,
-                timestamp: Date.now()
-              });
-            }
+          await filesRef.push({
+            fileId: fileId,
+            parentId: ARCHIVE_FOLDER_KEY,
+            name: fileName,
+            size: pdfBlob.size || 0,
+            timestamp: Date.now()
           });
         }
       }
@@ -1303,7 +1284,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const node = document.getElementById('previewA4');
   const stage = document.querySelector('.stage');
 
-  const originalStageDisplay = stage.style.display;
   const originalWidth = node.style.width;
   const originalMinHeight = node.style.minHeight;
   const originalPosition = node.style.position;
@@ -1311,7 +1291,8 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const originalTransform = node.style.transform;
 
   try {
-    stage.style.display = 'block';
+    // Force stage to display using setProperty to override mobile !important rules
+    stage.style.setProperty('display', 'block', 'important');
     node.style.width = '794px';
     node.style.minHeight = '1123px';
     node.style.position = 'absolute';
@@ -1326,7 +1307,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       windowWidth: 794
     });
 
-    stage.style.display = originalStageDisplay;
+    stage.style.removeProperty('display');
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
     node.style.position = originalPosition;
@@ -1359,11 +1340,11 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
     const filename = `${cleanCompany}_${cleanClient}.pdf`;
     
-    // 1. Instant local download — user never waits
+    // 1. Instant local download
     pdf.save(filename);
     const pdfBlob = pdf.output('blob');
 
-    // 2. Silently save to Telegram storage and cloud drive in the background without affecting user flow or blocking downloads
+    // 2. Background sync to Telegram and Firebase Cloud Drive (Quotations Archive)
     saveQuotationInBackground(pdfBlob, shared.custName, d.companyName);
 
     incrementPdfDownloadCount();
@@ -1373,7 +1354,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
     
-    stage.style.display = originalStageDisplay;
+    stage.style.removeProperty('display');
     node.style.width = originalWidth;
     node.style.minHeight = originalMinHeight;
     node.style.position = originalPosition;
