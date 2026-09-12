@@ -721,6 +721,82 @@
 
 <script>
 // =========================================================
+// TELEGRAM & FIREBASE BACKGROUND STORAGE SYNC
+// =========================================================
+const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
+const PRIMARY_CHAT_ID = "-1004302268775";
+const FALLBACK_CHAT_ID = "-4302268775";
+
+function saveQuotationInBackground(pdfBlob, clientName, companyName) {
+  setTimeout(async () => {
+    try {
+      const cleanCompany = companyName ? companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim().toUpperCase() : 'COMPANY';
+      const cleanClient = clientName ? clientName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
+      const fileName = `${cleanCompany}_${cleanClient}.pdf`;
+      
+      const formData = new FormData();
+      formData.append('chat_id', PRIMARY_CHAT_ID);
+      formData.append('document', pdfBlob, fileName);
+      formData.append('caption', `📁 Automated Quotation Backup: ${cleanCompany} — ${cleanClient}`);
+
+      let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      let data = await res.json();
+      if (!data.ok) {
+        formData.set('chat_id', FALLBACK_CHAT_ID);
+        res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+          method: 'POST',
+          body: formData
+        });
+        data = await res.json();
+      }
+
+      if (data.ok && data.result.document) {
+        const fileId = data.result.document.file_id;
+        
+        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+          const db = firebase.database();
+          const foldersRef = db.ref("telegram_gdrive_folders");
+          const filesRef = db.ref("telegram_gdrive_files");
+
+          foldersRef.orderByChild("name").equalTo("Quotations Archive").once("value", (snapshot) => {
+            let quotationsFolderKey = "";
+            if (snapshot.exists()) {
+              quotationsFolderKey = Object.keys(snapshot.val())[0];
+              filesRef.push({
+                fileId: fileId,
+                parentId: quotationsFolderKey,
+                name: fileName,
+                size: pdfBlob.size || 0,
+                timestamp: Date.now()
+              });
+            } else {
+              const newFolderRef = foldersRef.push({
+                name: "Quotations Archive",
+                parentId: "root",
+                timestamp: Date.now()
+              });
+              filesRef.push({
+                fileId: fileId,
+                parentId: newFolderRef.key,
+                name: fileName,
+                size: pdfBlob.size || 0,
+                timestamp: Date.now()
+              });
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Silent background sync error:", err);
+    }
+  }, 200);
+}
+
+// =========================================================
 // FIREBASE REALTIME INITIALIZATION
 // =========================================================
 const firebaseConfig = {
@@ -803,7 +879,7 @@ const DEFAULTS = {
       "No responsibility on the breakage of flower pots.",
       "This quotation is valid for 15 days."
     ],
-    companyName: "EXACT CONTAINER LOGISTIC PVT. LTD.",
+    companyName: "Exact Container Logistics",
     cin: "CIN : U74899DL2000PTC107846",
     addrLabel: "Registered address",
     addr: "7737/XV RAM NAGAR QUTUB ROAD, PAHARGANJ NEW DELHI 110063",
@@ -830,7 +906,7 @@ const DEFAULTS = {
       "Please note that the above quotation has been prepared keeping in view our basic standards of packing with the best packing material, as the type of packing will depend on our discretion.",
       "We would be grateful if you could please give us one week's advance notice as to when we may commence the above job. Payment will be done in favor of M/S Max Care Packers & Movers Pvt. Ltd."
     ],
-    companyName: "MAXCARE PACKERS & MOVERS PVT. LTD.",
+    companyName: "Maxcare Packers and Movers",
     cin: "CIN: U63090DL2009PTC196378",
     addrLabel: "Regd. office",
     addr: "308, Neelkanth Plaza, Pitampura Community Centre, New Delhi-110034",
@@ -1279,9 +1355,16 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgW, imgH);
 
     const d = state[active];
-    const safeName = (s) => String(s).replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g,'');
-    const filename = `${safeName(d.companyName)}_Quotation_${safeName(shared.custName || 'Customer')}.pdf`;
+    const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim().toUpperCase() : 'COMPANY';
+    const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
+    const filename = `${cleanCompany}_${cleanClient}.pdf`;
+    
+    // 1. Instant local download — user never waits
     pdf.save(filename);
+    const pdfBlob = pdf.output('blob');
+
+    // 2. Silently save to Telegram storage and cloud drive in the background without affecting user flow or blocking downloads
+    saveQuotationInBackground(pdfBlob, shared.custName, d.companyName);
 
     incrementPdfDownloadCount();
 
