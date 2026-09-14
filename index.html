@@ -11,8 +11,8 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.13">
-  <link rel="stylesheet" href="common.css?v=21.13">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.14">
+  <link rel="stylesheet" href="common.css?v=21.14">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -851,7 +851,7 @@
       <div class="hero-left-content">
         <div class="hero-top-row slide-up-intro" style="transition-delay: 0.02s;">
           <div class="hero-enterprise-pill">
-            <span class="hero-pill-badge">v21.13</span>
+            <span class="hero-pill-badge">v21.14</span>
             <span class="hero-pill-text">Enterprise Operations Workspace</span>
           </div>
 
@@ -1165,7 +1165,18 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.13"></script>
+  <!-- STALE SERVICE WORKER UNREGISTER & VERSION BUMP -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      }).catch(err => console.log('SW unregister error:', err));
+    }
+  </script>
+
+  <script src="common.js?v=21.14"></script>
 
   <!-- TYPING ANIMATION FOR SUBTITLE & SEARCH PLACEHOLDER -->
   <script>
