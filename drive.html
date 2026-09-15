@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Enterprise Cloud Drive</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.33">
-  <link rel="stylesheet" href="common.css?v=21.33">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
+  <link rel="stylesheet" href="common.css?v=21.35">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,7 +108,6 @@
       pointer-events: none;
     }
 
-    /* GLOWING UNLIMITED STORAGE SYMBOL CONTAINER */
     .glowing-infinity-wrapper {
       position: relative;
       width: 80px;
@@ -220,7 +219,6 @@
       font-weight: 500;
     }
 
-    /* LIVE COUNTERS & STORAGE SUMMARY PILLS */
     .drive-stats-pills {
       display: flex;
       gap: 8px;
@@ -273,7 +271,6 @@
       font-size: 14px;
     }
 
-    /* ADMIN AUTH BUTTON STYLES */
     .admin-action-wrap {
       display: flex;
       align-items: center;
@@ -328,7 +325,6 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* MULTI-SELECTION FLOATING ACTION BAR */
     .multi-select-toolbar {
       position: fixed;
       bottom: 30px;
@@ -384,7 +380,6 @@
       background: #dc2626;
     }
 
-    /* FOLDER SELECTION MODAL */
     .folder-select-overlay {
       position: fixed;
       inset: 0;
@@ -441,7 +436,6 @@
       color: var(--primary);
     }
 
-    /* POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS */
     .auth-warning-overlay {
       position: fixed;
       inset: 0;
@@ -527,7 +521,6 @@
       background: #b91c1c;
     }
 
-    /* APML DRIVE ACTION TOOLBAR & ACTIONS */
     .drive-action-bar {
       display: flex;
       flex-wrap: wrap;
@@ -692,7 +685,6 @@
       color: #dc2626;
     }
 
-    /* FILES GRID VIEW WITH CHECKBOX */
     .drive-files-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -884,7 +876,85 @@
       color: #ffffff;
     }
 
-    /* LIGHTBOX MODAL VIEWER FOR PREVIEWS */
+    /* MATERIAL DESIGN PAGINATION CONTAINER */
+    .pagination-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 36px;
+      padding: 14px 20px;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      box-shadow: var(--shadow-card);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .page-btn {
+      min-width: 38px;
+      height: 38px;
+      background: transparent;
+      border: 1.5px solid transparent;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 6px;
+    }
+
+    .page-btn:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .page-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+    }
+
+    .page-nav-btn {
+      width: 38px;
+      height: 38px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+
+    .page-nav-btn:hover:not(:disabled) {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .page-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      background: #f3f4f6;
+    }
+
+    .page-nav-btn .material-symbols-outlined {
+      font-size: 20px;
+    }
+
     .media-lightbox-overlay {
       position: fixed;
       inset: 0;
@@ -988,7 +1058,7 @@
 </head>
 <body>
 
-  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY WITH FAILSAFE -->
+  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
   <div class="app-loading-overlay" id="appLoadingOverlay">
     <div class="glowing-infinity-wrapper">
       <span class="material-symbols-outlined glowing-infinity-icon">cloud_queue</span>
@@ -1015,7 +1085,7 @@
     </div>
   </div>
 
-  <!-- FOLDER SELECTION MODAL FOR MOVE / COPY -->
+  <!-- FOLDER SELECTION MODAL -->
   <div class="folder-select-overlay" id="folderSelectModal">
     <div class="folder-select-modal">
       <h3 id="folderModalTitle">Select Destination Folder</h3>
@@ -1057,7 +1127,6 @@
         <div class="drive-sub-row">
           <p class="drive-sub">Create your own folders, navigate subdirectories, and manage files securely.</p>
         </div>
-        <!-- LIVE DRIVE STATS & UNLIMITED STORAGE LINK -->
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
           <a href="dump.html" class="storage-pill-link" title="Open Unlimited Storage Archive">
@@ -1066,7 +1135,6 @@
         </div>
       </div>
 
-      <!-- GOOGLE ADMIN AUTH BUTTON -->
       <div class="admin-action-wrap" id="adminAuthContainer">
         <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
           <svg width="18" height="18" viewBox="0 0 24 24">
@@ -1080,7 +1148,7 @@
       </div>
     </div>
 
-    <!-- APML DRIVE ACTION TOOLBAR (BREADCRUMB & ACTIONS) -->
+    <!-- ACTION BAR -->
     <div class="drive-action-bar">
       <div class="breadcrumb-nav" id="breadcrumbNav">
         <span class="breadcrumb-item" onclick="navigateToFolder('root')">
@@ -1122,7 +1190,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.33"></script>
+  <script src="common.js?v=21.35"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1167,6 +1235,8 @@
     let currentUser = null;
     let selectedFileKeys = new Set();
     let folderActionType = 'move';
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 20;
 
     const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
     const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
@@ -1254,7 +1324,6 @@
       }
     }
 
-    // --- REALTIME LISTENERS & CACHING ---
     const cachedFolders = localStorage.getItem(CACHE_KEY_FOLDERS);
     if (cachedFolders) {
       try {
@@ -1299,12 +1368,18 @@
       hidePageLoader();
     });
 
-    // --- FOLDER NAVIGATION & CREATION ---
     function navigateToFolder(folderId) {
       currentParentId = folderId;
+      currentPage = 1;
       selectedFileKeys.clear();
       updateMultiSelectToolbar();
       renderUI();
+    }
+
+    function changePage(newPage) {
+      currentPage = newPage;
+      renderUI();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function promptCreateFolder() {
@@ -1318,7 +1393,6 @@
       }).catch(err => alert("Failed to create folder: " + err.message));
     }
 
-    // --- MULTI-SELECTION LOGIC ---
     function toggleFileSelection(event, fileKey) {
       event.stopPropagation();
       if (selectedFileKeys.has(fileKey)) {
@@ -1351,7 +1425,6 @@
       }
     }
 
-    // --- MOVE / COPY SELECTED FILES ---
     function promptMoveSelected() {
       if (selectedFileKeys.size === 0) return;
       folderActionType = 'move';
@@ -1426,7 +1499,6 @@
       }
     }
 
-    // --- DELETION: RECURSIVELY SENDS FOLDER & ITS FILES TO DUMP ARCHIVE ---
     async function deleteSelectedFiles() {
       if (selectedFileKeys.size === 0) return;
       if (!confirm(`Are you sure you want to send ${selectedFileKeys.size} selected files to dump storage?`)) return;
@@ -1478,7 +1550,6 @@
 
           const folderItem = liveFolders.find(f => f.key === key);
           if (folderItem) {
-            // 1. Send folder itself to dump with metadata
             const dumpFolderRef = await dumpBinRef.push({
               name: folderItem.name,
               folder: folderItem.parentId || 'root',
@@ -1489,21 +1560,19 @@
             
             const dumpFolderKey = dumpFolderRef.key;
 
-            // 2. Find all sub-files directly inside this folder and move them to dump with path pointing to dumpFolderKey
             const childFiles = liveFiles.filter(f => f.parentId === key);
             for (const cFile of childFiles) {
               await dumpBinRef.push({
                 fileId: cFile.fileId,
                 name: cFile.name,
                 size: cFile.size || 0,
-                folder: dumpFolderKey, // Links child files to this dumped folder path
+                folder: dumpFolderKey,
                 timestamp: cFile.timestamp || Date.now(),
                 originalKey: cFile.key
               });
               await driveFilesRef.child(cFile.key).remove();
             }
 
-            // Remove folder from live drive
             await driveFoldersRef.child(key).remove();
           }
         }
@@ -1512,7 +1581,6 @@
       }
     }
 
-    // --- FILE UPLOAD LOGIC ---
     async function uploadToTelegram(file, chatId) {
       const formData = new FormData();
       formData.append('chat_id', chatId);
@@ -1568,7 +1636,6 @@
       alert(`Successfully uploaded ${successCount} of ${files.length} files!`);
     }
 
-    // --- TELEGRAM URL RESOLUTION & DOWNLOAD / PREVIEW ---
     async function resolveFileUrl(fileId, legacyUrl) {
       if (!fileId) return legacyUrl || '';
       if (fileUrlCache.has(fileId)) return fileUrlCache.get(fileId);
@@ -1638,7 +1705,6 @@
       }
     }
 
-    // --- RENDER UI ---
     function renderBreadcrumb() {
       const nav = document.getElementById('breadcrumbNav');
       if (currentParentId === 'root') {
@@ -1730,23 +1796,23 @@
 
       const archiveFolder = getProtectedArchiveFolder();
       let currentFolders = [];
-      let currentFiles = [];
+      let rawFiles = [];
 
       if (currentParentId === 'root') {
         currentFolders = [archiveFolder, ...liveFolders.filter(f => f.parentId === 'root' && f.name !== "Quotations Archive")];
-        currentFiles = liveFiles.filter(f => !f.parentId || f.parentId === 'root');
+        rawFiles = liveFiles.filter(f => !f.parentId || f.parentId === 'root');
       } else if (currentParentId === ARCHIVE_FOLDER_KEY) {
         currentFolders = [];
-        // Catch files whose parentId is explicitly ARCHIVE_FOLDER_KEY, or fallback to name matching for backward compatibility
-        currentFiles = liveFiles.filter(f => f.parentId === ARCHIVE_FOLDER_KEY || (f.parentId === 'root' && f.name && f.name.toLowerCase().includes('quotation')));
+        rawFiles = liveFiles.filter(f => f.parentId === ARCHIVE_FOLDER_KEY || (f.parentId === 'root' && f.name && f.name.toLowerCase().includes('quotation')));
       } else {
         currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
-        currentFiles = liveFiles.filter(f => f.parentId === currentParentId);
+        rawFiles = liveFiles.filter(f => f.parentId === currentParentId);
       }
+
+      rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
       document.getElementById('statTotalCount').textContent = liveFolders.length + 1 + liveFiles.length;
 
-      // Render Folders
       if (currentFolders.length > 0) {
         foldersSectionWrapper.style.display = 'block';
         foldersGrid.innerHTML = currentFolders.map(folder => {
@@ -1772,9 +1838,13 @@
         foldersGrid.innerHTML = '';
       }
 
-      // Render Files in Small Grid View with Checkboxes
-      if (currentFiles.length > 0) {
-        filesContainerWrapper.innerHTML = `
+      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+      if (rawFiles.length > 0) {
+        let filesHtml = `
           <div class="drive-files-grid">
             ${currentFiles.map(file => {
               const iconName = getFileIcon(file.name);
@@ -1786,7 +1856,6 @@
 
               return `
                 <div class="drive-file-grid-card ${isSelected ? 'selected' : ''}" id="file-card-${file.key}">
-                  <!-- MULTI-SELECT CHECKBOX -->
                   <div class="file-checkbox-overlay" onclick="toggleFileSelection(event, '${file.key}')" title="Select File">
                     <span class="material-symbols-outlined">check</span>
                   </div>
@@ -1821,6 +1890,29 @@
             }).join('')}
           </div>
         `;
+
+        /* MATERIAL DESIGN PAGINATION BAR */
+        if (totalPages > 1) {
+          filesHtml += `
+            <div class="pagination-bar">
+              <button type="button" class="page-nav-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})" title="Previous Page">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+          `;
+
+          for (let p = 1; p <= totalPages; p++) {
+            filesHtml += `<button type="button" class="page-btn ${p === currentPage ? 'active' : ''}" onclick="changePage(${p})">${p}</button>`;
+          }
+
+          filesHtml += `
+              <button type="button" class="page-nav-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})" title="Next Page">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          `;
+        }
+
+        filesContainerWrapper.innerHTML = filesHtml;
 
         currentFiles.forEach(async file => {
           if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
