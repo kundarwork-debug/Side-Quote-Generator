@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.21">
-  <link rel="stylesheet" href="common.css?v=21.21">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.23">
+  <link rel="stylesheet" href="common.css?v=21.23">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -108,7 +108,6 @@
       pointer-events: none;
     }
 
-    /* GLOWING UNLIMITED STORAGE SYMBOL CONTAINER */
     .glowing-infinity-wrapper {
       position: relative;
       width: 80px;
@@ -218,7 +217,6 @@
       font-weight: 500;
     }
 
-    /* LIVE COUNTERS & UNLIMITED STORAGE SUMMARY PILLS */
     .gallery-stats-pills {
       display: flex;
       gap: 8px;
@@ -243,7 +241,6 @@
       color: var(--primary);
     }
 
-    /* UNLIMITED STORAGE PILL */
     .storage-pill-link {
       display: inline-flex;
       align-items: center;
@@ -272,7 +269,6 @@
       font-size: 14px;
     }
 
-    /* ADMIN AUTH BUTTON STYLES */
     .admin-action-wrap {
       display: flex;
       align-items: center;
@@ -327,7 +323,6 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* CENTERED CONFIRMATION MODAL */
     .delete-confirm-overlay {
       position: fixed;
       inset: 0;
@@ -450,7 +445,6 @@
       background: #b91c1c;
     }
 
-    /* POPUP WARNING MODAL */
     .auth-warning-overlay {
       position: fixed;
       inset: 0;
@@ -536,7 +530,6 @@
       background: #b91c1c;
     }
 
-    /* UPLOAD ACTION PANEL */
     .unified-action-panel {
       background: var(--surface-card);
       backdrop-filter: blur(16px);
@@ -650,7 +643,6 @@
       transform: none;
     }
 
-    /* FILTER TABS & CHIPS */
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
@@ -695,7 +687,6 @@
       color: #ffffff;
     }
 
-    /* Admin Folder Management Actions inside Tab */
     .folder-admin-actions {
       display: inline-flex;
       align-items: center;
@@ -749,7 +740,6 @@
       transform: translateY(-1px);
     }
 
-    /* MEDIA GRID & PAGINATION CONTAINER */
     .media-grid-wrapper {
       display: flex;
       flex-direction: column;
@@ -762,23 +752,30 @@
       gap: 24px;
     }
 
-    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION CONTAINER */
+    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
     .pagination-bar {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 16px;
       margin-top: 36px;
-      padding: 12px 20px;
+      padding: 16px 24px;
       background: var(--surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-pill);
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow-card);
       width: fit-content;
       margin-left: auto;
       margin-right: auto;
+    }
+
+    .pagination-pages-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
     .btn-page {
@@ -812,6 +809,63 @@
     .btn-page:disabled {
       opacity: 0.35;
       cursor: not-allowed;
+    }
+
+    .page-ellipsis {
+      padding: 0 4px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+
+    /* MD3 JUMP-TO-PAGE SECTION */
+    .pagination-jump-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .jump-input {
+      width: 56px;
+      height: 34px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .jump-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
+    }
+
+    .btn-jump-go {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1.5px solid transparent;
+      padding: 0 14px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-jump-go:hover {
+      background: var(--primary);
+      color: #ffffff;
     }
 
     .media-card {
@@ -850,7 +904,6 @@
       display: block;
     }
 
-    /* PER-CARD INDIVIDUAL LOADING OVERLAY */
     .card-loading-overlay {
       position: absolute;
       inset: 0;
@@ -936,7 +989,6 @@
       gap: 10px;
     }
 
-    /* Big Download Button */
     .btn-download {
       display: inline-flex;
       align-items: center;
@@ -959,7 +1011,6 @@
       transform: translateY(-1px);
     }
 
-    /* Small Delete Button */
     .btn-delete {
       display: inline-flex;
       align-items: center;
@@ -980,7 +1031,6 @@
       color: #ffffff;
     }
 
-    /* LIGHTBOX MODAL VIEWER */
     .media-lightbox-overlay {
       position: fixed;
       inset: 0;
@@ -1079,7 +1129,7 @@
 </head>
 <body>
 
-  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY WITH FAILSAFE -->
+  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
   <div class="app-loading-overlay" id="appLoadingOverlay">
     <div class="glowing-infinity-wrapper">
       <span class="material-symbols-outlined glowing-infinity-icon">all_inclusive</span>
@@ -1106,7 +1156,7 @@
     </div>
   </div>
 
-  <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
+  <!-- POPUP WARNING MODAL -->
   <div class="auth-warning-overlay" id="authWarningModal">
     <div class="auth-warning-modal">
       <div class="warning-icon-wrap">
@@ -1139,7 +1189,6 @@
         <div class="gallery-sub-row">
           <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation.</p>
         </div>
-        <!-- LIVE MEDIA BREAKDOWN PILLS WITH UNLIMITED STORAGE BUTTON ON RIGHT -->
         <div class="gallery-stats-pills" id="galleryStatsPills">
           <span class="stat-pill">Total: <strong id="statTotalCount">0</strong></span>
           <span class="stat-pill">Photos: <strong id="statPhotoCount">0</strong></span>
@@ -1150,7 +1199,6 @@
         </div>
       </div>
 
-      <!-- GOOGLE ADMIN AUTH BUTTON -->
       <div class="admin-action-wrap" id="adminAuthContainer">
         <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
           <svg width="18" height="18" viewBox="0 0 24 24">
@@ -1204,7 +1252,7 @@
         </div>
       </main>
       
-      <!-- NUMERIC PAGINATION CONTROLS (MD3 Style) -->
+      <!-- NUMERIC PAGINATION CONTROLS -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </div>
 
@@ -1212,7 +1260,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.21"></script>
+  <script src="common.js?v=21.23"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1270,7 +1318,7 @@
     let pendingDeleteKey = null;
 
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 9; // Exactly 9 items per page as requested
+    const ITEMS_PER_PAGE = 9; // Exactly 9 files per page
 
     const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v3';
     const fileUrlCache = new Map();
@@ -1447,6 +1495,18 @@
       currentPage = pageNum;
       renderGallery();
       window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+
+    function jumpToCustomPage(totalPages) {
+      const input = document.getElementById('jumpPageInput');
+      if (!input) return;
+      const targetPage = parseInt(input.value);
+      if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+        input.focus();
+        return;
+      }
+      goToPage(targetPage);
     }
 
     function handleCreateFolder() {
@@ -1707,7 +1767,6 @@
       hidePageLoader();
     });
 
-    // Smart Ranking: Sort by combined views + downloads descending, then fallback to newest timestamp
     function sortMediaItems() {
       liveMediaItems.sort((a, b) => {
         const scoreA = (a.viewsCount || 0) + (a.downloadsCount || 0);
@@ -1807,7 +1866,6 @@
       return legacyUrl || '';
     }
 
-    // Creates an ultra-low quality compressed data-URL thumbnail for lightning-fast preview loading
     async function getLowQualityThumbnail(fullUrl, isVideo) {
       if (isVideo || !fullUrl) return '';
       if (lowQualityThumbCache.has(fullUrl)) {
@@ -1819,7 +1877,7 @@
         img.crossOrigin = "anonymous";
         img.onload = () => {
           const canvas = document.createElement('canvas');
-          const width = 120; // Tiny width for instant load
+          const width = 120;
           const height = Math.round((img.height * width) / img.width);
           canvas.width = width;
           canvas.height = height;
@@ -1927,16 +1985,42 @@
 
       if (totalPages > 1) {
         paginationBar.style.display = 'flex';
-        let paginationHtml = `
+        let paginationHtml = `<div class="pagination-pages-row">`;
+        
+        paginationHtml += `
           <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
             <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
           </button>
         `;
 
-        for (let p = 1; p <= totalPages; p++) {
+        // COMPACT 3-NUMBER WINDOW LOGIC WITH ELLIPSIS
+        let startPage = Math.max(1, currentPage - 1);
+        let endPage = Math.min(totalPages, currentPage + 1);
+
+        if (currentPage === 1) {
+          endPage = Math.min(totalPages, 3);
+        } else if (currentPage === totalPages) {
+          startPage = Math.max(1, totalPages - 2);
+        }
+
+        if (startPage > 1) {
+          paginationHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
+          if (startPage > 2) {
+            paginationHtml += `<span class="page-ellipsis">...</span>`;
+          }
+        }
+
+        for (let p = startPage; p <= endPage; p++) {
           paginationHtml += `
             <button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>
           `;
+        }
+
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            paginationHtml += `<span class="page-ellipsis">...</span>`;
+          }
+          paginationHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
         }
 
         paginationHtml += `
@@ -1945,12 +2029,24 @@
           </button>
         `;
 
+        paginationHtml += `</div>`;
+
+        // Only show manual jump option if total pages goes more than 3
+        if (totalPages > 3) {
+          paginationHtml += `
+            <div class="pagination-jump-row">
+              <span>Go to page:</span>
+              <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
+              <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
+            </div>
+          `;
+        }
+
         paginationBar.innerHTML = paginationHtml;
       } else {
         paginationBar.style.display = 'none';
       }
 
-      // Resolve permanent fileId, show low-quality thumbnail first, then upgrade to full asset
       paginatedItems.forEach(async item => {
         const freshUrl = await resolveFileUrl(item.fileId, item.url);
         const mediaEl = document.getElementById(`media-el-${item.key}`);
@@ -1987,9 +2083,9 @@
       const slot = document.getElementById('lightboxMediaSlot');
 
       if (isVideo) {
-        slot.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:20px;"></video>`;
+        slot.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
       } else {
-        slot.innerHTML = `<img src="${url}" alt="Expanded Media View" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:20px;">`;
+        slot.innerHTML = `<img src="${url}" alt="Expanded Media View" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">`;
       }
 
       overlay.classList.add('active');
