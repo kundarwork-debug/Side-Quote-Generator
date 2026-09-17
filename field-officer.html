@@ -20,23 +20,23 @@
             --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
             --primary-soft: rgba(194, 29, 29, 0.08);
             
-            --bg-base: #F5EFEB;
+            --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
             --surface-glass: rgba(255, 255, 255, 0.88);
-            --surface-card: rgba(255, 255, 255, 0.95);
+            --surface-card: #FFFFFF; /* Pure White Tiles */
             
-            --border-subtle: rgba(225, 212, 204, 0.85);
+            --border-subtle: #ede4de;
             --border-hover: rgba(194, 29, 29, 0.35);
             
-            --text-main: #141210;
-            --text-secondary: #3d3835;
-            --text-muted: #736b66;
+            --text-main: #292524;
+            --text-secondary: #44403c;
+            --text-muted: #78716c;
             --text-faint: #a8a29e;
             
-            --radius-xl: 18px;
+            --radius-xl: 20px;
             --radius-pill: 9999px;
             
-            --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.03);
-            --shadow-float: 0 20px 40px -12px rgba(194, 29, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.02);
+            --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+            --shadow-float: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
             
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-display: 'Space Grotesk', sans-serif;
@@ -59,10 +59,7 @@
         }
 
         body {
-            background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
-                        radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
-                        linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
-            background-attachment: fixed;
+            background-color: var(--bg-base);
             color: var(--text-main);
             min-height: 100%;
             display: flex;
@@ -72,15 +69,6 @@
             position: relative;
             -webkit-font-smoothing: antialiased;
             padding-top: 80px;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
-            pointer-events: none;
-            z-index: 0;
         }
 
         .material-symbols-outlined {
@@ -176,9 +164,7 @@
             align-items: center;
             gap: 6px;
             padding: 5px 14px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: #FFFFFF;
             border: 1px solid var(--border-subtle);
             color: var(--primary);
             border-radius: var(--radius-pill);
@@ -187,7 +173,7 @@
             text-transform: uppercase;
             letter-spacing: 0.05em;
             margin-bottom: 10px;
-            box-shadow: 0 2px 8px rgba(28, 25, 23, 0.03);
+            box-shadow: var(--shadow-card);
         }
 
         .page-title {
@@ -253,9 +239,7 @@
             align-items: center;
             gap: 8px;
             padding: 10px 24px;
-            background: var(--surface-card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: #FFFFFF;
             color: var(--primary);
             border: 1.5px solid var(--border-subtle);
             border-radius: var(--radius-pill);
@@ -270,13 +254,11 @@
         .btn-bottom-trash:hover {
             border-color: var(--primary);
             transform: translateY(-1px);
-            background: #ffffff;
         }
 
+        /* PURE WHITE TILES */
         .card {
-            background: var(--surface-card);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: #FFFFFF !important;
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-xl);
             padding: 28px;
@@ -287,7 +269,6 @@
         .card:hover {
             border-color: var(--border-hover);
             box-shadow: var(--shadow-float);
-            background: #ffffff;
         }
 
         .card-header {
@@ -315,14 +296,13 @@
             border: 1.5px solid var(--border-subtle);
             border-radius: var(--radius-pill);
             outline: none;
-            background: rgba(255, 255, 255, 0.9);
+            background: #FFFFFF;
             color: var(--text-main);
             transition: all 0.2s ease;
         }
 
         .lookup-input:focus {
             border-color: var(--primary);
-            background: #ffffff;
             box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.1);
         }
 
@@ -343,7 +323,7 @@
         }
 
         .chip {
-            background: rgba(255, 255, 255, 0.8);
+            background: #F7EDE6;
             border: 1px solid var(--border-subtle);
             color: var(--primary);
             padding: 6px 14px;
@@ -392,7 +372,7 @@
         }
 
         .contact-role-card {
-            background: rgba(245, 239, 235, 0.6);
+            background: #F7EDE6;
             border: 1px solid var(--border-subtle);
             border-radius: 12px;
             padding: 12px 16px;
@@ -894,7 +874,7 @@
             { branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM13913", name: "SANDEEP KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM13913", name: "SANJAY KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
             { branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
             { branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
@@ -935,26 +915,9 @@
             return match.length >= 10 ? match.substring(match.length - 10) : match;
         }
 
+        // FIXED: Removed strict duplicate filtering so newly added contacts always reflect instantly
         function deduplicateList(list) {
-            const seenPhones = new Set();
-            const seenNames = new Set();
-            const unique = [];
-
-            for (const item of list) {
-                if (!item) continue;
-                const phoneKey = extractPhone(item.mobile);
-                const nameKey = (item.name || '').trim().toLowerCase();
-
-                if (phoneKey && phoneKey.length >= 10) {
-                    if (seenPhones.has(phoneKey)) continue;
-                    seenPhones.add(phoneKey);
-                } else if (nameKey) {
-                    if (seenNames.has(nameKey)) continue;
-                    seenNames.add(nameKey);
-                }
-                unique.push(item);
-            }
-            return unique;
+            return list.filter(item => item !== null && item !== undefined);
         }
 
         officersRef.on('value', (snapshot) => {
