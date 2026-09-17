@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Enterprise Cloud Drive</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.36">
-  <link rel="stylesheet" href="common.css?v=21.36">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.37">
+  <link rel="stylesheet" href="common.css?v=21.37">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -685,12 +685,6 @@
       color: #dc2626;
     }
 
-    .drive-files-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
-    }
-
     /* =========================================================
        QUOTATIONS ARCHIVE DESKTOP LIST VIEW STYLES
        ========================================================= */
@@ -812,6 +806,12 @@
       align-items: center;
       gap: 10px;
       flex-shrink: 0;
+    }
+
+    .drive-files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
     }
 
     .drive-file-grid-card {
@@ -999,28 +999,35 @@
       color: #ffffff;
     }
 
-    /* MATERIAL DESIGN PAGINATION CONTAINER */
+    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
     .pagination-bar {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 16px;
       margin-top: 36px;
-      padding: 14px 20px;
+      padding: 16px 24px;
       background: var(--surface-card);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-pill);
+      border-radius: var(--radius-xl);
       box-shadow: var(--shadow-card);
       width: fit-content;
       margin-left: auto;
       margin-right: auto;
     }
 
-    .page-btn {
-      min-width: 38px;
-      height: 38px;
+    .pagination-pages-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-page {
+      min-width: 40px;
+      height: 40px;
       background: transparent;
       border: 1.5px solid transparent;
       color: var(--text-main);
@@ -1028,54 +1035,83 @@
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      font-size: 13.5px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       padding: 0 6px;
     }
 
-    .page-btn:hover {
+    .btn-page:hover:not(:disabled) {
       background: var(--primary-soft);
       color: var(--primary);
     }
 
-    .page-btn.active {
+    .btn-page.active {
       background: var(--primary);
       color: #ffffff;
       box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
     }
 
-    .page-nav-btn {
-      width: 38px;
-      height: 38px;
-      background: #ffffff;
-      border: 1.5px solid var(--border-subtle);
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-    }
-
-    .page-nav-btn:hover:not(:disabled) {
-      background: var(--primary-soft);
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-
-    .page-nav-btn:disabled {
+    .btn-page:disabled {
       opacity: 0.35;
       cursor: not-allowed;
-      background: #f3f4f6;
     }
 
-    .page-nav-btn .material-symbols-outlined {
-      font-size: 20px;
+    .page-ellipsis {
+      padding: 0 4px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+
+    .pagination-jump-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .jump-input {
+      width: 56px;
+      height: 34px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .jump-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
+    }
+
+    .btn-jump-go {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1.5px solid transparent;
+      padding: 0 14px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-jump-go:hover {
+      background: var(--primary);
+      color: #ffffff;
     }
 
     .media-lightbox-overlay {
@@ -1313,7 +1349,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.36"></script>
+  <script src="common.js?v=21.37"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1359,7 +1395,7 @@
     let selectedFileKeys = new Set();
     let folderActionType = 'move';
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 20;
+    const ITEMS_PER_PAGE = 12;
 
     const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
     const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
@@ -1445,6 +1481,7 @@
         authBtn.classList.remove('logged-in');
         authLabel.textContent = "Admin Login";
       }
+      renderUI();
     }
 
     const cachedFolders = localStorage.getItem(CACHE_KEY_FOLDERS);
@@ -1499,10 +1536,22 @@
       renderUI();
     }
 
-    function changePage(newPage) {
-      currentPage = newPage;
+    function goToPage(pageNum) {
+      currentPage = pageNum;
       renderUI();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+
+    function jumpToCustomPage(totalPages) {
+      const input = document.getElementById('jumpPageInput');
+      if (!input) return;
+      const targetPage = parseInt(input.value);
+      if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+        input.focus();
+        return;
+      }
+      goToPage(targetPage);
     }
 
     function promptCreateFolder() {
@@ -1624,7 +1673,11 @@
 
     async function deleteSelectedFiles() {
       if (selectedFileKeys.size === 0) return;
-      if (!confirm(`Are you sure you want to send ${selectedFileKeys.size} selected files to dump storage?`)) return;
+      if (currentParentId === ARCHIVE_FOLDER_KEY && !isCurrentUserAdmin()) {
+        alert("Access Denied: Only administrators can delete PDFs from the Quotations Archive.");
+        return;
+      }
+      if (!confirm(`Are you sure you want to delete ${selectedFileKeys.size} selected files?`)) return;
 
       try {
         const keys = Array.from(selectedFileKeys);
@@ -1646,13 +1699,17 @@
         updateMultiSelectToolbar();
         renderUI();
       } catch (err) {
-        alert("Failed to move files to dump: " + err.message);
+        alert("Failed to delete files: " + err.message);
       }
     }
 
     async function moveToDump(type, key) {
       try {
         if (type === 'file') {
+          if (currentParentId === ARCHIVE_FOLDER_KEY && !isCurrentUserAdmin()) {
+            alert("Access Denied: Only administrators can delete PDFs from the Quotations Archive.");
+            return;
+          }
           const fileItem = liveFiles.find(f => f.key === key);
           if (fileItem) {
             await dumpBinRef.push({
@@ -1700,7 +1757,7 @@
           }
         }
       } catch (err) {
-        alert("Failed to move item to dump: " + err.message);
+        alert("Failed to delete item: " + err.message);
       }
     }
 
@@ -1966,10 +2023,11 @@
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
       const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+      const canDelete = currentParentId !== ARCHIVE_FOLDER_KEY || isCurrentUserAdmin();
+
       if (rawFiles.length > 0) {
         let filesHtml = '';
         
-        // If inside Quotations Archive, use clean full-width desktop list view. Otherwise, use grid view.
         if (currentParentId === ARCHIVE_FOLDER_KEY) {
           filesHtml = `<div class="drive-files-list">`;
           filesHtml += currentFiles.map(file => {
@@ -2002,9 +2060,11 @@
                   <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
                     <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
                   </button>
-                  <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
-                    <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                  </button>
+                  ${canDelete ? `
+                    <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
+                      <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                    </button>
+                  ` : ''}
                 </div>
               </div>
             `;
@@ -2048,9 +2108,11 @@
                       <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
                         <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
                       </button>
-                      <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>
+                      ${canDelete ? `
+                        <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
+                          <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                        </button>
+                      ` : ''}
                     </div>
                   </div>
                 `;
@@ -2059,25 +2121,61 @@
           `;
         }
 
-        /* MATERIAL DESIGN PAGINATION BAR */
+        /* ADVANCED PAGINATION BAR WITH JUMP INPUT */
         if (totalPages > 1) {
           filesHtml += `
             <div class="pagination-bar">
-              <button type="button" class="page-nav-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})" title="Previous Page">
-                <span class="material-symbols-outlined">chevron_left</span>
-              </button>
+              <div class="pagination-pages-row">
+                <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+                </button>
           `;
 
-          for (let p = 1; p <= totalPages; p++) {
-            filesHtml += `<button type="button" class="page-btn ${p === currentPage ? 'active' : ''}" onclick="changePage(${p})">${p}</button>`;
+          let startPage = Math.max(1, currentPage - 1);
+          let endPage = Math.min(totalPages, currentPage + 1);
+
+          if (currentPage === 1) {
+            endPage = Math.min(totalPages, 3);
+          } else if (currentPage === totalPages) {
+            startPage = Math.max(1, totalPages - 2);
+          }
+
+          if (startPage > 1) {
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
+            if (startPage > 2) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+          }
+
+          for (let p = startPage; p <= endPage; p++) {
+            filesHtml += `<button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+          }
+
+          if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
           }
 
           filesHtml += `
-              <button type="button" class="page-nav-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})" title="Next Page">
-                <span class="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
+                <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+                </button>
+              </div>
           `;
+
+          if (totalPages > 3) {
+            filesHtml += `
+              <div class="pagination-jump-row">
+                <span>Go to page:</span>
+                <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
+                <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
+              </div>
+            `;
+          }
+
+          filesHtml += `</div>`;
         }
 
         filesContainerWrapper.innerHTML = filesHtml;
