@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.23">
-  <link rel="stylesheet" href="common.css?v=21.23">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.46">
+  <link rel="stylesheet" href="common.css?v=21.46">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -746,10 +746,24 @@
       gap: 32px;
     }
 
+    /* EXACTLY 3 COLUMNS HORIZONTALLY */
     .media-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 24px;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .media-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .media-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
     }
 
     /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
@@ -819,7 +833,6 @@
       letter-spacing: 1px;
     }
 
-    /* MD3 JUMP-TO-PAGE SECTION */
     .pagination-jump-row {
       display: flex;
       align-items: center;
@@ -878,6 +891,7 @@
       box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
+      width: 100%;
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
     }
 
@@ -1243,7 +1257,7 @@
     <!-- DYNAMIC FOLDER FILTER TABS -->
     <div class="filter-bar" id="filterBar"></div>
 
-    <!-- MEDIA GRID WRAPPER WITH PAGINATION -->
+    <!-- MEDIA GRID WRAPPER WITH 3-ROW PAGINATION -->
     <div class="media-grid-wrapper">
       <main class="media-grid" id="mediaGrid">
         <div class="state-msg">
@@ -1252,7 +1266,7 @@
         </div>
       </main>
       
-      <!-- NUMERIC PAGINATION CONTROLS -->
+      <!-- PAGINATION CONTROLS (EXACTLY 9 ITEMS PER PAGE = 3 HORIZONTAL LINES X 3 COLUMNS) -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </div>
 
@@ -1260,7 +1274,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.23"></script>
+  <script src="common.js?v=21.46"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1318,7 +1332,7 @@
     let pendingDeleteKey = null;
 
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 9; // Exactly 9 files per page
+    const ITEMS_PER_PAGE = 9; // Exactly 3 rows x 3 columns = 9 items per page
 
     const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v3';
     const fileUrlCache = new Map();
@@ -1993,7 +2007,6 @@
           </button>
         `;
 
-        // COMPACT 3-NUMBER WINDOW LOGIC WITH ELLIPSIS
         let startPage = Math.max(1, currentPage - 1);
         let endPage = Math.min(totalPages, currentPage + 1);
 
@@ -2031,7 +2044,6 @@
 
         paginationHtml += `</div>`;
 
-        // Only show manual jump option if total pages goes more than 3
         if (totalPages > 3) {
           paginationHtml += `
             <div class="pagination-jump-row">
