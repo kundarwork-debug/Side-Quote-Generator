@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>APML Unified Operations &amp; Field Directory</title>
+    
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
+    <link rel="stylesheet" href="common.css?v=21.35">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        :root {
+            --primary: #c21d1d;
+            --primary-dark: #991b1b;
+            --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
+            --primary-soft: rgba(194, 29, 29, 0.08);
+            
+            --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+            --surface-glass: rgba(255, 255, 255, 0.88);
+            --surface-card: #FFFFFF; /* Pure White Tiles */
+            
+            --border-subtle: #ede4de;
+            --border-hover: rgba(194, 29, 29, 0.35);
+            
+            --text-main: #292524;
+            --text-secondary: #44403c;
+            --text-muted: #78716c;
+            --text-faint: #a8a29e;
+            
+            --radius-xl: 20px;
+            --radius-pill: 9999px;
+            
+            --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+            --shadow-float: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+            
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            overflow-y: scroll !important;
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: visible !important;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            padding-top: 80px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        #pageLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-base);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        #pageLoadingOverlay.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-spinner-box {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-ring {
+            position: absolute;
+            inset: 0;
+            border: 3.5px solid rgba(194, 29, 29, 0.15);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spinLoader 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+        }
+
+        .loader-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            animation: pulseLogo 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spinLoader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.9); opacity: 0.85; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .loader-text {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px 24px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .directory-header-wrap {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            color: var(--primary);
+            border-radius: var(--radius-pill);
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.03em;
+        }
+
+        .page-title span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-top-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: #059669;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* SECTION SWITCH TABS */
+        .directory-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .dir-tab-btn {
+            padding: 10px 24px;
+            border-radius: var(--radius-pill);
+            border: 1.5px solid var(--border-subtle);
+            background: #ffffff;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .dir-tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(194, 29, 29, 0.2);
+        }
+
+        .dir-section-content {
+            display: none;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .dir-section-content.active {
+            display: flex;
+        }
+
+        .btn-bottom-trash {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: #FFFFFF;
+            color: var(--primary);
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            font-size: 13.5px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: var(--shadow-card);
+            transition: all 0.2s ease;
+        }
+
+        .btn-bottom-trash:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        /* PURE WHITE TILES */
+        .card {
+            background: #FFFFFF !important;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-float);
+        }
+
+        .card-header {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            letter-spacing: -0.01em;
+        }
+
+        .lookup-box {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .lookup-input {
+            width: 100%;
+            padding: 15px 20px 15px 48px;
+            font-size: 14.5px;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            outline: none;
+            background: #FFFFFF;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .lookup-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.1);
+        }
+
+        .lookup-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .chip {
+            background: #F7EDE6;
+            border: 1px solid var(--border-subtle);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .lookup-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .lookup-result-item {
+            position: relative;
+            padding: 20px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-subtle);
+            border-left: 4px solid var(--primary);
+            border-radius: var(--radius-xl);
+            animation: fadeIn 0.3s ease;
+            box-shadow: var(--shadow-card);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .contact-role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .contact-role-card {
+            background: #F7EDE6;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .role-title-tag {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 2px;
+            letter-spacing: 0.03em;
+        }
+
+        .role-person-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: block;
+        }
+
+        .btn-call-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            color: var(--primary);
+            border: 1px solid rgba(194, 29, 29, 0.2);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-call-mini:hover {
+            background: var(--primary);
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        .btn-wa-mini {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-wa-mini:hover {
+            background: #059669;
+            color: #ffffff;
+            transform: scale(1.08);
+        }
+
+        .btn-pencil-edit, .btn-pencil-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 1.5px solid var(--border-subtle);
+            transition: all 0.2s ease;
+        }
+
+        .btn-pencil-edit { color: #0284c7; }
+        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
+
+        .btn-pencil-delete { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
+        .btn-pencil-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; transform: scale(1.08); }
+
+        .region-badge {
+            background-color: var(--primary);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .state-badge {
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .state-badge.active { background: rgba(16, 185, 129, 0.12); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .state-badge.assco { background: rgba(59, 130, 246, 0.12); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .state-badge.leave { background: rgba(245, 158, 11, 0.12); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .state-badge.left { background: rgba(220, 38, 38, 0.12); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.3); }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1.5px solid var(--border-subtle);
+            background: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+            background: #ffffff;
+            min-width: 860px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: rgba(194, 29, 29, 0.05);
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+        }
+
+        tr:hover td { background-color: rgba(194, 29, 29, 0.02); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width { grid-column: 1 / -1; }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        input, textarea, select {
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-subtle);
+            background-color: #ffffff;
+            border-radius: 12px;
+            font-size: 13.5px;
+            outline: none;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.1);
+        }
+
+        .btn-submit {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-pill);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            box-shadow: 0 4px 14px rgba(194, 29, 29, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
+
+        .btn-cancel-edit {
+            background-color: #736b66;
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--radius-pill);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            margin-left: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel-edit:hover { background-color: var(--text-main); }
+
+        .action-icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .btn-edit-tbl { color: #0284c7; }
+        .btn-edit-tbl:hover { background-color: #e0f2fe; }
+        .btn-delete-tbl { color: #dc2626; }
+        .btn-delete-tbl:hover { background-color: #fee2e2; }
+    </style>
+</head>
+<body>
+
+    <div id="pageLoadingOverlay">
+        <div class="loader-spinner-box">
+            <div class="loader-ring"></div>
+            <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
+        </div>
+        <div class="loader-text">
+            <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">cloud_sync</span>
+            <span>Loading APML Unified Operations Directory...</span>
+        </div>
+    </div>
+
+    <div id="header-container"></div>
+
+    <main class="main-container">
+        
+        <div class="directory-header-wrap">
+            <div class="header-badge">
+                <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
+                <span>APML Unified Enterprise Hub &amp; Field Directory</span>
+            </div>
+            <h1 class="page-title">Operations &amp; Field <span>Master Directory</span></h1>
+            
+            <div class="header-top-actions">
+                <span class="status-badge">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
+                    Real-Time Connected
+                </span>
+            </div>
+
+            <!-- TAB SWITCHER TO VIEW EITHER HUBS OR FIELD OFFICERS -->
+            <div class="directory-tabs" style="margin-top: 20px;">
+                <button type="button" class="dir-tab-btn active" id="tabBtnHubs" onclick="switchDirectoryTab('hubs')">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">location_city</span>
+                    <span>Hubs &amp; Branches</span>
+                </button>
+                <button type="button" class="dir-tab-btn" id="tabBtnOfficers" onclick="switchDirectoryTab('officers')">
+                    <span class="material-symbols-outlined" style="font-size: 17px;">badge</span>
+                    <span>Field Officers (WCRO)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 1: HUBS & BRANCH DIRECTORY CONTENT -->
+        <!-- ========================================== -->
+        <div id="tabContentHubs" class="dir-section-content active">
+
+            <!-- 1. Quick Hub Lookup -->
+            <section class="card">
+                <div class="card-header">
+                    <span class="material-symbols-outlined">travel_explore</span>
+                    Instant Branch &amp; Team Lookup Finder
+                </div>
+                
+                <div class="lookup-box">
+                    <span class="material-symbols-outlined lookup-icon">search</span>
+                    <input type="text" id="branchLookupInput" class="lookup-input" placeholder="Search by city, incharge name, phone, or designation..." list="branchList">
+                    <datalist id="branchList"></datalist>
+                </div>
+
+                <div class="quick-chips" id="quickChipsContainerHubs"></div>
+                <div id="lookupResultsContainerHubs" class="lookup-results-list" style="display: none;"></div>
+            </section>
+
+            <!-- 2. Add / Edit Hub Form -->
+            <section class="card" id="addHubSection">
+                <div class="card-header" id="formCardHeaderHub">
+                    <span class="material-symbols-outlined" id="formHeaderIconHub">add_location_alt</span>
+                    <span id="formHeaderTitleHub">Add New Hub or Operations Team Contacts</span>
+                </div>
+
+                <form id="addHubForm">
+                    <input type="hidden" id="editingHubId" value="">
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="formRegion">Region (Optional e.g. WCRO, NRO)</label>
+                            <input type="text" id="formRegion" placeholder="WCRO">
+                        </div>
+                        <div class="form-group">
+                            <label for="formCity">City / Branch Name *</label>
+                            <input type="text" id="formCity" placeholder="e.g. Pune Hub" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="formHubManagerName">HUB Manager Name &amp; Phone</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <input type="text" id="formHubManagerName" placeholder="Manager Name">
+                                <input type="tel" id="formHubManagerPhone" placeholder="Phone Number">
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="formBranchManagerName">Branch Manager Name &amp; Phone</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <input type="text" id="formBranchManagerName" placeholder="Branch Manager Name">
+                                <input type="tel" id="formBranchManagerPhone" placeholder="Phone Number">
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="formPackingInchargeName">Packing Incharge Name &amp; Phone</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <input type="text" id="formPackingInchargeName" placeholder="Packing Incharge Name">
+                                <input type="tel" id="formPackingInchargePhone" placeholder="Phone Number">
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="formMap">Google Maps Link (Optional)</label>
+                            <input type="url" id="formMap" placeholder="https://maps.app.goo.gl/...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="formAddress">Warehouse Address (Optional)</label>
+                            <textarea id="formAddress" rows="2" placeholder="Warehouse address..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="formOfficeAddress">Office Address (Optional)</label>
+                            <textarea id="formOfficeAddress" rows="2" placeholder="Office address..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 10px;">
+                        <button type="submit" class="btn-submit">
+                            <span class="material-symbols-outlined">save</span>
+                            <span id="btnSubmitTextHub">Save Hub Details</span>
+                        </button>
+                        <button type="button" class="btn-cancel-edit" id="btnCancelEditHub" style="display: none;" onclick="cancelEditHubMode()">
+                            <span class="material-symbols-outlined">close</span>
+                            <span>Cancel Edit</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 3. Hubs Table -->
+            <section class="card">
+                <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                    <div class="card-header" style="margin-bottom: 0;">
+                        <span class="material-symbols-outlined">hub</span>
+                        All Registered Hubs (<span id="hubCount">0</span>)
+                    </div>
+                    <div style="position: relative; width: 100%; max-width: 320px;">
+                        <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 18px;">search</span>
+                        <input type="text" id="tableSearchInputHubs" placeholder="Filter hubs..." style="width: 100%; padding: 10px 14px 10px 36px; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-pill); outline: none; font-size: 13px; background: #ffffff;">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>City / Branch</th>
+                                <th>HUB Manager</th>
+                                <th>Branch Manager</th>
+                                <th>Packing Incharge</th>
+                                <th>Warehouse Address</th>
+                                <th>Map</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hubTableBody">
+                            <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading hubs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: FIELD OFFICERS DIRECTORY CONTENT -->
+        <!-- ========================================== -->
+        <div id="tabContentOfficers" class="dir-section-content">
+
+            <!-- 1. Quick Officer Lookup -->
+            <section class="card">
+                <div class="card-header">
+                    <span class="material-symbols-outlined">travel_explore</span>
+                    Instant Field Officer Lookup Finder
+                </div>
+                
+                <div class="lookup-box">
+                    <span class="material-symbols-outlined lookup-icon">search</span>
+                    <input type="text" id="officerLookupInput" class="lookup-input" placeholder="Search by name, branch (MUM, PUN, AHMD), APM code, designation, or phone...">
+                </div>
+
+                <div class="quick-chips" id="quickChipsContainerOfficers"></div>
+                <div id="lookupResultsContainerOfficers" class="lookup-results-list" style="display: none;"></div>
+            </section>
+
+            <!-- 2. Add / Edit Officer Form -->
+            <section class="card" id="addOfficerSection">
+                <div class="card-header" id="formCardHeaderOfficer">
+                    <span class="material-symbols-outlined" id="formHeaderIconOfficer">person_add</span>
+                    <span id="formHeaderTitleOfficer">Add New Field Officer Contact</span>
+                </div>
+
+                <form id="officerForm">
+                    <input type="hidden" id="editingOfficerId" value="">
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="formName">Officer Name *</label>
+                            <input type="text" id="formName" placeholder="e.g. JAIPAL SINGH" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formBranch">Branch Code *</label>
+                            <input type="text" id="formBranch" placeholder="e.g. MUM, PUN, AHMD" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="formApmCode">APM Code</label>
+                            <input type="text" id="formApmCode" placeholder="e.g. APM9990">
+                        </div>
+                        <div class="form-group">
+                            <label for="formDesignation">Designation *</label>
+                            <select id="formDesignation">
+                                <option value="Marketing Executive">Marketing Executive</option>
+                                <option value="Branch Incharge">Branch Incharge</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="formRole">Role</label>
+                            <input type="text" id="formRole" value="BFO">
+                        </div>
+                        <div class="form-group">
+                            <label for="formMobile">Mobile Number *</label>
+                            <input type="tel" id="formMobile" placeholder="e.g. 9289620037" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="formStatus">Status *</label>
+                            <select id="formStatus">
+                                <option value="Active">Active</option>
+                                <option value="Assco">Assco</option>
+                                <option value="Leave">Leave</option>
+                                <option value="Left">Left</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; margin-top: 14px;">
+                        <button type="submit" class="btn-submit">
+                            <span class="material-symbols-outlined">save</span>
+                            <span id="btnSubmitTextOfficer">Save Officer Details</span>
+                        </button>
+                        <button type="button" class="btn-cancel-edit" id="btnCancelEditOfficer" style="display: none;" onclick="cancelEditOfficerMode()">
+                            <span class="material-symbols-outlined">close</span>
+                            <span>Cancel Edit</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 3. Officers Table -->
+            <section class="card">
+                <div class="table-controls" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                    <div class="card-header" style="margin-bottom: 0;">
+                        <span class="material-symbols-outlined">groups</span>
+                        All Registered Officers (<span id="officerCount">0</span>)
+                    </div>
+                    <div style="position: relative; width: 100%; max-width: 320px;">
+                        <span class="material-symbols-outlined" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 18px;">search</span>
+                        <input type="text" id="tableSearchInputOfficers" placeholder="Filter officers..." style="width: 100%; padding: 10px 14px 10px 38px; border: 1.5px solid var(--border-subtle); border-radius: var(--radius-pill); outline: none; font-size: 13px; background: #ffffff;">
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sr.</th>
+                                <th>Officer Name</th>
+                                <th>Branch</th>
+                                <th>APM Code</th>
+                                <th>Designation</th>
+                                <th>Role</th>
+                                <th>Mobile No.</th>
+                                <th>Status</th>
+                                <th style="text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officerTableBody">
+                            <tr><td colspan="9" style="text-align: center; padding: 20px;">Loading officers...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; margin: 12px 0 24px;">
+            <a href="admin-trash.html" class="btn-bottom-trash" title="Open Trash &amp; Recovery Archive">
+                <span class="material-symbols-outlined" style="font-size: 20px;">delete_sweep</span>
+                <span>Trash / Recovery Archive</span>
+            </a>
+        </div>
+
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script src="common.js?v=21.35"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
+            authDomain: "apml-hub-directory.firebaseapp.com",
+            databaseURL: "https://apml-hub-directory-default-rtdb.firebaseio.com",
+            projectId: "apml-hub-directory",
+            storageBucket: "apml-hub-directory.firebasestorage.app",
+            messagingSenderId: "1042315421228",
+            appId: "1:1042315421228:web:677ccc4eca1803cd8b1389",
+            measurementId: "G-BVJY1VV84M"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        const hubsRef = db.ref('hubs');
+        const officersRef = db.ref('field_officers');
+        const trashRef = db.ref('deleted_hubs');
+
+        let loadedHubs = [];
+        let loadedOfficers = [];
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hide');
+                setTimeout(() => { overlay.style.display = 'none'; }, 400);
+            }
+        }
+
+        window.switchDirectoryTab = function(tabName) {
+            const tabHubs = document.getElementById('tabBtnHubs');
+            const tabOfficers = document.getElementById('tabBtnOfficers');
+            const contentHubs = document.getElementById('tabContentHubs');
+            const contentOfficers = document.getElementById('tabContentOfficers');
+
+            if (tabName === 'hubs') {
+                tabHubs.classList.add('active');
+                tabOfficers.classList.remove('active');
+                contentHubs.classList.add('active');
+                contentOfficers.classList.remove('active');
+            } else {
+                tabOfficers.classList.add('active');
+                tabHubs.classList.remove('active');
+                contentOfficers.classList.add('active');
+                contentHubs.classList.remove('active');
+            }
+        };
+
+        function scrollToAddForm() {
+            const activeTab = document.querySelector('.dir-section-content.active').id;
+            const section = activeTab === 'tabContentHubs' ? document.getElementById('addHubSection') : document.getElementById('addOfficerSection');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function extractPhone(str) {
+            if (!str) return '';
+            const match = str.replace(/[^0-9]/g, '');
+            return match.length >= 10 ? match.substring(match.length - 10) : match;
+        }
+
+        // --- 1. HUBS & BRANCHES SYNC & LOGIC ---
+        hubsRef.on('value', (snapshot) => {
+            try {
+                const data = snapshot.val();
+                loadedHubs = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        loadedHubs.push({ id: key, ...data[key] });
+                    });
+                }
+                loadedHubs.sort((a, b) => (a.city || '').localeCompare(b.city || ''));
+                renderHubTable(loadedHubs);
+                populateHubChips(loadedHubs);
+            } catch (err) {
+                console.error("Hubs sync error:", err);
+            } finally {
+                hideLoadingOverlay();
+            }
+        });
+
+        function populateHubChips(list) {
+            const chips = document.getElementById('quickChipsContainerHubs');
+            const topCities = ["GURGAON", "DELHI", "PUNE", "BANGALORE", "AHMEDABAD", "AGRA", "JAIPUR", "HYDERABAD", "BHIWANDI", "KOLKATA", "CHENNAI"];
+            chips.innerHTML = topCities.map(city => `<span class="chip" onclick="selectHubChip('${city}')">${city}</span>`).join('');
+        }
+
+        function selectHubChip(city) {
+            document.getElementById('branchLookupInput').value = city;
+            executeHubLookup(city);
+        }
+
+        const branchLookupInput = document.getElementById('branchLookupInput');
+        branchLookupInput.addEventListener('input', function() { executeHubLookup(this.value); });
+
+        function executeHubLookup(searchTerm) {
+            const container = document.getElementById('lookupResultsContainerHubs');
+            if (!searchTerm || searchTerm.trim() === '') {
+                container.innerHTML = '';
+                container.style.display = 'none';
+                return;
+            }
+            const term = searchTerm.trim().toLowerCase();
+            const matches = loadedHubs.filter(h => (h.city || '').toLowerCase().includes(term) || (h.region || '').toLowerCase().includes(term));
+            
+            if (matches.length > 0) {
+                container.innerHTML = matches.map(found => `
+                    <div class="lookup-result-item">
+                        <h3 style="font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 6px;">${escapeHtml(found.city)} (${escapeHtml(found.region || 'HUB')})</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary);"><b>HUB Manager:</b> ${escapeHtml(found.hod || '—')}</p>
+                        <p style="font-size: 13px; color: var(--text-secondary);"><b>Branch Manager:</b> ${escapeHtml(found.teamLeader || '—')}</p>
+                        ${found.address ? `<div class="address-box"><b>Warehouse:</b> ${escapeHtml(found.address)}</div>` : ''}
+                    </div>
+                `).join('');
+                container.style.display = 'flex';
+            } else {
+                container.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted);">No hubs found matching "${escapeHtml(searchTerm)}".</div>`;
+                container.style.display = 'block';
+            }
+        }
+
+        function renderHubTable(list) {
+            const tbody = document.getElementById('hubTableBody');
+            document.getElementById('hubCount').innerText = list.length;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px;">No hub records found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map(hub => `
+                <tr>
+                    <td><strong>${escapeHtml(hub.region || '—')}</strong></td>
+                    <td><strong style="color: var(--primary);">${escapeHtml(hub.city)}</strong></td>
+                    <td>${escapeHtml(hub.hod || '—')}</td>
+                    <td>${escapeHtml(hub.teamLeader || '—')}</td>
+                    <td>${escapeHtml(hub.packingIncharge || '—')}</td>
+                    <td style="font-size: 11.5px;">${escapeHtml(hub.address || '—')}</td>
+                    <td>${hub.map ? `<a href="${escapeHtml(hub.map)}" target="_blank" class="map-link-btn">Map Pin</a>` : '—'}</td>
+                    <td style="text-align: center; white-space: nowrap;">
+                        <button class="action-icon-btn btn-edit-tbl" onclick="startEditHub('${hub.id}')"><span class="material-symbols-outlined">edit</span></button>
+                        <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteHub('${hub.id}', '${escapeHtml(hub.city)}')"><span class="material-symbols-outlined">delete</span></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        document.getElementById('addHubForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editingId = document.getElementById('editingHubId').value;
+            const hubData = {
+                region: document.getElementById('formRegion').value.trim().toUpperCase() || "HUB",
+                city: document.getElementById('formCity').value.trim().toUpperCase(),
+                hod: document.getElementById('formHubManagerName').value.trim() + (document.getElementById('formHubManagerPhone').value ? ' - ' + document.getElementById('formHubManagerPhone').value : ''),
+                teamLeader: document.getElementById('formBranchManagerName').value.trim() + (document.getElementById('formBranchManagerPhone').value ? ' - ' + document.getElementById('formBranchManagerPhone').value : ''),
+                packingIncharge: document.getElementById('formPackingInchargeName').value.trim() + (document.getElementById('formPackingInchargePhone').value ? ' - ' + document.getElementById('formPackingInchargePhone').value : ''),
+                map: document.getElementById('formMap').value.trim(),
+                address: document.getElementById('formAddress').value.trim(),
+                officeAddress: document.getElementById('formOfficeAddress').value.trim()
+            };
+
+            if (editingId) {
+                hubsRef.child(editingId).update(hubData).then(() => {
+                    cancelEditHubMode();
+                    alert("Hub updated successfully!");
+                });
+            } else {
+                hubsRef.push({ ...hubData, timestamp: Date.now() }).then(() => {
+                    document.getElementById('addHubForm').reset();
+                    alert("Hub added successfully!");
+                });
+            }
+        });
+
+        window.startEditHub = function(id) {
+            const hub = loadedHubs.find(h => h.id === id);
+            if (!hub) return;
+            switchDirectoryTab('hubs');
+            document.getElementById('editingHubId').value = id;
+            document.getElementById('formRegion').value = hub.region || '';
+            document.getElementById('formCity').value = hub.city || '';
+            document.getElementById('formMap').value = hub.map || '';
+            document.getElementById('formAddress').value = hub.address || '';
+            document.getElementById('formOfficeAddress').value = hub.officeAddress || '';
+            document.getElementById('btnSubmitTextHub').innerText = 'Update Hub';
+            document.getElementById('btnCancelEditHub').style.display = 'inline-flex';
+            scrollToAddForm();
+        };
+
+        window.cancelEditHubMode = function() {
+            document.getElementById('editingHubId').value = '';
+            document.getElementById('addHubForm').reset();
+            document.getElementById('btnSubmitTextHub').innerText = 'Save Hub Details';
+            document.getElementById('btnCancelEditHub').style.display = 'none';
+        };
+
+        window.promptDeleteHub = function(id, name) {
+            if (!confirm(`Delete hub ${name}?`)) return;
+            hubsRef.child(id).remove().then(() => alert("Hub deleted."));
+        };
+
+
+        // --- 2. FIELD OFFICERS SYNC & LOGIC ---
+        officersRef.on('value', (snapshot) => {
+            try {
+                const data = snapshot.val();
+                loadedOfficers = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        loadedOfficers.push({ id: key, ...data[key] });
+                    });
+                }
+                loadedOfficers.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+                renderOfficerTable(loadedOfficers);
+                populateOfficerChips(loadedOfficers);
+            } catch (err) {
+                console.error("Officers sync error:", err);
+            }
+        });
+
+        function populateOfficerChips(list) {
+            const chips = document.getElementById('quickChipsContainerOfficers');
+            const topBranches = ["MUM", "PUN", "GRGN", "AHMD", "NMUM", "BHND", "BHPL", "BRD", "IND", "GOA", "RKT", "SRT"];
+            chips.innerHTML = topBranches.map(br => `<span class="chip" onclick="selectOfficerChip('${br}')">${br} Branch</span>`).join('');
+        }
+
+        function selectOfficerChip(branch) {
+            document.getElementById('officerLookupInput').value = branch;
+            executeOfficerLookup(branch);
+        }
+
+        const officerLookupInput = document.getElementById('officerLookupInput');
+        officerLookupInput.addEventListener('input', function() { executeOfficerLookup(this.value); });
+
+        function executeOfficerLookup(searchTerm) {
+            const container = document.getElementById('lookupResultsContainerOfficers');
+            if (!searchTerm || searchTerm.trim() === '') {
+                container.innerHTML = '';
+                container.style.display = 'none';
+                return;
+            }
+            const term = searchTerm.trim().toLowerCase();
+            const matches = loadedOfficers.filter(o => (o.name || '').toLowerCase().includes(term) || (o.branch || '').toLowerCase().includes(term) || (o.mobile || '').includes(term));
+
+            if (matches.length > 0) {
+                container.innerHTML = matches.map(officer => {
+                    const cleanPhone = extractPhone(officer.mobile);
+                    return `
+                        <div class="lookup-result-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <h3 style="font-size: 17px; font-weight: 800; color: var(--primary);">${escapeHtml(officer.name)}</h3>
+                                    <p style="font-size: 12px; color: var(--text-muted);">${escapeHtml(officer.designation)} • Branch: <b>${escapeHtml(officer.branch)}</b></p>
+                                    <p style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-top: 4px;">📞 ${escapeHtml(officer.mobile)}</p>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <a href="tel:${escapeHtml(cleanPhone)}" class="btn-call-mini"><span class="material-symbols-outlined">call</span></a>
+                                    <a href="https://wa.me/91${escapeHtml(cleanPhone)}" target="_blank" class="btn-wa-mini"><span class="material-symbols-outlined">chat</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                container.style.display = 'flex';
+            } else {
+                container.innerHTML = `<div style="padding: 14px; text-align: center; color: var(--text-muted);">No officers found matching "${escapeHtml(searchTerm)}".</div>`;
+                container.style.display = 'block';
+            }
+        }
+
+        function renderOfficerTable(list) {
+            const tbody = document.getElementById('officerTableBody');
+            document.getElementById('officerCount').innerText = list.length;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 20px;">No officer records found.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = list.map((o, idx) => {
+                const cleanPhone = extractPhone(o.mobile);
+                const statusClass = (o.status || 'active').toLowerCase();
+                return `
+                    <tr>
+                        <td><strong>${idx + 1}</strong></td>
+                        <td><strong style="color: var(--primary);">${escapeHtml(o.name)}</strong></td>
+                        <td><span class="region-badge">${escapeHtml(o.branch)}</span></td>
+                        <td><strong>${escapeHtml(o.apmCode || 'N/A')}</strong></td>
+                        <td>${escapeHtml(o.designation)}</td>
+                        <td>${escapeHtml(o.role || 'BFO')}</td>
+                        <td>
+                            <div>${escapeHtml(o.mobile)}</div>
+                            <div style="display: flex; gap: 8px; margin-top: 4px;">
+                                <a href="tel:${escapeHtml(cleanPhone)}" style="color:var(--primary); font-weight:700; font-size:11.5px; text-decoration:none;">📞 Call</a>
+                                <a href="https://wa.me/91${escapeHtml(cleanPhone)}" target="_blank" style="color:#059669; font-weight:700; font-size:11.5px; text-decoration:none;">💬 WA</a>
+                            </div>
+                        </td>
+                        <td><span class="state-badge ${statusClass}">${escapeHtml(o.status || 'Active')}</span></td>
+                        <td style="text-align: center; white-space: nowrap;">
+                            <button class="action-icon-btn btn-edit-tbl" onclick="startEditOfficer('${o.id}')"><span class="material-symbols-outlined">edit</span></button>
+                            <button class="action-icon-btn btn-delete-tbl" onclick="promptDeleteOfficer('${o.id}', '${escapeHtml(o.name)}')"><span class="material-symbols-outlined">delete</span></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('officerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editingId = document.getElementById('editingOfficerId').value;
+            const officerData = {
+                name: document.getElementById('formName').value.trim(),
+                branch: document.getElementById('formBranch').value.trim().toUpperCase(),
+                apmCode: document.getElementById('formApmCode').value.trim() || 'N/A',
+                designation: document.getElementById('formDesignation').value,
+                role: document.getElementById('formRole').value.trim() || 'BFO',
+                mobile: document.getElementById('formMobile').value.trim(),
+                status: document.getElementById('formStatus').value,
+                lastEditedAt: Date.now()
+            };
+
+            if (editingId) {
+                officersRef.child(editingId).update(officerData).then(() => {
+                    cancelEditOfficerMode();
+                    alert("Officer updated successfully!");
+                });
+            } else {
+                officersRef.push({ ...officerData, timestamp: Date.now() }).then(() => {
+                    document.getElementById('officerForm').reset();
+                    alert("Officer added successfully!");
+                });
+            }
+        });
+
+        window.startEditOfficer = function(id) {
+            const officer = loadedOfficers.find(o => o.id === id);
+            if (!officer) return;
+            switchDirectoryTab('officers');
+            document.getElementById('editingOfficerId').value = id;
+            document.getElementById('formName').value = officer.name || '';
+            document.getElementById('formBranch').value = officer.branch || '';
+            document.getElementById('formApmCode').value = officer.apmCode === 'N/A' ? '' : (officer.apmCode || '');
+            document.getElementById('formDesignation').value = officer.designation || 'Marketing Executive';
+            document.getElementById('formRole').value = officer.role || 'BFO';
+            document.getElementById('formMobile').value = officer.mobile || '';
+            document.getElementById('formStatus').value = officer.status || 'Active';
+            document.getElementById('btnSubmitTextOfficer').innerText = 'Update Officer';
+            document.getElementById('btnCancelEditOfficer').style.display = 'inline-flex';
+            scrollToAddForm();
+        };
+
+        window.cancelEditOfficerMode = function() {
+            document.getElementById('editingOfficerId').value = '';
+            document.getElementById('officerForm').reset();
+            document.getElementById('btnSubmitTextOfficer').innerText = 'Save Officer Details';
+            document.getElementById('btnCancelEditOfficer').style.display = 'none';
+        };
+
+        window.promptDeleteOfficer = function(id, name) {
+            if (!confirm(`Delete officer ${name}?`)) return;
+            officersRef.child(id).remove().then(() => alert("Officer deleted."));
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
