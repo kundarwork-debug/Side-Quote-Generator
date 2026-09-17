@@ -22,6 +22,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+  <!-- LOTTIE PLAYER SCRIPT -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" async></script>
+
   <style>
     :root {
       --primary: #b91c1c;
@@ -632,6 +635,81 @@
       margin-top: 2px;
     }
 
+    /* SUPPORT FLOATING FAB WIDGET STYLES WITH FLUSH LOTTIE VECTOR ANIMATION */
+    .support-fab {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0px; /* Flush gap */
+      text-decoration: none;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .support-msg-bubble {
+      background-color: #ffffff;
+      color: var(--text-main);
+      border: 2px solid var(--text-main);
+      box-shadow: 4px 4px 0px var(--text-main);
+      padding: 16px 24px;
+      border-radius: 20px 20px 0 20px;
+      font-size: 15px;
+      font-weight: 600;
+      max-width: 260px;
+      opacity: 0;
+      transform: translateY(10px) scale(0.9);
+      transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+      pointer-events: none;
+      line-height: 1.5;
+    }
+    .support-msg-bubble.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    .support-msg-bubble:hover {
+      transform: translateY(-2px) scale(1) !important;
+      box-shadow: 6px 6px 0px var(--text-main) !important;
+    }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      background-color: var(--text-main);
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .support-btn {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid var(--text-main);
+      box-shadow: 4px 4px 0px var(--text-main);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+      background: var(--surface-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+    .support-btn img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (hover: hover) {
+      .support-fab:hover .support-btn {
+        transform: translateY(-4px);
+        box-shadow: 6px 6px 0px var(--text-main);
+      }
+    }
+
     @media (max-width: 900px) {
       .telemetry-stats-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -654,6 +732,10 @@
       .telemetry-stat-item:last-child {
         border-bottom: none;
         padding-bottom: 0;
+      }
+      .support-fab {
+        bottom: 24px;
+        right: 24px;
       }
     }
   </style>
@@ -1066,6 +1148,27 @@
   <!-- COMMON FOOTER PLACEHOLDER -->
   <div id="footer-container"></div>
 
+  <!-- SUPPORT WIDGET WITH FLUSH LOTTIE VECTOR ANIMATION -->
+  <div class="support-fab" id="support-fab">
+    <a href="about.html" style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px; pointer-events: none;">      
+      <div class="support-msg-bubble" style="position: relative;">        
+        <!-- Lottie Vector Animation sitting right on top of the speech bubble with zero spacing -->
+        <lottie-player 
+          src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
+          background="transparent" 
+          speed="1" 
+          style="width: 75px; height: 75px; position: absolute; top: -52px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none;" 
+          loop 
+          autoplay>
+        </lottie-player>        
+        <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor">|</span></span>      
+      </div>      
+      <div class="support-btn" style="pointer-events: auto;">        
+        <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
+      </div>    
+    </a>  
+  </div>
+
   <!-- YOUR COMMON JS -->
   <script src="common.js?v=21.39"></script>
 
@@ -1170,6 +1273,61 @@
         fx.setText(el.getAttribute('data-value'));
       }
     });
+  </script>
+
+  <!-- FLOATING WIDGET TYPEWRITER & SCROLL CONTROLLER -->
+  <script>
+    window.addEventListener('scroll', () => {
+      const currentScrollY = window.scrollY;
+      const fabBubble = document.querySelector('.support-msg-bubble');
+      const supportFab = document.getElementById('support-fab');
+
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const bodyHeight = document.body.offsetHeight;
+      const footer = document.querySelector('footer') || document.getElementById('footer-container');
+      const footerHeight = footer ? footer.offsetHeight : 0;
+      const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
+
+      if (supportFab) {
+        supportFab.style.opacity = isNearBottom ? '0' : '1';
+        const supportBtn = document.querySelector('.support-btn');
+        if (supportBtn) supportBtn.style.pointerEvents = isNearBottom ? 'none' : 'auto';
+      }
+
+      if (currentScrollY > 50 && !isNearBottom) {
+        if (fabBubble) fabBubble.classList.add('show');
+        if (typeof startTypeWriter === 'function') startTypeWriter();
+      } else {
+        if (fabBubble) fabBubble.classList.remove('show');
+      }
+    }, {passive: true});
+
+    const typeText = document.getElementById('typewriter-text');
+    const msg = "Hi! If you love APML Portal, consider supporting my work! ☕";
+    let typeIndex = 0;
+    let hasTyped = false;
+
+    function typeWriter() {
+      if (typeIndex < msg.length) {
+        textInputCheck: {
+          typeText.innerHTML += msg.charAt(typeIndex);
+        }
+        typeIndex++;
+        setTimeout(typeWriter, 40);
+      } else {
+        setTimeout(() => {
+          const cursor = document.querySelector('.cursor');
+          if (cursor) cursor.style.display = 'none';
+        }, 2000);
+      }
+    }
+
+    function startTypeWriter() {
+      if (!hasTyped) {
+        hasTyped = true;
+        setTimeout(typeWriter, 300);
+      }
+    }
   </script>
 
   <!-- FIREBASE REALTIME PRESENCE & METRICS COUNTER -->
