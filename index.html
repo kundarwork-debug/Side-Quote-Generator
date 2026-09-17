@@ -11,10 +11,10 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.34">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.36">
   
   <!-- YOUR COMMON CSS -->
-  <link rel="stylesheet" href="common.css?v=21.34">
+  <link rel="stylesheet" href="common.css?v=21.36">
 
   <!-- GOOGLE FONTS & MATERIAL ICONS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -673,7 +673,7 @@
       
       <!-- Eyebrow Pill -->
       <div class="eyebrow-pill">
-        <span class="eyebrow-badge">V21.34</span>
+        <span class="eyebrow-badge">V21.36</span>
         <span>Enterprise Operations Workspace</span>
         <span class="eyebrow-dot">•</span>
         <span class="eyebrow-sub">APML Nationwide</span>
@@ -703,7 +703,7 @@
           <input 
             type="text" 
             id="moduleSearchInput" 
-            placeholder="Search operations module: Quotation, Gallery, Hubs, Drive, Rates..."
+            placeholder="Search operations module: Quotation, Directory, Hubs, Drive, Rates..."
             oninput="filterModules(this.value)"
           >
         </div>
@@ -714,8 +714,7 @@
         <button class="category-btn is-active" onclick="filterByCategory('all', this)">All Modules</button>
         <button class="category-btn" onclick="filterByCategory('quotation', this)">Quotation</button>
         <button class="category-btn" onclick="filterByCategory('rates', this)">Rates &amp; Calculators</button>
-        <button class="category-btn" onclick="filterByCategory('directories', this)">Directories</button>
-        <button class="category-btn" onclick="filterByCategory('hubs', this)">Hubs</button>
+        <button class="category-btn" onclick="filterByCategory('directory', this)">Directory</button>
         <button class="category-btn" onclick="filterByCategory('consignment', this)">Consignment</button>
         <button class="category-btn" onclick="filterByCategory('car', this)">Car Freight</button>
         <button class="category-btn" onclick="filterByCategory('drive', this)">Cloud Drive</button>
@@ -731,7 +730,7 @@
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">grid_view</span>
           <span>Operations Modules</span>
         </div>
-        <span class="section-counter" id="toolCounter">9 Active Tools</span>
+        <span class="section-counter" id="toolCounter">8 Active Tools</span>
       </div>
 
       <div class="modules-grid" id="modulesGrid">
@@ -797,22 +796,25 @@
           </div>
         </a>
 
-        <!-- 3. HUB DETAILS -->
-        <a href="hub-details.html" class="module-card" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
+        <!-- 3. OPERATIONS & FIELD MASTER DIRECTORY -->
+        <a href="directory.html" class="module-card" data-category="directory" data-tags="directory hubs branch field officer wcro contacts map">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
-                <span class="material-symbols-outlined">location_city</span>
+                <span class="material-symbols-outlined">contact_phone</span>
               </div>
-              <span class="status-tag">Directory</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span class="status-tag">Directory</span>
+                <span class="badge-core">Master</span>
+              </div>
             </div>
-            <h2 class="card-title">Hub &amp; Branch Directory</h2>
-            <p class="card-description">Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.</p>
+            <h2 class="card-title">Operations &amp; Field Master Directory</h2>
+            <p class="card-description">Unified enterprise directory containing nationwide warehouse hubs, branch incharges, and WCRO field officers.</p>
             <div class="tags-flow">
-              <span class="micro-tag">Pan-India Hubs</span>
-              <span class="micro-tag">HOD Contacts</span>
-              <span class="micro-tag">Map Navigation</span>
-              <span class="micro-tag">Live Status</span>
+              <span class="micro-tag">Hubs &amp; Branches</span>
+              <span class="micro-tag">Field Officers</span>
+              <span class="micro-tag">Live Database</span>
+              <span class="micro-tag">Quick Call &amp; WA</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -826,36 +828,7 @@
           </div>
         </a>
 
-        <!-- 4. FIELD OFFICER -->
-        <a href="field-officer.html" class="module-card" data-category="directories" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">badge</span>
-              </div>
-              <span class="status-tag">Directory</span>
-            </div>
-            <h2 class="card-title">Field Officer Directory WCRO</h2>
-            <p class="card-description">Western Central Regional Office field officers directory with direct WhatsApp contact, mobile numbers, and designated areas.</p>
-            <div class="tags-flow">
-              <span class="micro-tag">WCRO Region</span>
-              <span class="micro-tag">Officer Contacts</span>
-              <span class="micro-tag">Direct WhatsApp</span>
-              <span class="micro-tag">Coverage Area</span>
-            </div>
-          </div>
-          <div class="card-footer-cta static">
-            <span>Live Web Module</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary);">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
-          </div>
-        </a>
-
-        <!-- 5. APML CLOUD DRIVE -->
+        <!-- 4. APML CLOUD DRIVE -->
         <a href="drive.html" class="module-card" data-category="drive" data-tags="drive cloud folder upload storage telegram apml documents files">
           <div>
             <div class="card-head">
@@ -884,7 +857,7 @@
           </div>
         </a>
 
-        <!-- 6. WCRO CONSIGNMENT STATUS -->
+        <!-- 5. WCRO CONSIGNMENT STATUS -->
         <a href="wcro-consignment-status.html" class="module-card" data-category="consignment" data-tags="consignment tracking live status wcro dockets sheets logistics">
           <div>
             <div class="card-head">
@@ -916,7 +889,7 @@
           </div>
         </a>
 
-        <!-- 7. APML LITE RATE CALCULATOR -->
+        <!-- 6. APML LITE RATE CALCULATOR -->
         <a href="APML-Lite.html" class="module-card" data-category="rates" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
@@ -945,7 +918,7 @@
           </div>
         </a>
 
-        <!-- 8. CAR RATE CALCULATOR -->
+        <!-- 7. CAR RATE CALCULATOR -->
         <a href="car-rate.html" class="module-card" data-category="rates car" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
@@ -974,7 +947,7 @@
           </div>
         </a>
 
-        <!-- 9. LOCAL RATE -->
+        <!-- 8. LOCAL RATE -->
         <a href="local-rate.html" class="module-card" data-category="rates" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
@@ -1021,7 +994,7 @@
           
           <div class="operational-badge">
             <span class="operational-dot"></span>
-            <span>All 9 Systems Operational</span>
+            <span>All 8 Systems Operational</span>
           </div>
         </div>
 
@@ -1029,8 +1002,8 @@
           
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Active Enterprise Modules</div>
-            <div class="telemetry-stat-value">9 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">100% Ready</span></div>
-            <div class="telemetry-stat-sub">Rate matrices, Hubs &amp; Cloud</div>
+            <div class="telemetry-stat-value">8 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">100% Ready</span></div>
+            <div class="telemetry-stat-sub">Rate matrices, Directory &amp; Cloud</div>
           </div>
 
           <div class="telemetry-stat-item">
@@ -1067,7 +1040,7 @@
   <div id="footer-container"></div>
 
   <!-- YOUR COMMON JS -->
-  <script src="common.js?v=21.34"></script>
+  <script src="common.js?v=21.36"></script>
 
   <!-- SEARCH & FILTER SCRIPTS -->
   <script>
