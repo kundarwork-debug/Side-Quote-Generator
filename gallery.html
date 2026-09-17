@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.46">
-  <link rel="stylesheet" href="common.css?v=21.46">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.51">
+  <link rel="stylesheet" href="common.css?v=21.51">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -746,27 +746,16 @@
       gap: 32px;
     }
 
-    /* EXACTLY 3 COLUMNS HORIZONTALLY */
+    /* RESPONSIVE AUTO-FILL GRID THAT FILLS WIDTH WITHOUT BLANK SPOTS */
     .media-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 24px;
+      justify-content: stretch;
       width: 100%;
     }
 
-    @media (max-width: 1024px) {
-      .media-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .media-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
+    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION CONTAINER */
     .pagination-bar {
       display: flex;
       flex-direction: column;
@@ -1257,7 +1246,7 @@
     <!-- DYNAMIC FOLDER FILTER TABS -->
     <div class="filter-bar" id="filterBar"></div>
 
-    <!-- MEDIA GRID WRAPPER WITH 3-ROW PAGINATION -->
+    <!-- MEDIA GRID WRAPPER WITH DYNAMIC PAGINATION -->
     <div class="media-grid-wrapper">
       <main class="media-grid" id="mediaGrid">
         <div class="state-msg">
@@ -1266,7 +1255,7 @@
         </div>
       </main>
       
-      <!-- PAGINATION CONTROLS (EXACTLY 9 ITEMS PER PAGE = 3 HORIZONTAL LINES X 3 COLUMNS) -->
+      <!-- NUMERIC PAGINATION CONTROLS -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
     </div>
 
@@ -1274,7 +1263,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.46"></script>
+  <script src="common.js?v=21.51"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1332,7 +1321,19 @@
     let pendingDeleteKey = null;
 
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 9; // Exactly 3 rows x 3 columns = 9 items per page
+
+    // GUARANTEE AT LEAST 3 HORIZONTAL ROWS (e.g., 3 columns * 3 rows = 9+ items per page)
+    function getDynamicItemsPerPage() {
+      const cardWidth = 340; 
+      const cardHeight = 330; 
+      const availableWidth = Math.max(window.innerWidth - 80, 320);
+      const availableHeight = Math.max(window.innerHeight - 380, 300);
+
+      const columns = Math.max(1, Math.floor(availableWidth / cardWidth));
+      const rows = Math.max(3, Math.floor(availableHeight / cardHeight)); // Minimum 3 rows guaranteed!
+
+      return columns * rows;
+    }
 
     const CACHE_KEY_MEDIA = 'apml_gallery_media_cache_v3';
     const fileUrlCache = new Map();
@@ -1951,12 +1952,13 @@
         return;
       }
 
-      const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+      const itemsPerPage = getDynamicItemsPerPage();
+      const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
       if (currentPage > totalPages) currentPage = totalPages;
       if (currentPage < 1) currentPage = 1;
 
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const paginatedItems = filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage);
 
       grid.innerHTML = paginatedItems.map(item => {
         const matchedFolder = foldersList.find(f => f.id === item.folder);
@@ -2111,6 +2113,10 @@
         slot.innerHTML = '';
       }
     }
+
+    window.addEventListener('resize', () => {
+      renderGallery();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       supabaseClient.auth.getSession().then(({ data: { session } }) => {
