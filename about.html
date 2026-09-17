@@ -15,6 +15,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <!-- LOTTIE PLAYER SCRIPT -->
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" async></script>
+
   <style>
     :root {
       --primary: #b91c1c;
@@ -86,7 +89,7 @@
     }
 
     /* =========================================================
-       HERO PROFILE STAGE & INTERACTIVE RIG ZONE
+       HERO PROFILE STAGE & ANIMATION ZONE
        ========================================================= */
     .hero-stage {
       max-width: 1440px;
@@ -122,24 +125,22 @@
       line-height: 1.55;
     }
 
-    /* SPECIFIC ACTIVE INTERACTION BOUNDARY AREA */
+    /* CENTRAL TRANSPARENT ANIMATION ZONE */
     .interactive-hero-zone {
       position: relative;
-      width: min(94vw, 1100px);
-      height: 380px;
-      margin: 15px auto 10px;
+      width: min(94vw, 650px);
+      height: 360px;
+      margin: 10px auto 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      user-select: none;
-      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23fef2f2' stroke='%23b91c1c' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23b91c1c'/%3E%3Ccircle cx='10' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='22' cy='11' r='2' fill='%23b91c1c'/%3E%3Ccircle cx='16' cy='23' r='2' fill='%23b91c1c'/%3E%3Cline x1='16' y1='16' x2='10' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='22' y2='11' stroke='%23b91c1c' stroke-width='1.5'/%3E%3Cline x1='16' y1='16' x2='16' y2='23' stroke='%23b91c1c' stroke-width='1.5'/%3E%3C/svg%3E") 16 16, crosshair;
     }
 
     /* Ambient Pulsing Profile Waves */
     .beacon-wave {
       position: absolute;
-      width: 140px;
-      height: 140px;
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
       border: 1.5px solid var(--primary);
       opacity: 0;
@@ -149,94 +150,23 @@
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Static Dashed Orbital Ring Tracks */
-    .orbit-tracks-wrap {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-    }
-
-    .orbit-ring-track {
-      position: absolute;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(185, 28, 28, 0.25);
-      transition: opacity 0.3s ease;
-    }
-
-    .track-inner { width: 130px; height: 130px; }
-    .track-middle { width: 190px; height: 190px; border-color: rgba(225, 29, 72, 0.25); }
-    .track-outer { width: 250px; height: 250px; }
-
-    /* Central Profile Avatar Disc */
+    /* Central Lottie Animation Disc with Transparent Background (Increased Size) */
     .profile-core-disc {
       position: relative;
-      width: 84px;
-      height: 84px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 2px solid var(--surface-border);
-      box-shadow: 
-        0 12px 30px -4px rgba(185, 28, 28, 0.2),
-        0 2px 8px rgba(120, 113, 108, 0.08);
+      width: 280px;
+      height: 280px;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 5;
-      overflow: hidden;
-      pointer-events: none;
-      transition: transform 0.1s ease-out, box-shadow 0.3s ease;
-    }
-
-    .profile-core-disc img {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* Free-floating tail nodes layer */
-    .free-nodes-layer {
-      position: absolute;
-      inset: 0;
       pointer-events: none;
     }
-
-    .free-node {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 32px;
-      height: 32px;
-      margin-top: -16px;
-      margin-left: -16px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 1.5px solid var(--primary);
-      color: var(--primary);
-      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      will-change: transform;
-      z-index: 10;
-      transition: box-shadow 0.2s ease;
-    }
-
-    .free-node .material-symbols-outlined { font-size: 17px; }
-    .node-code { color: var(--primary); border-color: var(--primary); }
-    .node-web { color: #0284c7; border-color: #0284c7; box-shadow: 0 3px 10px rgba(2, 132, 199, 0.25); }
-    .node-database { color: #d97706; border-color: #d97706; box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25); }
-    .node-mobile { color: #e11d48; border-color: #e11d48; box-shadow: 0 3px 10px rgba(225, 29, 72, 0.25); }
-    .node-terminal { color: #7c3aed; border-color: #7c3aed; box-shadow: 0 3px 10px rgba(124, 58, 237, 0.25); }
 
     @keyframes beaconRipple {
       0% { transform: scale(0.65); opacity: 0.8; }
       50% { opacity: 0.4; }
-      100% { transform: scale(1.7); opacity: 0; }
+      100% { transform: scale(1.8); opacity: 0; }
     }
 
     /* Quick Social Actions Row */
@@ -398,7 +328,6 @@
       margin-bottom: 20px;
     }
 
-    /* Click to View Architecture CTA */
     .card-action-cta {
       display: flex;
       align-items: center;
@@ -427,7 +356,6 @@
       color: #ffffff;
     }
 
-    /* Core Technologies Chips */
     .chip-row {
       display: flex;
       flex-wrap: wrap;
@@ -577,7 +505,6 @@
       gap: 20px;
     }
 
-    /* Structural Flow Graph Elements */
     .flow-graph-container {
       background: #ffffff;
       border: 1px solid var(--surface-border);
@@ -654,15 +581,9 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .code-tag-red { color: #f87171; }
-    .code-tag-blue { color: #38bdf8; }
-    .code-tag-amber { color: #fbbf24; }
-    .code-tag-green { color: #4ade80; }
-
-    /* Mobile Adaptations */
     @media (max-width: 768px) {
       .hero-stage { padding: 90px 16px 10px; }
-      .interactive-hero-zone { height: 320px; }
+      .interactive-hero-zone { height: 280px; }
       .content-section { padding: 0 16px; }
       .features-grid { grid-template-columns: 1fr; }
       .flow-steps-grid { grid-template-columns: 1fr; }
@@ -689,43 +610,22 @@
         BDO at APML — built this project to simplify and automate daily operations.
       </p>
 
-      <div class="interactive-hero-zone" id="profileInteractiveZone" title="Move your cursor in this area to form a trailing snake tail! Triple-click to launch game.">
+      <div class="interactive-hero-zone">
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
 
-        <div class="orbit-tracks-wrap">
-          <div class="orbit-ring-track track-inner"></div>
-          <div class="orbit-ring-track track-middle"></div>
-          <div class="orbit-ring-track track-outer"></div>
+        <!-- CENTERED ENLARGED TRANSPARENT LOTTIE ANIMATION -->
+        <div class="profile-core-disc">
+          <lottie-player 
+            src="https://lottie.host/81e9bbae-7cd3-41aa-b736-624121d9a09e/uBNKC93rkX.json" 
+            background="transparent" 
+            speed="1" 
+            style="width: 260px; height: 260px;" 
+            loop 
+            autoplay>
+          </lottie-player>
         </div>
-
-        <div class="profile-core-disc" id="profileCore" title="Prasad Kundar">
-          <img src="https://github.com/kundarwork-debug.png" alt="Prasad Kundar" onerror="this.src='logo.svg'">
-        </div>
-
-        <div class="free-nodes-layer" id="nodesLayer">
-          <div class="free-node node-code" id="node1" title="Core Architecture">
-            <span class="material-symbols-outlined">code</span>
-          </div>
-
-          <div class="free-node node-web" id="node2" title="Web App Engine">
-            <span class="material-symbols-outlined">language</span>
-          </div>
-
-          <div class="free-node node-database" id="node3" title="Realtime Database">
-            <span class="material-symbols-outlined">database</span>
-          </div>
-
-          <div class="free-node node-mobile" id="node4" title="Responsive Layout">
-            <span class="material-symbols-outlined">devices</span>
-          </div>
-
-          <div class="free-node node-terminal" id="node5" title="Deployment &amp; Tools">
-            <span class="material-symbols-outlined">terminal</span>
-          </div>
-        </div>
-
       </div>
 
       <div class="profile-action-row">
@@ -746,14 +646,14 @@
       <div class="section-bar">
         <div class="section-heading">
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">engineering</span>
-          <span>Core Portal Modules Built</span>
+          <span>All Operations Modules Built</span>
         </div>
         <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Click card to view working flow</span>
       </div>
 
       <div class="features-grid">
         
-        <!-- CARD 1: Quotation Studio -->
+        <!-- 1. QUOTATION -->
         <div class="feature-card" onclick="openModuleArchitecture('quotation')">
           <div>
             <div class="card-head">
@@ -767,7 +667,7 @@
             </div>
             <h3 class="card-title">Quotation Drafting Studio</h3>
             <p class="card-description">
-              Dual-branded A4 PDF quotation generator with automated GST, freight matrices, and local draft persistence.
+              Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.
             </p>
           </div>
           <div class="card-action-cta">
@@ -778,7 +678,32 @@
           </div>
         </div>
 
-        <!-- CARD 2: Hub Directory -->
+        <!-- 2. GALLERY -->
+        <div class="feature-card" onclick="openModuleArchitecture('gallery')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">photo_library</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">Packing Standards Gallery</h3>
+            <p class="card-description">
+              High-definition media library with video demonstrations and official packaging standards for nationwide consignments.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. HUB DIRECTORY -->
         <div class="feature-card" onclick="openModuleArchitecture('directory')">
           <div>
             <div class="card-head">
@@ -792,7 +717,7 @@
             </div>
             <h3 class="card-title">Hub &amp; Branch Directory</h3>
             <p class="card-description">
-              Nationwide operations lookup engine with live Firebase search, direct incharge contacts, and one-tap Google Maps.
+              Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.
             </p>
           </div>
           <div class="card-action-cta">
@@ -803,21 +728,146 @@
           </div>
         </div>
 
-        <!-- CARD 3: Volume Calculators -->
-        <div class="feature-card" onclick="openModuleArchitecture('calculator')">
+        <!-- 4. FIELD OFFICER -->
+        <div class="feature-card" onclick="openModuleArchitecture('fieldOfficer')">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
-                <span class="material-symbols-outlined">calculate</span>
+                <span class="material-symbols-outlined">badge</span>
               </div>
               <span class="architecture-badge">
                 <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
                 <span>Click to View Code</span>
               </span>
             </div>
-            <h3 class="card-title">Volume &amp; Rate Calculators</h3>
+            <h3 class="card-title">Field Officer Directory WCRO</h3>
             <p class="card-description">
-              APML Lite CFT estimators and vehicle distance-rate algorithms designed for instant field pricing and consignment quotes.
+              Western Central Regional Office field officers directory with direct WhatsApp contact, mobile numbers, and designated areas.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CLOUD DRIVE -->
+        <div class="feature-card" onclick="openModuleArchitecture('drive')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">cloud_queue</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">APML Cloud Drive</h3>
+            <p class="card-description">
+              Enterprise cloud workspace for directory folder management, file uploads up to 50MB, and secure document sharing.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. CONSIGNMENT STATUS -->
+        <div class="feature-card" onclick="openModuleArchitecture('consignment')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">WCRO Consignment Status</h3>
+            <p class="card-description">
+              Real-time consignment tracking synced from Google Sheets with secure persistent access and dynamic tab filters.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. APML LITE RATE CALCULATOR -->
+        <div class="feature-card" onclick="openModuleArchitecture('calculator')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">inventory_2</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">APML Lite Rate Calculator</h3>
+            <p class="card-description">
+              Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. CAR RATE CALCULATOR -->
+        <div class="feature-card" onclick="openModuleArchitecture('carRate')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">directions_car</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">Car Rate Calculator</h3>
+            <p class="card-description">
+              Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.
+            </p>
+          </div>
+          <div class="card-action-cta">
+            <span>Explore Structural Graph</span>
+            <div class="cta-circle">
+              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 9. LOCAL RATE -->
+        <div class="feature-card" onclick="openModuleArchitecture('localRate')">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <span class="architecture-badge">
+                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
+                <span>Click to View Code</span>
+              </span>
+            </div>
+            <h3 class="card-title">APML Local Rate</h3>
+            <p class="card-description">
+              Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.
             </p>
           </div>
           <div class="card-action-cta">
@@ -882,124 +932,9 @@
 
   <script src="common.js?v=19.0"></script>
 
-  <!-- PROFILE SNAKE TAIL PHYSICS CONTROLLER -->
-  <script>
-    (function initProfileSnakeTailPhysics() {
-      const zone = document.getElementById('profileInteractiveZone');
-      const core = document.getElementById('profileCore');
-      if (!zone || !core) return;
-
-      const nodes = [
-        { el: document.getElementById('node1'), radius: 65,   speed:  0.016, angle: 0,                   x: 0, y: 0, vx: 0, vy: 0 },
-        { el: document.getElementById('node2'), radius: 95,   speed: -0.011, angle: Math.PI,            x: 0, y: 0, vx: 0, vy: 0 },
-        { el: document.getElementById('node3'), radius: 95,   speed: -0.011, angle: 0,                  x: 0, y: 0, vx: 0, vy: 0 },
-        { el: document.getElementById('node4'), radius: 125,  speed:  0.007, angle: -Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 },
-        { el: document.getElementById('node5'), radius: 125,  speed:  0.007, angle:  Math.PI / 2,        x: 0, y: 0, vx: 0, vy: 0 }
-      ];
-
-      let isInsideZone = false;
-      let mouseX = 0;
-      let mouseY = 0;
-      let coreX = 0, coreY = 0;
-
-      let clickCount = 0;
-      let clickTimer = null;
-
-      zone.addEventListener('click', () => {
-        clickCount++;
-        if (clickTimer) clearTimeout(clickTimer);
-        if (clickCount >= 3) {
-          clickCount = 0;
-          window.location.href = '404.html';
-        } else {
-          clickTimer = setTimeout(() => {
-            clickCount = 0;
-          }, 600);
-        }
-      });
-
-      zone.addEventListener('mousemove', (e) => {
-        const rect = zone.getBoundingClientRect();
-        mouseX = e.clientX - (rect.left + rect.width / 2);
-        mouseY = e.clientY - (rect.top + rect.height / 2);
-        isInsideZone = true;
-      });
-
-      zone.addEventListener('mouseleave', () => {
-        isInsideZone = false;
-      });
-
-      zone.addEventListener('touchmove', (e) => {
-        if (!e.touches[0]) return;
-        const rect = zone.getBoundingClientRect();
-        mouseX = e.touches[0].clientX - (rect.left + rect.width / 2);
-        mouseY = e.touches[0].clientY - (rect.top + rect.height / 2);
-        isInsideZone = true;
-      }, { passive: true });
-
-      zone.addEventListener('touchend', () => {
-        isInsideZone = false;
-      });
-
-      function render() {
-        if (isInsideZone) {
-          coreX += (mouseX * 0.08 - coreX) * 0.1;
-          coreY += (mouseY * 0.08 - coreY) * 0.1;
-        } else {
-          coreX += (0 - coreX) * 0.08;
-          coreY += (0 - coreY) * 0.08;
-        }
-        core.style.transform = `translate(${coreX}px, ${coreY}px)`;
-
-        for (let i = 0; i < nodes.length; i++) {
-          const item = nodes[i];
-          item.angle += item.speed;
-
-          let targetX, targetY;
-
-          if (isInsideZone) {
-            if (i === 0) {
-              targetX = mouseX;
-              targetY = mouseY;
-            } else {
-              const leader = nodes[i - 1];
-              const dx = item.x - leader.x;
-              const dy = item.y - leader.y;
-              const dist = Math.hypot(dx, dy) || 1;
-              const spacing = 36;
-
-              targetX = leader.x + (dx / dist) * spacing;
-              targetY = leader.y + (dy / dist) * spacing;
-            }
-
-            item.vx = (item.vx + (targetX - item.x) * 0.22) * 0.68;
-            item.vy = (item.vy + (targetY - item.y) * 0.22) * 0.68;
-          } else {
-            targetX = Math.cos(item.angle) * item.radius;
-            targetY = Math.sin(item.angle) * item.radius;
-
-            item.vx = (item.vx + (targetX - item.x) * 0.08) * 0.82;
-            item.vy = (item.vy + (targetY - item.y) * 0.08) * 0.82;
-          }
-
-          item.x += item.vx;
-          item.y += item.vy;
-
-          if (item.el) {
-            item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
-          }
-        }
-
-        requestAnimationFrame(render);
-      }
-
-      requestAnimationFrame(render);
-    })();
-  </script>
-
   <!-- =========================================================
        DYNAMIC STRUCTURAL GRAPH DATA & MODAL CONTROLLER
-       ========================================================= */ -->
+       ========================================================= -->
   <script>
     const ARCHITECTURE_DATA = {
       quotation: {
@@ -1040,6 +975,41 @@ const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 pdf.addImage(canvasDataUrl, 'JPEG', xOffset, yOffset, imgW, imgH);
 pdf.save(\`Quotation_\${customerName}.pdf\`);`
       },
+      gallery: {
+        title: "Packing Standards Gallery",
+        subtitle: "Cloud-Synced Media Feed & Compression Engine",
+        icon: "photo_library",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Client Compression",
+            desc: "Compresses multi-megabyte images and videos locally via HTML5 canvas before payload transmission."
+          },
+          {
+            num: "STEP 02",
+            name: "Telegram Bot API Relay",
+            desc: "Uploads compressed media directly to encrypted Telegram chat channels to ensure unlimited free storage."
+          },
+          {
+            num: "STEP 03",
+            name: "Firebase Realtime Sync",
+            desc: "Syncs folder indexes, file IDs, and interaction counts instantly across active client sessions."
+          },
+          {
+            num: "STEP 04",
+            name: "Dynamic Grid Pagination",
+            desc: "Calculates responsive rows and columns on the fly to fit screen dimensions without blank gaps."
+          }
+        ],
+        codeSnippet: `// Dynamic Grid & Responsive Items Per Page
+const getDynamicItemsPerPage = () => {
+  const width = Math.max(window.innerWidth - 80, 320);
+  const height = Math.max(window.innerHeight - 380, 300);
+  const columns = Math.max(1, Math.floor(width / 340));
+  const rows = Math.max(3, Math.floor(height / 330));
+  return columns * rows;
+};`
+      },
       directory: {
         title: "Hub & Branch Directory",
         subtitle: "Distributed Warehouse Database & Geolocation Pins",
@@ -1058,7 +1028,7 @@ pdf.save(\`Quotation_\${customerName}.pdf\`);`
           {
             num: "STEP 03",
             name: "Direct Dispatch Actions",
-            desc: "Constructs direct WhatsApp API links (`https://wa.me/...`) and telephone intent triggers (`tel:...`)."
+            desc: "Constructs direct WhatsApp API links (\`https://wa.me/...\`) and telephone intent triggers (\`tel:...\`)."
           },
           {
             num: "STEP 04",
@@ -1081,15 +1051,101 @@ const openWhatsApp = (phone, name) => {
   window.open(\`https://wa.me/\${phone}?text=Hello%20\${encodeURIComponent(name)}\`, '_blank');
 };`
       },
+      fieldOfficer: {
+        title: "Field Officer Directory WCRO",
+        subtitle: "Regional Operations Team & Direct Communication",
+        icon: "badge",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Officer Registry Mount",
+            desc: "Initializes Western Central Regional Office field surveyors and operations dispatchers."
+          },
+          {
+            num: "STEP 02",
+            name: "Territory Filtering",
+            desc: "Filters officers by Mumbai, Pune, and regional coverage zones for rapid assignment."
+          },
+          {
+            num: "STEP 03",
+            name: "Direct Intent Dispatch",
+            desc: "Triggers secure deep-links for immediate phone calls and mobile messaging."
+          }
+        ],
+        codeSnippet: `// Field Officer Quick-Filter Engine
+const filterOfficersByZone = (zone) => {
+  return officerRegistry.filter(officer => officer.zone === zone);
+};`
+      },
+      drive: {
+        title: "APML Cloud Drive",
+        subtitle: "Telegram-Backed Binary File Streamer & Storage",
+        icon: "cloud_queue",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Multipart Uploader",
+            desc: "Streams files up to 50MB directly through Telegram Bot API endpoints with progress handling."
+          },
+          {
+            num: "STEP 02",
+            name: "Hierarchical Folder Tree",
+            desc: "Manages nested directories and custom folder IDs in real-time Firebase nodes."
+          },
+          {
+            num: "STEP 03",
+            name: "Protected Quotations Archive",
+            desc: "Enforces strict admin-only verification checks for file deletion within secure folders."
+          }
+        ],
+        codeSnippet: `// Telegram Document Relay Streamer
+const uploadToTelegram = async (file, chatId) => {
+  const formData = new FormData();
+  formData.append('chat_id', chatId);
+  formData.append('document', file);
+  const res = await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendDocument\`, {
+    method: 'POST', body: formData
+  });
+  return await res.json();
+};`
+      },
+      consignment: {
+        title: "WCRO Consignment Status",
+        subtitle: "Google Sheets Live Sync & Secure Token Access",
+        icon: "local_shipping",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Secure Authentication",
+            desc: "Validates field officer credentials and caches secure session tokens locally."
+          },
+          {
+            num: "STEP 02",
+            name: "Google Sheets REST Parser",
+            desc: "Fetches live dispatch logs and docket sheets directly from live public spreadsheet feeds."
+          },
+          {
+            num: "STEP 03",
+            name: "Dynamic Tab Filtering",
+            desc: "Sorts active consignments by transit status, origin branch, and delivery milestone."
+          }
+        ],
+        codeSnippet: `// Live Sheets JSON Feed Parser
+const fetchConsignments = async (sheetUrl) => {
+  const response = await fetch(sheetUrl);
+  const data = await response.json();
+  return data.rows;
+};`
+      },
       calculator: {
-        title: "Volume & Rate Calculators",
+        title: "APML Lite Rate Calculator",
         subtitle: "CFT Volumetric Matrix & Slabs Computation",
-        icon: "calculate",
+        icon: "inventory_2",
         steps: [
           {
             num: "STEP 01",
             name: "Dimension Parser",
-            desc: "Extracts Length × Width × Height parameters and applies volume formula: `(L × W × H) / 1728 CFT`."
+            desc: "Extracts Length × Width × Height parameters and applies volume formula: \`(L × W × H) / 1728 CFT\`."
           },
           {
             num: "STEP 02",
@@ -1113,6 +1169,60 @@ const calculateFreight = (cft, distanceKm) => {
   const baseRate = distanceKm <= 600 ? 5000 : 5000 + (distanceKm - 600) * 12;
   const cftMultiplier = effectiveCft * 25; // Base SOP unit rate
   return Math.max(5000, baseRate + cftMultiplier);
+};`
+      },
+      carRate: {
+        title: "Car Rate Calculator",
+        subtitle: "Automated Vehicle Transport & Distance Slabs",
+        icon: "directions_car",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Vehicle Category Detection",
+            desc: "Identifies hatchback, sedan, or SUV profiles to assign carrier tier weights."
+          },
+          {
+            num: "STEP 02",
+            name: "Distance Calculation Matrix",
+            desc: "Computes interstate transit distances using baseline 600 KM formulas."
+          },
+          {
+            num: "STEP 03",
+            name: "Freight Yield Output",
+            desc: "Yields final transparent quotation for car carrier transportation."
+          }
+        ],
+        codeSnippet: `// Vehicle Carrier Tariff Calculator
+const calculateCarFreight = (carType, km) => {
+  const multiplier = carType === 'suv' ? 1.35 : 1.0;
+  return Math.max(8000, (6000 + km * 15) * multiplier);
+};`
+      },
+      localRate: {
+        title: "APML Local Rate",
+        subtitle: "Intra-City Relocation & SOP Budget Slabs",
+        icon: "local_shipping",
+        steps: [
+          {
+            num: "STEP 01",
+            name: "Intra-City Parameter Check",
+            desc: "Evaluates local shifting requirements within metropolitan limits."
+          },
+          {
+            num: "STEP 02",
+            name: "CFT & Floor Constraint Validation",
+            desc: "Computes labor and vehicle deployment based on floor levels and elevator availability."
+          },
+          {
+            num: "STEP 03",
+            name: "Final SOP Budget Output",
+            desc: "Generates standardized local quotation adhering to corporate pricing guidelines."
+          }
+        ],
+        codeSnippet: `// Intra-City Local Shifting Formula
+const calculateLocalSopRate = (cft, floors) => {
+  const laborCharge = floors * 500;
+  return Math.max(3000, cft * 18 + laborCharge);
 };`
       }
     };
