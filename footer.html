@@ -4,7 +4,7 @@
     <div class="footer-left-col">
       <div class="footer-brand-group">
         <div class="footer-logo-box">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="rotating-logo">
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
           </svg>
         </div>
@@ -14,7 +14,7 @@
         </div>
       </div>
       <p class="footer-desc">
-        Enterprise Rate Matrix • Exact Container Logistics &amp; Maxcare Standards. Designed &amp; developed by <strong>Prasad</strong>.
+        APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.
       </p>
     </div>
 
@@ -25,8 +25,6 @@
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms &amp; Conditions</a>
         <a href="bug-report.html" style="color: var(--primary, #c21d1d); font-weight: 700;">Report a Bug</a>
-        <a href="index.html">Original Portal</a>
-        <a href="gallery.html">Release Notes</a>
       </div>
     </div>
   </div>
@@ -39,10 +37,10 @@
     </div>
     
     <div class="footer-actions-group">
-      <div class="footer-author-pill">
+      <a href="about.html" class="footer-author-pill" style="text-decoration: none;" title="About Developer">
         <img src="https://github.com/kundarwork-debug.png" alt="Prasad" class="footer-avatar">
         <span>Prasad Kundar</span>
-      </div>
+      </a>
       <button type="button" class="footer-scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
         <span class="material-symbols-outlined" style="font-size: 20px;">arrow_upward</span>
       </button>
@@ -54,13 +52,24 @@
   .site-footer {
     width: 100%;
     max-width: 1400px;
-    margin: 80px auto 50px;
-    padding: 0 24px;
+    margin: 60px auto 0 auto;
+    padding: 44px 24px 32px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 36px;
     color: var(--text-muted, #736b66);
     font-size: 14px;
+    background: rgba(255, 255, 255, 0.45);
+    border-top: 1.5px solid rgba(225, 212, 204, 0.85);
+  }
+
+  @keyframes spinLogo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .rotating-logo {
+    animation: spinLogo 12s linear infinite;
   }
 
   .footer-grid-layout {
@@ -72,10 +81,10 @@
   }
 
   .footer-left-col {
-    max-width: 450px;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
 
   .footer-brand-group {
@@ -85,8 +94,8 @@
   }
 
   .footer-logo-box {
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
     background: rgba(194, 29, 29, 0.08);
     border: 1.5px solid rgba(194, 29, 29, 0.15);
@@ -113,13 +122,9 @@
   }
 
   .footer-desc {
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--text-muted, #736b66);
-    line-height: 1.55;
-  }
-
-  .footer-desc strong {
-    color: var(--text-main, #141210);
+    line-height: 1.6;
   }
 
   .footer-right-col {
@@ -172,6 +177,13 @@
     font-weight: 600;
     color: var(--text-secondary, #3d3835);
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+  }
+
+  .footer-author-pill:hover {
+    border-color: var(--primary, #c21d1d);
+    color: var(--primary, #c21d1d);
+    transform: translateY(-2px);
   }
 
   .footer-avatar {
