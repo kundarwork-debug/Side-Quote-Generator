@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.51">
-  <link rel="stylesheet" href="common.css?v=21.51">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.1">
+  <link rel="stylesheet" href="common.css?v=22.1">
 
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1263,7 +1263,7 @@
 
   <div id="footer-container"></div>
 
-  <script src="common.js?v=21.51"></script>
+  <script src="common.js?v=22.1"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1909,30 +1909,28 @@
       });
     }
 
-    function incrementGlobalMediaDownloadAndDownload(firebaseKey, fileUrl, fileName) {
+    // VERCEL PROXY DOWNLOAD HANDLER ROUTE
+    async function incrementGlobalMediaDownloadAndDownload(firebaseKey, fileId, legacyUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
       recordInteraction(firebaseKey, 'downloadsCount');
-      downloadAsset(fileUrl, fileName);
-    }
-
-    async function downloadAsset(fileUrl, fileName) {
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = blobUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (err) {
-        window.open(fileUrl, '_blank');
+      
+      if (!fileId) {
+        alert("File ID is missing.");
+        return;
       }
+
+      // Point directly to your live Vercel Serverless Function Proxy URL
+      const proxyUrl = `https://apml-telegram-proxy-qtrd.vercel.app/api/proxy-download?fileId=${fileId}&fileName=${encodeURIComponent(fileName || 'asset')}`;
+
+      // Trigger clean native browser download through Vercel proxy
+      const a = document.createElement('a');
+      a.href = proxyUrl;
+      a.download = fileName || 'apml-media-asset';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 
     async function renderGallery() {
@@ -1987,7 +1985,7 @@
                 <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.key}', '${(item.fileId && fileUrlCache.get(item.fileId)) || item.url || ''}', '${item.name}')" title="Download Original Quality">
+                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); incrementGlobalMediaDownloadAndDownload('${item.key}', '${item.fileId || ''}', '${item.url || ''}', '${item.name}')" title="Download Original Quality">
                   <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
                 <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
