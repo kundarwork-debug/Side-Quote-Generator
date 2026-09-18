@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <title>APML Portal — Privacy &amp; Policy</title>
+  <meta name="description" content="Privacy Policy and data security guidelines for the APML Enterprise Operations Workspace.">
+
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.40">
+  
+  <!-- YOUR COMMON CSS -->
+  <link rel="stylesheet" href="common.css?v=21.40">
+
+  <!-- GOOGLE FONTS & MATERIAL ICONS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --primary: #b91c1c;
+      --primary-dark: #881337;
+      --primary-gradient: linear-gradient(135deg, #b91c1c 0%, #e11d48 50%, #f43f5e 100%);
+      --primary-soft: rgba(185, 28, 28, 0.06);
+      
+      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+      --surface-card: #FFFFFF; /* Pure White Tiles */
+      --surface-border: #ede4de;
+      --surface-subtle: #f7ede6;
+      
+      --text-main: #292524;
+      --text-secondary: #44403c;
+      --text-muted: #78716c;
+      --text-faint: #a8a29e;
+      
+      --radius-xl: 20px;
+      --radius-pill: 9999px;
+      
+      --shadow-subtle: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+      --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll !important;
+      height: 100%;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: visible !important;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Soft Radial Mesh Background */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none !important;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 120px auto 80px;
+      padding: 0 24px;
+    }
+
+    .policy-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: clamp(28px, 5vw, 48px);
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .policy-header {
+      margin-bottom: 36px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .policy-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 36px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .policy-title span {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .policy-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+    }
+
+    .policy-content {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .policy-section h2 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .policy-section p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+
+    .policy-section ul {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .policy-section li {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .contact-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .contact-item:hover {
+      color: var(--primary);
+    }
+
+    .back-home-row {
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      padding: 10px 22px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Soft Radial Mesh Background -->
+  <div class="ambient-bg"></div>
+
+  <!-- COMMON HEADER PLACEHOLDER -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="policy-card">
+      <div class="policy-header">
+        <h1 class="policy-title">Privacy &amp; <span>Policy</span></h1>
+        <div class="policy-meta">
+          <span class="material-symbols-outlined" style="font-size: 16px;">schedule</span>
+          <span>Last Updated: September 2026</span>
+        </div>
+      </div>
+
+      <div class="policy-content">
+        <div class="policy-section">
+          <h2>1. Overview &amp; Scope</h2>
+          <p>
+            Welcome to the <strong>APML Enterprise Operations Workspace</strong>. We respect your privacy and are committed to protecting the secure handling of operational quotation drafts, directory lookups, rate calculations, and cloud drive documents across our network.
+          </p>
+        </div>
+
+        <div class="policy-section">
+          <h2>2. Information Collection &amp; Usage</h2>
+          <p>Our platform handles operational records strictly for internal logistics and workflow efficiency:</p>
+          <ul>
+            <li><strong>User Sessions &amp; Authentication:</strong> Managed securely via Supabase OAuth credentials to verify authorized administrative personnel.</li>
+            <li><strong>Operational Data:</strong> Quotation drafts, freight parameters, and directory queries processed through client-side state and Firebase Realtime Database.</li>
+            <li><strong>Cloud Drive Files:</strong> Binary documents and media assets uploaded up to 50MB limits are relayed securely to encrypted storage channels.</li>
+          </ul>
+        </div>
+
+        <div class="policy-section">
+          <h2>3. Data Security &amp; Storage</h2>
+          <p>
+            All network transactions utilize encrypted SSL protocols. Real-time records stored on Firebase and Supabase instances are restricted to authorized personnel. We do not sell, trade, or transfer sensitive enterprise data to external commercial third parties.
+          </p>
+        </div>
+
+        <div class="policy-section">
+          <h2>4. Contact &amp; Administration</h2>
+          <p>
+            For any security inquiries, policy questions, or access permissions regarding this workspace, users can connect directly through the following channels:
+          </p>
+          <div class="contact-box">
+            <a href="mailto:kundar.work@gmail.com" class="contact-item">
+              <span class="material-symbols-outlined" style="color: var(--primary);">mail</span>
+              <span>kundar.work@gmail.com</span>
+            </a>
+            <a href="https://wa.me/919599588135" target="_blank" rel="noopener noreferrer" class="contact-item">
+              <span class="material-symbols-outlined" style="color: #22c55e;">chat</span>
+              <span>+91 95995 88135 (WhatsApp)</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="back-home-row">
+        <a href="index.html" class="btn-back">
+          <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+          <span>Return to Workspace</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- COMMON FOOTER PLACEHOLDER -->
+  <div id="footer-container"></div>
+
+  <!-- YOUR COMMON JS -->
+  <script src="common.js?v=21.40"></script>
+</body>
+</html>
