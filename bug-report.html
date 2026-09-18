@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <title>APML Portal — Bug Report &amp; Feedback</title>
+  <meta name="description" content="Report bugs, submit feedback, and share screenshots directly with the administrator.">
+
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.45">
+  
+  <!-- YOUR COMMON CSS -->
+  <link rel="stylesheet" href="common.css?v=21.45">
+
+  <!-- GOOGLE FONTS & MATERIAL ICONS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <style>
+    :root {
+      --primary: #b91c1c;
+      --primary-dark: #881337;
+      --primary-gradient: linear-gradient(135deg, #b91c1c 0%, #e11d48 50%, #f43f5e 100%);
+      --primary-soft: rgba(185, 28, 28, 0.06);
+      
+      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+      --surface-card: #FFFFFF; /* Pure White Tiles */
+      --surface-border: #ede4de;
+      --surface-subtle: #f7ede6;
+      
+      --text-main: #292524;
+      --text-secondary: #44403c;
+      --text-muted: #78716c;
+      --text-faint: #a8a29e;
+      
+      --radius-xl: 20px;
+      --radius-pill: 9999px;
+      
+      --shadow-subtle: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+      --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll !important;
+      height: 100%;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: visible !important;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Soft Radial Mesh Background */
+    .ambient-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none !important;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+    }
+
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+
+    main {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin: 120px auto 80px;
+      padding: 0 24px;
+    }
+
+    .bug-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: clamp(28px, 5vw, 42px);
+      box-shadow: var(--shadow-subtle);
+      width: 100%;
+    }
+
+    .bug-header {
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    .bug-title {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .bug-title span {
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .bug-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1.5px solid var(--surface-border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--primary);
+      background: #FFFFFF;
+      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    .file-upload-box {
+      border: 2px dashed var(--surface-border);
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      background: var(--surface-subtle);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .file-upload-box:hover {
+      border-color: var(--primary);
+      background: #fff5f5;
+    }
+
+    .file-upload-box input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .upload-icon {
+      color: var(--primary);
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .upload-text {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .upload-subtext {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .preview-container {
+      display: none;
+      margin-top: 12px;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface-subtle);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--surface-border);
+    }
+
+    .preview-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--surface-border);
+    }
+
+    .preview-info {
+      flex: 1;
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-remove-file {
+      background: #fee2e2;
+      color: #dc2626;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .btn-remove-file:hover {
+      background: #dc2626;
+      color: #FFFFFF;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 15px;
+      border-radius: var(--radius-pill);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(185, 28, 28, 0.25);
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .form-actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--surface-border);
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .btn-back:hover {
+      color: var(--primary);
+    }
+
+    .success-alert {
+      display: none;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Soft Radial Mesh Background -->
+  <div class="ambient-bg"></div>
+
+  <!-- COMMON HEADER PLACEHOLDER -->
+  <div id="header-container"></div>
+
+  <main>
+    <div class="bug-card">
+      <div class="bug-header">
+        <h1 class="bug-title">Report a <span>Bug</span></h1>
+        <p class="bug-sub">Encountered an issue or glitch? Send the details directly to the administrator.</p>
+      </div>
+
+      <div class="success-alert" id="successAlert">
+        <span class="material-symbols-outlined" style="font-size: 20px; color: #16a34a;">check_circle</span>
+        <span>Bug report successfully transmitted! Thank you.</span>
+      </div>
+
+      <form id="bugReportForm" onsubmit="submitBugReport(event)">
+        <div class="form-group">
+          <label class="form-label" for="reporterName">Your Name / HOD / Officer</label>
+          <input type="text" id="reporterName" class="form-input" placeholder="" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="bugMessage">Bug Description &amp; Details</label>
+          <textarea id="bugMessage" class="form-textarea" placeholder="Describe what went wrong, steps to reproduce, or module name..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Attach Screenshot (Optional)</label>
+          <div class="file-upload-box">
+            <span class="material-symbols-outlined upload-icon">add_photo_alternate</span>
+            <div class="upload-text">Click or drag image here to attach screenshot</div>
+            <div class="upload-subtext">Supports PNG, JPG, WEBP up to 10MB</div>
+            <input type="file" id="screenshotInput" accept="image/*" onchange="handleFilePreview(this)">
+          </div>
+
+          <div class="preview-container" id="filePreviewBox">
+            <img id="previewImage" class="preview-thumb" src="" alt="Screenshot Preview">
+            <span class="preview-info" id="previewFileName">screenshot.png</span>
+            <button type="button" class="btn-remove-file" onclick="clearAttachment()" title="Remove Attachment">
+              <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBugBtn">
+          <span class="material-symbols-outlined" style="font-size: 20px;">send</span>
+          <span>Send Report</span>
+        </button>
+      </form>
+
+      <div class="form-actions-row">
+        <a href="index.html" class="btn-back">
+          <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
+          <span>Return to Workspace</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- COMMON FOOTER PLACEHOLDER -->
+  <div id="footer-container"></div>
+
+  <!-- YOUR COMMON JS -->
+  <script src="common.js?v=21.45"></script>
+
+  <script>
+    const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
+    const CHAT_ID = "-1004302268775";
+
+    let base64Image = null;
+
+    function handleFilePreview(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 10 * 1024 * 1024) {
+          alert("File size exceeds 10MB limit.");
+          input.value = "";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          base64Image = e.target.result;
+          document.getElementById('previewImage').src = base64Image;
+          document.getElementById('previewFileName').textContent = file.name;
+          document.getElementById('filePreviewBox').style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function clearAttachment() {
+      base64Image = null;
+      document.getElementById('screenshotInput').value = "";
+      document.getElementById('filePreviewBox').style.display = 'none';
+      document.getElementById('previewImage').src = "";
+    }
+
+    async function submitBugReport(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('reporterName').value.trim();
+      const message = document.getElementById('bugMessage').value.trim();
+      const submitBtn = document.getElementById('submitBugBtn');
+      const successAlert = document.getElementById('successAlert');
+
+      if (!name || !message) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<div class="spinner" style="width:18px; height:18px; border-width:2px; margin:0;"></div><span>Transmitting...</span>`;
+
+      const formattedText = `🚨 *NEW BUG REPORT RECEIVED* 🚨\n\n👤 *Reporter:* ${name}\n💬 *Message:* ${message}\n⏰ *Time:* ${new Date().toLocaleString('en-IN')}`;
+
+      try {
+        if (base64Image) {
+          const blob = dataURItoBlob(base64Image);
+          const formData = new FormData();
+          formData.append('chat_id', CHAT_ID);
+          formData.append('photo', blob, 'screenshot.jpg');
+          formData.append('caption', formattedText);
+          formData.append('parse_mode', 'Markdown');
+
+          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.description || 'Failed to send photo.');
+        } else {
+          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: CHAT_ID,
+              text: formattedText,
+              parse_mode: 'Markdown'
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.description || 'Failed to send message.');
+        }
+
+        successAlert.style.display = 'flex';
+        document.getElementById('bugReportForm').reset();
+        clearAttachment();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        setTimeout(() => {
+          successAlert.style.display = 'none';
+        }, 6000);
+
+      } catch (err) {
+        alert("Error sending bug report: " + err.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">send</span><span>Send Report</span>`;
+      }
+    }
+
+    function dataURItoBlob(dataURI) {
+      const byteString = atob(dataURI.split(',')[1]);
+      const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], { type: mimeString });
+    }
+  </script>
+</body>
+</html>
