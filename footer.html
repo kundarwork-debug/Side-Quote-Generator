@@ -1,48 +1,51 @@
 <footer class="site-footer">
-  <div class="footer-top-row">
-    <div class="footer-brand-group">
-      <div class="footer-logo-box">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
+  <div class="footer-grid-layout">
+    <!-- Left Column: Brand & Enterprise Info -->
+    <div class="footer-left-col">
+      <div class="footer-brand-group">
+        <div class="footer-logo-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="footer-title">APML<span style="color: var(--primary, #c21d1d);">Portal</span></div>
+          <div class="footer-subtitle">Enterprise Operations &amp; Nationwide Moving Hub</div>
+        </div>
       </div>
-      <div>
-        <div class="footer-title">APML<span style="color: var(--primary, #c21d1d);">Portal</span></div>
-        <div class="footer-subtitle">Enterprise Operations &amp; Nationwide Moving Hub</div>
-      </div>
+      <p class="footer-desc">
+        Enterprise Rate Matrix • Exact Container Logistics &amp; Maxcare Standards. Designed &amp; developed by <strong>Prasad</strong>.
+      </p>
     </div>
 
-    <div class="footer-actions-group">
-      <div class="footer-author-pill">
-        <img src="https://github.com/kundarwork-debug.png" alt="Prasad" class="footer-avatar">
-        <span>Designed &amp; developed by <strong>Prasad</strong></span>
+    <!-- Right Column: Navigation Links -->
+    <div class="footer-right-col">
+      <div class="footer-links-heading">Links</div>
+      <div class="footer-links-list">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="bug-report.html" style="color: var(--primary, #c21d1d); font-weight: 700;">Report a Bug</a>
+        <a href="index.html">Original Portal</a>
+        <a href="gallery.html">Release Notes</a>
       </div>
-      <button type="button" class="footer-scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
-        <span class="material-symbols-outlined" style="font-size: 20px;">arrow_upward</span>
-      </button>
     </div>
   </div>
 
   <div class="footer-divider"></div>
 
   <div class="footer-bottom-row">
-    <div class="footer-meta-left">
-      <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">verified</span>
-      <span>Enterprise Rate Matrix • Exact Container Logistics &amp; Maxcare Standards</span>
+    <div class="footer-copyright">
+      © 2026 APML Portal. All rights reserved.
     </div>
     
-    <div class="footer-meta-right">
-      <a href="privacy.html">Privacy Policy</a>
-      <span class="footer-bullet">•</span>
-      <a href="terms.html">Terms &amp; Conditions</a>
-      <span class="footer-bullet">•</span>
-      <a href="bug-report.html" style="color: var(--primary, #c21d1d); font-weight: 700;">Report a Bug</a>
-      <span class="footer-bullet">•</span>
-      <a href="index.html">Original Portal</a>
-      <span class="footer-bullet">•</span>
-      <a href="gallery.html">Release Notes</a>
-      <span class="footer-bullet">•</span>
-      <span class="footer-copyright">© 2026 APML Portal</span>
+    <div class="footer-actions-group">
+      <div class="footer-author-pill">
+        <img src="https://github.com/kundarwork-debug.png" alt="Prasad" class="footer-avatar">
+        <span>Prasad Kundar</span>
+      </div>
+      <button type="button" class="footer-scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
+        <span class="material-symbols-outlined" style="font-size: 20px;">arrow_upward</span>
+      </button>
     </div>
   </div>
 </footer>
@@ -51,21 +54,28 @@
   .site-footer {
     width: 100%;
     max-width: 1400px;
-    margin: 60px auto 40px;
+    margin: 80px auto 50px;
     padding: 0 24px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
     color: var(--text-muted, #736b66);
-    font-size: 13.5px;
+    font-size: 14px;
   }
 
-  .footer-top-row {
+  .footer-grid-layout {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 40px;
+  }
+
+  .footer-left-col {
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
   }
 
   .footer-brand-group {
@@ -88,7 +98,7 @@
 
   .footer-title {
     font-family: var(--font-display, 'Space Grotesk', sans-serif);
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 800;
     color: var(--text-main, #141210);
     letter-spacing: -0.02em;
@@ -96,10 +106,52 @@
   }
 
   .footer-subtitle {
-    font-size: 12.5px;
+    font-size: 13px;
     color: var(--text-muted, #736b66);
     font-weight: 500;
     margin-top: 2px;
+  }
+
+  .footer-desc {
+    font-size: 13.5px;
+    color: var(--text-muted, #736b66);
+    line-height: 1.55;
+  }
+
+  .footer-desc strong {
+    color: var(--text-main, #141210);
+  }
+
+  .footer-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links-heading {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main, #141210);
+    margin-bottom: 4px;
+  }
+
+  .footer-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-links-list a {
+    color: var(--text-muted, #736b66);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.15s ease;
+  }
+
+  .footer-links-list a:hover {
+    color: var(--primary, #c21d1d);
   }
 
   .footer-actions-group {
@@ -120,11 +172,6 @@
     font-weight: 600;
     color: var(--text-secondary, #3d3835);
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-  }
-
-  .footer-author-pill strong {
-    color: var(--text-main, #141210);
-    font-weight: 800;
   }
 
   .footer-avatar {
@@ -168,38 +215,16 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 16px;
-    font-size: 12.5px;
+    font-size: 13px;
     font-weight: 600;
   }
 
-  .footer-meta-left {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .footer-meta-right {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .footer-meta-right a {
+  .footer-copyright {
     color: var(--text-muted, #736b66);
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-
-  .footer-meta-right a:hover {
-    color: var(--primary, #c21d1d);
-  }
-
-  .footer-bullet {
-    color: var(--text-faint, #a8a29e);
   }
 
   @media (max-width: 768px) {
-    .footer-top-row, .footer-bottom-row {
+    .footer-grid-layout, .footer-bottom-row {
       flex-direction: column;
       align-items: flex-start;
     }
