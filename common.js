@@ -171,28 +171,15 @@
       }
     }
 
-    // 2. INJECT FOOTER
+    // 2. FETCH & INJECT FOOTER FROM footer.html
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
-      footerContainer.innerHTML = `
-        <footer class="site-footer">
-          <div class="footer-inner">
-            <div class="footer-brand">
-              <div class="logo-badge" style="width: 28px; height: 28px;">
-                <img src="logo.svg" alt="APML Hub" style="width: 18px; height: 18px; display: block; object-fit: contain;">
-              </div>
-              <div class="footer-credit-text">Designed &amp; developed by <span>Prasad</span></div>
-            </div>
-
-            <div class="footer-actions">
-              <a href="about.html" class="m3-about-btn" title="About Developer">
-                <img src="https://github.com/kundarwork-debug.png" alt="GitHub Profile" class="about-github-avatar" onerror="this.src='logo.svg'">
-                <span>About Me</span>
-              </a>
-            </div>
-          </div>
-        </footer>
-      `;
+      fetch('footer.html')
+        .then(response => response.text())
+        .then(html => {
+          footerContainer.innerHTML = html;
+        })
+        .catch(err => console.warn('Could not load footer:', err));
     }
   }
 
