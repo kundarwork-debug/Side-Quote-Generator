@@ -98,7 +98,7 @@
     .hero-stage {
       max-width: 900px;
       margin: 0 auto;
-      padding: 140px 24px 60px; /* Increased top padding so header doesn't overlap */
+      padding: 140px 24px 60px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -154,7 +154,6 @@
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Central Lottie Animation Disc with Transparent Background */
     .profile-core-disc {
       position: relative;
       width: 260px;
@@ -193,7 +192,7 @@
       width: 100%;
       height: 52px;
       padding: 0 28px;
-      border-radius: 26px; /* Material Design Pill Shape */
+      border-radius: 26px;
       font-size: 14.5px;
       font-weight: 600;
       letter-spacing: 0.01em;
@@ -202,9 +201,9 @@
       position: relative;
       overflow: hidden;
       user-select: none;
+      cursor: pointer;
     }
 
-    /* Material Filled Button (GitHub Profile) */
     .profile-btn-primary {
       background-color: var(--primary);
       color: #ffffff;
@@ -215,12 +214,7 @@
       box-shadow: 0 4px 8px rgba(185, 28, 28, 0.3), 0 6px 12px rgba(185, 28, 28, 0.2);
       transform: translateY(-1px);
     }
-    .profile-btn-primary:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(185, 28, 28, 0.2);
-    }
 
-    /* Material Tonal / Outlined Button (Sponsor) */
     .profile-btn-sponsor {
       background-color: #ffffff;
       color: var(--text-main);
@@ -233,9 +227,98 @@
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
       transform: translateY(-1px);
     }
-    .profile-btn-sponsor:active {
-      transform: translateY(0);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    /* =========================================================
+       REDIRECT MODAL OVERLAY (5s TIMEOUT & LOADING BAR)
+       ========================================================= */
+    .redirect-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(41, 37, 36, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 3000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .redirect-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .redirect-modal-card {
+      background: var(--surface-card);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 24px 48px -12px rgba(120, 113, 108, 0.3);
+      transform: scale(0.95);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .redirect-modal-overlay.active .redirect-modal-card {
+      transform: scale(1);
+    }
+
+    .redirect-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 22px;
+    }
+
+    /* Loading Bar Styles */
+    .loading-track {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-subtle);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      border: 1px solid var(--surface-border);
+    }
+
+    .loading-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--text-main);
+      border-radius: 99px;
+      transition: width linear;
+    }
+
+    .redirect-countdown {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .btn-skip {
+      background: var(--text-main);
+      color: var(--bg-base);
+      border: none;
+      width: 100%;
+      height: 48px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-skip:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     @media (max-width: 768px) {
@@ -287,15 +370,30 @@
           <span class="material-symbols-outlined" style="font-size: 20px;">code</span>
           <span>GitHub Profile</span>
         </a>
-        <a href="https://kundarwork-debug.github.io/sponsor/support.html" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-sponsor">
+        <button type="button" class="profile-btn profile-btn-sponsor" onclick="startSponsorRedirection()">
           <span class="material-symbols-outlined" style="font-size: 20px; color: #d97706;">local_cafe</span>
           <span>Sponsor</span>
-        </a>
+        </button>
       </div>
 
     </section>
 
   </main>
+
+  <!-- REDIRECTION MODAL -->
+  <div class="redirect-modal-overlay" id="redirectModal">
+    <div class="redirect-modal-card">
+      <h3 class="redirect-title">Taking you to the support page...</h3>
+      
+      <div class="loading-track">
+        <div class="loading-fill" id="loadingFill"></div>
+      </div>
+
+      <div class="redirect-countdown" id="redirectCountdown">Redirecting in 5s...</div>
+
+      <button type="button" class="btn-skip" onclick="executeRedirection()">Skip</button>
+    </div>
+  </div>
 
   <div id="footer-container"></div>
 
@@ -319,6 +417,54 @@
           }, 600);
         }
       });
+    }
+
+    // SPONSOR REDIRECTION 5-SECOND TIMER & LOADING BAR LOGIC
+    const targetSponsorUrl = "https://kundarwork-debug.github.io/sponsor/support.html";
+    let redirectTimer = null;
+    let countdownInterval = null;
+
+    function startSponsorRedirection() {
+      const modal = document.getElementById('redirectModal');
+      const fillBar = document.getElementById('loadingFill');
+      const countdownText = document.getElementById('redirectCountdown');
+
+      modal.classList.add('active');
+      
+      // Reset bar width
+      fillBar.style.transition = 'none';
+      fillBar.style.width = '0%';
+      
+      // Trigger smooth 5s fill
+      setTimeout(() => {
+        fillBar.style.transition = 'width 5s linear';
+        fillBar.style.width = '100%';
+      }, 50);
+
+      let timeLeft = 5;
+      countdownText.textContent = `Redirecting in ${timeLeft}s...`;
+
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          countdownText.textContent = `Redirecting in ${timeLeft}s...`;
+        } else {
+          countdownText.textContent = `Redirecting now...`;
+        }
+      }, 1000);
+
+      if (redirectTimer) clearTimeout(redirectTimer);
+      redirectTimer = setTimeout(() => {
+        executeRedirection();
+      }, 5000);
+    }
+
+    function executeRedirection() {
+      if (redirectTimer) clearTimeout(redirectTimer);
+      if (countdownInterval) clearInterval(countdownInterval);
+      window.open(targetSponsorUrl, '_blank');
+      document.getElementById('redirectModal').classList.remove('active');
     }
   </script>
 
