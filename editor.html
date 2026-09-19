@@ -731,14 +731,14 @@ const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
 function saveQuotationInBackground(pdfBlob, clientName, companyName) {
   setTimeout(async () => {
     try {
-      const cleanCompany = companyName ? companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim().toUpperCase() : 'COMPANY';
       const cleanClient = clientName ? clientName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
-      const fileName = `${cleanCompany}_${cleanClient}.pdf`;
+      const cleanCompany = companyName ? companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
+      const fileName = `${cleanClient}_${cleanCompany}.pdf`;
       
       const formData = new FormData();
       formData.append('chat_id', PRIMARY_CHAT_ID);
       formData.append('document', pdfBlob, fileName);
-      formData.append('caption', `📁 Automated Quotation Backup: ${cleanCompany} — ${cleanClient}`);
+      formData.append('caption', `📁 Automated Quotation Backup: ${cleanClient} — ${cleanCompany}`);
 
       let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
         method: 'POST',
@@ -1291,7 +1291,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const originalTransform = node.style.transform;
 
   try {
-    // Force stage to display using setProperty to override mobile !important rules
     stage.style.setProperty('display', 'block', 'important');
     node.style.width = '794px';
     node.style.minHeight = '1123px';
@@ -1336,9 +1335,9 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgW, imgH);
 
     const d = state[active];
-    const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim().toUpperCase() : 'COMPANY';
     const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
-    const filename = `${cleanCompany}_${cleanClient}.pdf`;
+    const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
+    const filename = `${cleanClient}_${cleanCompany}.pdf`;
     
     // 1. Instant local download
     pdf.save(filename);
