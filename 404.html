@@ -13,6 +13,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+  <!-- LOTTIE PLAYER SCRIPT -->
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js" type="module" async></script>
+
   <style>
     :root {
       --primary: #b91c1c;
@@ -68,6 +71,11 @@
       justify-content: space-between;
       position: relative;
       transition: var(--theme-transition);
+    }
+
+    /* HIDE FOOTER COMPLETELY ON THIS PAGE */
+    #footer-container {
+      display: none !important;
     }
 
     /* =========================================================
@@ -160,9 +168,8 @@
         linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
 
-    /* HEADER & FOOTER BLAST ANIMATIONS */
-    #header-container,
-    #footer-container {
+    /* HEADER BLAST ANIMATION */
+    #header-container {
       position: relative;
       z-index: 20;
       transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
@@ -172,13 +179,6 @@
     #header-container.fired-up {
       opacity: 0 !important;
       transform: translateY(-40px) scale(0.96) !important;
-      filter: blur(4px) brightness(1.6);
-      pointer-events: none !important;
-    }
-
-    #footer-container.fired-up {
-      opacity: 0 !important;
-      transform: translateY(40px) scale(0.96) !important;
       filter: blur(4px) brightness(1.6);
       pointer-events: none !important;
     }
@@ -349,133 +349,40 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* OPEN SPACE VISUAL RIG */
+    /* OPEN SPACE LOTTIE STAGE (BIGGER SIZE ON MAIN PAGE, COMPACT IN GAME) */
     .open-space-stage {
       position: relative;
-      width: 250px;
-      height: 220px;
+      width: 360px;
+      height: 320px;
       display: flex;
       align-items: center;
       justify-content: center;
       user-select: none;
-      margin-bottom: 6px;
+      margin-bottom: 2px;
+      transition: transform 0.3s ease;
+    }
+
+    body.game-active .open-space-stage {
+      transform: scale(0.65);
     }
 
     .broken-planet-center {
       position: relative;
-      width: 74px;
-      height: 74px;
+      width: 320px;
+      height: 320px;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 8;
-    }
-
-    .core-shield-beacon {
-      position: absolute;
-      inset: -14px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(185, 28, 28, 0.38);
-      background: radial-gradient(circle, rgba(185, 28, 28, 0.16) 0%, rgba(225, 29, 72, 0.05) 55%, transparent 72%);
-      animation: shieldPulse 3.2s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-
-    @keyframes shieldPulse {
-      0% { transform: scale(0.92); opacity: 0.6; box-shadow: 0 0 15px rgba(185, 28, 28, 0.15); }
-      100% { transform: scale(1.12); opacity: 1; box-shadow: 0 0 35px rgba(225, 29, 72, 0.35); }
-    }
-
-    .core-quantum-spinner {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 1.5px dashed rgba(185, 28, 28, 0.45);
-      animation: quantumRotate 16s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes quantumRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .core-main-capsule {
-      position: relative;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ffffff 0%, #fff1f2 50%, #ffe4e6 100%);
-      border: 2px solid #ffffff;
-      box-shadow: 0 8px 24px -4px rgba(185, 28, 28, 0.32), 0 0 0 1px rgba(185, 28, 28, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    html[data-theme="dark"] .core-main-capsule {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border-color: #334155;
-      box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.4);
-    }
-
-    .core-brand-logo {
-      width: 38px;
-      height: 38px;
-      object-fit: contain;
-      filter: drop-shadow(0 2px 5px rgba(185, 28, 28, 0.25));
-      animation: logoLevitate 3.6s ease-in-out infinite alternate;
+    dotlottie-wc {
+      width: 340px;
+      height: 340px;
       pointer-events: none;
-      z-index: 2;
+      filter: drop-shadow(0 12px 35px rgba(185, 28, 28, 0.22));
     }
-
-    @keyframes logoLevitate {
-      0% { transform: translateY(-2px) scale(0.97); }
-      100% { transform: translateY(2px) scale(1.03); }
-    }
-
-    .orbit-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px dashed rgba(185, 28, 28, 0.22);
-      pointer-events: none;
-    }
-    .orbit-1 { width: 110px; height: 110px; }
-    .orbit-2 { width: 165px; height: 165px; border-color: rgba(225, 29, 72, 0.22); }
-    .orbit-3 { width: 220px; height: 220px; border-color: rgba(185, 28, 28, 0.16); }
-
-    .free-node {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 25px;
-      height: 25px;
-      margin-top: -12.5px;
-      margin-left: -12.5px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-      box-shadow: 0 2px 8px rgba(185, 28, 28, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      will-change: transform;
-      z-index: 10;
-    }
-
-    html[data-theme="dark"] .free-node {
-      background: #1e293b;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-    }
-
-    .free-node .material-symbols-outlined { font-size: 14px; }
-    .node-truck { color: var(--primary); border-color: var(--primary); }
-    .node-car { color: #e11d48; border-color: #e11d48; }
-    .node-carton-1, .node-carton-2 { color: #d97706; border-color: #d97706; }
-    .node-hub { color: #0284c7; border-color: #0284c7; }
 
     .blast-ui-group {
       display: flex;
@@ -510,32 +417,20 @@
       margin-bottom: 4px;
     }
 
-    .error-code {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(34px, 5vw, 42px);
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
-    }
-
     .error-title {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(15px, 2.2vw, 17px);
-      font-weight: 700;
+      font-size: clamp(18px, 2.8vw, 22px);
+      font-weight: 800;
       color: var(--text-main);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .error-description {
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--text-muted);
-      line-height: 1.4;
-      max-width: 360px;
-      margin-bottom: 12px;
+      line-height: 1.45;
+      max-width: 380px;
+      margin-bottom: 14px;
     }
 
     .action-group {
@@ -839,7 +734,7 @@
     }
 
     @media (max-width: 768px) {
-      .open-space-stage { transform: scale(0.85); margin-bottom: 0; }
+      .open-space-stage { transform: scale(0.9); margin-bottom: 0; }
       .perspective-grid-layer { opacity: 0.35; }
       #failed-rocket-cursor { display: none !important; }
       body.game-active, 
@@ -928,49 +823,19 @@
        ========================================================= -->
   <main class="screen-view" id="gameView">
     
-    <!-- OPEN SPACE ORBIT RIG -->
+    <!-- OPEN SPACE LOTTIE STAGE (BIGGER SIZE) -->
     <div class="open-space-stage" id="spaceStage">
-      
-      <div class="orbit-ring orbit-1"></div>
-      <div class="orbit-ring orbit-2"></div>
-      <div class="orbit-ring orbit-3"></div>
-
-      <!-- ANIMATED LOGO CORE WITH QUANTUM BEACON -->
       <div class="broken-planet-center" id="planetCenter">
-        <div class="core-shield-beacon"></div>
-        <div class="core-quantum-spinner"></div>
-        
-        <div class="core-main-capsule" id="coreMainCapsule">
-          <img src="logo.svg" alt="APML Hub" class="core-brand-logo" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%23b91c1c\'><path d=\'M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5V17l10 5 10-5v-3.5l-5-2.5-5 2.5z\'/></svg>'">
-        </div>
+        <dotlottie-wc 
+          src="https://lottie.host/11b05400-33ac-4185-a8ef-6484729b3576/1PtJikL0WX.lottie" 
+          autoplay 
+          loop>
+        </dotlottie-wc>
       </div>
-
-      <div class="free-node node-carton-1" id="node1" title="Displaced Carton">
-        <span class="material-symbols-outlined">package_2</span>
-      </div>
-
-      <div class="free-node node-truck" id="node2" title="Stranded Fleet Logistics">
-        <span class="material-symbols-outlined">local_shipping</span>
-      </div>
-
-      <div class="free-node node-hub" id="node3" title="Unreachable Hub">
-        <span class="material-symbols-outlined">location_city</span>
-      </div>
-
-      <div class="free-node node-car" id="node4" title="Off-course Car Carrier">
-        <span class="material-symbols-outlined">directions_car</span>
-      </div>
-
-      <div class="free-node node-carton-2" id="node5" title="Lost Consignment">
-        <span class="material-symbols-outlined">inventory_2</span>
-      </div>
-
     </div>
 
     <div class="blast-ui-group" id="blastUiGroup">
       
-      <div class="error-code">404</div>
-
       <h1 class="error-title">Signal Lost in Deep Orbit</h1>
 
       <p class="error-description" id="gameDescText">
@@ -1057,7 +922,7 @@
     </div>
   </main>
 
-  <!-- Footer Injected via common.js -->
+  <!-- Footer Injected via common.js (Hidden via CSS) -->
   <div id="footer-container"></div>
 
   <!-- FIREBASE SDK -->
@@ -1101,7 +966,6 @@
         scoreboardIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
       }
 
-      // Sync header toggle if present
       const headerIcon = document.getElementById('themeToggleIcon');
       const headerBadge = document.querySelector('.theme-toggle-badge');
       if (headerIcon) headerIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
@@ -1133,7 +997,7 @@
     });
   </script>
 
-  <!-- PLANET ATTRACTION & ORBIT MOTION RIG -->
+  <!-- PLANET ATTRACTION & MOUSE RIG -->
   <script>
     let globalRocketX = window.innerWidth / 2;
     let globalRocketY = window.innerHeight / 2;
@@ -1141,15 +1005,7 @@
 
     (function initPhysicsAndAttraction() {
       const stage = document.getElementById('spaceStage');
-      const coreCapsule = document.getElementById('coreMainCapsule');
-
-      const nodes = [
-        { el: document.getElementById('node1'), radius: 55,  speed:  0.009, angle: 0.5,             x: 0, y: 0 },
-        { el: document.getElementById('node2'), radius: 82,  speed: -0.007, angle: Math.PI,         x: 0, y: 0 },
-        { el: document.getElementById('node3'), radius: 82,  speed: -0.007, angle: 0.2,            x: 0, y: 0 },
-        { el: document.getElementById('node4'), radius: 110, speed:  0.005, angle: -Math.PI / 2,     x: 0, y: 0 },
-        { el: document.getElementById('node5'), radius: 110, speed:  0.005, angle:  Math.PI / 2.2,   x: 0, y: 0 }
-      ];
+      const planetCenter = document.getElementById('planetCenter');
 
       let coreOffsetX = 0;
       let coreOffsetY = 0;
@@ -1163,31 +1019,16 @@
           const relY = globalRocketY - centerY;
 
           const pullDist = Math.hypot(relX, relY) || 1;
-          const pullStrength = Math.min(18, 1100 / (pullDist + 60));
+          const pullStrength = Math.min(14, 900 / (pullDist + 60));
           const pullAngle = Math.atan2(relY, relX);
 
-          const targetCoreX = Math.cos(pullAngle) * pullStrength * 0.7;
-          const targetCoreY = Math.sin(pullAngle) * pullStrength * 0.7;
+          const targetCoreX = Math.cos(pullAngle) * pullStrength * 0.5;
+          const targetCoreY = Math.sin(pullAngle) * pullStrength * 0.5;
           coreOffsetX += (targetCoreX - coreOffsetX) * 0.1;
           coreOffsetY += (targetCoreY - coreOffsetY) * 0.1;
 
-          if (coreCapsule) {
-            coreCapsule.style.transform = `translate(${coreOffsetX}px, ${coreOffsetY}px) rotate(${coreOffsetX * 1.5}deg)`;
-          }
-
-          for (let i = 0; i < nodes.length; i++) {
-            const item = nodes[i];
-            item.angle += item.speed;
-
-            const targetX = Math.cos(item.angle) * item.radius + (Math.cos(pullAngle) * pullStrength * 0.4);
-            const targetY = Math.sin(item.angle) * item.radius + (Math.sin(pullAngle) * pullStrength * 0.4);
-
-            item.x += (targetX - item.x) * 0.1;
-            item.y += (targetY - item.y) * 0.1;
-
-            if (item.el) {
-              item.el.style.transform = `translate(${item.x}px, ${item.y}px)`;
-            }
+          if (planetCenter) {
+            planetCenter.style.transform = `translate(${coreOffsetX}px, ${coreOffsetY}px) rotate(${coreOffsetX * 0.8}deg)`;
           }
         }
         requestAnimationFrame(render);
@@ -1407,10 +1248,6 @@
           triggerUiBlastEffect(headerContainer, 36);
           headerContainer.classList.add('fired-up');
         }
-        if (footerContainer) {
-          triggerUiBlastEffect(footerContainer, 36);
-          footerContainer.classList.add('fired-up');
-        }
         if (blastUiGroup) {
           triggerUiBlastEffect(btnStartGame, 45);
           triggerUiBlastEffect(blastUiGroup, 55);
@@ -1420,7 +1257,6 @@
         setTimeout(() => {
           if (blastUiGroup) blastUiGroup.style.display = 'none';
           if (headerContainer) headerContainer.style.display = 'none';
-          if (footerContainer) footerContainer.style.display = 'none';
         }, 340);
 
         isGameActive = true;
@@ -1574,10 +1410,6 @@
             headerContainer.style.display = 'block';
             headerContainer.classList.remove('fired-up');
           }
-          if (footerContainer) {
-            footerContainer.style.display = 'block';
-            footerContainer.classList.remove('fired-up');
-          }
           if (blastUiGroup) blastUiGroup.classList.remove('blasted');
 
           if (scoreCardBadge) scoreCardBadge.textContent = "Global Rankings";
@@ -1616,10 +1448,6 @@
         if (headerContainer) {
           headerContainer.style.display = 'block';
           headerContainer.classList.remove('fired-up');
-        }
-        if (footerContainer) {
-          footerContainer.style.display = 'block';
-          footerContainer.classList.remove('fired-up');
         }
         if (blastUiGroup) {
           blastUiGroup.style.display = 'flex';
@@ -1750,10 +1578,6 @@
         if (headerContainer) {
           headerContainer.style.display = 'block';
           headerContainer.classList.remove('fired-up');
-        }
-        if (footerContainer) {
-          footerContainer.style.display = 'block';
-          footerContainer.classList.remove('fired-up');
         }
         if (blastUiGroup) {
           blastUiGroup.classList.remove('blasted');
