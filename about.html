@@ -150,7 +150,7 @@
     .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
     .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
 
-    /* Central Lottie Animation Disc with Transparent Background (Increased Size) */
+    /* Central Lottie Animation Disc with Transparent Background */
     .profile-core-disc {
       position: relative;
       width: 280px;
@@ -160,7 +160,7 @@
       align-items: center;
       justify-content: center;
       z-index: 5;
-      pointer-events: none;
+      cursor: pointer;
     }
 
     @keyframes beaconRipple {
@@ -211,6 +211,17 @@
     .profile-btn-outline:hover {
       border-color: rgba(185, 28, 28, 0.3);
       color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .profile-btn-coffee {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .profile-btn-coffee:hover {
+      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
       transform: translateY(-2px);
     }
 
@@ -615,8 +626,8 @@
         <div class="beacon-wave"></div>
         <div class="beacon-wave"></div>
 
-        <!-- CENTERED ENLARGED TRANSPARENT LOTTIE ANIMATION -->
-        <div class="profile-core-disc">
+        <!-- CENTRAL TRANSPARENT LOTTIE ANIMATION WITH TRIPLE-CLICK EASTER EGG -->
+        <div class="profile-core-disc" id="lottieClickTrigger" title="Click me...">
           <lottie-player 
             src="https://lottie.host/81e9bbae-7cd3-41aa-b736-624121d9a09e/uBNKC93rkX.json" 
             background="transparent" 
@@ -632,6 +643,10 @@
         <a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-primary">
           <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
           <span>GitHub Profile</span>
+        </a>
+        <a href="https://bondin.io/kundarwork" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-coffee">
+          <span class="material-symbols-outlined" style="font-size: 18px;">local_cafe</span>
+          <span>Buy me a coffee</span>
         </a>
         <a href="index.html" class="profile-btn profile-btn-outline">
           <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
@@ -936,6 +951,25 @@
        DYNAMIC STRUCTURAL GRAPH DATA & MODAL CONTROLLER
        ========================================================= -->
   <script>
+    // TRIPLE-CLICK EASTER EGG REDIRECT TO 404.html
+    let lottieClickCount = 0;
+    let lottieClickTimer = null;
+    const lottieTrigger = document.getElementById('lottieClickTrigger');
+    if (lottieTrigger) {
+      lottieTrigger.addEventListener('click', () => {
+        lottieClickCount++;
+        if (lottieClickTimer) clearTimeout(lottieClickTimer);
+        
+        if (lottieClickCount >= 3) {
+          window.location.href = '404.html';
+        } else {
+          lottieClickTimer = setTimeout(() => {
+            lottieClickCount = 0;
+          }, 600);
+        }
+      });
+    }
+
     const ARCHITECTURE_DATA = {
       quotation: {
         title: "Quotation Drafting Studio",
