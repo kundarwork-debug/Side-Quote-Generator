@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Prasad Kundar - Profile & Architecture</title>
 
+  <!-- SVG LOGO FAVICON -->
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=19.0">
   <link rel="manifest" href="./manifest.json">
-
   <link rel="stylesheet" href="common.css?v=19.0">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,15 +86,19 @@
       position: relative;
       z-index: 1;
       width: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* =========================================================
        HERO PROFILE STAGE & ANIMATION ZONE
        ========================================================= */
     .hero-stage {
-      max-width: 1440px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 100px 32px 10px;
+      padding: 60px 24px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -128,9 +132,9 @@
     /* CENTRAL TRANSPARENT ANIMATION ZONE */
     .interactive-hero-zone {
       position: relative;
-      width: min(94vw, 650px);
-      height: 360px;
-      margin: 10px auto 10px;
+      width: min(94vw, 500px);
+      height: 320px;
+      margin: 10px auto;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -153,8 +157,8 @@
     /* Central Lottie Animation Disc with Transparent Background */
     .profile-core-disc {
       position: relative;
-      width: 280px;
-      height: 280px;
+      width: 260px;
+      height: 260px;
       background: transparent;
       display: flex;
       align-items: center;
@@ -169,437 +173,75 @@
       100% { transform: scale(1.8); opacity: 0; }
     }
 
-    /* Quick Social Actions Row */
+    /* GOOGLE MATERIAL DESIGN STACKED BUTTONS */
     .profile-action-row {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      gap: 16px;
+      margin-top: 24px;
+      width: 100%;
+      max-width: 480px;
     }
 
     .profile-btn {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 13px;
-      font-weight: 700;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      height: 52px;
+      padding: 0 28px;
+      border-radius: 26px; /* Material Design Pill Shape */
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
       text-decoration: none;
-      transition: all 0.25s ease;
-      border: 1px solid transparent;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      user-select: none;
     }
 
+    /* Material Filled Button (GitHub Profile) */
     .profile-btn-primary {
-      background: var(--primary);
+      background-color: var(--primary);
       color: #ffffff;
-      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.2);
+      box-shadow: 0 2px 4px rgba(185, 28, 28, 0.2), 0 4px 8px rgba(185, 28, 28, 0.15);
     }
     .profile-btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
+      background-color: #991b1b;
+      box-shadow: 0 4px 8px rgba(185, 28, 28, 0.3), 0 6px 12px rgba(185, 28, 28, 0.2);
+      transform: translateY(-1px);
+    }
+    .profile-btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(185, 28, 28, 0.2);
     }
 
-    .profile-btn-outline {
-      background: #ffffff;
+    /* Material Tonal / Outlined Button (Sponsor) */
+    .profile-btn-sponsor {
+      background-color: #ffffff;
       color: var(--text-main);
-      border-color: var(--surface-border);
-      box-shadow: var(--shadow-subtle);
-    }
-    .profile-btn-outline:hover {
-      border-color: rgba(185, 28, 28, 0.3);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    .profile-btn-coffee {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-      color: #ffffff;
-      box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-    .profile-btn-coffee:hover {
-      background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-      transform: translateY(-2px);
-    }
-
-    /* =========================================================
-       CONTENT SECTIONS & INTERACTIVE ARCHITECTURE CARDS
-       ========================================================= */
-    .content-section {
-      max-width: 1440px;
-      margin: 20px auto 40px;
-      padding: 0 32px;
-      width: 100%;
-    }
-
-    .section-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .section-heading {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-      gap: 24px;
-      width: 100%;
-    }
-
-    .feature-card {
-      background: var(--surface-card);
       border: 1px solid var(--surface-border);
-      border-radius: var(--radius-xl);
-      padding: 28px 24px;
-      box-shadow: var(--shadow-subtle);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
-
-    .feature-card:hover {
-      transform: translateY(-6px);
-      border-color: rgba(185, 28, 28, 0.3);
-      box-shadow: var(--shadow-hover);
+    .profile-btn-sponsor:hover {
+      background-color: var(--surface-subtle);
+      border-color: #d6ccc4;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
     }
-
-    .card-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 18px;
-    }
-
-    .card-icon-pill {
-      width: 50px;
-      height: 50px;
-      border-radius: 14px;
-      background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
-    }
-
-    .feature-card:hover .card-icon-pill {
-      transform: scale(1.06);
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-    }
-
-    .architecture-badge {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, 0.15);
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .card-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 18.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 8px;
-      letter-spacing: -0.01em;
-    }
-
-    .card-description {
-      font-size: 13.5px;
-      color: var(--text-muted);
-      line-height: 1.55;
-      margin-bottom: 20px;
-    }
-
-    .card-action-cta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-top: 14px;
-      border-top: 1px solid var(--surface-border);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .cta-circle {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--primary-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
-    }
-
-    .feature-card:hover .cta-circle {
-      transform: translateX(4px);
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .tech-chip {
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-pill);
-      padding: 8px 16px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: var(--shadow-subtle);
-      transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .tech-chip:hover {
-      border-color: rgba(185, 28, 28, 0.25);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    .tech-chip .dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--primary);
-    }
-
-    /* =========================================================
-       STRUCTURAL GRAPH & ARCHITECTURE MODAL
-       ========================================================= */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(41, 37, 36, 0.65);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .modal-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-dialog {
-      background: var(--bg-base);
-      border: 1.5px solid var(--surface-border);
-      border-radius: var(--radius-xl);
-      width: 100%;
-      max-width: 820px;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 24px 48px -12px rgba(120, 113, 108, 0.25);
-      transform: translateY(20px) scale(0.96);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow: hidden;
-    }
-
-    .modal-overlay.open .modal-dialog {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-header {
-      padding: 20px 24px;
-      background: #ffffff;
-      border-bottom: 1px solid var(--surface-border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .modal-header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .modal-icon-pill {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-    }
-
-    .modal-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    .modal-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .modal-close-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid var(--surface-border);
-      background: var(--surface-subtle);
-      color: var(--text-main);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-    }
-
-    .modal-close-btn:hover {
-      background: #ffffff;
-      color: var(--primary);
-      border-color: var(--primary);
-      transform: scale(1.08);
-    }
-
-    .modal-body {
-      padding: 24px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .flow-graph-container {
-      background: #ffffff;
-      border: 1px solid var(--surface-border);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow-subtle);
-    }
-
-    .flow-graph-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--primary);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .flow-steps-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-      position: relative;
-    }
-
-    .flow-step-card {
-      background: var(--bg-base);
-      border: 1.5px solid var(--surface-border);
-      border-radius: 12px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: relative;
-    }
-
-    .flow-step-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 700;
-      color: var(--primary);
-      background: var(--primary-soft);
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      align-self: flex-start;
-      border: 1px solid rgba(185, 28, 28, 0.15);
-    }
-
-    .flow-step-name {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .flow-step-desc {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      line-height: 1.45;
-    }
-
-    .code-architecture-snippet {
-      background: #1c1917;
-      border-radius: 12px;
-      padding: 16px;
-      color: #f5f5f4;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      overflow-x: auto;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .profile-btn-sponsor:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     @media (max-width: 768px) {
-      .hero-stage { padding: 90px 16px 10px; }
-      .interactive-hero-zone { height: 280px; }
-      .content-section { padding: 0 16px; }
-      .features-grid { grid-template-columns: 1fr; }
-      .flow-steps-grid { grid-template-columns: 1fr; }
-      .modal-dialog { max-height: 95vh; }
-      .modal-body { padding: 16px; }
+      .hero-stage { padding: 40px 16px; }
+      .interactive-hero-zone { height: 260px; }
+      .profile-action-row { max-width: 100%; }
     }
   </style>
 </head>
@@ -632,324 +274,33 @@
             src="https://lottie.host/81e9bbae-7cd3-41aa-b736-624121d9a09e/uBNKC93rkX.json" 
             background="transparent" 
             speed="1" 
-            style="width: 260px; height: 260px;" 
+            style="width: 240px; height: 240px;" 
             loop 
             autoplay>
           </lottie-player>
         </div>
       </div>
 
+      <!-- GOOGLE MATERIAL DESIGN STACKED WIDE BUTTONS -->
       <div class="profile-action-row">
         <a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-primary">
-          <span class="material-symbols-outlined" style="font-size: 18px;">code</span>
+          <span class="material-symbols-outlined" style="font-size: 20px;">code</span>
           <span>GitHub Profile</span>
         </a>
-        <a href="https://bondin.io/kundarwork/support" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-coffee">
-          <span class="material-symbols-outlined" style="font-size: 18px;">local_cafe</span>
-          <span>Buy me a Coffee</span>
-        </a>
-        <a href="index.html" class="profile-btn profile-btn-outline">
-          <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
-          <span>Portal Home</span>
+        <a href="https://kundarwork-debug.github.io/sponsor/support.html" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-sponsor">
+          <span class="material-symbols-outlined" style="font-size: 20px; color: #d97706;">local_cafe</span>
+          <span>Sponsor</span>
         </a>
       </div>
 
-    </section>
-
-    <!-- CORE PORTAL MODULES WITH CLICKABLE STRUCTURAL ARCHITECTURE GRAPH -->
-    <section class="content-section">
-      <div class="section-bar">
-        <div class="section-heading">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">engineering</span>
-          <span>All Operations Modules Built</span>
-        </div>
-        <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">Click card to view working flow</span>
-      </div>
-
-      <div class="features-grid">
-        
-        <!-- 1. QUOTATION -->
-        <div class="feature-card" onclick="openModuleArchitecture('quotation')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">edit_note</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">Quotation Drafting Studio</h3>
-            <p class="card-description">
-              Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. GALLERY -->
-        <div class="feature-card" onclick="openModuleArchitecture('gallery')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">photo_library</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">Packing Standards Gallery</h3>
-            <p class="card-description">
-              High-definition media library with video demonstrations and official packaging standards for nationwide consignments.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 3. HUB DIRECTORY -->
-        <div class="feature-card" onclick="openModuleArchitecture('directory')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">location_city</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">Hub &amp; Branch Directory</h3>
-            <p class="card-description">
-              Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. FIELD OFFICER -->
-        <div class="feature-card" onclick="openModuleArchitecture('fieldOfficer')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">badge</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">Field Officer Directory WCRO</h3>
-            <p class="card-description">
-              Western Central Regional Office field officers directory with direct WhatsApp contact, mobile numbers, and designated areas.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 5. CLOUD DRIVE -->
-        <div class="feature-card" onclick="openModuleArchitecture('drive')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">cloud_queue</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">APML Cloud Drive</h3>
-            <p class="card-description">
-              Enterprise cloud workspace for directory folder management, file uploads up to 50MB, and secure document sharing.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 6. CONSIGNMENT STATUS -->
-        <div class="feature-card" onclick="openModuleArchitecture('consignment')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">local_shipping</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">WCRO Consignment Status</h3>
-            <p class="card-description">
-              Real-time consignment tracking synced from Google Sheets with secure persistent access and dynamic tab filters.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 7. APML LITE RATE CALCULATOR -->
-        <div class="feature-card" onclick="openModuleArchitecture('calculator')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">inventory_2</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">APML Lite Rate Calculator</h3>
-            <p class="card-description">
-              Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 8. CAR RATE CALCULATOR -->
-        <div class="feature-card" onclick="openModuleArchitecture('carRate')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">directions_car</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">Car Rate Calculator</h3>
-            <p class="card-description">
-              Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 9. LOCAL RATE -->
-        <div class="feature-card" onclick="openModuleArchitecture('localRate')">
-          <div>
-            <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">local_shipping</span>
-              </div>
-              <span class="architecture-badge">
-                <span class="material-symbols-outlined" style="font-size: 14px;">account_tree</span>
-                <span>Click to View Code</span>
-              </span>
-            </div>
-            <h3 class="card-title">APML Local Rate</h3>
-            <p class="card-description">
-              Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.
-            </p>
-          </div>
-          <div class="card-action-cta">
-            <span>Explore Structural Graph</span>
-            <div class="cta-circle">
-              <span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- CORE ARCHITECTURE PILLARS -->
-    <section class="content-section">
-      <div class="section-bar">
-        <div class="section-heading">
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 20px;">memory</span>
-          <span>Core Technologies &amp; Architecture</span>
-        </div>
-      </div>
-
-      <div class="chip-row">
-        <div class="tech-chip"><span class="dot"></span>Zero-Dependency Vanilla JavaScript</div>
-        <div class="tech-chip"><span class="dot"></span>HTML5 Canvas Frame Engine</div>
-        <div class="tech-chip"><span class="dot"></span>Asynchronous Binary Blob Streamer</div>
-        <div class="tech-chip"><span class="dot"></span>jsPDF &amp; html2canvas</div>
-        <div class="tech-chip"><span class="dot"></span>Firebase Realtime Database</div>
-        <div class="tech-chip"><span class="dot"></span>GitHub Pages CI/CD Pipeline</div>
-      </div>
     </section>
 
   </main>
-
-  <!-- =========================================================
-       DYNAMIC ARCHITECTURAL GRAPH MODAL
-       ========================================================= -->
-  <div class="modal-overlay" id="architectureModal" onclick="closeModuleArchitecture(event)">
-    <div class="modal-dialog" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-header-left">
-          <div class="modal-icon-pill">
-            <span class="material-symbols-outlined" id="modalIcon">schema</span>
-          </div>
-          <div>
-            <h2 class="modal-title" id="modalTitle">Module Architecture</h2>
-            <p class="modal-subtitle" id="modalSubtitle">Structural Dataflow &amp; Implementation</p>
-          </div>
-        </div>
-        <button class="modal-close-btn" onclick="closeModuleArchitectureModal()" aria-label="Close modal">
-          <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
-        </button>
-      </div>
-
-      <div class="modal-body" id="modalDynamicBody">
-        <!-- Injected via JavaScript -->
-      </div>
-    </div>
-  </div>
 
   <div id="footer-container"></div>
 
   <script src="common.js?v=19.0"></script>
 
-  <!-- =========================================================
-       DYNAMIC STRUCTURAL GRAPH DATA & MODAL CONTROLLER
-       ========================================================= -->
   <script>
     // TRIPLE-CLICK EASTER EGG REDIRECT TO 404.html
     let lottieClickCount = 0;
@@ -969,366 +320,6 @@
         }
       });
     }
-
-    const ARCHITECTURE_DATA = {
-      quotation: {
-        title: "Quotation Drafting Studio",
-        subtitle: "A4 PDF Vector Engine & Realtime Split Logic",
-        icon: "edit_note",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Form Event Listener",
-            desc: "Captures user inputs, freight rates, GST percentages, and line items reactively without DOM page reloads."
-          },
-          {
-            num: "STEP 02",
-            name: "Dynamic Matrix Split",
-            desc: "Applies automated % percentage distribution across freight, packing, loading, and transit insurance formulas."
-          },
-          {
-            num: "STEP 03",
-            name: "A4 Virtual DOM Sync",
-            desc: "Real-time twin rendering into an off-screen, high-DPI (794px × 1123px) standardized A4 sheet template."
-          },
-          {
-            num: "STEP 04",
-            name: "jsPDF Vector Exporter",
-            desc: "Streams HTML2Canvas pixel rasterization into a compressed, client-side PDF document with zero backend delay."
-          }
-        ],
-        codeSnippet: `// Dynamic State Calculation & Vector Export Flow
-const computeTotals = (data) => {
-  const subtotal = data.costItems.reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
-  const gstAmount = subtotal * (Number(data.gstPercent) || 0) / 100;
-  return { subtotal, gstAmount, grand: subtotal + gstAmount };
-};
-
-// Client-side Direct Stream
-const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
-pdf.addImage(canvasDataUrl, 'JPEG', xOffset, yOffset, imgW, imgH);
-pdf.save(\`Quotation_\${customerName}.pdf\`);`
-      },
-      gallery: {
-        title: "Packing Standards Gallery",
-        subtitle: "Cloud-Synced Media Feed & Compression Engine",
-        icon: "photo_library",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Client Compression",
-            desc: "Compresses multi-megabyte images and videos locally via HTML5 canvas before payload transmission."
-          },
-          {
-            num: "STEP 02",
-            name: "Telegram Bot API Relay",
-            desc: "Uploads compressed media directly to encrypted Telegram chat channels to ensure unlimited free storage."
-          },
-          {
-            num: "STEP 03",
-            name: "Firebase Realtime Sync",
-            desc: "Syncs folder indexes, file IDs, and interaction counts instantly across active client sessions."
-          },
-          {
-            num: "STEP 04",
-            name: "Dynamic Grid Pagination",
-            desc: "Calculates responsive rows and columns on the fly to fit screen dimensions without blank gaps."
-          }
-        ],
-        codeSnippet: `// Dynamic Grid & Responsive Items Per Page
-const getDynamicItemsPerPage = () => {
-  const width = Math.max(window.innerWidth - 80, 320);
-  const height = Math.max(window.innerHeight - 380, 300);
-  const columns = Math.max(1, Math.floor(width / 340));
-  const rows = Math.max(3, Math.floor(height / 330));
-  return columns * rows;
-};`
-      },
-      directory: {
-        title: "Hub & Branch Directory",
-        subtitle: "Distributed Warehouse Database & Geolocation Pins",
-        icon: "location_city",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Firebase Sync",
-            desc: "Loads JSON-indexed nationwide hub metadata and HOD contact registries on first page render."
-          },
-          {
-            num: "STEP 02",
-            name: "Inverted Index Search",
-            desc: "Sub-millisecond query parsing matching state names, cities, PIN codes, and branch office names."
-          },
-          {
-            num: "STEP 03",
-            name: "Direct Dispatch Actions",
-            desc: "Constructs direct WhatsApp API links (\`https://wa.me/...\`) and telephone intent triggers (\`tel:...\`)."
-          },
-          {
-            num: "STEP 04",
-            name: "Google Maps Deep Link",
-            desc: "Resolves latitude/longitude coordinates to launch one-tap turn-by-turn navigation for field teams."
-          }
-        ],
-        codeSnippet: `// Realtime Hub Indexer & Query Dispatcher
-const searchHubs = (query) => {
-  const normalized = query.toLowerCase().trim();
-  return hubDatabase.filter(hub => 
-    hub.city.toLowerCase().includes(normalized) ||
-    hub.state.toLowerCase().includes(normalized) ||
-    hub.pincode.includes(normalized)
-  );
-};
-
-// One-tap Action Handler
-const openWhatsApp = (phone, name) => {
-  window.open(\`https://wa.me/\${phone}?text=Hello%20\${encodeURIComponent(name)}\`, '_blank');
-};`
-      },
-      fieldOfficer: {
-        title: "Field Officer Directory WCRO",
-        subtitle: "Regional Operations Team & Direct Communication",
-        icon: "badge",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Officer Registry Mount",
-            desc: "Initializes Western Central Regional Office field surveyors and operations dispatchers."
-          },
-          {
-            num: "STEP 02",
-            name: "Territory Filtering",
-            desc: "Filters officers by Mumbai, Pune, and regional coverage zones for rapid assignment."
-          },
-          {
-            num: "STEP 03",
-            name: "Direct Intent Dispatch",
-            desc: "Triggers secure deep-links for immediate phone calls and mobile messaging."
-          }
-        ],
-        codeSnippet: `// Field Officer Quick-Filter Engine
-const filterOfficersByZone = (zone) => {
-  return officerRegistry.filter(officer => officer.zone === zone);
-};`
-      },
-      drive: {
-        title: "APML Cloud Drive",
-        subtitle: "Telegram-Backed Binary File Streamer & Storage",
-        icon: "cloud_queue",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Multipart Uploader",
-            desc: "Streams files up to 50MB directly through Telegram Bot API endpoints with progress handling."
-          },
-          {
-            num: "STEP 02",
-            name: "Hierarchical Folder Tree",
-            desc: "Manages nested directories and custom folder IDs in real-time Firebase nodes."
-          },
-          {
-            num: "STEP 03",
-            name: "Protected Quotations Archive",
-            desc: "Enforces strict admin-only verification checks for file deletion within secure folders."
-          }
-        ],
-        codeSnippet: `// Telegram Document Relay Streamer
-const uploadToTelegram = async (file, chatId) => {
-  const formData = new FormData();
-  formData.append('chat_id', chatId);
-  formData.append('document', file);
-  const res = await fetch(\`https://api.telegram.org/bot\${BOT_TOKEN}/sendDocument\`, {
-    method: 'POST', body: formData
-  });
-  return await res.json();
-};`
-      },
-      consignment: {
-        title: "WCRO Consignment Status",
-        subtitle: "Google Sheets Live Sync & Secure Token Access",
-        icon: "local_shipping",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Secure Authentication",
-            desc: "Validates field officer credentials and caches secure session tokens locally."
-          },
-          {
-            num: "STEP 02",
-            name: "Google Sheets REST Parser",
-            desc: "Fetches live dispatch logs and docket sheets directly from live public spreadsheet feeds."
-          },
-          {
-            num: "STEP 03",
-            name: "Dynamic Tab Filtering",
-            desc: "Sorts active consignments by transit status, origin branch, and delivery milestone."
-          }
-        ],
-        codeSnippet: `// Live Sheets JSON Feed Parser
-const fetchConsignments = async (sheetUrl) => {
-  const response = await fetch(sheetUrl);
-  const data = await response.json();
-  return data.rows;
-};`
-      },
-      calculator: {
-        title: "APML Lite Rate Calculator",
-        subtitle: "CFT Volumetric Matrix & Slabs Computation",
-        icon: "inventory_2",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Dimension Parser",
-            desc: "Extracts Length × Width × Height parameters and applies volume formula: \`(L × W × H) / 1728 CFT\`."
-          },
-          {
-            num: "STEP 02",
-            name: "Capacity Ceiling Guard",
-            desc: "Enforces a strict 450 CFT volume limit per vehicle consignment slot and ₹5,000 base minimum floor."
-          },
-          {
-            num: "STEP 03",
-            name: "Mileage Slab Matrix",
-            desc: "Applies 600 KM baseline formulas with incremental per-KM tariff slabs for car carriers and freight routes."
-          },
-          {
-            num: "STEP 04",
-            name: "Instant Price Yield",
-            desc: "Computes final net freight estimate with optional add-on loading/unloading and floor-level surcharges."
-          }
-        ],
-        codeSnippet: `// Volumetric CFT & Mileage Math Engine
-const calculateFreight = (cft, distanceKm) => {
-  const effectiveCft = Math.min(450, Math.max(0, cft));
-  const baseRate = distanceKm <= 600 ? 5000 : 5000 + (distanceKm - 600) * 12;
-  const cftMultiplier = effectiveCft * 25; // Base SOP unit rate
-  return Math.max(5000, baseRate + cftMultiplier);
-};`
-      },
-      carRate: {
-        title: "Car Rate Calculator",
-        subtitle: "Automated Vehicle Transport & Distance Slabs",
-        icon: "directions_car",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Vehicle Category Detection",
-            desc: "Identifies hatchback, sedan, or SUV profiles to assign carrier tier weights."
-          },
-          {
-            num: "STEP 02",
-            name: "Distance Calculation Matrix",
-            desc: "Computes interstate transit distances using baseline 600 KM formulas."
-          },
-          {
-            num: "STEP 03",
-            name: "Freight Yield Output",
-            desc: "Yields final transparent quotation for car carrier transportation."
-          }
-        ],
-        codeSnippet: `// Vehicle Carrier Tariff Calculator
-const calculateCarFreight = (carType, km) => {
-  const multiplier = carType === 'suv' ? 1.35 : 1.0;
-  return Math.max(8000, (6000 + km * 15) * multiplier);
-};`
-      },
-      localRate: {
-        title: "APML Local Rate",
-        subtitle: "Intra-City Relocation & SOP Budget Slabs",
-        icon: "local_shipping",
-        steps: [
-          {
-            num: "STEP 01",
-            name: "Intra-City Parameter Check",
-            desc: "Evaluates local shifting requirements within metropolitan limits."
-          },
-          {
-            num: "STEP 02",
-            name: "CFT & Floor Constraint Validation",
-            desc: "Computes labor and vehicle deployment based on floor levels and elevator availability."
-          },
-          {
-            num: "STEP 03",
-            name: "Final SOP Budget Output",
-            desc: "Generates standardized local quotation adhering to corporate pricing guidelines."
-          }
-        ],
-        codeSnippet: `// Intra-City Local Shifting Formula
-const calculateLocalSopRate = (cft, floors) => {
-  const laborCharge = floors * 500;
-  return Math.max(3000, cft * 18 + laborCharge);
-};`
-      }
-    };
-
-    function openModuleArchitecture(type) {
-      const data = ARCHITECTURE_DATA[type];
-      if (!data) return;
-
-      document.getElementById('modalIcon').textContent = data.icon;
-      document.getElementById('modalTitle').textContent = data.title;
-      document.getElementById('modalSubtitle').textContent = data.subtitle;
-
-      const body = document.getElementById('modalDynamicBody');
-      body.innerHTML = `
-        <div class="flow-graph-container">
-          <div class="flow-graph-title">
-            <span class="material-symbols-outlined" style="font-size: 17px;">account_tree</span>
-            <span>Structural Working Pipeline</span>
-          </div>
-
-          <div class="flow-steps-grid">
-            ${data.steps.map(s => `
-              <div class="flow-step-card">
-                <span class="flow-step-num">${s.num}</span>
-                <h4 class="flow-step-name">${s.name}</h4>
-                <p class="flow-step-desc">${s.desc}</p>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-
-        <div class="flow-graph-container">
-          <div class="flow-graph-title">
-            <span class="material-symbols-outlined" style="font-size: 17px;">terminal</span>
-            <span>Key Architectural Implementation Code</span>
-          </div>
-          <pre class="code-architecture-snippet"><code>${escapeHtml(data.codeSnippet)}</code></pre>
-        </div>
-      `;
-
-      const modal = document.getElementById('architectureModal');
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModuleArchitectureModal() {
-      const modal = document.getElementById('architectureModal');
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    function closeModuleArchitecture(e) {
-      if (e.target === document.getElementById('architectureModal')) {
-        closeModuleArchitectureModal();
-      }
-    }
-
-    function escapeHtml(str) {
-      return str.replace(/[&<>'"]/g, 
-        tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        }[tag] || tag)
-      );
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModuleArchitectureModal();
-    });
   </script>
 
 </body>
