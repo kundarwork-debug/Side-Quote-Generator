@@ -98,7 +98,7 @@
     .hero-stage {
       max-width: 900px;
       margin: 0 auto;
-      padding: 60px 24px;
+      padding: 140px 24px 60px; /* Increased top padding so header doesn't overlap */
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -239,7 +239,7 @@
     }
 
     @media (max-width: 768px) {
-      .hero-stage { padding: 40px 16px; }
+      .hero-stage { padding: 120px 16px 40px; }
       .interactive-hero-zone { height: 260px; }
       .profile-action-row { max-width: 100%; }
     }
