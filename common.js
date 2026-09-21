@@ -179,7 +179,7 @@
       }
     }
 
-    // 2. INJECT LONG EXPANDED FOOTER WITH EMBEDDED BACK-TO-TOP BUTTON
+    // 2. INJECT EDGE-TO-EDGE STRETCHED FOOTER
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
@@ -247,20 +247,20 @@
         </footer>
 
         <style>
-          /* EXTENDED FOOTER STYLING */
+          /* EXTENDED STRETCHED FOOTER STYLING */
           .site-footer-extended {
             background: var(--md-sys-color-surface-container-low, #f7ede6);
             border-top: 1px solid var(--md-sys-color-outline-variant, #ede4de);
-            padding: 60px 24px 30px;
+            padding: 60px 40px 30px;
+            width: 100%;
             margin-top: auto;
             color: var(--text-main, #292524);
           }
 
           .footer-grid-container {
-            max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
             display: grid;
-            grid-template-columns: 1.2fr 2fr;
+            grid-template-columns: 1.5fr 3fr;
             gap: 40px;
             align-items: start;
             padding-bottom: 40px;
@@ -290,7 +290,7 @@
             font-size: 13.5px;
             color: var(--text-muted, #78716c);
             line-height: 1.6;
-            max-width: 360px;
+            max-width: 440px;
           }
 
           .footer-developer-tag {
@@ -309,6 +309,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+            width: 100%;
           }
 
           .footer-col-title {
@@ -339,8 +340,8 @@
           }
 
           .footer-bottom-bar {
-            max-width: 1200px;
-            margin: 24px auto 0;
+            width: 100%;
+            margin-top: 24px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -398,6 +399,9 @@
           }
 
           @media (max-width: 850px) {
+            .site-footer-extended {
+              padding: 40px 20px 24px;
+            }
             .footer-grid-container {
               grid-template-columns: 1fr;
               gap: 32px;
