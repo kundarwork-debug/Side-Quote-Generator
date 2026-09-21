@@ -69,8 +69,16 @@
                 <span>Gallery</span>
               </a>
               <a href="directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">contact_phone</span>
-                <span>Directory</span>
+                <span class="material-symbols-outlined">location_city</span>
+                <span>Hub &amp; Branch Directory</span>
+              </a>
+              <a href="field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">badge</span>
+                <span>Field Officer Directory WCRO</span>
+              </a>
+              <a href="drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">cloud_queue</span>
+                <span>APML Cloud Drive</span>
               </a>
               <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
