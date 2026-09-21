@@ -1118,7 +1118,7 @@
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Live Active Personnel</div>
             <div class="telemetry-stat-value">
-              <span id="liveUserCount">1</span> 
+              <span id="liveUserCount">888</span> 
               <span style="font-size: 14px; font-weight: 700; color: #16A34A; display: inline-flex; align-items: center; gap: 4px;">
                 <span style="width: 7px; height: 7px; background: #22C55E; border-radius: 50%; display: inline-block;"></span> Online
               </span>
@@ -1128,14 +1128,14 @@
 
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">PDF Quotations Drafted</div>
-            <div class="telemetry-stat-value" id="totalPdfDownloads">1,482+</div>
+            <div class="telemetry-stat-value" id="totalPdfDownloads">8,888+</div>
             <div class="telemetry-stat-sub">Exact Container &amp; Maxcare</div>
           </div>
 
           <div class="telemetry-stat-item">
-            <div class="telemetry-stat-label">Packaging Media &amp; Guides</div>
-            <div class="telemetry-stat-value" id="totalMediaDownloads">628+</div>
-            <div class="telemetry-stat-sub">Standards, videos &amp; inspections</div>
+            <div class="telemetry-stat-label">Cloud Files &amp; Media Downloads</div>
+            <div class="telemetry-stat-value" id="totalMediaDownloads">8,888+</div>
+            <div class="telemetry-stat-sub">Drive &amp; gallery assets</div>
           </div>
 
         </div>
@@ -1330,7 +1330,7 @@
     }
   </script>
 
-  <!-- FIREBASE REALTIME PRESENCE & METRICS COUNTER -->
+  <!-- FIREBASE REALTIME PRESENCE & METRICS COUNTER WITH NUMBER SCRAMBLE -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -1352,6 +1352,11 @@
       }
       const db = firebase.database();
 
+      // Track scramble instances for stats counters
+      const userCountScramble = new TextScrambleEffect(document.getElementById("liveUserCount"));
+      const pdfScramble = new TextScrambleEffect(document.getElementById("totalPdfDownloads"));
+      const mediaScramble = new TextScrambleEffect(document.getElementById("totalMediaDownloads"));
+
       const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
       const myPresenceRef = db.ref("presence/" + userSessionId);
       const allPresenceRef = db.ref("presence");
@@ -1365,25 +1370,24 @@
 
       allPresenceRef.on("value", (snap) => {
         const activeCount = snap.numChildren() || 1;
-        const countEl = document.getElementById("liveUserCount");
-        if (countEl) countEl.textContent = activeCount.toLocaleString('en-IN');
+        userCountScramble.setText(activeCount.toLocaleString('en-IN'));
       });
 
       const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
       totalDownloadsRef.on("value", (snap) => {
         const totalCount = snap.val();
-        const totalEl = document.getElementById("totalPdfDownloads");
-        if (totalEl && totalCount !== null && totalCount !== undefined) {
-          totalEl.textContent = Number(totalCount).toLocaleString('en-IN') + '+';
+        if (totalCount !== null && totalCount !== undefined) {
+          const finalVal = Number(totalCount).toLocaleString('en-IN') + '+';
+          pdfScramble.setText(finalVal);
         }
       });
 
       const totalMediaRef = db.ref("analytics/totalMediaDownloads");
       totalMediaRef.on("value", (snap) => {
         const totalCount = snap.val();
-        const totalEl = document.getElementById("totalMediaDownloads");
-        if (totalEl && totalCount !== null && totalCount !== undefined) {
-          totalEl.textContent = Number(totalCount).toLocaleString('en-IN') + '+';
+        if (totalCount !== null && totalCount !== undefined) {
+          const finalVal = Number(totalCount).toLocaleString('en-IN') + '+';
+          mediaScramble.setText(finalVal);
         }
       });
     } catch (err) {
