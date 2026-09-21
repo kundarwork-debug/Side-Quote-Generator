@@ -1,210 +1,222 @@
-// =========================================================
-// APML STANDALONE APK DETECTION
-// =========================================================
-(function detectStandaloneApp() {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
-                    || window.navigator.standalone 
-                    || document.referrer.includes('android-app://');
+/**
+ * ============================================================================
+ * APML PORTAL - COMMON LAYOUT & NAVIGATION CONTROLLER (common.js)
+ * ============================================================================
+ */
 
-  if (isStandalone) {
-    document.documentElement.classList.add('is-native-apk');
-  }
-})();
+document.addEventListener("DOMContentLoaded", () => {
+  initCommonLayout();
+});
 
-// =========================================================
-// APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
-// =========================================================
-(function initCommonLayout() {
-  function renderHeaderAndFooter() {
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    const isHomePage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
+function initCommonLayout() {
+  renderHeader();
+  renderFooter();
+  setupMobileMenu();
+}
 
-    // Add flag to <html> if on home page
-    if (isHomePage) {
-      document.documentElement.classList.add("is-home-page");
-    } else {
-      document.documentElement.classList.remove("is-home-page");
-    }
+/**
+ * Renders the Global Responsive Header with Live Clock & Hamburger Menu
+ */
+function renderHeader() {
+  const headerContainer = document.getElementById('header-container');
+  if (!headerContainer) return;
 
-    // 1. INJECT HEADER (Rotating Hub Logo + Live Clock + Navigation)
-    const headerContainer = document.getElementById("header-container");
-    if (headerContainer) {
-      headerContainer.innerHTML = `
-        <header class="site-header" id="siteHeader">
-          <div class="header-inner">
-            <div style="display: flex; align-items: center; gap: 20px;">
-              <a href="index.html" class="site-logo">
-                <div class="logo-badge">
-                  <img src="logo.svg" alt="APML Hub" style="width: 24px; height: 24px; display: block; object-fit: contain;">
-                </div>
-                <div class="logo-text">APML <span>Portal</span></div>
-              </a>
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
 
-              <!-- Live Header Date & Time Display -->
-              <div class="header-live-clock" id="headerLiveClock" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted, #78716c); background: var(--md-sys-color-surface-container-low, #f7ede6); padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--md-sys-color-outline-variant, #ede4de);">
-                <span class="material-symbols-outlined" style="font-size: 15px; color: var(--primary, #b91c1c);">schedule</span>
-                <span id="liveClockText">Loading time...</span>
-              </div>
-            </div>
-
-            <!-- Animated Rotating Hamburger Button -->
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span class="bar"></span>
-              <span class="bar"></span>
-              <span class="bar"></span>
-            </button>
-
-            <!-- Navigation Menu Dropdown -->
-            <nav class="nav-menu" id="navMenu">
-              <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
-                <span class="material-symbols-outlined">home</span>
-                <span>Home</span>
-              </a>
-              <a href="editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">edit_note</span>
-                <span>Quotation Editor</span>
-              </a>
-              <a href="gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">photo_library</span>
-                <span>Gallery</span>
-              </a>
-              <a href="directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">contact_phone</span>
-                <span>Directory</span>
-              </a>
-              <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">grid_view</span>
-                <span>APML Lite</span>
-              </a>
-              <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">directions_car</span>
-                <span>Car Rate</span>
-              </a>
-              <a href="local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">local_shipping</span>
-                <span>APML Local Rate</span>
-              </a>
-            </nav>
+  headerContainer.innerHTML = `
+    <header class="portal-header">
+      <div class="header-inner">
+        
+        <!-- BRAND LOGO & TITLE -->
+        <a href="index.html" class="header-brand">
+          <div class="brand-logo-pill">
+            <span class="material-symbols-outlined">hub</span>
           </div>
-        </header>
-      `;
+          <div class="brand-text-group">
+            <span class="brand-title">APML</span>
+            <span class="brand-subtitle">Portal</span>
+          </div>
+        </a>
 
-      // Initialize Live Clock Updater
-      function updateLiveClock() {
-        const clockEl = document.getElementById("liveClockText");
-        if (clockEl) {
-          const now = new Date();
-          const options = { 
-            weekday: 'short', 
-            day: '2-digit', 
-            month: 'short', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: true 
-          };
-          clockEl.textContent = now.toLocaleString('en-IN', options);
-        }
-      }
-      updateLiveClock();
-      setInterval(updateLiveClock, 1000);
+        <!-- DESKTOP NAVIGATION -->
+        <nav class="desktop-nav">
+          <a href="index.html" class="nav-link ${currentPath === 'index.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined" style="font-size: 18px;">home</span>
+            <span>Home</span>
+          </a>
+          <a href="editor.html" class="nav-link ${currentPath === 'editor.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined" style="font-size: 18px;">edit_note</span>
+            <span>Quotation Studio</span>
+          </a>
+          <a href="calculator.html" class="nav-link ${currentPath === 'calculator.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined" style="font-size: 18px;">calculate</span>
+            <span>Lite Calculator</span>
+          </a>
+          <a href="wcro-consignment-status.html" class="nav-link ${currentPath === 'wcro-consignment-status.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined" style="font-size: 18px;">local_shipping</span>
+            <span>Consignment Status</span>
+          </a>
+        </nav>
 
-      // Event Listeners for Hamburger Click & Outside Clicks
-      const hamburgerBtn = document.getElementById("hamburgerBtn");
-      const navMenu = document.getElementById("navMenu");
-      const siteHeader = document.getElementById("siteHeader");
+        <!-- HEADER RIGHT UTILITIES (LIVE CLOCK & HAMBURGER TRIGGER) -->
+        <div class="header-right-utils">
+          
+          <!-- LIVE CLOCK PILL -->
+          <div class="live-clock-pill" id="liveClockPill">
+            <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">schedule</span>
+            <span id="headerClockText">Loading time...</span>
+          </div>
 
-      if (hamburgerBtn && navMenu) {
-        hamburgerBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const isOpen = hamburgerBtn.classList.toggle("is-active");
-          navMenu.classList.toggle("open", isOpen);
-          hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        });
+          <!-- HAMBURGER MENU TOGGLE BUTTON -->
+          <button type="button" class="hamburger-toggle-btn" id="hamburgerToggleBtn" aria-label="Toggle Navigation Menu">
+            <span class="material-symbols-outlined" id="hamburgerIcon">menu</span>
+          </button>
 
-        navMenu.querySelectorAll(".nav-link").forEach((link) => {
-          link.addEventListener("click", () => {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          });
-        });
+        </div>
 
-        document.addEventListener("click", (e) => {
-          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          }
-        });
+      </div>
+    </header>
 
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          }
-        });
-      }
+    <!-- MOBILE / HAMBURGER SLIDE-OUT OVERLAY DRAWER -->
+    <div class="mobile-drawer-overlay" id="mobileDrawerOverlay">
+      <div class="mobile-drawer-panel" onclick="event.stopPropagation()">
+        
+        <div class="drawer-header">
+          <div class="brand-text-group">
+            <span class="brand-title" style="font-size: 18px;">APML Portal</span>
+            <span class="brand-subtitle">Operations Menu</span>
+          </div>
+          <button type="button" class="drawer-close-btn" id="drawerCloseBtn" aria-label="Close menu">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
 
-      // Hide/reveal on scroll only applies to home page
-      if (isHomePage) {
-        const scrollTriggerDistance = 110;
-        function handleHeaderScroll() {
-          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-          if (scrollY > scrollTriggerDistance) {
-            siteHeader?.classList.add("header-visible");
-          } else {
-            siteHeader?.classList.remove("header-visible");
-            if (navMenu && navMenu.classList.contains("open")) {
-              navMenu.classList.remove("open");
-              if (hamburgerBtn) {
-                hamburgerBtn.classList.remove("is-active");
-                hamburgerBtn.setAttribute("aria-expanded", "false");
-              }
-            }
-          }
-        }
+        <div class="drawer-links-stack">
+          <div class="drawer-category-label">Quick Navigation</div>
+          <a href="index.html" class="drawer-link ${currentPath === 'index.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">home</span>
+            <span>Home Portal</span>
+          </a>
+          <a href="editor.html" class="drawer-link ${currentPath === 'editor.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">edit_note</span>
+            <span>Quotation Drafting Studio</span>
+          </a>
+          <a href="calculator.html" class="drawer-link ${currentPath === 'calculator.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">calculate</span>
+            <span>APML Lite Rate Calculator</span>
+          </a>
+          <a href="wcro-consignment-status.html" class="drawer-link ${currentPath === 'wcro-consignment-status.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">local_shipping</span>
+            <span>WCRO Consignment Status</span>
+          </a>
 
-        window.addEventListener("scroll", handleHeaderScroll, { passive: true });
-        handleHeaderScroll();
-      }
-    }
+          <div class="drawer-category-label" style="margin-top: 16px;">Enterprise Directories &amp; Drive</div>
+          <a href="directory.html" class="drawer-link ${currentPath === 'directory.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">location_city</span>
+            <span>Hub &amp; Branch Directory</span>
+          </a>
+          <a href="field-officer.html" class="drawer-link ${currentPath === 'field-officer.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">badge</span>
+            <span>Field Officer Directory WCRO</span>
+          </a>
+          <a href="drive.html" class="drawer-link ${currentPath === 'drive.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">cloud_queue</span>
+            <span>APML Cloud Drive</span>
+          </a>
+          <a href="gallery.html" class="drawer-link ${currentPath === 'gallery.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">photo_library</span>
+            <span>Packing Standards Gallery</span>
+          </a>
 
-    // 2. FETCH & INJECT FOOTER FROM footer.html
-    const footerContainer = document.getElementById("footer-container");
-    if (footerContainer) {
-      fetch('footer.html')
-        .then(response => response.text())
-        .then(html => {
-          footerContainer.innerHTML = html;
-        })
-        .catch(err => console.warn('Could not load footer:', err));
-    }
-  }
+          <div class="drawer-category-label" style="margin-top: 16px;">Calculators</div>
+          <a href="car-rate.html" class="drawer-link ${currentPath === 'car-rate.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">directions_car</span>
+            <span>Car Rate Calculator</span>
+          </a>
+          <a href="local-rate.html" class="drawer-link ${currentPath === 'local-rate.html' ? 'active' : ''}">
+            <span class="material-symbols-outlined">local_shipping</span>
+            <span>APML Local Rate Calculator</span>
+          </a>
+        </div>
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", renderHeaderAndFooter);
-  } else {
-    renderHeaderAndFooter();
-  }
+        <div class="drawer-footer-note">
+          <span>Prasad Kundar • APML BDO</span>
+        </div>
 
-  // 3. SERVICE WORKER REGISTRATION (PWA Support)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch((err) => {
-        console.warn('ServiceWorker registration note:', err);
-      });
-    });
-  }
+      </div>
+    </div>
+  `;
 
-  // 4. HARDWARE BACK BUTTON NAVIGATION TRAP
-  window.addEventListener('popstate', () => {
-    const navMenu = document.getElementById("navMenu");
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    if (navMenu && navMenu.classList.contains('open')) {
-      navMenu.classList.remove('open');
-      if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
-    }
+  startLiveClock();
+}
+
+/**
+ * Renders the Global Footer
+ */
+function renderFooter() {
+  const footerContainer = document.getElementById('footer-container');
+  if (!footerContainer) return;
+
+  const currentYear = new Date().getFullYear();
+
+  footerContainer.innerHTML = `
+    <footer class="portal-footer">
+      <div class="footer-inner">
+        <div class="footer-left">
+          <span class="material-symbols-outlined" style="font-size: 18px; color: var(--primary);">shield_lock</span>
+          <span>APML Enterprise Operations Portal &copy; ${currentYear}</span>
+        </div>
+        <div class="footer-right">
+          <a href="about.html" class="footer-link">Architecture</a>
+          <a href="support.html" class="footer-link">Support</a>
+        </div>
+      </div>
+    </footer>
+  `;
+}
+
+/**
+ * Configures Hamburger Menu Slide-Out Interactions
+ */
+function setupMobileMenu() {
+  const toggleBtn = document.getElementById('hamburgerToggleBtn');
+  const overlay = document.getElementById('mobileDrawerOverlay');
+  const closeBtn = document.getElementById('drawerCloseBtn');
+
+  if (!toggleBtn || !overlay) return;
+
+  const openDrawer = () => {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeDrawer = () => {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  toggleBtn.addEventListener('click', openDrawer);
+  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDrawer();
   });
-})();
+}
+
+/**
+ * Updates the Live Header Clock
+ */
+function startLiveClock() {
+  const clockText = document.getElementById('headerClockText');
+  if (!clockText) return;
+
+  const updateClock = () => {
+    const now = new Date();
+    const options = { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    clockText.textContent = now.toLocaleString('en-IN', options);
+  };
+
+  updateClock();
+  setInterval(updateClock, 1000);
+}
