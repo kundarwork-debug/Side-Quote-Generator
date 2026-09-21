@@ -1259,6 +1259,7 @@
     const driveFilesRef = db.ref("telegram_gdrive_files");
     const driveFoldersRef = db.ref("telegram_gdrive_folders");
     const dumpBinRef = db.ref("telegram_dump_gallery_folders");
+    const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
       "kundar.work@gmail.com",
@@ -1713,6 +1714,11 @@
     }
 
     async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
+      // Increment Firebase total media downloads counter so index.html updates instantly
+      totalMediaDownloadsRef.transaction((currentValue) => {
+        return (currentValue || 0) + 1;
+      });
+
       let targetUrl = legacyUrl;
       
       if (fileId) {
