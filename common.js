@@ -179,7 +179,7 @@
       }
     }
 
-    // 2. INJECT FOOTER
+    // 2. INJECT FOOTER (Restored with Terms, Privacy & Bug Report)
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       footerContainer.innerHTML = `
@@ -190,6 +190,14 @@
                 <img src="logo.svg" alt="APML Hub" style="width: 18px; height: 18px; display: block; object-fit: contain;">
               </div>
               <div class="footer-credit-text">Designed &amp; developed by <span>Prasad</span></div>
+            </div>
+
+            <div class="footer-links-group" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 13px; font-weight: 600;">
+              <a href="terms.html" class="footer-nav-link" style="color: var(--text-muted, #78716c); text-decoration: none; transition: color 0.2s;">Terms &amp; Conditions</a>
+              <a href="privacy.html" class="footer-nav-link" style="color: var(--text-muted, #78716c); text-decoration: none; transition: color 0.2s;">Privacy Policy</a>
+              <a href="bug-report.html" class="footer-nav-link" style="color: var(--primary, #b91c1c); text-decoration: none; transition: color 0.2s; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 15px;">bug_report</span> Report Bug
+              </a>
             </div>
 
             <div class="footer-actions">
