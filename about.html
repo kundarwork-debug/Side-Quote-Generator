@@ -88,8 +88,9 @@
       width: 100%;
       flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
     }
 
     /* =========================================================
@@ -98,7 +99,7 @@
     .hero-stage {
       max-width: 900px;
       margin: 0 auto;
-      padding: 140px 24px 60px;
+      padding: 140px 24px 20px;
       text-align: center;
       display: flex;
       flex-direction: column;
@@ -229,6 +230,53 @@
     }
 
     /* =========================================================
+       FLUID STREAMLINED SERVICES & SOLUTIONS SECTION (NATURAL PAGE FLOW)
+       ========================================================= */
+    .services-fluid-section {
+      width: 100%;
+      max-width: 1080px;
+      margin: 60px auto 100px;
+      padding: 0 32px;
+      text-align: left;
+    }
+
+    .services-content-wrapper {
+      padding-left: 24px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .services-heading,
+    .services-subline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(24px, 4vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+    }
+
+    .services-heading {
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.3em;
+    }
+
+    .services-subline {
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .services-description {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: clamp(16px, 2vw, 18px);
+      color: var(--text-muted);
+      line-height: 1.8;
+      font-weight: 500;
+    }
+
+    /* =========================================================
        REDIRECT MODAL OVERLAY (5s TIMEOUT & LOADING BAR)
        ========================================================= */
     .redirect-modal-overlay {
@@ -322,9 +370,11 @@
     }
 
     @media (max-width: 768px) {
-      .hero-stage { padding: 120px 16px 40px; }
+      .hero-stage { padding: 120px 16px 10px; }
       .interactive-hero-zone { height: 260px; }
       .profile-action-row { max-width: 100%; }
+      .services-fluid-section { padding: 0 20px; margin: 40px auto 80px; }
+      .services-content-wrapper { padding-left: 16px; }
     }
   </style>
 </head>
@@ -378,6 +428,23 @@
 
     </section>
 
+    <!-- STREAMLINED FLUID SERVICES SECTION WITH TEXT LOOP -->
+    <section class="services-fluid-section">
+      <div class="services-content-wrapper">
+        <h2 class="services-heading">
+          Need 
+          <span class="inline-flex whitespace-pre-wrap">
+            <span id="textLoopSlot">AI Solutions</span>
+          </span>
+          ?
+        </h2>
+        <div class="services-subline">We got you covered!! 🚀</div>
+        <p class="services-description">
+          We build AI solutions, modern websites, and scalable SaaS MVPs that turn ideas into real products. Whether you’re launching something new, automating your business, or taking your digital presence to the next level—we’ve got you covered. Let’s build something impactful together.
+        </p>
+      </div>
+    </section>
+
   </main>
 
   <!-- REDIRECTION MODAL -->
@@ -399,7 +466,32 @@
 
   <script src="common.js?v=19.0"></script>
 
+  <!-- FRAMER MOTION & TEXT LOOP SCRIPT DEPENDENCIES FOR VANILLA JS INTEGRATION -->
+  <script src="https://unpkg.com/framer-motion@11.1.7/dist/framer-motion.js"></script>
+
   <script>
+    // Simple Vanilla JS Text Loop Cycler matching the transition configuration
+    const loopWords = ["AI Solutions", "Website Development", "SaaS MVP"];
+    let currentWordIndex = 0;
+    const slotEl = document.getElementById('textLoopSlot');
+
+    if (slotEl) {
+      setInterval(() => {
+        slotEl.style.opacity = '0';
+        slotEl.style.transform = 'translateY(10px)';
+        slotEl.style.filter = 'blur(4px)';
+        slotEl.style.transition = 'all 0.3s ease';
+
+        setTimeout(() => {
+          currentWordIndex = (currentWordIndex + 1) % loopWords.length;
+          slotEl.textContent = loopWords[currentWordIndex];
+          slotEl.style.opacity = '1';
+          slotEl.style.transform = 'translateY(0)';
+          slotEl.style.filter = 'blur(0px)';
+        }, 300);
+      }, 2500);
+    }
+
     // TRIPLE-CLICK EASTER EGG REDIRECT TO 404.html
     let lottieClickCount = 0;
     let lottieClickTimer = null;
