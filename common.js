@@ -179,7 +179,7 @@
       }
     }
 
-    // 2. INJECT LONG EXPANDED FOOTER & BACK TO TOP BUTTON
+    // 2. INJECT LONG EXPANDED FOOTER WITH EMBEDDED BACK-TO-TOP BUTTON
     const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
@@ -231,17 +231,20 @@
 
           <div class="footer-bottom-bar">
             <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
-            <a href="about.html" class="footer-about-pill">
-              <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
-              <span>About Developer</span>
-            </a>
+            
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <a href="about.html" class="footer-about-pill">
+                <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
+                <span>About Developer</span>
+              </a>
+
+              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON -->
+              <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
+                <span class="material-symbols-outlined">arrow_upward</span>
+              </button>
+            </div>
           </div>
         </footer>
-
-        <!-- BACK TO TOP ARROW BUTTON -->
-        <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Scroll to top" title="Go to top">
-          <span class="material-symbols-outlined">arrow_upward</span>
-        </button>
 
         <style>
           /* EXTENDED FOOTER STYLING */
@@ -372,13 +375,10 @@
             object-fit: cover;
           }
 
-          /* BACK TO TOP FLOATING BUTTON STYLES */
-          .back-to-top-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 46px;
-            height: 46px;
+          /* EMBEDDED FOOTER BACK TO TOP BUTTON */
+          .footer-back-to-top-btn {
+            width: 42px;
+            height: 42px;
             background: var(--primary, #b91c1c);
             color: #ffffff;
             border: none;
@@ -387,24 +387,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 16px rgba(185, 28, 28, 0.35);
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(15px);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+            transition: all 0.2s ease;
           }
 
-          .back-to-top-btn.visible {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-          }
-
-          .back-to-top-btn:hover {
+          .footer-back-to-top-btn:hover {
             background: #991b1b;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(185, 28, 28, 0.45);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
           }
 
           @media (max-width: 850px) {
@@ -419,18 +409,10 @@
         </style>
       `;
 
-      // Back to Top Button Interaction Logic
-      const backToTopBtn = document.getElementById("backToTopBtn");
-      if (backToTopBtn) {
-        window.addEventListener("scroll", () => {
-          if (window.pageYOffset > 300) {
-            backToTopBtn.classList.add("visible");
-          } else {
-            backToTopBtn.classList.remove("visible");
-          }
-        }, { passive: true });
-
-        backToTopBtn.addEventListener("click", () => {
+      // Footer Back to Top Click Handler
+      const footerBackToTopBtn = document.getElementById("footerBackToTopBtn");
+      if (footerBackToTopBtn) {
+        footerBackToTopBtn.addEventListener("click", () => {
           window.scrollTo({
             top: 0,
             behavior: "smooth"
