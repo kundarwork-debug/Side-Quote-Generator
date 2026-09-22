@@ -1303,6 +1303,7 @@
 
     const DEFAULT_FOLDERS = [
       { id: 'truck', label: 'Truck & Fleet', icon: 'local_shipping' },
+      { id: 'crockery', label: 'Crockery', icon: 'restaurant' },
       { id: 'packing-images', label: 'Packing Images', icon: 'inventory_2' },
       { id: 'bike-packing', label: 'Bike Packing', icon: 'two_wheeler' },
       { id: 'car-transportation', label: 'Car Transportation', icon: 'directions_car' },
@@ -1417,7 +1418,7 @@
       if (stored) {
         try {
           foldersList = JSON.parse(stored);
-          const requiredIds = ['electronic', 'furniture', 'others'];
+          const requiredIds = ['crockery', 'electronic', 'furniture', 'others'];
           requiredIds.forEach(reqId => {
             if (!foldersList.some(f => f.id === reqId)) {
               const def = DEFAULT_FOLDERS.find(d => d.id === reqId);
@@ -1452,7 +1453,7 @@
       `;
 
       tabsHtml += visibleFolders.map(folder => {
-        const isProtectedFolder = ['truck', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others'].includes(folder.id);
+        const isProtectedFolder = ['truck', 'crockery', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others'].includes(folder.id);
         const adminAuthenticated = isCurrentUserAdmin();
         const adminActions = adminAuthenticated && !isProtectedFolder ? `
           <span class="folder-admin-actions" onclick="event.stopPropagation()">
