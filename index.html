@@ -11,10 +11,10 @@
   <title>APML Portal — Enterprise Operations Hub</title>
   <meta name="description" content="APML Portal is the official enterprise operations workspace for quotation drafting, nationwide directory lookups, dynamic rate matrices, and packing logistics standards.">
 
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.39">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.44">
   
   <!-- YOUR COMMON CSS -->
-  <link rel="stylesheet" href="common.css?v=21.39">
+  <link rel="stylesheet" href="common.css?v=21.44">
 
   <!-- GOOGLE FONTS & MATERIAL ICONS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,8 +32,8 @@
       --primary-gradient: linear-gradient(135deg, #b91c1c 0%, #e11d48 50%, #f43f5e 100%);
       --primary-soft: rgba(185, 28, 28, 0.06);
       
-      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
-      --surface-card: #FFFFFF; /* Pure White Tiles */
+      --bg-base: #FDF8F5;
+      --surface-card: #FFFFFF;
       --surface-border: #ede4de;
       --surface-subtle: #f7ede6;
       
@@ -79,7 +79,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Soft Radial Mesh Background */
     .ambient-bg {
       position: fixed;
       top: 0;
@@ -105,7 +104,6 @@
       z-index: 1;
     }
 
-    /* EXPANDED DESKTOP HERO SECTION */
     .hero-center {
       max-width: 1040px;
       margin: 0 auto;
@@ -153,7 +151,6 @@
       font-weight: 500;
     }
 
-    /* PER-WORD BLUR ANIMATION STYLES */
     .hero-main-title {
       font-size: clamp(40px, 6.2vw, 70px);
       font-weight: 800;
@@ -235,7 +232,6 @@
       50% { opacity: 0; }
     }
 
-    /* SEARCH BAR */
     .search-wrapper {
       width: 100%;
       max-width: 820px;
@@ -282,7 +278,6 @@
       font-weight: 400;
     }
 
-    /* CATEGORY TABS */
     .category-pills-row {
       display: flex;
       flex-wrap: wrap;
@@ -321,7 +316,6 @@
       box-shadow: 0 4px 14px rgba(185, 28, 28, 0.22);
     }
 
-    /* OPERATIONS MODULES GRID */
     .workspace-section {
       max-width: 1360px;
       margin: 40px auto 60px;
@@ -366,7 +360,6 @@
       width: 100%;
     }
 
-    /* PURE WHITE TILES FOR MODULE CARDS */
     .module-card {
       background: #FFFFFF !important;
       border: 1px solid var(--surface-border);
@@ -386,6 +379,35 @@
       transform: translateY(-4px);
       border-color: rgba(185, 28, 28, 0.4);
       box-shadow: var(--shadow-hover);
+    }
+
+    /* Maintenance Card States */
+    .module-card.under-maintenance {
+      opacity: 0.75;
+      border-style: dashed;
+      border-color: #f59e0b;
+      cursor: not-allowed;
+    }
+
+    .module-card.under-maintenance:hover {
+      transform: none;
+      box-shadow: var(--shadow-subtle);
+      border-color: #f59e0b;
+    }
+
+    .badge-maintenance {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #92400e;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .card-head {
@@ -408,7 +430,7 @@
       transition: all 0.25s ease;
     }
 
-    .module-card:hover .card-icon-pill {
+    .module-card:hover:not(.under-maintenance) .card-icon-pill {
       background: var(--primary);
       color: #FFFFFF;
       box-shadow: 0 6px 16px rgba(185, 28, 28, 0.25);
@@ -426,19 +448,7 @@
       border-radius: var(--radius-pill);
     }
 
-    .badge-core {
-      font-size: 10.5px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #b45309;
-      background: #fef3c7;
-      border: 1px solid #fde68a;
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-    }
-
-    .badge-sync {
+    .badge-core, .badge-sync {
       font-size: 10.5px;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -512,13 +522,12 @@
       color: var(--primary);
     }
 
-    .module-card:hover .cta-arrow {
+    .module-card:hover:not(.under-maintenance) .cta-arrow {
       transform: translateX(4px);
       background: var(--primary);
       color: #FFFFFF;
     }
 
-    /* TELEMETRY & IMPACT WIDGET (PURE WHITE TILE) WITH TEXT SCRAMBLE */
     .telemetry-section {
       max-width: 1360px;
       margin: 8px auto 60px;
@@ -635,7 +644,6 @@
       margin-top: 2px;
     }
 
-    /* SUPPORT FLOATING FAB WIDGET STYLES WITH FLUSH LOTTIE VECTOR ANIMATION */
     .support-fab {
       position: fixed;
       bottom: 32px;
@@ -644,7 +652,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 0px; /* Flush gap */
+      gap: 0px;
       text-decoration: none;
       pointer-events: none;
       transition: opacity 0.3s ease;
@@ -669,10 +677,6 @@
       opacity: 1;
       transform: translateY(0) scale(1);
       pointer-events: auto;
-    }
-    .support-msg-bubble:hover {
-      transform: translateY(-2px) scale(1) !important;
-      box-shadow: 6px 6px 0px var(--text-main) !important;
     }
     .cursor {
       display: inline-block;
@@ -755,7 +759,7 @@
       
       <!-- Eyebrow Pill -->
       <div class="eyebrow-pill">
-        <span class="eyebrow-badge">V21.39</span>
+        <span class="eyebrow-badge">V21.44</span>
         <span>Enterprise Operations Workspace</span>
         <span class="eyebrow-dot">•</span>
         <span class="eyebrow-sub">APML Nationwide</span>
@@ -850,34 +854,35 @@
           </div>
         </a>
 
-        <!-- 2. GALLERY -->
-        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <!-- 2. GALLERY (UNDER MAINTENANCE) -->
+        <div class="module-card under-maintenance" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging maintenance">
           <div>
             <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">photo_library</span>
+              <div class="card-icon-pill" style="color: #d97706; background: rgba(245, 158, 11, 0.1);">
+                <span class="material-symbols-outlined">engineering</span>
               </div>
-              <span class="status-tag">Media Library</span>
+              <span class="badge-maintenance">
+                <span class="material-symbols-outlined" style="font-size: 12px;">build</span> Under Maintenance
+              </span>
             </div>
             <h2 class="card-title">Packing Standards Gallery</h2>
-            <p class="card-description">High-definition media library with video demonstrations and official packaging standards for nationwide consignments.</p>
+            <p class="card-description">Currently undergoing scheduled database architecture and bot token migrations. Back online shortly.</p>
             <div class="tags-flow">
               <span class="micro-tag">Fleet Logistics</span>
-              <span class="micro-tag">Bike Packaging</span>
-              <span class="micro-tag">Car Carriers</span>
-              <span class="micro-tag">Safety SOPs</span>
+              <span class="micro-tag">Media Sync</span>
+              <span class="micro-tag">System Upgrade</span>
             </div>
           </div>
           <div class="card-footer-cta static">
-            <span>Live Web Module</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary);">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
+            <span style="color: #d97706; font-weight: 700;">Temporarily Unavailable</span>
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #d97706;">
+              <span>Paused</span>
+              <div class="cta-arrow" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">lock_clock</span>
               </div>
             </div>
           </div>
-        </a>
+        </div>
 
         <!-- 3. HUB DETAILS -->
         <a href="hub-details.html" class="module-card" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
@@ -937,34 +942,35 @@
           </div>
         </a>
 
-        <!-- 5. APML CLOUD DRIVE -->
-        <a href="drive.html" class="module-card" data-category="drive" data-tags="drive cloud folder upload storage telegram apml documents files">
+        <!-- 5. APML CLOUD DRIVE (UNDER MAINTENANCE) -->
+        <div class="module-card under-maintenance" data-category="drive" data-tags="drive cloud folder upload storage telegram apml documents files maintenance">
           <div>
             <div class="card-head">
-              <div class="card-icon-pill">
-                <span class="material-symbols-outlined">cloud_queue</span>
+              <div class="card-icon-pill" style="color: #d97706; background: rgba(245, 158, 11, 0.1);">
+                <span class="material-symbols-outlined">engineering</span>
               </div>
-              <span class="status-tag">Cloud Storage</span>
+              <span class="badge-maintenance">
+                <span class="material-symbols-outlined" style="font-size: 12px;">build</span> Under Maintenance
+              </span>
             </div>
             <h2 class="card-title">APML Cloud Drive</h2>
-            <p class="card-description">Enterprise cloud workspace for directory folder management, file uploads up to 50MB, and secure document sharing.</p>
+            <p class="card-description">Enterprise cloud workspace undergoing scheduled token re-indexing and storage security enhancements.</p>
             <div class="tags-flow">
               <span class="micro-tag">Folder Navigation</span>
-              <span class="micro-tag">Telegram Hosting</span>
-              <span class="micro-tag">50MB Limit</span>
-              <span class="micro-tag">Fast Sharing</span>
+              <span class="micro-tag">Token Refresh</span>
+              <span class="micro-tag">Data Migration</span>
             </div>
           </div>
           <div class="card-footer-cta static">
-            <span>Live Web Module</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary);">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
+            <span style="color: #d97706; font-weight: 700;">Temporarily Unavailable</span>
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #d97706;">
+              <span>Paused</span>
+              <div class="cta-arrow" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">lock_clock</span>
               </div>
             </div>
           </div>
-        </a>
+        </div>
 
         <!-- 6. WCRO CONSIGNMENT STATUS -->
         <a href="wcro-consignment-status.html" class="module-card" data-category="consignment" data-tags="consignment tracking live status wcro dockets sheets logistics">
@@ -1103,7 +1109,7 @@
           
           <div class="operational-badge">
             <span class="operational-dot"></span>
-            <span>All 9 Systems Operational</span>
+            <span>All Operational Systems Monitored</span>
           </div>
         </div>
 
@@ -1111,8 +1117,8 @@
           
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Active Enterprise Modules</div>
-            <div class="telemetry-stat-value">9 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">100% Ready</span></div>
-            <div class="telemetry-stat-sub">Rate matrices, Hubs &amp; Cloud</div>
+            <div class="telemetry-stat-value">7 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">Online</span></div>
+            <div class="telemetry-stat-sub">Rate matrices, Hubs &amp; Editor</div>
           </div>
 
           <div class="telemetry-stat-item">
@@ -1135,7 +1141,7 @@
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Cloud Files &amp; Media Downloads</div>
             <div class="telemetry-stat-value" id="totalMediaDownloads">8,888+</div>
-            <div class="telemetry-stat-sub">Drive &amp; gallery assets</div>
+            <div class="telemetry-stat-sub">Drive &amp; gallery archives</div>
           </div>
 
         </div>
@@ -1152,7 +1158,6 @@
   <div class="support-fab" id="support-fab">
     <a href="about.html" style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px; pointer-events: none;">      
       <div class="support-msg-bubble" style="position: relative;">        
-        <!-- Lottie Vector Animation sitting right on top of the speech bubble with zero spacing -->
         <lottie-player 
           src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
           background="transparent" 
@@ -1170,7 +1175,7 @@
   </div>
 
   <!-- YOUR COMMON JS -->
-  <script src="common.js?v=21.39"></script>
+  <script src="common.js?v=21.44"></script>
 
   <!-- SEARCH & FILTER SCRIPTS -->
   <script>
@@ -1309,9 +1314,7 @@
 
     function typeWriter() {
       if (typeIndex < msg.length) {
-        textInputCheck: {
-          typeText.innerHTML += msg.charAt(typeIndex);
-        }
+        typeText.innerHTML += msg.charAt(typeIndex);
         typeIndex++;
         setTimeout(typeWriter, 40);
       } else {
@@ -1352,7 +1355,6 @@
       }
       const db = firebase.database();
 
-      // Track scramble instances for stats counters
       const userCountScramble = new TextScrambleEffect(document.getElementById("liveUserCount"));
       const pdfScramble = new TextScrambleEffect(document.getElementById("totalPdfDownloads"));
       const mediaScramble = new TextScrambleEffect(document.getElementById("totalMediaDownloads"));
