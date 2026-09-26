@@ -1240,7 +1240,7 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
+    const BOT_TOKEN = "8937016793:AAG-fYv5nMQtD8SU1Dwa1ZgCaDCQJbwFTz0";
     const PRIMARY_CHAT_ID = "-1004302268775";
     const FALLBACK_CHAT_ID = "-4302268775";
     const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
@@ -1714,7 +1714,6 @@
     }
 
     async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
-      // Increment Firebase total media downloads counter so index.html updates instantly
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
