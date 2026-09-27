@@ -381,35 +381,6 @@
       box-shadow: var(--shadow-hover);
     }
 
-    /* Maintenance Card States */
-    .module-card.under-maintenance {
-      opacity: 0.75;
-      border-style: dashed;
-      border-color: #f59e0b;
-      cursor: not-allowed;
-    }
-
-    .module-card.under-maintenance:hover {
-      transform: none;
-      box-shadow: var(--shadow-subtle);
-      border-color: #f59e0b;
-    }
-
-    .badge-maintenance {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #92400e;
-      background: #fef3c7;
-      border: 1px solid #f59e0b;
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
     .card-head {
       display: flex;
       align-items: flex-start;
@@ -430,7 +401,7 @@
       transition: all 0.25s ease;
     }
 
-    .module-card:hover:not(.under-maintenance) .card-icon-pill {
+    .module-card:hover .card-icon-pill {
       background: var(--primary);
       color: #FFFFFF;
       box-shadow: 0 6px 16px rgba(185, 28, 28, 0.25);
@@ -522,7 +493,7 @@
       color: var(--primary);
     }
 
-    .module-card:hover:not(.under-maintenance) .cta-arrow {
+    .module-card:hover .cta-arrow {
       transform: translateX(4px);
       background: var(--primary);
       color: #FFFFFF;
@@ -854,35 +825,33 @@
           </div>
         </a>
 
-        <!-- 2. GALLERY (UNDER MAINTENANCE) -->
-        <div class="module-card under-maintenance" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging maintenance">
+        <!-- 2. GALLERY (OPENED & ACTIVE) -->
+        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
-              <div class="card-icon-pill" style="color: #d97706; background: rgba(245, 158, 11, 0.1);">
-                <span class="material-symbols-outlined">engineering</span>
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">photo_library</span>
               </div>
-              <span class="badge-maintenance">
-                <span class="material-symbols-outlined" style="font-size: 12px;">build</span> Under Maintenance
-              </span>
+              <span class="status-tag">Media Assets</span>
             </div>
             <h2 class="card-title">Packing Standards Gallery</h2>
-            <p class="card-description">Currently undergoing scheduled database architecture and bot token migrations. Back online shortly.</p>
+            <p class="card-description">Visual packaging standards, fleet logistics documentation, and operational video references with live download counters.</p>
             <div class="tags-flow">
               <span class="micro-tag">Fleet Logistics</span>
-              <span class="micro-tag">Media Sync</span>
-              <span class="micro-tag">System Upgrade</span>
+              <span class="micro-tag">ImgBB Sync</span>
+              <span class="micro-tag">Media Archive</span>
             </div>
           </div>
-          <div class="card-footer-cta static">
-            <span style="color: #d97706; font-weight: 700;">Temporarily Unavailable</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #d97706;">
-              <span>Paused</span>
-              <div class="cta-arrow" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
-                <span class="material-symbols-outlined" style="font-size: 16px;">lock_clock</span>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span>Launch</span>
+              <div class="cta-arrow">
+                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
               </div>
             </div>
           </div>
-        </div>
+        </a>
 
         <!-- 3. HUB DETAILS -->
         <a href="hub-details.html" class="module-card" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
@@ -942,35 +911,33 @@
           </div>
         </a>
 
-        <!-- 5. APML CLOUD DRIVE (UNDER MAINTENANCE) -->
-        <div class="module-card under-maintenance" data-category="drive" data-tags="drive cloud folder upload storage telegram apml documents files maintenance">
+        <!-- 5. APML CLOUD DRIVE (OPENED & ACTIVE) -->
+        <a href="drive.html" class="module-card" data-category="drive" data-tags="drive cloud folder upload storage telegram apml documents files">
           <div>
             <div class="card-head">
-              <div class="card-icon-pill" style="color: #d97706; background: rgba(245, 158, 11, 0.1);">
-                <span class="material-symbols-outlined">engineering</span>
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">folder_open</span>
               </div>
-              <span class="badge-maintenance">
-                <span class="material-symbols-outlined" style="font-size: 12px;">build</span> Under Maintenance
-              </span>
+              <span class="status-tag">Cloud Storage</span>
             </div>
             <h2 class="card-title">APML Cloud Drive</h2>
-            <p class="card-description">Enterprise cloud workspace undergoing scheduled token re-indexing and storage security enhancements.</p>
+            <p class="card-description">Enterprise cloud workspace with custom folder navigation, file previews, rankings, and secure multi-select management.</p>
             <div class="tags-flow">
               <span class="micro-tag">Folder Navigation</span>
-              <span class="micro-tag">Token Refresh</span>
-              <span class="micro-tag">Data Migration</span>
+              <span class="micro-tag">Live Sync</span>
+              <span class="micro-tag">Multi-Select Tools</span>
             </div>
           </div>
-          <div class="card-footer-cta static">
-            <span style="color: #d97706; font-weight: 700;">Temporarily Unavailable</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #d97706;">
-              <span>Paused</span>
-              <div class="cta-arrow" style="background: rgba(245, 158, 11, 0.1); color: #d97706;">
-                <span class="material-symbols-outlined" style="font-size: 16px;">lock_clock</span>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span>Launch</span>
+              <div class="cta-arrow">
+                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
               </div>
             </div>
           </div>
-        </div>
+        </a>
 
         <!-- 6. WCRO CONSIGNMENT STATUS -->
         <a href="wcro-consignment-status.html" class="module-card" data-category="consignment" data-tags="consignment tracking live status wcro dockets sheets logistics">
@@ -1117,7 +1084,7 @@
           
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Active Enterprise Modules</div>
-            <div class="telemetry-stat-value">7 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">Online</span></div>
+            <div class="telemetry-stat-value">9 <span style="font-size: 16px; font-weight: 700; color: #16A34A;">Online</span></div>
             <div class="telemetry-stat-sub">Rate matrices, Hubs &amp; Editor</div>
           </div>
 
