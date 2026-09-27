@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -614,7 +615,8 @@
       align-items: center;
       gap: 10px;
       flex: 1;
-      max-width: 520px;
+      max-width: 600px;
+      flex-wrap: wrap;
     }
 
     .folder-select {
@@ -629,7 +631,7 @@
       color: var(--text-main);
       outline: none;
       flex: 1;
-      min-width: 0;
+      min-width: 180px;
     }
 
     .folder-select.select-highlight-error {
@@ -651,9 +653,9 @@
       gap: 6px;
       background: var(--primary);
       color: #ffffff;
-      padding: 10px 22px;
+      padding: 10px 18px;
       border-radius: var(--radius-pill);
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
       border: none;
       cursor: pointer;
@@ -668,10 +670,27 @@
       transform: translateY(-1px);
     }
 
-    .btn-action-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+    .btn-action-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e293b;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(30, 41, 59, 0.2);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .btn-action-secondary:hover {
+      background: #0f172a;
+      transform: translateY(-1px);
     }
 
     .filter-bar {
@@ -1182,7 +1201,7 @@
       </div>
     </div>
 
-    <!-- MEDIA UPLOAD PANEL -->
+    <!-- MEDIA UPLOAD PANEL WITH SEPARATE BUTTONS -->
     <div class="unified-action-panel">
       <div class="upload-action-content">
         
@@ -1191,8 +1210,8 @@
             <span class="material-symbols-outlined" style="font-size: 24px;">cloud_upload</span>
           </div>
           <div>
-            <h3>Upload Multiple Media Assets</h3>
-            <p id="uploadStatusText">Select destination category and choose multiple images or videos (Permanent cloud sync)</p>
+            <h3>Upload Media Assets</h3>
+            <p id="uploadStatusText">Select destination category and choose files or add a video link</p>
           </div>
         </div>
 
@@ -1200,10 +1219,17 @@
           <select id="uploadFolderSelect" class="folder-select" required onchange="this.classList.remove('select-highlight-error')">
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
-          <input type="file" id="mediaFileInput" accept="image/*,video/mp4,video/webm,video/quicktime" multiple style="display: none;" onchange="handlePermanentUpload(this.files)">
-          <button type="button" class="btn-action-primary" id="uploadTriggerBtn" onclick="triggerCompulsoryUpload()">
+          
+          <input type="file" id="mediaFileInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
+          
+          <button type="button" class="btn-action-primary" id="uploadPhotoBtn" onclick="triggerPhotoUpload()">
             <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
-            <span>Upload Files</span>
+            <span>Upload Photos</span>
+          </button>
+
+          <button type="button" class="btn-action-secondary" id="uploadVideoBtn" onclick="triggerVideoLinkPrompt()">
+            <span class="material-symbols-outlined" style="font-size: 18px;">video_library</span>
+            <span>Add Video Link</span>
           </button>
         </div>
 
@@ -1245,7 +1271,7 @@
     });
 
     const IMGBB_API_KEY = "58eed290883a293c596b33aa46fb1289";
-    const MAX_FILE_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB Limit
+    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1258,7 +1284,7 @@
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.database();
-    const mediaRef = db.ref("apml_hybrid_gallery");
+    const mediaRef = db.ref("apml_ranked_gallery");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1299,7 +1325,7 @@
       return columns * rows;
     }
 
-    const CACHE_KEY_MEDIA = 'apml_hybrid_gallery_cache_v3';
+    const CACHE_KEY_MEDIA = 'apml_ranked_gallery_cache_v1';
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1534,14 +1560,14 @@
       renderGallery();
     }
 
-    function triggerCompulsoryUpload() {
+    function triggerPhotoUpload() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
 
       if (!uploadSelect.value) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder before uploading!</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
         return;
       }
 
@@ -1549,8 +1575,47 @@
       document.getElementById('mediaFileInput').click();
     }
 
-    function isVideo(filename) {
-      return /\.(mp4|webm|ogg|mov|m4v)$/i.test(filename);
+    async function triggerVideoLinkPrompt() {
+      const uploadSelect = document.getElementById('uploadFolderSelect');
+      const statusText = document.getElementById('uploadStatusText');
+
+      if (!uploadSelect.value) {
+        uploadSelect.classList.add('select-highlight-error');
+        uploadSelect.focus();
+        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
+        return;
+      }
+
+      uploadSelect.classList.remove('select-highlight-error');
+      const folder = uploadSelect.value;
+
+      const videoUrl = prompt("Enter direct video URL or YouTube link:", "");
+      if (!videoUrl || !videoUrl.trim()) return;
+
+      const videoName = prompt("Enter a title/name for this video:", "Operation Video");
+      const title = videoName && videoName.trim() ? videoName.trim() : "Operation Video";
+
+      statusText.innerHTML = `<span style="color: var(--primary);">Adding video link...</span>`;
+
+      try {
+        await mediaRef.push({
+          url: videoUrl.trim(),
+          folder: folder,
+          name: title,
+          size: 0,
+          isVideo: true,
+          viewsCount: 0,
+          downloadsCount: 0,
+          timestamp: Date.now()
+        });
+
+        statusText.innerHTML = `<span style="color: #10b981;">Video link added successfully!</span>`;
+        setTimeout(() => {
+          statusText.textContent = "Select destination category and choose files or add a video link";
+        }, 3000);
+      } catch (err) {
+        alert("Failed to save video link: " + err.message);
+      }
     }
 
     function formatBytes(bytes, decimals = 1) {
@@ -1562,69 +1627,48 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
-    // HYBRID PERMANENT UPLOAD HANDLER (Photos -> ImgBB, Videos -> Direct Link Prompt for 100% Reliability)
-    async function handlePermanentUpload(files) {
+    async function handlePhotoUpload(files) {
       if (!files || !files.length) return;
 
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const folder = uploadSelect.value;
       const statusText = document.getElementById('uploadStatusText');
-      const uploadBtn = document.getElementById('uploadTriggerBtn');
+      const uploadBtn = document.getElementById('uploadPhotoBtn');
 
-      if (!folder) {
-        uploadSelect.classList.add('select-highlight-error');
-        uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
-        document.getElementById('mediaFileInput').value = '';
-        return;
-      }
+      if (!folder) return;
 
       uploadBtn.disabled = true;
       let successCount = 0;
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        const fileIsVideo = isVideo(file.name);
-
-        statusText.innerHTML = `<span style="color: var(--primary);">Processing ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary);">Uploading photo ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
-          let fileUrl = '';
+          if (file.size > MAX_FILE_SIZE_BYTES) {
+            alert(`File size exceeds limit (${file.name}). Skipping.`);
+            continue;
+          }
 
-          if (fileIsVideo) {
-            const videoLink = prompt(`Enter a direct video URL or YouTube link for "${file.name}":`, "");
-            if (!videoLink || !videoLink.trim()) {
-              continue;
-            }
-            fileUrl = videoLink.trim();
-          } else {
-            if (file.size > MAX_FILE_SIZE_BYTES) {
-              alert(`Image size exceeds limit (${file.name}). Skipping.`);
-              continue;
-            }
+          const formData = new FormData();
+          formData.append('image', file);
 
-            const formData = new FormData();
-            formData.append('image', file);
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
 
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-              method: 'POST',
-              body: formData
-            });
-            const data = await res.json();
-
-            if (data.success && data.data && data.data.url) {
-              fileUrl = data.data.url;
-            } else {
-              throw new Error('Photo upload rejected by ImgBB.');
-            }
+          if (!data.success || !data.data || !data.data.url) {
+            throw new Error('ImgBB upload rejected.');
           }
 
           await mediaRef.push({
-            url: fileUrl,
+            url: data.data.url,
             folder: folder,
             name: file.name,
             size: file.size || 0,
-            isVideo: fileIsVideo,
+            isVideo: false,
             viewsCount: 0,
             downloadsCount: 0,
             timestamp: Date.now()
@@ -1632,17 +1676,17 @@
 
           successCount++;
         } catch (err) {
-          console.error(`Error processing "${file.name}":`, err.message);
-          alert(`Failed to process ${file.name}.`);
+          console.error(`Error uploading "${file.name}":`, err.message);
+          alert(`Failed to upload ${file.name}.`);
         }
       }
 
       document.getElementById('mediaFileInput').value = '';
       uploadBtn.disabled = false;
-      statusText.innerHTML = `<span style="color: #10b981;">Successfully added ${successCount} of ${files.length} files!</span>`;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} photos!</span>`;
       
       setTimeout(() => {
-        statusText.textContent = "Select destination category and choose multiple images or videos";
+        statusText.textContent = "Select destination category and choose files or add a video link";
       }, 4000);
     }
 
@@ -1678,10 +1722,11 @@
       hidePageLoader();
     });
 
+    // RANKING SORT: Higher downloads & views pushed to the front!
     function sortMediaItems() {
       liveMediaItems.sort((a, b) => {
-        const scoreA = (a.viewsCount || 0) + (a.downloadsCount || 0);
-        const scoreB = (b.viewsCount || 0) + (b.downloadsCount || 0);
+        const scoreA = (a.downloadsCount || 0) * 2 + (a.viewsCount || 0);
+        const scoreB = (b.downloadsCount || 0) * 2 + (b.viewsCount || 0);
         if (scoreB !== scoreA) {
           return scoreB - scoreA;
         }
@@ -1691,7 +1736,7 @@
 
     async function recordInteraction(firebaseKey, metricField) {
       try {
-        const ref = db.ref(`apml_hybrid_gallery/${firebaseKey}/${metricField}`);
+        const ref = db.ref(`apml_ranked_gallery/${firebaseKey}/${metricField}`);
         await ref.transaction((currentVal) => (currentVal || 0) + 1);
       } catch (err) {
         console.error("Failed to record metric:", err);
@@ -1756,14 +1801,34 @@
       }
     }
 
-    async function handleDirectDownload(firebaseKey, fileUrl, fileName) {
+    // DOWNLOAD ACTION WITH LOADING FEEDBACK RESPONSE
+    async function handleInteractiveDownload(firebaseKey, fileUrl, fileName, isVideo) {
+      const btn = document.getElementById(`btn-dl-${firebaseKey}`);
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border-width:2px; margin:0; display:inline-block;"></span> Preparing...`;
+      }
+
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
-      recordInteraction(firebaseKey, 'downloadsCount');
+      await recordInteraction(firebaseKey, 'downloadsCount');
       
       if (!fileUrl) {
         alert("File URL is missing.");
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download`;
+        }
+        return;
+      }
+
+      if (isVideo) {
+        window.open(fileUrl, '_blank');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">download</span> Open`;
+        }
         return;
       }
 
@@ -1781,6 +1846,11 @@
         window.URL.revokeObjectURL(blobUrl);
       } catch (err) {
         window.open(fileUrl, '_blank');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download`;
+        }
       }
     }
 
@@ -1835,8 +1905,8 @@
                 <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
-                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleDirectDownload('${item.key}', '${item.url}', '${item.name}')" title="Download File">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
+                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleInteractiveDownload('${item.key}', '${item.url}', '${item.name}', ${item.isVideo})" title="Download File">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">download</span> ${item.isVideo ? 'Open' : 'Download'}
                 </button>
                 <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
                   <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
