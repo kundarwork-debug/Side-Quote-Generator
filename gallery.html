@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -798,10 +797,23 @@
 
     .media-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      /* FIXED 4x4 GRID SETUP (Up to 4 columns per row) */
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 24px;
       justify-content: stretch;
       width: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      .media-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .pagination-bar {
@@ -941,7 +953,7 @@
 
     .media-preview-wrap {
       width: 100%;
-      height: 240px;
+      height: 200px;
       background: #0f172a;
       position: relative;
       overflow: hidden;
@@ -993,7 +1005,7 @@
     }
 
     .media-info {
-      padding: 16px 18px;
+      padding: 14px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1013,10 +1025,10 @@
     }
 
     .media-badge {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
       text-transform: uppercase;
-      padding: 3px 8px;
+      padding: 2px 6px;
       border-radius: 6px;
       background: var(--primary-soft);
       color: var(--primary);
@@ -1028,7 +1040,7 @@
     }
 
     .media-size-label {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 600;
       color: var(--text-muted);
       letter-spacing: 0.01em;
@@ -1037,21 +1049,21 @@
     .card-actions-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-download {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       color: #ffffff;
       background: var(--primary);
       border: none;
-      padding: 8px 16px;
+      padding: 6px 12px;
       border-radius: var(--radius-pill);
       cursor: pointer;
       text-decoration: none;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       box-shadow: 0 2px 8px rgba(194, 29, 29, 0.2);
       transition: background 0.2s ease, transform 0.2s ease;
@@ -1066,8 +1078,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
@@ -1201,7 +1213,7 @@
       </div>
     </div>
 
-    <!-- MEDIA UPLOAD PANEL WITH SEPARATE BUTTONS -->
+    <!-- MEDIA UPLOAD PANEL -->
     <div class="unified-action-panel">
       <div class="upload-action-content">
         
@@ -1313,19 +1325,12 @@
     let pendingDeleteKey = null;
     let currentPage = 1;
 
+    // FIXED TO 16 ITEMS PER PAGE (4x4 GRID LAYOUT)
     function getDynamicItemsPerPage() {
-      const cardWidth = 340; 
-      const cardHeight = 330; 
-      const availableWidth = Math.max(window.innerWidth - 80, 320);
-      const availableHeight = Math.max(window.innerHeight - 380, 300);
-
-      const columns = Math.max(1, Math.floor(availableWidth / cardWidth));
-      const rows = Math.max(3, Math.floor(availableHeight / cardHeight));
-
-      return columns * rows;
+      return 16;
     }
 
-    const CACHE_KEY_MEDIA = 'apml_ranked_gallery_cache_v1';
+    const CACHE_KEY_MEDIA = 'apml_ranked_gallery_cache_v2';
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
