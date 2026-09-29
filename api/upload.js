@@ -1,56 +1,2041 @@
-module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>APML Portal — Enterprise Cloud Drive</title>
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.3">
+  <link rel="stylesheet" href="common.css?v=22.3">
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  <!-- GOOGLE FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  try {
-    const filename = req.query.filename || 'uploaded-file';
-    const fileBuffer = req.body; // Vercel handles parsing or raw body
+  <!-- SUPABASE JS CLIENT -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    if (!fileBuffer) {
-      return res.status(400).json({ error: 'No file data received' });
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --primary: #c21d1d;
+      --primary-dark: #991b1b;
+      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
+      --primary-soft: rgba(194, 29, 29, 0.08);
+      
+      --bg-base: #F5EFEB;
+      --surface-glass: rgba(255, 255, 255, 0.88);
+      --surface-card: rgba(255, 255, 255, 0.95);
+      
+      --border-subtle: rgba(225, 212, 204, 0.85);
+      --border-hover: rgba(194, 29, 29, 0.35);
+      
+      --text-main: #141210;
+      --text-secondary: #3d3835;
+      --text-muted: #736b66;
+      --text-faint: #a8a29e;
+      
+      --radius-xl: 18px;
+      --radius-pill: 9999px;
+      
+      --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.03);
+      --shadow-float: 0 20px 40px -12px rgba(194, 29, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.02);
+      
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
-    const PIXELDRAIN_API_KEY = "e160ffab-69c1-47c9-a29e-f72b5d5a02b7";
-    const authHeader = "Basic " + Buffer.from(":" + PIXELDRAIN_API_KEY).toString("base64");
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-sans);
+    }
 
-    const pixeldrainRes = await fetch(`https://pixeldrain.com/api/file/${encodeURIComponent(filename)}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': authHeader,
-        'Content-Type': 'application/octet-stream'
-      },
-      body: fileBuffer
+    html {
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      overflow-y: scroll !important;
+      height: 100%;
+    }
+
+    body {
+      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
+                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
+                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: visible !important;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* FULL PAGE SMOOTH LOADING OVERLAY */
+    .app-loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-base);
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .app-loading-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .glowing-infinity-wrapper {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .glowing-infinity-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: -10px;
+      background: radial-gradient(circle, rgba(194, 29, 29, 0.35) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: pulseGlow 2s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(0.9); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    .glowing-infinity-icon {
+      font-size: 52px;
+      color: var(--primary);
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 0 12px rgba(194, 29, 29, 0.6));
+      animation: floatInfinity 3s ease-in-out infinite;
+    }
+
+    @keyframes floatInfinity {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .loading-brand-text {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .loading-sub-text {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    #header-container {
+      position: sticky !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .drive-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      margin-top: 110px !important;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .drive-head-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .drive-title {
+      font-family: var(--font-display);
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .drive-title span {
+      font-family: var(--font-display);
+      font-weight: 800;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .drive-sub-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .drive-sub {
+      color: var(--text-muted);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .drive-stats-pills {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .stat-pill strong {
+      color: var(--primary);
+    }
+
+    .storage-pill-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .storage-pill-link:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
+    }
+
+    .storage-pill-link .material-symbols-outlined {
+      font-size: 14px;
+    }
+
+    .admin-action-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-admin-auth {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+    }
+
+    .btn-admin-auth:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-admin-auth.logged-in {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #1e293b;
+      box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+    }
+
+    .admin-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-authorized {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .multi-select-toolbar {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #ffffff;
+      padding: 12px 24px;
+      border-radius: var(--radius-pill);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      z-index: 99999;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .multi-select-toolbar.active {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .multi-select-count {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .multi-toolbar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-toolbar {
+      background: rgba(255,255,255,0.12);
+      border: none;
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.2s ease;
+    }
+
+    .btn-toolbar:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .btn-toolbar.danger:hover {
+      background: #dc2626;
+    }
+
+    .folder-select-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .folder-select-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .folder-select-modal {
+      background: #ffffff;
+      max-width: 400px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+    }
+
+    .folder-select-modal h3 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 16px;
+    }
+
+    .folder-option-item {
+      padding: 12px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .folder-option-item:hover {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .auth-warning-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .auth-warning-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .auth-warning-modal {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 28px;
+      text-align: center;
+      box-shadow: 0 20px 40px -8px rgba(0,0,0,0.25);
+      border: 1.5px solid #fee2e2;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .auth-warning-overlay.active .auth-warning-modal {
+      transform: scale(1);
+    }
+
+    .warning-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .auth-warning-modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .auth-warning-modal p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .auth-warning-modal strong {
+      color: #dc2626;
+      word-break: break-all;
+    }
+
+    .btn-warning-dismiss {
+      background: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s ease;
+    }
+
+    .btn-warning-dismiss:hover {
+      background: #b91c1c;
+    }
+
+    .drive-action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .breadcrumb-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .breadcrumb-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    .breadcrumb-item:hover {
+      text-decoration: underline;
+    }
+
+    .drive-action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-drive-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+
+    .btn-drive-action:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-drive-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(194, 29, 29, 0.2);
+    }
+
+    .btn-drive-primary:hover {
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .drive-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .folders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .folder-card {
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+      transition: all 0.2s ease;
+    }
+
+    .folder-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-float);
+      background: #ffffff;
+    }
+
+    .folder-card.archive-folder {
+      border: 1.5px solid rgba(194, 29, 29, 0.4);
+      background: linear-gradient(135deg, rgba(254, 242, 242, 0.6) 0%, #ffffff 100%);
+    }
+
+    .folder-card.archive-folder .folder-card-left .material-symbols-outlined {
+      color: var(--primary);
+    }
+
+    .folder-card-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .folder-card-left .material-symbols-outlined {
+      color: var(--primary);
+      font-size: 24px;
+    }
+
+    .folder-card-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .folder-delete-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .folder-delete-btn:hover {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .drive-files-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .drive-file-grid-card {
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .drive-file-grid-card.selected {
+      border-color: var(--primary);
+      background: rgba(194, 29, 29, 0.03);
+      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.15);
+    }
+
+    .file-checkbox-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border-subtle);
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .drive-file-grid-card.selected .file-checkbox-overlay {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .file-checkbox-overlay .material-symbols-outlined {
+      font-size: 16px;
+      opacity: 0;
+    }
+
+    .drive-file-grid-card.selected .file-checkbox-overlay .material-symbols-outlined {
+      opacity: 1;
+    }
+
+    .grid-preview-box {
+      width: 100%;
+      height: 110px;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .grid-preview-box img, .grid-preview-box video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .grid-preview-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .grid-preview-placeholder span.material-symbols-outlined {
+      font-size: 36px;
+      color: #f43f5e;
+    }
+
+    .grid-preview-placeholder span.ext-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    .grid-card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .file-name {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .file-timestamp {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .file-details-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .file-type-pill {
+      background: rgba(194, 29, 29, 0.08);
+      color: var(--primary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .grid-card-footer {
+      padding: 0 14px 14px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+
+    .btn-download-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #ffffff;
+      background: var(--primary);
+      border: none;
+      padding: 6px 12px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 2px 6px rgba(194, 29, 29, 0.2);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-download-file:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-delete-file {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      padding: 0;
+      color: #dc2626;
+      background: #fee2e2;
+    }
+
+    .btn-delete-file:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
+    .pagination-bar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-top: 36px;
+      padding: 16px 24px;
+      background: var(--surface-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card);
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .pagination-pages-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-page {
+      min-width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 1.5px solid transparent;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 6px;
+    }
+
+    .btn-page:hover:not(:disabled) {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .btn-page.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+    }
+
+    .btn-page:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .page-ellipsis {
+      padding: 0 4px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+    }
+
+    .pagination-jump-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .jump-input {
+      width: 56px;
+      height: 34px;
+      background: #ffffff;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: 10px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .jump-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
+    }
+
+    .btn-jump-go {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1.5px solid transparent;
+      padding: 0 14px;
+      height: 34px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-jump-go:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .media-lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(8px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .media-lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-content-box {
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .lightbox-content-box img, .lightbox-content-box video, .lightbox-content-box iframe {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      background: #ffffff;
+      width: 100%;
+      height: 80vh;
+    }
+
+    .btn-lightbox-close {
+      position: absolute;
+      top: -45px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-lightbox-close:hover {
+      background: var(--primary);
+    }
+
+    .state-msg {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-muted);
+      font-weight: 600;
+      background: var(--surface-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+    }
+
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 14px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 900px) {
+      .drive-container {
+        margin-top: 95px !important;
+      }
+      .drive-action-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .drive-action-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
+  <div class="app-loading-overlay" id="appLoadingOverlay">
+    <div class="glowing-infinity-wrapper">
+      <span class="material-symbols-outlined glowing-infinity-icon">cloud_queue</span>
+    </div>
+    <div class="loading-brand-text">APML Cloud Drive</div>
+    <div class="loading-sub-text">Syncing folders &amp; documents...</div>
+  </div>
+
+  <div id="header-container"></div>
+
+  <!-- MULTI-SELECTION FLOATING ACTION BAR (ADMIN ONLY) -->
+  <div class="multi-select-toolbar" id="multiSelectToolbar" style="display: none;">
+    <span class="multi-select-count" id="selectedCountText">0 selected</span>
+    <div class="multi-toolbar-actions">
+      <button type="button" class="btn-toolbar" onclick="promptMoveSelected()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">drive_file_move</span> Move
+      </button>
+      <button type="button" class="btn-toolbar" onclick="promptCopySelected()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">content_copy</span> Copy
+      </button>
+      <button type="button" class="btn-toolbar danger" onclick="deleteSelectedFiles()">
+        <span class="material-symbols-outlined" style="font-size: 16px;">delete</span> Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- FOLDER SELECTION MODAL -->
+  <div class="folder-select-overlay" id="folderSelectModal">
+    <div class="folder-select-modal">
+      <h3 id="folderModalTitle">Select Destination Folder</h3>
+      <div id="folderModalList" style="max-height: 250px; overflow-y: auto;"></div>
+      <button type="button" class="btn-toolbar" style="background:#f3f4f6; color:#374151; width:100%; justify-content:center; margin-top:12px;" onclick="closeFolderModal()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
+  <div class="auth-warning-overlay" id="authWarningModal">
+    <div class="auth-warning-modal">
+      <div class="warning-icon-wrap">
+        <span class="material-symbols-outlined" style="font-size: 32px;">gpp_bad</span>
+      </div>
+      <h3>Access Denied</h3>
+      <p>
+        The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
+        Only authorized admin accounts can access admin controls.
+      </p>
+      <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX PREVIEW MODAL -->
+  <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
+    <div class="lightbox-content-box" id="lightboxContainer">
+      <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div id="lightboxMediaSlot" style="width: 100%; display: flex; justify-content: center;"></div>
+    </div>
+  </div>
+
+  <main class="drive-container">
+    
+    <div class="drive-head-bar">
+      <div class="drive-header">
+        <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
+        <div class="drive-sub-row">
+          <p class="drive-sub">Create your own folders, navigate subdirectories, and manage files securely.</p>
+        </div>
+        <div class="drive-stats-pills" id="driveStatsPills">
+          <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
+          <a href="dump.html" class="storage-pill-link" title="Open Unlimited Storage Archive">
+            <span class="material-symbols-outlined">all_inclusive</span> Unlimited Storage
+          </a>
+        </div>
+      </div>
+
+      <div class="admin-action-wrap" id="adminAuthContainer">
+        <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span id="adminBtnLabel">Admin Login</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div class="drive-action-bar">
+      <div class="breadcrumb-nav" id="breadcrumbNav">
+        <span class="breadcrumb-item" onclick="navigateToFolder('root')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
+        </span>
+      </div>
+
+      <div class="drive-action-buttons">
+        <button type="button" class="btn-drive-action" onclick="promptCreateFolder()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span>
+          <span>New Folder</span>
+        </button>
+        <input type="file" id="driveFileInput" multiple style="display: none;" onchange="handleDriveUpload()">
+        <button type="button" class="btn-drive-action btn-drive-primary" onclick="document.getElementById('driveFileInput').click()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
+          <span>Upload File</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- FOLDERS SECTION -->
+    <div id="foldersSectionWrapper">
+      <div class="drive-section-title">Folders</div>
+      <div class="folders-grid" id="foldersGrid"></div>
+    </div>
+
+    <!-- FILES SECTION -->
+    <div>
+      <div class="drive-section-title">Files</div>
+      <div id="filesContainerWrapper">
+        <div class="state-msg">
+          <div class="spinner"></div>
+          Syncing drive items...
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="common.js?v=22.3"></script>
+
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    const responseText = await pixeldrainRes.text();
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      data = { message: responseText };
+    const PIXELDRAIN_API_KEY = "e160ffab-69c1-47c9-a29e-f72b5d5a02b7";
+    const PIXELDRAIN_AUTH_HEADER = "Basic " + btoa(":" + PIXELDRAIN_API_KEY);
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+    const driveFilesRef = db.ref("pixeldrain_gdrive_files");
+    const driveFoldersRef = db.ref("pixeldrain_gdrive_folders");
+    const dumpBinRef = db.ref("pixeldrain_dump_gallery_folders");
+    const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
+
+    const AUTHORIZED_ADMIN_EMAILS = [
+      "kundar.work@gmail.com",
+      "kundar701@gmail.com"
+    ];
+
+    let currentParentId = 'root';
+    let liveFolders = [];
+    let liveFiles = [];
+    let currentUser = null;
+    let selectedFileKeys = new Set();
+    let folderActionType = 'move';
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 12;
+
+    const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
+    const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
+
+    const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
+
+    function getProtectedArchiveFolder() {
+      return {
+        key: ARCHIVE_FOLDER_KEY,
+        name: "Quotations Archive",
+        parentId: "root",
+        isProtected: true
+      };
     }
 
-    return res.status(pixeldrainRes.status).json(data);
-  } catch (err) {
-    console.error("Upload proxy error:", err);
-    return res.status(500).json({ error: err.message });
-  }
-};
+    function hidePageLoader() {
+      const overlay = document.getElementById('appLoadingOverlay');
+      if (overlay && !overlay.classList.contains('fade-out')) {
+        overlay.classList.add('fade-out');
+      }
+    }
 
-// Allow larger file payloads up to 30MB through Vercel
-module.exports.config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '30mb',
-    },
-  },
-};
+    setTimeout(hidePageLoader, 1500);
+
+    function isCurrentUserAdmin() {
+      if (!currentUser || !currentUser.email) return false;
+      const email = currentUser.email.trim().toLowerCase();
+      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === email);
+    }
+
+    function showUnauthorizedWarning(email) {
+      document.getElementById('unauthorizedEmailDisplay').textContent = email;
+      document.getElementById('authWarningModal').classList.add('active');
+    }
+
+    async function dismissWarningModal() {
+      document.getElementById('authWarningModal').classList.remove('active');
+      await supabaseClient.auth.signOut();
+      currentUser = null;
+      handleUserSession(null);
+    }
+
+    async function handleGoogleAdminAuth() {
+      if (currentUser) {
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        handleUserSession(null);
+      } else {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + window.location.pathname
+          }
+        });
+        if (error) alert(`Google login error: ${error.message}`);
+      }
+    }
+
+    function handleUserSession(user) {
+      currentUser = user;
+      const authBtn = document.getElementById('adminAuthBtn');
+      const authLabel = document.getElementById('adminBtnLabel');
+      const authContainer = document.getElementById('adminAuthContainer');
+
+      const existingBadge = document.getElementById('adminStatusBadge');
+      if (existingBadge) existingBadge.remove();
+
+      if (user) {
+        if (isCurrentUserAdmin()) {
+          authBtn.classList.add('logged-in');
+          authLabel.textContent = "Sign Out";
+
+          const badge = document.createElement('span');
+          badge.id = 'adminStatusBadge';
+          badge.className = 'admin-status-badge badge-authorized';
+          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
+          authContainer.insertBefore(badge, authBtn);
+        } else {
+          showUnauthorizedWarning(user.email);
+        }
+      } else {
+        authBtn.classList.remove('logged-in');
+        authLabel.textContent = "Admin Login";
+      }
+      renderUI();
+    }
+
+    const cachedFolders = localStorage.getItem(CACHE_KEY_FOLDERS);
+    if (cachedFolders) {
+      try {
+        liveFolders = JSON.parse(cachedFolders);
+        renderUI();
+        hidePageLoader();
+      } catch (e) {}
+    }
+
+    const cachedFiles = localStorage.getItem(CACHE_KEY_FILES);
+    if (cachedFiles) {
+      try {
+        liveFiles = JSON.parse(cachedFiles);
+        renderUI();
+        hidePageLoader();
+      } catch (e) {}
+    }
+
+    driveFoldersRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      liveFolders = [];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          liveFolders.push({ key, ...data[key] });
+        });
+      }
+      try { localStorage.setItem(CACHE_KEY_FOLDERS, JSON.stringify(liveFolders)); } catch(e){}
+      renderUI();
+      hidePageLoader();
+    });
+
+    driveFilesRef.on('value', (snapshot) => {
+      const data = snapshot.val();
+      liveFiles = [];
+      if (data) {
+        Object.keys(data).forEach(key => {
+          liveFiles.push({ key, ...data[key] });
+        });
+      }
+      try { localStorage.setItem(CACHE_KEY_FILES, JSON.stringify(liveFiles)); } catch(e){}
+      renderUI();
+      hidePageLoader();
+    });
+
+    function navigateToFolder(folderId) {
+      currentParentId = folderId;
+      currentPage = 1;
+      selectedFileKeys.clear();
+      updateMultiSelectToolbar();
+      renderUI();
+    }
+
+    function goToPage(pageNum) {
+      currentPage = pageNum;
+      renderUI();
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+
+    function jumpToCustomPage(totalPages) {
+      const input = document.getElementById('jumpPageInput');
+      if (!input) return;
+      const targetPage = parseInt(input.value);
+      if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
+        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
+        input.focus();
+        return;
+      }
+      goToPage(targetPage);
+    }
+
+    function promptCreateFolder() {
+      const folderName = prompt("Enter new folder name:");
+      if (!folderName || !folderName.trim()) return;
+
+      driveFoldersRef.push({
+        name: folderName.trim(),
+        parentId: currentParentId,
+        timestamp: Date.now()
+      }).catch(err => alert("Failed to create folder: " + err.message));
+    }
+
+    function toggleFileSelection(event, fileKey) {
+      if (!isCurrentUserAdmin()) return;
+      event.stopPropagation();
+      if (selectedFileKeys.has(fileKey)) {
+        selectedFileKeys.delete(fileKey);
+      } else {
+        selectedFileKeys.add(fileKey);
+      }
+      updateMultiSelectToolbar();
+      
+      const card = document.getElementById(`file-row-${fileKey}`) || document.getElementById(`file-card-${fileKey}`);
+      if (card) {
+        if (selectedFileKeys.has(fileKey)) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      }
+    }
+
+    function updateMultiSelectToolbar() {
+      const toolbar = document.getElementById('multiSelectToolbar');
+      const countText = document.getElementById('selectedCountText');
+      const count = selectedFileKeys.size;
+
+      if (isCurrentUserAdmin() && count > 0) {
+        countText.textContent = `${count} selected`;
+        toolbar.style.display = 'flex';
+        toolbar.classList.add('active');
+      } else {
+        toolbar.classList.remove('active');
+        toolbar.style.display = 'none';
+      }
+    }
+
+    function promptMoveSelected() {
+      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
+      folderActionType = 'move';
+      document.getElementById('folderModalTitle').textContent = "Move Selected Files To...";
+      openFolderModal();
+    }
+
+    function promptCopySelected() {
+      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
+      folderActionType = 'copy';
+      document.getElementById('folderModalTitle').textContent = "Copy Selected Files To...";
+      openFolderModal();
+    }
+
+    function openFolderModal() {
+      const listContainer = document.getElementById('folderModalList');
+      let optionsHtml = `
+        <div class="folder-option-item" onclick="executeFolderAction('root')">
+          <span class="material-symbols-outlined">folder</span> My Drive (Root)
+        </div>
+        <div class="folder-option-item" onclick="executeFolderAction('${ARCHIVE_FOLDER_KEY}')">
+          <span class="material-symbols-outlined" style="color:var(--primary);">folder</span> Quotations Archive
+        </div>
+      `;
+
+      liveFolders.forEach(f => {
+        optionsHtml += `
+          <div class="folder-option-item" onclick="executeFolderAction('${f.key}')">
+            <span class="material-symbols-outlined">folder</span> ${f.name}
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = optionsHtml;
+      document.getElementById('folderSelectModal').classList.add('active');
+    }
+
+    function closeFolderModal() {
+      document.getElementById('folderSelectModal').classList.remove('active');
+    }
+
+    async function executeFolderAction(targetParentId) {
+      if (!isCurrentUserAdmin()) return;
+      closeFolderModal();
+      const keys = Array.from(selectedFileKeys);
+
+      try {
+        if (folderActionType === 'move') {
+          for (const key of keys) {
+            await driveFilesRef.child(key).update({ parentId: targetParentId });
+          }
+          alert(`Successfully moved ${keys.length} files!`);
+        } else if (folderActionType === 'copy') {
+          for (const key of keys) {
+            const fileItem = liveFiles.find(f => f.key === key);
+            if (fileItem) {
+              await driveFilesRef.push({
+                fileId: fileItem.fileId,
+                parentId: targetParentId,
+                name: fileItem.name,
+                size: fileItem.size || 0,
+                timestamp: Date.now()
+              });
+            }
+          }
+          alert(`Successfully copied ${keys.length} files!`);
+        }
+        selectedFileKeys.clear();
+        updateMultiSelectToolbar();
+        renderUI();
+      } catch (err) {
+        alert("Operation failed: " + err.message);
+      }
+    }
+
+    async function deleteSelectedFiles() {
+      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
+      if (!confirm(`Are you sure you want to delete ${selectedFileKeys.size} selected files?`)) return;
+
+      try {
+        const keys = Array.from(selectedFileKeys);
+        for (const key of keys) {
+          const fileItem = liveFiles.find(f => f.key === key);
+          if (fileItem) {
+            await dumpBinRef.push({
+              fileId: fileItem.fileId,
+              name: fileItem.name,
+              size: fileItem.size || 0,
+              folder: fileItem.parentId || 'root',
+              timestamp: fileItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            await driveFilesRef.child(key).remove();
+          }
+        }
+        selectedFileKeys.clear();
+        updateMultiSelectToolbar();
+        renderUI();
+      } catch (err) {
+        alert("Failed to delete files: " + err.message);
+      }
+    }
+
+    async function moveToDump(type, key) {
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only administrators can delete files or folders.");
+        return;
+      }
+
+      try {
+        if (type === 'file') {
+          const fileItem = liveFiles.find(f => f.key === key);
+          if (fileItem) {
+            await dumpBinRef.push({
+              fileId: fileItem.fileId,
+              name: fileItem.name,
+              size: fileItem.size || 0,
+              folder: fileItem.parentId || 'root',
+              timestamp: fileItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            await driveFilesRef.child(key).remove();
+          }
+        } else if (type === 'folder') {
+          if (key === ARCHIVE_FOLDER_KEY) {
+            alert("The Quotations Archive folder is permanent and protected and cannot be deleted.");
+            return;
+          }
+
+          const folderItem = liveFolders.find(f => f.key === key);
+          if (folderItem) {
+            const dumpFolderRef = await dumpBinRef.push({
+              name: folderItem.name,
+              folder: folderItem.parentId || 'root',
+              isFolder: true,
+              timestamp: folderItem.timestamp || Date.now(),
+              originalKey: key
+            });
+            
+            const dumpFolderKey = dumpFolderRef.key;
+
+            const childFiles = liveFiles.filter(f => f.parentId === key);
+            for (const cFile of childFiles) {
+              await dumpBinRef.push({
+                fileId: cFile.fileId,
+                name: cFile.name,
+                size: cFile.size || 0,
+                folder: dumpFolderKey,
+                timestamp: cFile.timestamp || Date.now(),
+                originalKey: cFile.key
+              });
+              await driveFilesRef.child(cFile.key).remove();
+            }
+
+            await driveFoldersRef.child(key).remove();
+          }
+        }
+      } catch (err) {
+        alert("Failed to delete item: " + err.message);
+      }
+    }
+
+    // Direct Client-Side Upload to Pixeldrain (No Vercel Proxy Needed)
+    async function uploadDirectToPixeldrain(file) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('PUT', `https://pixeldrain.com/api/file/${encodeURIComponent(file.name)}`, true);
+        xhr.setRequestHeader('Authorization', PIXELDRAIN_AUTH_HEADER);
+
+        xhr.onload = function() {
+          if (xhr.status === 201) {
+            try {
+              const res = JSON.parse(xhr.responseText);
+              resolve(res);
+            } catch (e) {
+              reject(new Error('Invalid JSON response from Pixeldrain'));
+            }
+          } else {
+            reject(new Error(`Pixeldrain upload failed with status ${xhr.status}:${xhr.responseText}`));
+          }
+        };
+
+        xhr.onerror = function() {
+          reject(new Error('Network error during Pixeldrain upload'));
+        };
+
+        xhr.send(file);
+      });
+    }
+
+    async function handleDriveUpload() {
+      const fileInput = document.getElementById('driveFileInput');
+      const files = fileInput.files;
+
+      if (!files || files.length === 0) return;
+
+      let successCount = 0;
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        try {
+          const data = await uploadDirectToPixeldrain(file);
+          const fileId = data.id;
+          if (!fileId) throw new Error('Could not extract file ID from upload response.');
+
+          await driveFilesRef.push({
+            fileId: fileId,
+            parentId: currentParentId,
+            name: file.name,
+            size: file.size || 0,
+            timestamp: Date.now()
+          });
+
+          successCount++;
+        } catch (err) {
+          console.error(`Error uploading "${file.name}":`, err.message);
+          alert(`Upload failed for "${file.name}": ${err.message}`);
+        }
+      }
+
+      fileInput.value = '';
+      alert(`Successfully uploaded ${successCount} of${files.length} files directly to Pixeldrain!`);
+      renderUI();
+    }
+
+    async function resolveFileUrl(fileId) {
+      if (!fileId) return '';
+      return `https://pixeldrain.com/api/file/${fileId}`;
+    }
+
+    async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
+      totalMediaDownloadsRef.transaction((currentValue) => {
+        return (currentValue || 0) + 1;
+      });
+
+      const targetUrl = fileId ? `https://pixeldrain.com/api/file/${fileId}?download` : (legacyUrl || '');
+      if (!targetUrl) {
+        alert("File download reference is missing.");
+        return;
+      }
+
+      const a = document.createElement('a');
+      a.href = targetUrl;
+      a.download = fileName || 'apml-media-asset';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    async function openFilePreview(fileId, legacyUrl, fileName) {
+      const freshUrl = await resolveFileUrl(fileId);
+      const overlay = document.getElementById('mediaLightboxModal');
+      const slot = document.getElementById('lightboxMediaSlot');
+
+      const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName);
+      const isPdf = /\.pdf$/i.test(fileName);
+
+      if (isImage) {
+        slot.innerHTML = `<img src="${freshUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
+      } else if (isPdf) {
+        slot.innerHTML = `<iframe src="${freshUrl}" style="width:100%; height:80vh; border:none; border-radius:12px;"></iframe>`;
+      } else {
+        slot.innerHTML = `
+          <div style="text-align:center; padding:40px; color:#ffffff;">
+            <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
+            <a href="${freshUrl}" download="${fileName}" class="btn-download-file">Download File</a>
+          </div>
+        `;
+      }
+
+      overlay.classList.add('active');
+    }
+
+    function closeLightbox(evt) {
+      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
+        const overlay = document.getElementById('mediaLightboxModal');
+        const slot = document.getElementById('lightboxMediaSlot');
+        overlay.classList.remove('active');
+        slot.innerHTML = '';
+      }
+    }
+
+    function renderBreadcrumb() {
+      const nav = document.getElementById('breadcrumbNav');
+      if (currentParentId === 'root') {
+        nav.innerHTML = `
+          <span class="breadcrumb-item">
+            <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
+          </span>
+        `;
+        return;
+      }
+
+      if (currentParentId === ARCHIVE_FOLDER_KEY) {
+        nav.innerHTML = `
+          <span class="breadcrumb-item" onclick="navigateToFolder('root')">
+            <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
+          </span>
+          <span style="color: var(--text-muted);">/</span>
+          <span class="breadcrumb-item">Quotations Archive</span>
+        `;
+        return;
+      }
+
+      let path = [];
+      let currId = currentParentId;
+      while (currId && currId !== 'root') {
+        const folder = liveFolders.find(f => f.key === currId);
+        if (!folder) break;
+        path.unshift(folder);
+        currId = folder.parentId;
+      }
+
+      let html = `
+        <span class="breadcrumb-item" onclick="navigateToFolder('root')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
+        </span>
+      `;
+
+      path.forEach(f => {
+        html += ` <span style="color: var(--text-muted);">/</span> <span class="breadcrumb-item" onclick="navigateToFolder('${f.key}')">${f.name}</span>`;
+      });
+
+      nav.innerHTML = html;
+    }
+
+    function getFileExtension(filename) {
+      const parts = filename.split('.');
+      return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
+    }
+
+    function getFileIcon(filename) {
+      if (/\.pdf$/i.test(filename)) return 'picture_as_pdf';
+      if (/\.(xls|xlsx|csv)$/i.test(filename)) return 'table_chart';
+      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'folder_zip';
+      if (/\.(doc|docx)$/i.test(filename)) return 'article';
+      if (/\.(jpg|jpeg|png|webp|gif)$/i.test(filename)) return 'image';
+      return 'insert_drive_file';
+    }
+
+    function formatBytes(bytes, decimals = 1) {
+      if (!bytes || bytes === 0) return '0 KB';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function formatTimestamp(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return '';
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleDateString('en-IN', { month: 'short' });
+      const year = d.getFullYear();
+      let hours = d.getHours();
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${day}${month} ${year},${hours}:${minutes}${ampm}`;
+    }
+
+    function renderUI() {
+      renderBreadcrumb();
+
+      const foldersGrid = document.getElementById('foldersGrid');
+      const foldersSectionWrapper = document.getElementById('foldersSectionWrapper');
+      const filesContainerWrapper = document.getElementById('filesContainerWrapper');
+      const isAdmin = isCurrentUserAdmin();
+
+      const archiveFolder = getProtectedArchiveFolder();
+      let currentFolders = [];
+      let rawFiles = [];
+
+      if (currentParentId === 'root') {
+        currentFolders = [archiveFolder, ...liveFolders.filter(f => f.parentId === 'root' && f.name !== "Quotations Archive")];
+        rawFiles = liveFiles.filter(f => !f.parentId || f.parentId === 'root');
+      } else if (currentParentId === ARCHIVE_FOLDER_KEY) {
+        currentFolders = [];
+        rawFiles = liveFiles.filter(f => f.parentId === ARCHIVE_FOLDER_KEY || (f.parentId === 'root' && f.name && f.name.toLowerCase().includes('quotation')));
+      } else {
+        currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
+        rawFiles = liveFiles.filter(f => f.parentId === currentParentId);
+      }
+
+      rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      document.getElementById('statTotalCount').textContent = liveFolders.length + 1 + liveFiles.length;
+
+      if (currentFolders.length > 0) {
+        foldersSectionWrapper.style.display = 'block';
+        foldersGrid.innerHTML = currentFolders.map(folder => {
+          const isArchive = folder.key === ARCHIVE_FOLDER_KEY;
+          return `
+            <div class="folder-card ${isArchive ? 'archive-folder' : ''}" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')">
+              <div class="folder-card-left">
+                <span class="material-symbols-outlined">${isArchive ? 'folder_special' : 'folder'}</span>
+                <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
+              </div>
+              ${!isArchive && isAdmin ? `
+                <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); moveToDump('folder', '${folder.key}')" title="Delete Folder">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+                </button>
+              ` : `
+                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);" title="Protected Permanent Folder">lock</span>
+              `}
+            </div>
+          `;
+        }).join('');
+      } else {
+        foldersSectionWrapper.style.display = 'none';
+        foldersGrid.innerHTML = '';
+      }
+
+      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+      if (rawFiles.length > 0) {
+        let filesHtml = '';
+        
+        filesHtml = `
+          <div class="drive-files-grid">
+            ${currentFiles.map(file => {
+              const iconName = getFileIcon(file.name);
+              const extName = getFileExtension(file.name);
+              const formattedSize = formatBytes(file.size);
+              const formattedDate = formatTimestamp(file.timestamp);
+              const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
+              const isSelected = selectedFileKeys.has(file.key);
+
+              return `
+                <div class="drive-file-grid-card ${isSelected ? 'selected' : ''}" id="file-card-${file.key}">
+                  ${isAdmin ? `
+                    <div class="file-checkbox-overlay" onclick="toggleFileSelection(event, '${file.key}')" title="Select File">
+                      <span class="material-symbols-outlined">check</span>
+                    </div>
+                  ` : ''}
+
+                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.url || ''}', '${file.name}')" title="Click to preview">
+                    ${isImage 
+                      ? `<img id="preview-img-${file.key}" src="" alt="${file.name}">` 
+                      : `<div class="grid-preview-placeholder">
+                           <span class="material-symbols-outlined">${iconName}</span>
+                           <span class="ext-badge">${extName}</span>
+                         </div>`
+                    }
+                  </div>
+                  <div class="grid-card-body">
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    ${formattedDate ? `<div class="file-timestamp">${formattedDate}</div>` : ''}
+                    <div class="file-details-row">
+                      <span class="file-type-pill">${extName}</span>
+                      <span>${formattedSize}</span>
+                    </div>
+                  </div>
+                  <div class="grid-card-footer">
+                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
+                      <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
+                    </button>
+                    ${isAdmin ? `
+                      <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        if (totalPages > 1) {
+          filesHtml += `
+            <div class="pagination-bar">
+              <div class="pagination-pages-row">
+                <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+                </button>
+          `;
+
+          let startPage = Math.max(1, currentPage - 1);
+          let endPage = Math.min(totalPages, currentPage + 1);
+
+          if (currentPage === 1) {
+            endPage = Math.min(totalPages, 3);
+          } else if (currentPage === totalPages) {
+            startPage = Math.max(1, totalPages - 2);
+          }
+
+          if (startPage > 1) {
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
+            if (startPage > 2) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+          }
+
+          for (let p = startPage; p <= endPage; p++) {
+            filesHtml += `<button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+          }
+
+          if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+          }
+
+          filesHtml += `
+                <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+                </button>
+              </div>
+          `;
+
+          if (totalPages > 3) {
+            filesHtml += `
+              <div class="pagination-jump-row">
+                <span>Go to page:</span>
+                <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
+                <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
+              </div>
+            `;
+          }
+
+          filesHtml += `</div>`;
+        }
+
+        filesContainerWrapper.innerHTML = filesHtml;
+
+        currentFiles.forEach(async file => {
+          if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
+            const freshUrl = await resolveFileUrl(file.fileId);
+            const imgEl = document.getElementById(`preview-img-${file.key}`);
+            if (imgEl) imgEl.src = freshUrl;
+          }
+        });
+
+      } else if (currentFolders.length === 0) {
+        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
+      } else {
+        filesContainerWrapper.innerHTML = ``;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      supabaseClient.auth.getSession().then(({ data: { session } }) => {
+        handleUserSession(session ? session.user : null);
+      }).catch(() => {
+        handleUserSession(null);
+      });
+
+      supabaseClient.auth.onAuthStateChange((_event, session) => {
+        handleUserSession(session ? session.user : null);
+      });
+
+      setTimeout(hidePageLoader, 3000);
+    });
+  </script>
+</body>
+</html>
