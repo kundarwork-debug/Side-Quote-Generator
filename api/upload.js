@@ -24,14 +24,21 @@ module.exports = async (req, res) => {
       body: req
     });
 
-    const data = await pixeldrainRes.json();
+    const responseText = await pixeldrainRes.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      data = { message: responseText };
+    }
+
     return res.status(pixeldrainRes.status).json(data);
   } catch (err) {
+    console.error("Proxy upload error:", err.message);
     return res.status(500).json({ error: err.message });
   }
 };
 
-// Required config to disable body parser for file streams in Vercel
 module.exports.config = {
   api: {
     bodyParser: false,
