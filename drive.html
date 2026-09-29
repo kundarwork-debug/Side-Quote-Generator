@@ -1161,7 +1161,7 @@
       <div class="drive-header">
         <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
         <div class="drive-sub-row">
-          <p class="drive-sub">Create your own folders, navigate subdirectories, and manage files securely.</p>
+          <p class="drive-sub">Create your own folders, navigate subdirectories, and manage files securely via Vercel proxy.</p>
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
@@ -1240,11 +1240,6 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    const BOT_TOKEN = "8937016793:AAG-fYv5nMQtD8SU1Dwa1ZgCaDCQJbwFTz0";
-    const PRIMARY_CHAT_ID = "-1004302268775";
-    const FALLBACK_CHAT_ID = "-4302268775";
-    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
-
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
@@ -1256,9 +1251,9 @@
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.database();
-    const driveFilesRef = db.ref("telegram_gdrive_files");
-    const driveFoldersRef = db.ref("telegram_gdrive_folders");
-    const dumpBinRef = db.ref("telegram_dump_gallery_folders");
+    const driveFilesRef = db.ref("pixeldrain_gdrive_files");
+    const driveFoldersRef = db.ref("pixeldrain_gdrive_folders");
+    const dumpBinRef = db.ref("pixeldrain_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1277,7 +1272,6 @@
 
     const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
     const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
-    const fileUrlCache = new Map();
 
     const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
 
@@ -1640,42 +1634,44 @@
       }
     }
 
-    async function uploadToTelegram(file, chatId) {
-      const formData = new FormData();
-      formData.append('chat_id', chatId);
-      formData.append('document', file);
+    // Upload via your new Vercel serverless function proxy route
+    async function uploadViaVercelProxy(file) {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `/api/upload?filename=${encodeURIComponent(file.name)}`, true);
 
-      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-        method: 'POST',
-        body: formData
+        xhr.onload = function() {
+          if (xhr.status === 200 || xhr.status === 201) {
+            try {
+              const res = JSON.parse(xhr.responseText);
+              resolve(res);
+            } catch (e) {
+              reject(new Error('Invalid JSON response from Vercel proxy'));
+            }
+          } else {
+            reject(new Error(`Upload failed with server status ${xhr.status}`));
+          }
+        };
+
+        xhr.onerror = function() {
+          reject(new Error('Network connection error during Vercel proxy upload'));
+        };
+
+        xhr.send(file);
       });
-      return await res.json();
     }
 
     async function handleDriveUpload(files) {
-      if (!files || !files.length) return;
+      if (!files || files.length === 0) return;
 
       let successCount = 0;
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
 
         try {
-          if (file.size > MAX_FILE_SIZE_BYTES) {
-            alert(`File size exceeds 50MB limit (${file.name}). Skipping.`);
-            continue;
-          }
-
-          let data = await uploadToTelegram(file, PRIMARY_CHAT_ID);
-          if (!data.ok) {
-            data = await uploadToTelegram(file, FALLBACK_CHAT_ID);
-          }
-
-          if (!data.ok) {
-            throw new Error(data.description || 'Telegram upload rejected.');
-          }
-
-          const fileId = data.result.document ? data.result.document.file_id : '';
-          if (!fileId) throw new Error('Could not extract file ID.');
+          const data = await uploadViaVercelProxy(file);
+          const fileId = data.id;
+          if (!fileId) throw new Error('Could not extract file ID from upload response.');
 
           await driveFilesRef.push({
             fileId: fileId,
@@ -1691,26 +1687,15 @@
         }
       }
 
-      document.getElementById('driveFileInput').value = '';
-      alert(`Successfully uploaded ${successCount} of${files.length} files!`);
+      const fileInputEl = document.getElementById('driveFileInput');
+      if (fileInputEl) fileInputEl.value = '';
+
+      alert(`Successfully uploaded ${successCount} of${files.length} files through Vercel proxy!`);
     }
 
-    async function resolveFileUrl(fileId, legacyUrl) {
-      if (!fileId) return legacyUrl || '';
-      if (fileUrlCache.has(fileId)) return fileUrlCache.get(fileId);
-
-      try {
-        const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
-        const pathData = await pathRes.json();
-        if (pathData.ok && pathData.result.file_path) {
-          const freshUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
-          fileUrlCache.set(fileId, freshUrl);
-          return freshUrl;
-        }
-      } catch (err) {
-        console.error("Failed to resolve fileId:", fileId, err);
-      }
-      return legacyUrl || '';
+    async function resolveFileUrl(fileId) {
+      if (!fileId) return '';
+      return `https://pixeldrain.com/api/file/${fileId}`;
     }
 
     async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
@@ -1718,11 +1703,8 @@
         return (currentValue || 0) + 1;
       });
 
-      let targetUrl = legacyUrl;
-      
-      if (fileId) {
-        targetUrl = `https://apml-telegram-proxy-qtrd.vercel.app/api/proxy-download?fileId=${fileId}&fileName=${encodeURIComponent(fileName || 'asset')}`;
-      } else if (!targetUrl) {
+      const targetUrl = fileId ? `https://pixeldrain.com/api/file/${fileId}?download` : (legacyUrl || '');
+      if (!targetUrl) {
         alert("File download reference is missing.");
         return;
       }
@@ -1736,7 +1718,7 @@
     }
 
     async function openFilePreview(fileId, legacyUrl, fileName) {
-      const freshUrl = await resolveFileUrl(fileId, legacyUrl);
+      const freshUrl = await resolveFileUrl(fileId);
       const overlay = document.getElementById('mediaLightboxModal');
       const slot = document.getElementById('lightboxMediaSlot');
 
@@ -2021,7 +2003,7 @@
 
         currentFiles.forEach(async file => {
           if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
-            const freshUrl = await resolveFileUrl(file.fileId, file.url);
+            const freshUrl = await resolveFileUrl(file.fileId);
             const imgEl = document.getElementById(`preview-img-${file.key}`);
             if (imgEl) imgEl.src = freshUrl;
           }
