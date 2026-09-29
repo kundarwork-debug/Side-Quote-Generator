@@ -1,10 +1,12 @@
-export const config = {
-  api: {
-    bodyParser: false, // Disabling default parser to handle raw file stream
-  },
-};
+module.exports = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export default async function handler(req, res) {
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'PUT' && req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -19,17 +21,19 @@ export default async function handler(req, res) {
       headers: {
         'Authorization': authHeader
       },
-      body: req // Pipe the incoming request stream straight to Pixeldrain
+      body: req
     });
 
     const data = await pixeldrainRes.json();
-    
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, PUT, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
     return res.status(pixeldrainRes.status).json(data);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-}
+};
+
+// Required config to disable body parser for file streams in Vercel
+module.exports.config = {
+  api: {
+    bodyParser: false,
+  },
+};
