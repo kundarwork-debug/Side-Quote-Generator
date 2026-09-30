@@ -104,7 +104,7 @@
       z-index: 1;
     }
 
-    /* Increased Hero Section Height and Spacing */
+    /* Hero Section */
     .hero-center {
       max-width: 1160px;
       margin: 0 auto;
@@ -117,39 +117,27 @@
       justify-content: center;
     }
 
-    .eyebrow-pill {
-      display: inline-flex;
+    /* Rotating Logo Styles */
+    .rotating-logo-container {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 28px;
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 20px 8px 8px;
-      background: #FFFFFF;
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-subtle);
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-      user-select: none;
+      justify-content: center;
+      animation: smoothRotate 12s linear infinite;
+      filter: drop-shadow(0 8px 16px rgba(185, 28, 28, 0.2));
     }
 
-    .eyebrow-badge {
-      background: var(--primary);
-      color: #FFFFFF;
-      font-size: 11.5px;
-      font-weight: 800;
-      padding: 5px 14px;
-      border-radius: var(--radius-pill);
+    .rotating-logo-container svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
 
-    .eyebrow-dot {
-      color: var(--text-faint);
-      font-size: 11px;
-    }
-
-    .eyebrow-sub {
-      color: var(--text-muted);
-      font-weight: 500;
+    @keyframes smoothRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     .hero-main-title {
@@ -645,12 +633,21 @@
     <!-- EXPANDED HERO SECTION -->
     <section class="hero-center">
       
-      <!-- Eyebrow Pill -->
-      <div class="eyebrow-pill">
-        <span class="eyebrow-badge">V21.44</span>
-        <span>Enterprise Operations Workspace</span>
-        <span class="eyebrow-dot">•</span>
-        <span class="eyebrow-sub">APML Nationwide</span>
+      <!-- Big Rotating SVG Logo -->
+      <div class="rotating-logo-container">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="44" stroke="url(#paint0_linear)" stroke-width="8" stroke-linecap="round" stroke-dasharray="70 40"/>
+          <circle cx="50" cy="50" r="28" stroke="#b91c1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="30 20" opacity="0.8"/>
+          <polygon points="50,22 62,42 38,42" fill="#b91c1c"/>
+          <polygon points="50,78 38,58 62,58" fill="#e11d48"/>
+          <defs>
+            <linearGradient id="paint0_linear" x1="6" y1="6" x2="94" y2="94" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#b91c1c"/>
+              <stop offset="0.5" stop-color="#e11d48"/>
+              <stop offset="1" stop-color="#f43f5e"/>
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
 
       <!-- Title -->
