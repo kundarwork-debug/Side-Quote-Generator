@@ -1,6 +1,14 @@
-module.exports = async (req, res) => {
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '30mb',
+    },
+  },
+};
+
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') {
@@ -15,13 +23,10 @@ module.exports = async (req, res) => {
     const { filename, fileData } = req.body || {};
 
     if (!fileData || !filename) {
-      return res.status(400).json({ error: 'Missing filename or fileData in request body' });
+      return res.status(400).json({ error: 'Missing filename or fileData' });
     }
 
-    // Convert base64 data back to a buffer
     const buffer = Buffer.from(fileData, 'base64');
-
-    // Prepare multipart form data payload for Catbox API
     const boundary = '----VercelCatboxBoundary' + Math.random().toString(36).substring(2);
     
     let payload = '';
@@ -51,18 +56,9 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Catbox error: ' + responseText });
     }
 
-    // Catbox returns the direct public URL as plain text (e.g., https://files.catbox.moe/xyz.png)
     return res.status(200).json({ url: responseText.trim() });
   } catch (err) {
-    console.error("Vercel Catbox proxy error:", err);
+    console.error("Proxy error:", err);
     return res.status(500).json({ error: err.message });
   }
-};
-
-module.exports.config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '30mb',
-    },
-  },
-};
+}
