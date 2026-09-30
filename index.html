@@ -129,9 +129,10 @@
       filter: drop-shadow(0 8px 16px rgba(185, 28, 28, 0.2));
     }
 
-    .rotating-logo-container svg {
+    .rotating-logo-container img {
       width: 100%;
       height: 100%;
+      object-fit: contain;
       display: block;
     }
 
@@ -635,19 +636,7 @@
       
       <!-- Big Rotating SVG Logo -->
       <div class="rotating-logo-container">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="44" stroke="url(#paint0_linear)" stroke-width="8" stroke-linecap="round" stroke-dasharray="70 40"/>
-          <circle cx="50" cy="50" r="28" stroke="#b91c1c" stroke-width="6" stroke-linecap="round" stroke-dasharray="30 20" opacity="0.8"/>
-          <polygon points="50,22 62,42 38,42" fill="#b91c1c"/>
-          <polygon points="50,78 38,58 62,58" fill="#e11d48"/>
-          <defs>
-            <linearGradient id="paint0_linear" x1="6" y1="6" x2="94" y2="94" gradientUnits="userSpaceOnUse">
-              <stop stop-color="#b91c1c"/>
-              <stop offset="0.5" stop-color="#e11d48"/>
-              <stop offset="1" stop-color="#f43f5e"/>
-            </linearGradient>
-          </defs>
-        </svg>
+        <img src="logo.svg" alt="APML Logo">
       </div>
 
       <!-- Title -->
