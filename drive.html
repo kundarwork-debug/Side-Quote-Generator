@@ -1197,7 +1197,7 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span>
           <span>New Folder</span>
         </button>
-        <input type="file" id="driveFileInput" multiple style="display: none;" onchange="handleDriveUpload(this.files)">
+        <input type="file" id="driveFileInput" multiple style="display: none;" onchange="handleDriveUpload()">
         <button type="button" class="btn-drive-action btn-drive-primary" onclick="document.getElementById('driveFileInput').click()">
           <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
           <span>Upload File</span>
@@ -1251,9 +1251,9 @@
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.database();
-    const driveFilesRef = db.ref("pixeldrain_gdrive_files");
-    const driveFoldersRef = db.ref("pixeldrain_gdrive_folders");
-    const dumpBinRef = db.ref("pixeldrain_dump_gallery_folders");
+    const driveFilesRef = db.ref("catbox_gdrive_files");
+    const driveFoldersRef = db.ref("catbox_gdrive_folders");
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1270,8 +1270,8 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 12;
 
-    const CACHE_KEY_FOLDERS = 'apml_gdrive_folders_cache_v1';
-    const CACHE_KEY_FILES = 'apml_gdrive_files_cache_v1';
+    const CACHE_KEY_FOLDERS = 'apml_catbox_folders_cache_v1';
+    const CACHE_KEY_FILES = 'apml_catbox_files_cache_v1';
 
     const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
 
@@ -1634,34 +1634,59 @@
       }
     }
 
-    // Upload via your new Vercel serverless function proxy route
+    // Upload via Vercel Proxy using JSON Base64 payload targeting Catbox
     async function uploadViaVercelProxy(file) {
       return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `/api/upload?filename=${encodeURIComponent(file.name)}`, true);
+        const reader = new FileReader();
 
-        xhr.onload = function() {
-          if (xhr.status === 200 || xhr.status === 201) {
+        reader.onload = async function() {
+          try {
+            const base64String = reader.result.split(',')[1];
+
+            const response = await fetch(`/api/upload`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                filename: file.name,
+                fileData: base64String
+              })
+            });
+
+            const responseText = await response.text();
+            let resJson;
             try {
-              const res = JSON.parse(xhr.responseText);
-              resolve(res);
+              resJson = JSON.parse(responseText);
             } catch (e) {
-              reject(new Error('Invalid JSON response from Vercel proxy'));
+              throw new Error('Invalid JSON response: ' + responseText);
             }
-          } else {
-            reject(new Error(`Upload failed with server status ${xhr.status}`));
+
+            if (response.ok && resJson.url) {
+              resolve({
+                fileId: resJson.url,
+                url: resJson.url
+              });
+            } else {
+              reject(new Error(resJson.error || `Server status ${response.status}`));
+            }
+          } catch (err) {
+            reject(err);
           }
         };
 
-        xhr.onerror = function() {
-          reject(new Error('Network connection error during Vercel proxy upload'));
+        reader.onerror = function() {
+          reject(new Error('Failed to read local file'));
         };
 
-        xhr.send(file);
+        reader.readAsDataURL(file);
       });
     }
 
-    async function handleDriveUpload(files) {
+    async function handleDriveUpload() {
+      const fileInput = document.getElementById('driveFileInput');
+      const files = fileInput.files;
+
       if (!files || files.length === 0) return;
 
       let successCount = 0;
@@ -1670,11 +1695,11 @@
 
         try {
           const data = await uploadViaVercelProxy(file);
-          const fileId = data.id;
-          if (!fileId) throw new Error('Could not extract file ID from upload response.');
+          const fileUrl = data.url;
+          if (!fileUrl) throw new Error('Could not extract file URL from upload response.');
 
           await driveFilesRef.push({
-            fileId: fileId,
+            fileId: fileUrl,
             parentId: currentParentId,
             name: file.name,
             size: file.size || 0,
@@ -1684,18 +1709,19 @@
           successCount++;
         } catch (err) {
           console.error(`Error uploading "${file.name}":`, err.message);
+          alert(`Upload failed for "${file.name}": ${err.message}`);
         }
       }
 
-      const fileInputEl = document.getElementById('driveFileInput');
-      if (fileInputEl) fileInputEl.value = '';
-
+      fileInput.value = '';
       alert(`Successfully uploaded ${successCount} of${files.length} files through Vercel proxy!`);
+      renderUI();
     }
 
     async function resolveFileUrl(fileId) {
       if (!fileId) return '';
-      return `https://pixeldrain.com/api/file/${fileId}`;
+      if (fileId.startsWith('http')) return fileId;
+      return `https://files.catbox.moe/${fileId}`;
     }
 
     async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
@@ -1703,7 +1729,7 @@
         return (currentValue || 0) + 1;
       });
 
-      const targetUrl = fileId ? `https://pixeldrain.com/api/file/${fileId}?download` : (legacyUrl || '');
+      const targetUrl = await resolveFileUrl(fileId);
       if (!targetUrl) {
         alert("File download reference is missing.");
         return;
@@ -1712,6 +1738,7 @@
       const a = document.createElement('a');
       a.href = targetUrl;
       a.download = fileName || 'apml-media-asset';
+      a.target = '_blank';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -1733,7 +1760,7 @@
         slot.innerHTML = `
           <div style="text-align:center; padding:40px; color:#ffffff;">
             <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
-            <a href="${freshUrl}" download="${fileName}" class="btn-download-file">Download File</a>
+            <a href="${freshUrl}" download="${fileName}" class="btn-download-file" target="_blank">Download File</a>
           </div>
         `;
       }
