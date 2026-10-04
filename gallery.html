@@ -967,11 +967,13 @@
       display: block;
     }
 
+    /* CARD LOADING SHIMMER ANIMATION OVERLAY */
     .card-loading-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(4px);
+      background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+      background-size: 200% 100%;
+      animation: shimmerLoading 1.5s infinite;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -979,7 +981,12 @@
       color: #ffffff;
       gap: 10px;
       z-index: 10;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    @keyframes shimmerLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     .card-loading-overlay.fade-out {
@@ -989,19 +996,12 @@
     }
 
     .card-spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid rgba(255,255,255,0.25);
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.2);
       border-top-color: #ffffff;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-    }
-
-    .card-loading-text {
-      font-size: 11.5px;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      color: rgba(255,255,255,0.9);
     }
 
     .media-info {
@@ -1892,14 +1892,14 @@
         return `
           <div class="media-card" id="card-${item.key}">
             <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
-              <div class="card-loading-overlay fade-out" id="card-loader-${item.key}">
+              <!-- SMOOTH SHIMMER LOADING OVERLAY -->
+              <div class="card-loading-overlay" id="card-loader-${item.key}">
                 <div class="card-spinner"></div>
-                <div class="card-loading-text">Loading file...</div>
               </div>
 
               ${item.isVideo 
-                ? `<video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="metadata"></video>` 
-                : `<img id="media-el-${item.key}" src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover">`
+                ? `<video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="none" onloadeddata="hideCardLoader('${item.key}')"></video>` 
+                : `<img id="media-el-${item.key}" src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">`
               }
             </div>
             <div class="media-info">
@@ -1982,6 +1982,13 @@
         paginationBar.innerHTML = paginationHtml;
       } else {
         paginationBar.style.display = 'none';
+      }
+    }
+
+    function hideCardLoader(key) {
+      const loader = document.getElementById(`card-loader-${key}`);
+      if (loader) {
+        loader.classList.add('fade-out');
       }
     }
 
