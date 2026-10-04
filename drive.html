@@ -243,34 +243,6 @@
       color: var(--primary);
     }
 
-    .storage-pill-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .storage-pill-link:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
-    }
-
-    .storage-pill-link .material-symbols-outlined {
-      font-size: 14px;
-    }
-
     .admin-action-wrap {
       display: flex;
       align-items: center;
@@ -325,62 +297,8 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    .multi-select-toolbar {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1e293b;
-      color: #ffffff;
-      padding: 12px 24px;
-      border-radius: var(--radius-pill);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-      z-index: 99999;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .multi-select-toolbar.active {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .multi-select-count {
-      font-size: 13.5px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-    }
-
-    .multi-toolbar-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-toolbar {
-      background: rgba(255,255,255,0.12);
-      border: none;
-      color: #ffffff;
-      padding: 7px 14px;
-      border-radius: var(--radius-pill);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: background 0.2s ease;
-    }
-
-    .btn-toolbar:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
-    .btn-toolbar.danger:hover {
-      background: #dc2626;
-    }
-
-    .folder-select-overlay {
+    /* MODAL STYLES FOR ADD FILE */
+    .link-modal-overlay {
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.7);
@@ -395,47 +313,250 @@
       transition: opacity 0.25s ease;
     }
 
-    .folder-select-overlay.active {
+    .link-modal-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .folder-select-modal {
+    .link-modal-box {
       background: #ffffff;
-      max-width: 400px;
+      max-width: 480px;
       width: 100%;
       border-radius: 20px;
-      padding: 24px;
+      padding: 28px;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
+      border: 1.5px solid var(--border-subtle);
+      position: relative;
     }
 
-    .folder-select-modal h3 {
-      font-size: 18px;
+    .link-modal-box h3 {
+      font-size: 20px;
       font-weight: 800;
       color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .link-modal-box p {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* TINY CATBOX LINK BUTTON */
+    .btn-catbox-tiny {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border: 1px solid rgba(194, 29, 29, 0.2);
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-catbox-tiny:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .link-form-group {
       margin-bottom: 16px;
     }
 
-    .folder-option-item {
-      padding: 12px 16px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      margin-bottom: 8px;
-      cursor: pointer;
+    .link-form-label {
+      font-size: 12.5px;
       font-weight: 700;
+      color: #374151;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .link-form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 12px;
       font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .link-form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
+    }
+
+    .link-modal-actions {
       display: flex;
-      align-items: center;
       gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-link-cancel, .btn-link-submit {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
       transition: all 0.2s ease;
     }
 
-    .folder-option-item:hover {
-      background: var(--primary-soft);
-      border-color: var(--primary);
-      color: var(--primary);
+    .btn-link-cancel {
+      background: #f3f4f6;
+      color: #374151;
     }
 
+    .btn-link-cancel:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-link-submit {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+    }
+
+    .btn-link-submit:hover {
+      background: var(--primary-dark);
+    }
+
+    /* GALLERY STYLE DELETE WITH 'YES' CONFIRMATION */
+    .delete-confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .delete-confirm-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .delete-confirm-modal {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+      border: 1.5px solid #fee2e2;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .delete-confirm-overlay.active .delete-confirm-modal {
+      transform: scale(1);
+    }
+
+    .delete-warning-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #fee2e2;
+      color: #dc2626;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .delete-confirm-modal h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .delete-confirm-modal p {
+      font-size: 13.5px;
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .delete-input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      margin-bottom: 20px;
+      transition: border-color 0.2s ease;
+    }
+
+    .delete-input-field:focus {
+      border-color: #dc2626;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    }
+
+    .delete-modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-modal-cancel, .btn-modal-confirm {
+      flex: 1;
+      padding: 11px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-modal-cancel {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #e5e7eb;
+    }
+
+    .btn-modal-confirm {
+      background: #dc2626;
+      color: #ffffff;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .btn-modal-confirm.enabled {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .btn-modal-confirm.enabled:hover {
+      background: #b91c1c;
+    }
+
+    /* POPUP WARNING MODAL */
     .auth-warning-overlay {
       position: fixed;
       inset: 0;
@@ -637,15 +758,6 @@
       background: #ffffff;
     }
 
-    .folder-card.archive-folder {
-      border: 1.5px solid rgba(194, 29, 29, 0.4);
-      background: linear-gradient(135deg, rgba(254, 242, 242, 0.6) 0%, #ffffff 100%);
-    }
-
-    .folder-card.archive-folder .folder-card-left .material-symbols-outlined {
-      color: var(--primary);
-    }
-
     .folder-card-left {
       display: flex;
       align-items: center;
@@ -687,8 +799,20 @@
 
     .drive-files-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .drive-files-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .drive-files-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .drive-file-grid-card {
@@ -706,47 +830,16 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
-    .drive-file-grid-card.selected {
-      border-color: var(--primary);
-      background: rgba(194, 29, 29, 0.03);
-      box-shadow: 0 4px 16px rgba(194, 29, 29, 0.15);
-    }
-
-    .file-checkbox-overlay {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      width: 22px;
-      height: 22px;
-      border-radius: 6px;
-      border: 2px solid var(--border-subtle);
-      background: rgba(255,255,255,0.9);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .drive-file-grid-card.selected .file-checkbox-overlay {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #ffffff;
-    }
-
-    .file-checkbox-overlay .material-symbols-outlined {
-      font-size: 16px;
-      opacity: 0;
-    }
-
-    .drive-file-grid-card.selected .file-checkbox-overlay .material-symbols-outlined {
-      opacity: 1;
+    .drive-file-grid-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-float);
+      background: #ffffff;
     }
 
     .grid-preview-box {
       width: 100%;
-      height: 110px;
+      height: 180px;
       background: #0f172a;
       position: relative;
       overflow: hidden;
@@ -756,37 +849,78 @@
       cursor: pointer;
     }
 
-    .grid-preview-box img, .grid-preview-box video {
+    .grid-preview-box img, .grid-preview-box video, .grid-preview-box iframe {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      pointer-events: none;
     }
+
+    .preview-placeholder-doc { background: #f8fafc; }
+    .preview-placeholder-excel { background: #f0fdf4; }
+    .preview-placeholder-pdf { background: #fff1f2; }
+    .preview-placeholder-zip { background: #fffbeb; }
 
     .grid-preview-placeholder {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      color: rgba(255,255,255,0.85);
+      gap: 6px;
+      color: #475569;
     }
 
     .grid-preview-placeholder span.material-symbols-outlined {
-      font-size: 36px;
-      color: #f43f5e;
+      font-size: 42px;
     }
 
     .grid-preview-placeholder span.ext-badge {
       font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      background: rgba(255,255,255,0.15);
-      padding: 2px 6px;
+      background: rgba(0,0,0,0.06);
+      padding: 2px 8px;
       border-radius: 4px;
       letter-spacing: 0.05em;
     }
 
+    .card-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
+      background-size: 200% 100%;
+      animation: shimmerLoading 1.5s infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      gap: 10px;
+      z-index: 10;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+
+    @keyframes shimmerLoading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .card-loading-overlay.fade-out {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .card-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     .grid-card-body {
-      padding: 12px 14px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -827,11 +961,11 @@
     }
 
     .grid-card-footer {
-      padding: 0 14px 14px 14px;
+      padding: 0 16px 16px 16px;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      gap: 6px;
+      justify-content: space-between;
+      gap: 8px;
     }
 
     .btn-download-file {
@@ -876,7 +1010,7 @@
       color: #ffffff;
     }
 
-    /* GOOGLE MATERIAL DESIGN 3 (MD3) PAGINATION & JUMP CONTAINER */
+    /* PAGINATION */
     .pagination-bar {
       display: flex;
       flex-direction: column;
@@ -1061,6 +1195,7 @@
       background: var(--surface-card);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
+      grid-column: 1 / -1;
     }
 
     .spinner {
@@ -1105,28 +1240,42 @@
 
   <div id="header-container"></div>
 
-  <!-- MULTI-SELECTION FLOATING ACTION BAR (ADMIN ONLY) -->
-  <div class="multi-select-toolbar" id="multiSelectToolbar" style="display: none;">
-    <span class="multi-select-count" id="selectedCountText">0 selected</span>
-    <div class="multi-toolbar-actions">
-      <button type="button" class="btn-toolbar" onclick="promptMoveSelected()">
-        <span class="material-symbols-outlined" style="font-size: 16px;">drive_file_move</span> Move
-      </button>
-      <button type="button" class="btn-toolbar" onclick="promptCopySelected()">
-        <span class="material-symbols-outlined" style="font-size: 16px;">content_copy</span> Copy
-      </button>
-      <button type="button" class="btn-toolbar danger" onclick="deleteSelectedFiles()">
-        <span class="material-symbols-outlined" style="font-size: 16px;">delete</span> Delete
-      </button>
+  <!-- DELETE CONFIRMATION MODAL (GALLERY STYLE TYPE 'YES') -->
+  <div class="delete-confirm-overlay" id="deleteConfirmModal">
+    <div class="delete-confirm-modal">
+      <div class="delete-warning-icon">
+        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
+      </div>
+      <h3>Are you sure?</h3>
+      <p>Once deleted, this action is not reversible. Type <strong>yes</strong> below to confirm.</p>
+      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type yes to confirm" oninput="checkDeleteKeyword(this)">
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
+      </div>
     </div>
   </div>
 
-  <!-- FOLDER SELECTION MODAL -->
-  <div class="folder-select-overlay" id="folderSelectModal">
-    <div class="folder-select-modal">
-      <h3 id="folderModalTitle">Select Destination Folder</h3>
-      <div id="folderModalList" style="max-height: 250px; overflow-y: auto;"></div>
-      <button type="button" class="btn-toolbar" style="background:#f3f4f6; color:#374151; width:100%; justify-content:center; margin-top:12px;" onclick="closeFolderModal()">Cancel</button>
+  <!-- ADD LINK MODAL DIALOG -->
+  <div class="link-modal-overlay" id="linkModalOverlay">
+    <div class="link-modal-box">
+      <h3>Add File via Catbox Link</h3>
+      <p>
+        <span>Generate a link on Catbox.moe and paste it below.</span>
+        <a href="https://catbox.moe/" target="_blank" class="btn-catbox-tiny" title="Upload to Catbox">
+          <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span> Catbox.moe
+        </a>
+      </p>
+
+      <div class="link-form-group">
+        <label class="link-form-label">Direct File URL</label>
+        <input type="url" id="linkFileUrlInput" class="link-form-input" placeholder="https://files.catbox.moe/xxxxxx.ext">
+      </div>
+
+      <div class="link-modal-actions">
+        <button type="button" class="btn-link-cancel" onclick="closeLinkModal()">Cancel</button>
+        <button type="button" class="btn-link-submit" onclick="submitCatboxLink()">Save File</button>
+      </div>
     </div>
   </div>
 
@@ -1161,13 +1310,10 @@
       <div class="drive-header">
         <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
         <div class="drive-sub-row">
-          <p class="drive-sub">Create your own folders, navigate subdirectories, and manage files securely via Vercel proxy.</p>
+          <p class="drive-sub">Organize files in folders and store references seamlessly via Catbox links.</p>
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
-          <a href="dump.html" class="storage-pill-link" title="Open Unlimited Storage Archive">
-            <span class="material-symbols-outlined">all_inclusive</span> Unlimited Storage
-          </a>
         </div>
       </div>
 
@@ -1197,10 +1343,9 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span>
           <span>New Folder</span>
         </button>
-        <input type="file" id="driveFileInput" multiple style="display: none;" onchange="handleDriveUpload()">
-        <button type="button" class="btn-drive-action btn-drive-primary" onclick="document.getElementById('driveFileInput').click()">
+        <button type="button" class="btn-drive-action btn-drive-primary" onclick="openLinkModal()">
           <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
-          <span>Upload File</span>
+          <span>Add File</span>
         </button>
       </div>
     </div>
@@ -1253,7 +1398,6 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("catbox_gdrive_files");
     const driveFoldersRef = db.ref("catbox_gdrive_folders");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1265,24 +1409,13 @@
     let liveFolders = [];
     let liveFiles = [];
     let currentUser = null;
-    let selectedFileKeys = new Set();
-    let folderActionType = 'move';
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 12;
+    let pendingDeleteKey = null;
+    let pendingDeleteType = null; // 'file' or 'folder'
+    const ITEMS_PER_PAGE = 16; // FIXED 4x4 GRID
 
-    const CACHE_KEY_FOLDERS = 'apml_catbox_folders_cache_v1';
-    const CACHE_KEY_FILES = 'apml_catbox_files_cache_v1';
-
-    const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
-
-    function getProtectedArchiveFolder() {
-      return {
-        key: ARCHIVE_FOLDER_KEY,
-        name: "Quotations Archive",
-        parentId: "root",
-        isProtected: true
-      };
-    }
+    const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
+    const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1403,8 +1536,6 @@
     function navigateToFolder(folderId) {
       currentParentId = folderId;
       currentPage = 1;
-      selectedFileKeys.clear();
-      updateMultiSelectToolbar();
       renderUI();
     }
 
@@ -1437,330 +1568,143 @@
       }).catch(err => alert("Failed to create folder: " + err.message));
     }
 
-    function toggleFileSelection(event, fileKey) {
-      if (!isCurrentUserAdmin()) return;
-      event.stopPropagation();
-      if (selectedFileKeys.has(fileKey)) {
-        selectedFileKeys.delete(fileKey);
-      } else {
-        selectedFileKeys.add(fileKey);
-      }
-      updateMultiSelectToolbar();
-      
-      const card = document.getElementById(`file-row-${fileKey}`) || document.getElementById(`file-card-${fileKey}`);
-      if (card) {
-        if (selectedFileKeys.has(fileKey)) {
-          card.classList.add('selected');
-        } else {
-          card.classList.remove('selected');
-        }
-      }
+    function openLinkModal() {
+      document.getElementById('linkFileUrlInput').value = '';
+      document.getElementById('linkModalOverlay').classList.add('active');
     }
 
-    function updateMultiSelectToolbar() {
-      const toolbar = document.getElementById('multiSelectToolbar');
-      const countText = document.getElementById('selectedCountText');
-      const count = selectedFileKeys.size;
-
-      if (isCurrentUserAdmin() && count > 0) {
-        countText.textContent = `${count} selected`;
-        toolbar.style.display = 'flex';
-        toolbar.classList.add('active');
-      } else {
-        toolbar.classList.remove('active');
-        toolbar.style.display = 'none';
-      }
+    function closeLinkModal() {
+      document.getElementById('linkModalOverlay').classList.remove('active');
     }
 
-    function promptMoveSelected() {
-      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
-      folderActionType = 'move';
-      document.getElementById('folderModalTitle').textContent = "Move Selected Files To...";
-      openFolderModal();
-    }
-
-    function promptCopySelected() {
-      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
-      folderActionType = 'copy';
-      document.getElementById('folderModalTitle').textContent = "Copy Selected Files To...";
-      openFolderModal();
-    }
-
-    function openFolderModal() {
-      const listContainer = document.getElementById('folderModalList');
-      let optionsHtml = `
-        <div class="folder-option-item" onclick="executeFolderAction('root')">
-          <span class="material-symbols-outlined">folder</span> My Drive (Root)
-        </div>
-        <div class="folder-option-item" onclick="executeFolderAction('${ARCHIVE_FOLDER_KEY}')">
-          <span class="material-symbols-outlined" style="color:var(--primary);">folder</span> Quotations Archive
-        </div>
-      `;
-
-      liveFolders.forEach(f => {
-        optionsHtml += `
-          <div class="folder-option-item" onclick="executeFolderAction('${f.key}')">
-            <span class="material-symbols-outlined">folder</span> ${f.name}
-          </div>
-        `;
-      });
-
-      listContainer.innerHTML = optionsHtml;
-      document.getElementById('folderSelectModal').classList.add('active');
-    }
-
-    function closeFolderModal() {
-      document.getElementById('folderSelectModal').classList.remove('active');
-    }
-
-    async function executeFolderAction(targetParentId) {
-      if (!isCurrentUserAdmin()) return;
-      closeFolderModal();
-      const keys = Array.from(selectedFileKeys);
-
-      try {
-        if (folderActionType === 'move') {
-          for (const key of keys) {
-            await driveFilesRef.child(key).update({ parentId: targetParentId });
-          }
-          alert(`Successfully moved ${keys.length} files!`);
-        } else if (folderActionType === 'copy') {
-          for (const key of keys) {
-            const fileItem = liveFiles.find(f => f.key === key);
-            if (fileItem) {
-              await driveFilesRef.push({
-                fileId: fileItem.fileId,
-                parentId: targetParentId,
-                name: fileItem.name,
-                size: fileItem.size || 0,
-                timestamp: Date.now()
-              });
-            }
-          }
-          alert(`Successfully copied ${keys.length} files!`);
-        }
-        selectedFileKeys.clear();
-        updateMultiSelectToolbar();
-        renderUI();
-      } catch (err) {
-        alert("Operation failed: " + err.message);
-      }
-    }
-
-    async function deleteSelectedFiles() {
-      if (!isCurrentUserAdmin() || selectedFileKeys.size === 0) return;
-      if (!confirm(`Are you sure you want to delete ${selectedFileKeys.size} selected files?`)) return;
-
-      try {
-        const keys = Array.from(selectedFileKeys);
-        for (const key of keys) {
-          const fileItem = liveFiles.find(f => f.key === key);
-          if (fileItem) {
-            await dumpBinRef.push({
-              fileId: fileItem.fileId,
-              name: fileItem.name,
-              size: fileItem.size || 0,
-              folder: fileItem.parentId || 'root',
-              timestamp: fileItem.timestamp || Date.now(),
-              originalKey: key
-            });
-            await driveFilesRef.child(key).remove();
-          }
-        }
-        selectedFileKeys.clear();
-        updateMultiSelectToolbar();
-        renderUI();
-      } catch (err) {
-        alert("Failed to delete files: " + err.message);
-      }
-    }
-
-    async function moveToDump(type, key) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only administrators can delete files or folders.");
+    async function submitCatboxLink() {
+      const urlInput = document.getElementById('linkFileUrlInput').value.trim();
+      if (!urlInput) {
+        alert("Please enter a valid direct URL.");
         return;
       }
 
+      const cleanUrl = urlInput.split('?')[0].split('#')[0];
+      const segments = cleanUrl.split('/');
+      const rawFilename = segments.pop();
+      const finalName = (rawFilename && rawFilename.includes('.')) ? decodeURIComponent(rawFilename) : 'uploaded-file';
+
+      try {
+        await driveFilesRef.push({
+          fileId: urlInput,
+          parentId: currentParentId,
+          name: finalName,
+          size: 0,
+          timestamp: Date.now()
+        });
+
+        closeLinkModal();
+        renderUI();
+      } catch (err) {
+        alert("Failed to save file link: " + err.message);
+      }
+    }
+
+    function confirmDeleteAction(type, key) {
+      if (!isCurrentUserAdmin()) {
+        alert("Access Denied: Only administrators can delete items.");
+        return;
+      }
+      pendingDeleteType = type;
+      pendingDeleteKey = key;
+      document.getElementById('deleteInputKeyword').value = '';
+      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
+      document.getElementById('deleteConfirmModal').classList.add('active');
+      document.getElementById('deleteInputKeyword').focus();
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteKey = null;
+      pendingDeleteType = null;
+      document.getElementById('deleteConfirmModal').classList.remove('active');
+    }
+
+    function checkDeleteKeyword(input) {
+      const btn = document.getElementById('btnConfirmDeleteAction');
+      if (input.value.trim().toLowerCase() === 'yes') {
+        btn.classList.add('enabled');
+      } else {
+        btn.classList.remove('enabled');
+      }
+    }
+
+    async function executePendingDelete() {
+      if (!pendingDeleteKey || !pendingDeleteType) return;
+      const type = pendingDeleteType;
+      const key = pendingDeleteKey;
+      closeDeleteModal();
+
       try {
         if (type === 'file') {
-          const fileItem = liveFiles.find(f => f.key === key);
-          if (fileItem) {
-            await dumpBinRef.push({
-              fileId: fileItem.fileId,
-              name: fileItem.name,
-              size: fileItem.size || 0,
-              folder: fileItem.parentId || 'root',
-              timestamp: fileItem.timestamp || Date.now(),
-              originalKey: key
-            });
-            await driveFilesRef.child(key).remove();
-          }
+          await driveFilesRef.child(key).remove();
         } else if (type === 'folder') {
-          if (key === ARCHIVE_FOLDER_KEY) {
-            alert("The Quotations Archive folder is permanent and protected and cannot be deleted.");
-            return;
-          }
-
-          const folderItem = liveFolders.find(f => f.key === key);
-          if (folderItem) {
-            const dumpFolderRef = await dumpBinRef.push({
-              name: folderItem.name,
-              folder: folderItem.parentId || 'root',
-              isFolder: true,
-              timestamp: folderItem.timestamp || Date.now(),
-              originalKey: key
-            });
-            
-            const dumpFolderKey = dumpFolderRef.key;
-
-            const childFiles = liveFiles.filter(f => f.parentId === key);
-            for (const cFile of childFiles) {
-              await dumpBinRef.push({
-                fileId: cFile.fileId,
-                name: cFile.name,
-                size: cFile.size || 0,
-                folder: dumpFolderKey,
-                timestamp: cFile.timestamp || Date.now(),
-                originalKey: cFile.key
-              });
-              await driveFilesRef.child(cFile.key).remove();
-            }
-
-            await driveFoldersRef.child(key).remove();
-          }
+          await driveFoldersRef.child(key).remove();
         }
+        renderUI();
       } catch (err) {
         alert("Failed to delete item: " + err.message);
       }
     }
 
-    // Upload via Vercel Proxy using JSON Base64 payload targeting Catbox
-    async function uploadViaVercelProxy(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-
-        reader.onload = async function() {
-          try {
-            const base64String = reader.result.split(',')[1];
-
-            const response = await fetch(`/api/upload`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                filename: file.name,
-                fileData: base64String
-              })
-            });
-
-            const responseText = await response.text();
-            let resJson;
-            try {
-              resJson = JSON.parse(responseText);
-            } catch (e) {
-              throw new Error('Invalid JSON response: ' + responseText);
-            }
-
-            if (response.ok && resJson.url) {
-              resolve({
-                fileId: resJson.url,
-                url: resJson.url
-              });
-            } else {
-              reject(new Error(resJson.error || `Server status ${response.status}`));
-            }
-          } catch (err) {
-            reject(err);
-          }
-        };
-
-        reader.onerror = function() {
-          reject(new Error('Failed to read local file'));
-        };
-
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function handleDriveUpload() {
-      const fileInput = document.getElementById('driveFileInput');
-      const files = fileInput.files;
-
-      if (!files || files.length === 0) return;
-
-      let successCount = 0;
-      for (let i = 0; i < files.length; i++) {
-        let file = files[i];
-
-        try {
-          const data = await uploadViaVercelProxy(file);
-          const fileUrl = data.url;
-          if (!fileUrl) throw new Error('Could not extract file URL from upload response.');
-
-          await driveFilesRef.push({
-            fileId: fileUrl,
-            parentId: currentParentId,
-            name: file.name,
-            size: file.size || 0,
-            timestamp: Date.now()
-          });
-
-          successCount++;
-        } catch (err) {
-          console.error(`Error uploading "${file.name}":`, err.message);
-          alert(`Upload failed for "${file.name}": ${err.message}`);
-        }
-      }
-
-      fileInput.value = '';
-      alert(`Successfully uploaded ${successCount} of${files.length} files through Vercel proxy!`);
-      renderUI();
-    }
-
-    async function resolveFileUrl(fileId) {
-      if (!fileId) return '';
-      if (fileId.startsWith('http')) return fileId;
-      return `https://files.catbox.moe/${fileId}`;
-    }
-
-    async function handleItemDownload(firebaseKey, fileId, legacyUrl, fileName) {
+    async function handleItemDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
 
-      const targetUrl = await resolveFileUrl(fileId);
-      if (!targetUrl) {
-        alert("File download reference is missing.");
+      if (!fileUrl) {
+        alert("File URL is missing.");
         return;
       }
 
-      const a = document.createElement('a');
-      a.href = targetUrl;
-      a.download = fileName || 'apml-media-asset';
-      a.target = '_blank';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      try {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName || 'apml-asset';
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = fileName || 'apml-asset';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     }
 
-    async function openFilePreview(fileId, legacyUrl, fileName) {
-      const freshUrl = await resolveFileUrl(fileId);
+    async function openFilePreview(fileUrl, fileName) {
       const overlay = document.getElementById('mediaLightboxModal');
       const slot = document.getElementById('lightboxMediaSlot');
 
-      const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(fileName);
-      const isPdf = /\.pdf$/i.test(fileName);
+      const isImage = isImageFile(fileName, fileUrl);
+      const isVideo = isVideoFile(fileName, fileUrl);
+      const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(fileUrl);
+      const isHtml = isHtmlFile(fileName, fileUrl);
 
       if (isImage) {
-        slot.innerHTML = `<img src="${freshUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
-      } else if (isPdf) {
-        slot.innerHTML = `<iframe src="${freshUrl}" style="width:100%; height:80vh; border:none; border-radius:12px;"></iframe>`;
+        slot.innerHTML = `<img src="${fileUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
+      } else if (isVideo) {
+        slot.innerHTML = `<video src="${fileUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
+      } else if (isPdf || isHtml) {
+        slot.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:80vh; border:none; border-radius:12px; background:#ffffff;"></iframe>`;
       } else {
         slot.innerHTML = `
           <div style="text-align:center; padding:40px; color:#ffffff;">
             <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
-            <a href="${freshUrl}" download="${fileName}" class="btn-download-file" target="_blank">Download File</a>
+            <a href="${fileUrl}" download="${fileName}" class="btn-download-file" target="_blank">Download File</a>
           </div>
         `;
       }
@@ -1777,6 +1721,13 @@
       }
     }
 
+    function hideCardLoader(key) {
+      const loader = document.getElementById(`card-loader-${key}`);
+      if (loader) {
+        loader.classList.add('fade-out');
+      }
+    }
+
     function renderBreadcrumb() {
       const nav = document.getElementById('breadcrumbNav');
       if (currentParentId === 'root') {
@@ -1784,17 +1735,6 @@
           <span class="breadcrumb-item">
             <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
           </span>
-        `;
-        return;
-      }
-
-      if (currentParentId === ARCHIVE_FOLDER_KEY) {
-        nav.innerHTML = `
-          <span class="breadcrumb-item" onclick="navigateToFolder('root')">
-            <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
-          </span>
-          <span style="color: var(--text-muted);">/</span>
-          <span class="breadcrumb-item">Quotations Archive</span>
         `;
         return;
       }
@@ -1822,21 +1762,56 @@
     }
 
     function getFileExtension(filename) {
+      if (!filename) return 'FILE';
       const parts = filename.split('.');
       return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
     }
 
-    function getFileIcon(filename) {
-      if (/\.pdf$/i.test(filename)) return 'picture_as_pdf';
-      if (/\.(xls|xlsx|csv)$/i.test(filename)) return 'table_chart';
+    function isImageFile(filename, url) {
+      const pattern = /\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i;
+      return pattern.test(filename) || pattern.test(url);
+    }
+
+    function isVideoFile(filename, url) {
+      const pattern = /\.(mp4|webm|ogg|mov)(\?.*)?$/i;
+      return pattern.test(filename) || pattern.test(url);
+    }
+
+    function isHtmlFile(filename, url) {
+      const pattern = /\.(html|htm)(\?.*)?$/i;
+      return pattern.test(filename) || pattern.test(url);
+    }
+
+    function getFileIcon(filename, url) {
+      if (isImageFile(filename, url)) return 'image';
+      if (isVideoFile(filename, url)) return 'movie';
+      if (isHtmlFile(filename, url)) return 'code';
+      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'picture_as_pdf';
+      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'table_chart';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'folder_zip';
       if (/\.(doc|docx)$/i.test(filename)) return 'article';
-      if (/\.(jpg|jpeg|png|webp|gif)$/i.test(filename)) return 'image';
       return 'insert_drive_file';
     }
 
+    function getThumbnailThemeClass(filename, url) {
+      if (isHtmlFile(filename, url)) return 'preview-placeholder-doc';
+      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'preview-placeholder-excel';
+      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'preview-placeholder-pdf';
+      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'preview-placeholder-zip';
+      return 'preview-placeholder-doc';
+    }
+
+    function getThumbnailIconColor(filename, url) {
+      if (isHtmlFile(filename, url)) return 'color: #7c3aed;';
+      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'color: #059669;';
+      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'color: #dc2626;';
+      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'color: #d97706;';
+      if (/\.(doc|docx)$/i.test(filename)) return 'color: #2563eb;';
+      return 'color: var(--primary);';
+    }
+
     function formatBytes(bytes, decimals = 1) {
-      if (!bytes || bytes === 0) return '0 KB';
+      if (!bytes || bytes === 0) return 'Link Asset';
       const k = 1024;
       const dm = decimals < 0 ? 0 : decimals;
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -1867,42 +1842,27 @@
       const filesContainerWrapper = document.getElementById('filesContainerWrapper');
       const isAdmin = isCurrentUserAdmin();
 
-      const archiveFolder = getProtectedArchiveFolder();
-      let currentFolders = [];
-      let rawFiles = [];
-
-      if (currentParentId === 'root') {
-        currentFolders = [archiveFolder, ...liveFolders.filter(f => f.parentId === 'root' && f.name !== "Quotations Archive")];
-        rawFiles = liveFiles.filter(f => !f.parentId || f.parentId === 'root');
-      } else if (currentParentId === ARCHIVE_FOLDER_KEY) {
-        currentFolders = [];
-        rawFiles = liveFiles.filter(f => f.parentId === ARCHIVE_FOLDER_KEY || (f.parentId === 'root' && f.name && f.name.toLowerCase().includes('quotation')));
-      } else {
-        currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
-        rawFiles = liveFiles.filter(f => f.parentId === currentParentId);
-      }
+      const currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
+      const rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId);
 
       rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-      document.getElementById('statTotalCount').textContent = liveFolders.length + 1 + liveFiles.length;
+      document.getElementById('statTotalCount').textContent = currentFolders.length + rawFiles.length;
 
       if (currentFolders.length > 0) {
         foldersSectionWrapper.style.display = 'block';
         foldersGrid.innerHTML = currentFolders.map(folder => {
-          const isArchive = folder.key === ARCHIVE_FOLDER_KEY;
           return `
-            <div class="folder-card ${isArchive ? 'archive-folder' : ''}" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')">
+            <div class="folder-card" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')">
               <div class="folder-card-left">
-                <span class="material-symbols-outlined">${isArchive ? 'folder_special' : 'folder'}</span>
+                <span class="material-symbols-outlined">folder</span>
                 <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
               </div>
-              ${!isArchive && isAdmin ? `
-                <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); moveToDump('folder', '${folder.key}')" title="Delete Folder">
+              ${isAdmin ? `
+                <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
                   <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
                 </button>
-              ` : `
-                <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);" title="Protected Permanent Folder">lock</span>
-              `}
+              ` : ''}
             </div>
           `;
         }).join('');
@@ -1917,34 +1877,43 @@
       const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
       if (rawFiles.length > 0) {
-        let filesHtml = '';
-        
-        filesHtml = `
+        let filesHtml = `
           <div class="drive-files-grid">
             ${currentFiles.map(file => {
-              const iconName = getFileIcon(file.name);
+              const isImage = isImageFile(file.name, file.fileId);
+              const isVideo = isVideoFile(file.name, file.fileId);
+              const isHtml = isHtmlFile(file.name, file.fileId);
+              
+              const iconName = getFileIcon(file.name, file.fileId);
               const extName = getFileExtension(file.name);
               const formattedSize = formatBytes(file.size);
               const formattedDate = formatTimestamp(file.timestamp);
-              const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(file.name);
-              const isSelected = selectedFileKeys.has(file.key);
+              const themeClass = getThumbnailThemeClass(file.name, file.fileId);
+              const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
+
+              let previewHtml = '';
+              if (isImage) {
+                previewHtml = `<img src="${file.fileId}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
+              } else if (isVideo) {
+                previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
+              } else if (isHtml) {
+                previewHtml = `<iframe src="${file.fileId}" scrolling="no" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></iframe>`;
+              } else {
+                previewHtml = `
+                  <div class="grid-preview-placeholder ${themeClass}">
+                    <span class="material-symbols-outlined" style="${iconColorStyle}">${iconName}</span>
+                    <span class="ext-badge">${extName}</span>
+                  </div>
+                `;
+              }
 
               return `
-                <div class="drive-file-grid-card ${isSelected ? 'selected' : ''}" id="file-card-${file.key}">
-                  ${isAdmin ? `
-                    <div class="file-checkbox-overlay" onclick="toggleFileSelection(event, '${file.key}')" title="Select File">
-                      <span class="material-symbols-outlined">check</span>
+                <div class="drive-file-grid-card" id="file-card-${file.key}">
+                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.name}')" title="Click to preview">
+                    <div class="card-loading-overlay" id="card-loader-${file.key}">
+                      <div class="card-spinner"></div>
                     </div>
-                  ` : ''}
-
-                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.url || ''}', '${file.name}')" title="Click to preview">
-                    ${isImage 
-                      ? `<img id="preview-img-${file.key}" src="" alt="${file.name}">` 
-                      : `<div class="grid-preview-placeholder">
-                           <span class="material-symbols-outlined">${iconName}</span>
-                           <span class="ext-badge">${extName}</span>
-                         </div>`
-                    }
+                    ${previewHtml}
                   </div>
                   <div class="grid-card-body">
                     <div class="file-name" title="${file.name}">${file.name}</div>
@@ -1955,11 +1924,11 @@
                     </div>
                   </div>
                   <div class="grid-card-footer">
-                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.url || ''}', '${file.name}')" title="Download">
+                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Download">
                       <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
                     </button>
                     ${isAdmin ? `
-                      <button type="button" class="btn-delete-file" onclick="moveToDump('file', '${file.key}')" title="Delete">
+                      <button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
                         <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
                       </button>
                     ` : ''}
@@ -2028,16 +1997,17 @@
 
         filesContainerWrapper.innerHTML = filesHtml;
 
-        currentFiles.forEach(async file => {
-          if (/\.(jpg|jpeg|png|webp|gif)$/i.test(file.name)) {
-            const freshUrl = await resolveFileUrl(file.fileId);
-            const imgEl = document.getElementById(`preview-img-${file.key}`);
-            if (imgEl) imgEl.src = freshUrl;
+        currentFiles.forEach(file => {
+          const isImage = isImageFile(file.name, file.fileId);
+          const isVideo = isVideoFile(file.name, file.fileId);
+          const isHtml = isHtmlFile(file.name, file.fileId);
+          if (!isImage && !isVideo && !isHtml) {
+            hideCardLoader(file.key);
           }
         });
 
       } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
+        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or add file links above.</div>`;
       } else {
         filesContainerWrapper.innerHTML = ``;
       }
