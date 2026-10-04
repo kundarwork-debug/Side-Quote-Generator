@@ -1,2141 +1,453 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>APML Portal — Enterprise Cloud Drive</title>
-
-  <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.3">
-  <link rel="stylesheet" href="common.css?v=22.3">
-
-  <!-- GOOGLE FONTS -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-  <!-- SUPABASE JS CLIENT -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
-  <style>
-    :root {
-      --primary: #c21d1d;
-      --primary-dark: #991b1b;
-      --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
-      --primary-soft: rgba(194, 29, 29, 0.08);
-      
-      --bg-base: #F5EFEB;
-      --surface-glass: rgba(255, 255, 255, 0.88);
-      --surface-card: rgba(255, 255, 255, 0.95);
-      
-      --border-subtle: rgba(225, 212, 204, 0.85);
-      --border-hover: rgba(194, 29, 29, 0.35);
-      
-      --text-main: #141210;
-      --text-secondary: #3d3835;
-      --text-muted: #736b66;
-      --text-faint: #a8a29e;
-      
-      --radius-xl: 18px;
-      --radius-pill: 9999px;
-      
-      --shadow-card: 0 1px 3px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.03);
-      --shadow-float: 0 20px 40px -12px rgba(194, 29, 29, 0.12), 0 4px 12px rgba(0, 0, 0, 0.02);
-      
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-display: 'Space Grotesk', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: var(--font-sans);
-    }
-
-    html {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-      overflow-y: scroll !important;
-      height: 100%;
-    }
-
-    body {
-      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
-                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
-                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
-      background-attachment: fixed;
-      color: var(--text-main);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: visible !important;
-      position: relative;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* FULL PAGE SMOOTH LOADING OVERLAY */
-    .app-loading-overlay {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-base);
-      z-index: 999999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
-    }
-
-    .app-loading-overlay.fade-out {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .glowing-infinity-wrapper {
-      position: relative;
-      width: 80px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 24px;
-    }
-
-    .glowing-infinity-wrapper::before {
-      content: "";
-      position: absolute;
-      inset: -10px;
-      background: radial-gradient(circle, rgba(194, 29, 29, 0.35) 0%, transparent 70%);
-      border-radius: 50%;
-      animation: pulseGlow 2s ease-in-out infinite;
-      z-index: 0;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(0.9); opacity: 0.5; }
-      50% { transform: scale(1.2); opacity: 1; }
-    }
-
-    .glowing-infinity-icon {
-      font-size: 52px;
-      color: var(--primary);
-      position: relative;
-      z-index: 1;
-      filter: drop-shadow(0 0 12px rgba(194, 29, 29, 0.6));
-      animation: floatInfinity 3s ease-in-out infinite;
-    }
-
-    @keyframes floatInfinity {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .loading-brand-text {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      letter-spacing: -0.02em;
-    }
-
-    .loading-sub-text {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    #header-container {
-      position: sticky !important;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-    }
-
-    .drive-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 24px 80px;
-      margin-top: 110px !important;
-      width: 100%;
-      position: relative;
-      z-index: 1;
-    }
-
-    .drive-head-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .drive-title {
-      font-family: var(--font-display);
-      font-size: clamp(30px, 4vw, 42px);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin-bottom: 6px;
-      line-height: 1.2;
-    }
-
-    .drive-title span {
-      font-family: var(--font-display);
-      font-weight: 800;
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .drive-sub-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .drive-sub {
-      color: var(--text-muted);
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .drive-stats-pills {
-      display: flex;
-      gap: 8px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .stat-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .stat-pill strong {
-      color: var(--primary);
-    }
-
-    .storage-pill-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .storage-pill-link:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
-    }
-
-    .storage-pill-link .material-symbols-outlined {
-      font-size: 14px;
-    }
-
-    .admin-action-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .btn-admin-auth {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      transition: all 0.2s ease;
-    }
-
-    .btn-admin-auth:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-
-    .btn-admin-auth.logged-in {
-      background: #1e293b;
-      color: #ffffff;
-      border-color: #1e293b;
-      box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
-    }
-
-    .admin-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-    }
-
-    .badge-authorized {
-      background: rgba(16, 185, 129, 0.12);
-      color: #059669;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    /* MODAL STYLES FOR ADD FILE */
-    .link-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .link-modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .link-modal-box {
-      background: #ffffff;
-      max-width: 480px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
-      border: 1.5px solid var(--border-subtle);
-      position: relative;
-    }
-
-    .link-modal-box h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 6px;
-    }
-
-    .link-modal-box p {
-      font-size: 13px;
-      color: #6b7280;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    /* TINY CATBOX LINK BUTTON */
-    .btn-catbox-tiny {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      border: 1px solid rgba(194, 29, 29, 0.2);
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-catbox-tiny:hover {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .link-form-group {
-      margin-bottom: 16px;
-    }
-
-    .link-form-label {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #374151;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .link-form-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .link-form-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
-    }
-
-    .link-modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .btn-link-cancel, .btn-link-submit {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-link-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-link-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-link-submit {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
-    }
-
-    .btn-link-submit:hover {
-      background: var(--primary-dark);
-    }
-
-    /* GALLERY STYLE DELETE WITH 'YES' CONFIRMATION */
-    .delete-confirm-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .delete-confirm-modal {
-      background: #ffffff;
-      max-width: 440px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active .delete-confirm-modal {
-      transform: scale(1);
-    }
-
-    .delete-warning-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .delete-confirm-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .delete-confirm-modal p {
-      font-size: 13.5px;
-      color: #6b7280;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .delete-input-field {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-      margin-bottom: 20px;
-      transition: border-color 0.2s ease;
-    }
-
-    .delete-input-field:focus {
-      border-color: #dc2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-    }
-
-    .delete-modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-modal-cancel, .btn-modal-confirm {
-      flex: 1;
-      padding: 11px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-modal-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-modal-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-modal-confirm {
-      background: #dc2626;
-      color: #ffffff;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .btn-modal-confirm.enabled {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .btn-modal-confirm.enabled:hover {
-      background: #b91c1c;
-    }
-
-    /* POPUP WARNING MODAL */
-    .auth-warning-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .auth-warning-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .auth-warning-modal {
-      background: #ffffff;
-      max-width: 440px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 28px;
-      text-align: center;
-      box-shadow: 0 20px 40px -8px rgba(0,0,0,0.25);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
-    }
-
-    .auth-warning-overlay.active .auth-warning-modal {
-      transform: scale(1);
-    }
-
-    .warning-icon-wrap {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .auth-warning-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .auth-warning-modal p {
-      font-size: 14px;
-      color: #6b7280;
-      line-height: 1.5;
-      margin-bottom: 22px;
-    }
-
-    .auth-warning-modal strong {
-      color: #dc2626;
-      word-break: break-all;
-    }
-
-    .btn-warning-dismiss {
-      background: #dc2626;
-      color: #ffffff;
-      border: none;
-      padding: 10px 24px;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s ease;
-    }
-
-    .btn-warning-dismiss:hover {
-      background: #b91c1c;
-    }
-
-    .drive-action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      padding: 18px 24px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-card);
-    }
-
-    .breadcrumb-nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .breadcrumb-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      color: var(--primary);
-    }
-
-    .breadcrumb-item:hover {
-      text-decoration: underline;
-    }
-
-    .drive-action-buttons {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-drive-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #ffffff;
-      border: 1.5px solid var(--border-subtle);
-      color: var(--text-main);
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-      transition: all 0.2s ease;
-    }
-
-    .btn-drive-action:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-
-    .btn-drive-primary {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(194, 29, 29, 0.2);
-    }
-
-    .btn-drive-primary:hover {
-      background: var(--primary-dark);
-      color: #ffffff;
-    }
-
-    .drive-section-title {
-      font-size: 13px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .folders-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .folder-card {
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      box-shadow: var(--shadow-card);
-      transition: all 0.2s ease;
-    }
-
-    .folder-card:hover {
-      border-color: var(--primary);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-float);
-      background: #ffffff;
-    }
-
-    .folder-card-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .folder-card-left .material-symbols-outlined {
-      color: var(--primary);
-      font-size: 24px;
-    }
-
-    .folder-card-name {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .folder-delete-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: var(--text-muted);
-      padding: 4px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s ease;
-    }
-
-    .folder-delete-btn:hover {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-
-    .drive-files-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 20px;
-    }
-
-    @media (max-width: 1100px) {
-      .drive-files-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 600px) {
-      .drive-files-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .drive-file-grid-card {
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      overflow: hidden;
-      box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .drive-file-grid-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-float);
-      background: #ffffff;
-    }
-
-    .grid-preview-box {
-      width: 100%;
-      height: 180px;
-      background: #0f172a;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-
-    .grid-preview-box img, .grid-preview-box video, .grid-preview-box iframe {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-    }
-
-    .preview-placeholder-doc { background: #f8fafc; }
-    .preview-placeholder-excel { background: #f0fdf4; }
-    .preview-placeholder-pdf { background: #fff1f2; }
-    .preview-placeholder-zip { background: #fffbeb; }
-
-    .grid-preview-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      color: #475569;
-    }
-
-    .grid-preview-placeholder span.material-symbols-outlined {
-      font-size: 42px;
-    }
-
-    .grid-preview-placeholder span.ext-badge {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      background: rgba(0,0,0,0.06);
-      padding: 2px 8px;
-      border-radius: 4px;
-      letter-spacing: 0.05em;
-    }
-
-    .card-loading-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, #1e293b 0%, #334155 50%, #1e293b 100%);
-      background-size: 200% 100%;
-      animation: shimmerLoading 1.5s infinite;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      gap: 10px;
-      z-index: 10;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
-    }
-
-    @keyframes shimmerLoading {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .card-loading-overlay.fade-out {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .card-spinner {
-      width: 28px;
-      height: 28px;
-      border: 3px solid rgba(255,255,255,0.2);
-      border-top-color: #ffffff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    .grid-card-body {
-      padding: 14px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .file-name {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .file-timestamp {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .file-details-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-    }
-
-    .file-type-pill {
-      background: rgba(194, 29, 29, 0.08);
-      color: var(--primary);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 9.5px;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .grid-card-footer {
-      padding: 0 16px 16px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .btn-download-file {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: #ffffff;
-      background: var(--primary);
-      border: none;
-      padding: 6px 12px;
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 700;
-      box-shadow: 0 2px 6px rgba(194, 29, 29, 0.2);
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .btn-download-file:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .card-actions-admin {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .btn-edit-file, .btn-delete-file {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      padding: 0;
-    }
-
-    .btn-edit-file {
-      color: #2563eb;
-      background: #eff6ff;
-    }
-
-    .btn-edit-file:hover {
-      background: #2563eb;
-      color: #ffffff;
-    }
-
-    .btn-delete-file {
-      color: #dc2626;
-      background: #fee2e2;
-    }
-
-    .btn-delete-file:hover {
-      background: #dc2626;
-      color: #ffffff;
-    }
-
-    /* PAGINATION */
-    .pagination-bar {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      margin-top: 36px;
-      padding: 16px 24px;
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-card);
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .pagination-pages-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-page {
-      min-width: 40px;
-      height: 40px;
-      background: transparent;
-      border: 1.5px solid transparent;
-      color: var(--text-main);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      padding: 0 6px;
-    }
-
-    .btn-page:hover:not(:disabled) {
-      background: var(--primary-soft);
-      color: var(--primary);
-    }
-
-    .btn-page.active {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
-    }
-
-    .btn-page:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .page-ellipsis {
-      padding: 0 4px;
-      color: var(--text-muted);
-      font-weight: 700;
-      font-size: 15px;
-      letter-spacing: 1px;
-    }
-
-    .pagination-jump-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border-subtle);
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .jump-input {
-      width: 56px;
-      height: 34px;
-      background: #ffffff;
-      border: 1.5px solid var(--border-subtle);
-      border-radius: 10px;
-      text-align: center;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .jump-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
-    }
-
-    .btn-jump-go {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border: 1.5px solid transparent;
-      padding: 0 14px;
-      height: 34px;
-      border-radius: 10px;
-      font-size: 12.5px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-jump-go:hover {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .media-lightbox-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(8px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .media-lightbox-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .lightbox-content-box {
-      max-width: 900px;
-      width: 100%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .lightbox-content-box img, .lightbox-content-box video, .lightbox-content-box iframe {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      background: #ffffff;
-      width: 100%;
-      height: 80vh;
-    }
-
-    .btn-lightbox-close {
-      position: absolute;
-      top: -45px;
-      right: 0;
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .btn-lightbox-close:hover {
-      background: var(--primary);
-    }
-
-    .state-msg {
-      text-align: center;
-      padding: 50px 20px;
-      color: var(--text-muted);
-      font-weight: 600;
-      background: var(--surface-card);
-      border: 1.5px solid var(--border-subtle);
-      border-radius: var(--radius-xl);
-      grid-column: 1 / -1;
-    }
-
-    .spinner {
-      width: 34px;
-      height: 34px;
-      border: 3px solid var(--border-subtle);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 14px;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 900px) {
-      .drive-container {
-        margin-top: 95px !important;
-      }
-      .drive-action-bar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .drive-action-buttons {
-        width: 100%;
-        justify-content: space-between;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- FULL PAGE SMOOTH LOADING ANIMATION OVERLAY -->
-  <div class="app-loading-overlay" id="appLoadingOverlay">
-    <div class="glowing-infinity-wrapper">
-      <span class="material-symbols-outlined glowing-infinity-icon">cloud_queue</span>
-    </div>
-    <div class="loading-brand-text">APML Cloud Drive</div>
-    <div class="loading-sub-text">Syncing folders &amp; documents...</div>
-  </div>
-
-  <div id="header-container"></div>
-
-  <!-- DELETE CONFIRMATION MODAL (GALLERY STYLE TYPE 'YES') -->
-  <div class="delete-confirm-overlay" id="deleteConfirmModal">
-    <div class="delete-confirm-modal">
-      <div class="delete-warning-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
-      </div>
-      <h3>Are you sure?</h3>
-      <p>Once deleted, this action is not reversible. Type <strong>yes</strong> below to confirm.</p>
-      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type yes to confirm" oninput="checkDeleteKeyword(this)">
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ADD LINK MODAL DIALOG -->
-  <div class="link-modal-overlay" id="linkModalOverlay">
-    <div class="link-modal-box">
-      <h3>Add File via Catbox Link</h3>
-      <p>
-        <span>Generate a link on Catbox.moe and paste it below.</span>
-        <a href="https://catbox.moe/" target="_blank" class="btn-catbox-tiny" title="Upload to Catbox">
-          <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span> Catbox.moe
-        </a>
-      </p>
-
-      <div class="link-form-group">
-        <label class="link-form-label">Direct File URL</label>
-        <input type="url" id="linkFileUrlInput" class="link-form-input" placeholder="https://files.catbox.moe/xxxxxx.ext">
-      </div>
-
-      <div class="link-form-group">
-        <label class="link-form-label">File Name (Optional — leaves auto-extracted if empty)</label>
-        <input type="text" id="linkFileNameInput" class="link-form-input" placeholder="e.g. custom-name.pdf">
-      </div>
-
-      <div class="link-modal-actions">
-        <button type="button" class="btn-link-cancel" onclick="closeLinkModal()">Cancel</button>
-        <button type="button" class="btn-link-submit" onclick="submitCatboxLink()">Save File</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
-  <div class="auth-warning-overlay" id="authWarningModal">
-    <div class="auth-warning-modal">
-      <div class="warning-icon-wrap">
-        <span class="material-symbols-outlined" style="font-size: 32px;">gpp_bad</span>
-      </div>
-      <h3>Access Denied</h3>
-      <p>
-        The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
-        Only authorized admin accounts can access admin controls.
-      </p>
-      <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
-    </div>
-  </div>
-
-  <!-- LIGHTBOX PREVIEW MODAL -->
-  <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
-    <div class="lightbox-content-box" id="lightboxContainer">
-      <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-      <div id="lightboxMediaSlot" style="width: 100%; display: flex; justify-content: center;"></div>
-    </div>
-  </div>
-
-  <main class="drive-container">
-    
-    <div class="drive-head-bar">
-      <div class="drive-header">
-        <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
-        <div class="drive-sub-row">
-          <p class="drive-sub">Organize files in folders and store references seamlessly via Catbox links.</p>
-        </div>
-        <div class="drive-stats-pills" id="driveStatsPills">
-          <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
-          <a href="dump.html" class="storage-pill-link" title="Open Trash Archive">
-            <span class="material-symbols-outlined">delete</span> Trash Archive
-          </a>
-        </div>
-      </div>
-
-      <div class="admin-action-wrap" id="adminAuthContainer">
-        <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span id="adminBtnLabel">Admin Login</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ACTION BAR -->
-    <div class="drive-action-bar">
-      <div class="breadcrumb-nav" id="breadcrumbNav">
-        <span class="breadcrumb-item" onclick="navigateToFolder('root')">
-          <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
-        </span>
-      </div>
-
-      <div class="drive-action-buttons">
-        <button type="button" class="btn-drive-action" onclick="promptCreateFolder()">
-          <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span>
-          <span>New Folder</span>
-        </button>
-        <button type="button" class="btn-drive-action btn-drive-primary" onclick="openLinkModal()">
-          <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
-          <span>Add File</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- FOLDERS SECTION -->
-    <div id="foldersSectionWrapper">
-      <div class="drive-section-title">Folders</div>
-      <div class="folders-grid" id="foldersGrid"></div>
-    </div>
-
-    <!-- FILES SECTION -->
-    <div>
-      <div class="drive-section-title">Files</div>
-      <div id="filesContainerWrapper">
-        <div class="state-msg">
-          <div class="spinner"></div>
-          Syncing drive items...
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <div id="footer-container"></div>
-
-  <script src="common.js?v=22.3"></script>
-
-  <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
-  <script>
-    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true }
-    });
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-      authDomain: "apml-portal.firebaseapp.com",
-      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-      projectId: "apml-portal"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-    const driveFilesRef = db.ref("catbox_gdrive_files");
-    const driveFoldersRef = db.ref("catbox_gdrive_folders");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
-    const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
-
-    const AUTHORIZED_ADMIN_EMAILS = [
-      "kundar.work@gmail.com",
-      "kundar701@gmail.com"
-    ];
-
-    let currentParentId = 'root';
-    let liveFolders = [];
-    let liveFiles = [];
-    let currentUser = null;
-    let currentPage = 1;
-    let pendingDeleteKey = null;
-    let pendingDeleteType = null; // 'file' or 'folder'
-    const ITEMS_PER_PAGE = 16; // FIXED 4x4 GRID
-
-    const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
-    const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
-
-    function hidePageLoader() {
-      const overlay = document.getElementById('appLoadingOverlay');
-      if (overlay && !overlay.classList.contains('fade-out')) {
-        overlay.classList.add('fade-out');
-      }
-    }
-
-    setTimeout(hidePageLoader, 1500);
-
-    function isCurrentUserAdmin() {
-      if (!currentUser || !currentUser.email) return false;
-      const email = currentUser.email.trim().toLowerCase();
-      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === email);
-    }
-
-    function showUnauthorizedWarning(email) {
-      document.getElementById('unauthorizedEmailDisplay').textContent = email;
-      document.getElementById('authWarningModal').classList.add('active');
-    }
-
-    async function dismissWarningModal() {
-      document.getElementById('authWarningModal').classList.remove('active');
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      handleUserSession(null);
-    }
-
-    async function handleGoogleAdminAuth() {
-      if (currentUser) {
-        await supabaseClient.auth.signOut();
-        currentUser = null;
-        handleUserSession(null);
-      } else {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: window.location.origin + window.location.pathname
-          }
-        });
-        if (error) alert(`Google login error: ${error.message}`);
-      }
-    }
-
-    function handleUserSession(user) {
-      currentUser = user;
-      const authBtn = document.getElementById('adminAuthBtn');
-      const authLabel = document.getElementById('adminBtnLabel');
-      const authContainer = document.getElementById('adminAuthContainer');
-
-      const existingBadge = document.getElementById('adminStatusBadge');
-      if (existingBadge) existingBadge.remove();
-
-      if (user) {
-        if (isCurrentUserAdmin()) {
-          authBtn.classList.add('logged-in');
-          authLabel.textContent = "Sign Out";
-
-          const badge = document.createElement('span');
-          badge.id = 'adminStatusBadge';
-          badge.className = 'admin-status-badge badge-authorized';
-          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
-          authContainer.insertBefore(badge, authBtn);
-        } else {
-          showUnauthorizedWarning(user.email);
-        }
-      } else {
-        authBtn.classList.remove('logged-in');
-        authLabel.textContent = "Admin Login";
-      }
-      renderUI();
-    }
-
-    const cachedFolders = localStorage.getItem(CACHE_KEY_FOLDERS);
-    if (cachedFolders) {
-      try {
-        liveFolders = JSON.parse(cachedFolders);
-        renderUI();
-        hidePageLoader();
-      } catch (e) {}
-    }
-
-    const cachedFiles = localStorage.getItem(CACHE_KEY_FILES);
-    if (cachedFiles) {
-      try {
-        liveFiles = JSON.parse(cachedFiles);
-        renderUI();
-        hidePageLoader();
-      } catch (e) {}
-    }
-
-    driveFoldersRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      liveFolders = [];
-      if (data) {
-        Object.keys(data).forEach(key => {
-          liveFolders.push({ key, ...data[key] });
-        });
-      }
-      try { localStorage.setItem(CACHE_KEY_FOLDERS, JSON.stringify(liveFolders)); } catch(e){}
-      renderUI();
-      hidePageLoader();
-    });
-
-    driveFilesRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      liveFiles = [];
-      if (data) {
-        Object.keys(data).forEach(key => {
-          liveFiles.push({ key, ...data[key] });
-        });
-      }
-      try { localStorage.setItem(CACHE_KEY_FILES, JSON.stringify(liveFiles)); } catch(e){}
-      renderUI();
-      hidePageLoader();
-    });
-
-    function navigateToFolder(folderId) {
-      currentParentId = folderId;
-      currentPage = 1;
-      renderUI();
-    }
-
-    function goToPage(pageNum) {
-      currentPage = pageNum;
-      renderUI();
-      window.scrollTo({ top: 200, behavior: 'smooth' });
-    }
-
-    function jumpToCustomPage(totalPages) {
-      const input = document.getElementById('jumpPageInput');
-      if (!input) return;
-      const targetPage = parseInt(input.value);
-      if (isNaN(targetPage) || targetPage < 1 || targetPage > totalPages) {
-        alert(`Please enter a valid page number between 1 and ${totalPages}.`);
-        input.focus();
-        return;
-      }
-      goToPage(targetPage);
-    }
-
-    function promptCreateFolder() {
-      const folderName = prompt("Enter new folder name:");
-      if (!folderName || !folderName.trim()) return;
-
-      driveFoldersRef.push({
-        name: folderName.trim(),
-        parentId: currentParentId,
-        timestamp: Date.now()
-      }).catch(err => alert("Failed to create folder: " + err.message));
-    }
-
-    function openLinkModal() {
-      document.getElementById('linkFileUrlInput').value = '';
-      document.getElementById('linkFileNameInput').value = '';
-      document.getElementById('linkModalOverlay').classList.add('active');
-    }
-
-    function closeLinkModal() {
-      document.getElementById('linkModalOverlay').classList.remove('active');
-    }
-
-    async function submitCatboxLink() {
-      const urlInput = document.getElementById('linkFileUrlInput').value.trim();
-      const customNameInput = document.getElementById('linkFileNameInput').value.trim();
-
-      if (!urlInput) {
-        alert("Please enter a valid direct URL.");
-        return;
-      }
-
-      let finalName = customNameInput;
-      if (!finalName) {
-        const cleanUrl = urlInput.split('?')[0].split('#')[0];
-        const segments = cleanUrl.split('/');
-        const rawFilename = segments.pop();
-        finalName = (rawFilename && rawFilename.includes('.')) ? decodeURIComponent(rawFilename) : 'uploaded-file';
-      }
-
-      try {
-        await driveFilesRef.push({
-          fileId: urlInput,
-          parentId: currentParentId,
-          name: finalName,
-          size: 0,
-          timestamp: Date.now()
-        });
-
-        closeLinkModal();
-        renderUI();
-      } catch (err) {
-        alert("Failed to save file link: " + err.message);
-      }
-    }
-
-    async function editFileName(firebaseKey, currentName) {
-      const newName = prompt("Enter new file name (with extension):", currentName);
-      if (!newName || !newName.trim()) return;
-
-      try {
-        await driveFilesRef.child(firebaseKey).update({ name: newName.trim() });
-        renderUI();
-      } catch (err) {
-        alert("Failed to update file name: " + err.message);
-      }
-    }
-
-    function confirmDeleteAction(type, key) {
-      pendingDeleteType = type;
-      pendingDeleteKey = key;
-      document.getElementById('deleteInputKeyword').value = '';
-      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
-      document.getElementById('deleteConfirmModal').classList.add('active');
-      document.getElementById('deleteInputKeyword').focus();
-    }
-
-    function closeDeleteModal() {
-      pendingDeleteKey = null;
-      pendingDeleteType = null;
-      document.getElementById('deleteConfirmModal').classList.remove('active');
-    }
-
-    function checkDeleteKeyword(input) {
-      const btn = document.getElementById('btnConfirmDeleteAction');
-      if (input.value.trim().toLowerCase() === 'yes') {
-        btn.classList.add('enabled');
-      } else {
-        btn.classList.remove('enabled');
-      }
-    }
-
-    async function executePendingDelete() {
-      if (!pendingDeleteKey || !pendingDeleteType) return;
-      const type = pendingDeleteType;
-      const key = pendingDeleteKey;
-      closeDeleteModal();
-
-      try {
-        if (type === 'file') {
-          const fileObj = liveFiles.find(f => f.key === key);
-          if (fileObj) {
-            // Push deleted file to dump.html trash archive node
-            await dumpBinRef.push({
-              fileId: fileObj.fileId,
-              url: fileObj.fileId,
-              name: fileObj.name,
-              size: fileObj.size || 0,
-              folder: fileObj.parentId || 'root',
-              timestamp: fileObj.timestamp || Date.now(),
-              originalKey: key
-            });
-            await driveFilesRef.child(key).remove();
-          }
-        } else if (type === 'folder') {
-          const folderObj = liveFolders.find(f => f.key === key);
-          if (folderObj) {
-            const dumpFolderRef = await dumpBinRef.push({
-              name: folderObj.name,
-              folder: folderObj.parentId || 'root',
-              isFolder: true,
-              timestamp: folderObj.timestamp || Date.now(),
-              originalKey: key
-            });
-            const dumpFolderKey = dumpFolderRef.key;
-
-            const childFiles = liveFiles.filter(f => f.parentId === key);
-            for (const cFile of childFiles) {
-              await dumpBinRef.push({
-                fileId: cFile.fileId,
-                url: cFile.fileId,
-                name: cFile.name,
-                size: cFile.size || 0,
-                folder: dumpFolderKey,
-                timestamp: cFile.timestamp || Date.now(),
-                originalKey: cFile.key
-              });
-              await driveFilesRef.child(cFile.key).remove();
-            }
-
-            await driveFoldersRef.child(key).remove();
-          }
-        }
-        renderUI();
-      } catch (err) {
-        alert("Failed to delete item: " + err.message);
-      }
-    }
-
-    async function handleItemDownload(firebaseKey, fileUrl, fileName) {
-      totalMediaDownloadsRef.transaction((currentValue) => {
-        return (currentValue || 0) + 1;
-      });
-
-      if (!fileUrl) {
-        alert("File URL is missing.");
-        return;
-      }
-
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = fileName || 'apml-asset';
-        document.body.appendChild(a);
-        a.click();
-        
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (err) {
-        const a = document.createElement('a');
-        a.href = fileUrl;
-        a.download = fileName || 'apml-asset';
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    }
-
-    async function openFilePreview(fileUrl, fileName) {
-      const overlay = document.getElementById('mediaLightboxModal');
-      const slot = document.getElementById('lightboxMediaSlot');
-
-      const isImage = isImageFile(fileName, fileUrl);
-      const isVideo = isVideoFile(fileName, fileUrl);
-      const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(fileUrl);
-      const isHtml = isHtmlFile(fileName, fileUrl);
-
-      if (isImage) {
-        slot.innerHTML = `<img src="${fileUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
-      } else if (isVideo) {
-        slot.innerHTML = `<video src="${fileUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
-      } else if (isPdf || isHtml) {
-        slot.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:80vh; border:none; border-radius:12px; background:#ffffff;"></iframe>`;
-      } else {
-        slot.innerHTML = `
-          <div style="text-align:center; padding:40px; color:#ffffff;">
-            <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
-            <a href="${fileUrl}" download="${fileName}" class="btn-download-file" target="_blank">Download File</a>
+// =========================================================
+// APML STANDALONE APK DETECTION
+// =========================================================
+(function detectStandaloneApp() {
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
+                    || window.navigator.standalone 
+                    || document.referrer.includes('android-app://');
+
+  if (isStandalone) {
+    document.documentElement.classList.add('is-native-apk');
+  }
+})();
+
+// =========================================================
+// APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
+// =========================================================
+(function initCommonLayout() {
+  function renderHeaderAndFooter() {
+    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const isHomePage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
+
+    // Add flag to <html> if on home page
+    if (isHomePage) {
+      document.documentElement.classList.add("is-home-page");
+    } else {
+      document.documentElement.classList.remove("is-home-page");
+    }
+
+    // 1. INJECT HEADER (Rotating Hub Logo + Live Clock + Navigation)
+    const headerContainer = document.getElementById("header-container");
+    if (headerContainer) {
+      headerContainer.innerHTML = `
+        <header class="site-header" id="siteHeader">
+          <div class="header-inner">
+            <div style="display: flex; align-items: center; gap: 20px;">
+              <a href="index.html" class="site-logo">
+                <div class="logo-badge">
+                  <img src="logo.svg" alt="APML Hub" style="width: 24px; height: 24px; display: block; object-fit: contain;">
+                </div>
+                <div class="logo-text">APML <span>Portal</span></div>
+              </a>
+
+              <!-- Live Header Date & Time Display -->
+              <div class="header-live-clock" id="headerLiveClock" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted, #78716c); background: var(--md-sys-color-surface-container-low, #f7ede6); padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--md-sys-color-outline-variant, #ede4de);">
+                <span class="material-symbols-outlined" style="font-size: 15px; color: var(--primary, #b91c1c);">schedule</span>
+                <span id="liveClockText">Loading time...</span>
+              </div>
+            </div>
+
+            <!-- Animated Rotating Hamburger Button -->
+            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </button>
+
+            <!-- Navigation Menu Dropdown -->
+            <nav class="nav-menu" id="navMenu">
+              <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
+                <span class="material-symbols-outlined">home</span>
+                <span>Home</span>
+              </a>
+              <a href="editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">edit_note</span>
+                <span>Quotation Editor</span>
+              </a>
+              <a href="gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">photo_library</span>
+                <span>Gallery</span>
+              </a>
+              <a href="drive-link.html" class="nav-link ${currentPage === 'drive-link.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">cloud</span>
+                <span>Cloud Drive</span>
+              </a>
+              <a href="hub-details.html" class="nav-link ${currentPage === 'hub-details.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">location_city</span>
+                <span>Hub &amp; Branch Directory</span>
+              </a>
+              <a href="field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">badge</span>
+                <span>Field Officer Directory WCRO</span>
+              </a>
+              <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">grid_view</span>
+                <span>APML Lite</span>
+              </a>
+              <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">directions_car</span>
+                <span>Car Rate</span>
+              </a>
+              <a href="local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span>APML Local Rate</span>
+              </a>
+            </nav>
           </div>
-        `;
-      }
-
-      overlay.classList.add('active');
-    }
-
-    function closeLightbox(evt) {
-      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
-        const overlay = document.getElementById('mediaLightboxModal');
-        const slot = document.getElementById('lightboxMediaSlot');
-        overlay.classList.remove('active');
-        slot.innerHTML = '';
-      }
-    }
-
-    function hideCardLoader(key) {
-      const loader = document.getElementById(`card-loader-${key}`);
-      if (loader) {
-        loader.classList.add('fade-out');
-      }
-    }
-
-    function renderBreadcrumb() {
-      const nav = document.getElementById('breadcrumbNav');
-      if (currentParentId === 'root') {
-        nav.innerHTML = `
-          <span class="breadcrumb-item">
-            <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
-          </span>
-        `;
-        return;
-      }
-
-      let path = [];
-      let currId = currentParentId;
-      while (currId && currId !== 'root') {
-        const folder = liveFolders.find(f => f.key === currId);
-        if (!folder) break;
-        path.unshift(folder);
-        currId = folder.parentId;
-      }
-
-      let html = `
-        <span class="breadcrumb-item" onclick="navigateToFolder('root')">
-          <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
-        </span>
+        </header>
       `;
 
-      path.forEach(f => {
-        html += ` <span style="color: var(--text-muted);">/</span> <span class="breadcrumb-item" onclick="navigateToFolder('${f.key}')">${f.name}</span>`;
-      });
-
-      nav.innerHTML = html;
-    }
-
-    function getFileExtension(filename) {
-      if (!filename) return 'FILE';
-      const parts = filename.split('.');
-      return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
-    }
-
-    function isImageFile(filename, url) {
-      const pattern = /\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i;
-      return pattern.test(filename) || pattern.test(url);
-    }
-
-    function isVideoFile(filename, url) {
-      const pattern = /\.(mp4|webm|ogg|mov)(\?.*)?$/i;
-      return pattern.test(filename) || pattern.test(url);
-    }
-
-    function isHtmlFile(filename, url) {
-      const pattern = /\.(html|htm)(\?.*)?$/i;
-      return pattern.test(filename) || pattern.test(url);
-    }
-
-    function getFileIcon(filename, url) {
-      if (isImageFile(filename, url)) return 'image';
-      if (isVideoFile(filename, url)) return 'movie';
-      if (isHtmlFile(filename, url)) return 'code';
-      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'picture_as_pdf';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'table_chart';
-      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'folder_zip';
-      if (/\.(doc|docx)$/i.test(filename)) return 'article';
-      return 'insert_drive_file';
-    }
-
-    function getThumbnailThemeClass(filename, url) {
-      if (isHtmlFile(filename, url)) return 'preview-placeholder-doc';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'preview-placeholder-excel';
-      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'preview-placeholder-pdf';
-      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'preview-placeholder-zip';
-      return 'preview-placeholder-doc';
-    }
-
-    function getThumbnailIconColor(filename, url) {
-      if (isHtmlFile(filename, url)) return 'color: #7c3aed;';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'color: #059669;';
-      if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'color: #dc2626;';
-      if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'color: #d97706;';
-      if (/\.(doc|docx)$/i.test(filename)) return 'color: #2563eb;';
-      return 'color: var(--primary);';
-    }
-
-    function formatBytes(bytes, decimals = 1) {
-      if (!bytes || bytes === 0) return 'Link Asset';
-      const k = 1024;
-      const dm = decimals < 0 ? 0 : decimals;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
-
-    function formatTimestamp(ts) {
-      if (!ts) return '';
-      const d = new Date(ts);
-      if (isNaN(d.getTime())) return '';
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = d.toLocaleDateString('en-IN', { month: 'short' });
-      const year = d.getFullYear();
-      let hours = d.getHours();
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      return `${day}${month} ${year},${hours}:${minutes}${ampm}`;
-    }
-
-    function renderUI() {
-      renderBreadcrumb();
-
-      const foldersGrid = document.getElementById('foldersGrid');
-      const foldersSectionWrapper = document.getElementById('foldersSectionWrapper');
-      const filesContainerWrapper = document.getElementById('filesContainerWrapper');
-      const isAdmin = isCurrentUserAdmin();
-
-      const currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
-      const rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId);
-
-      rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-      document.getElementById('statTotalCount').textContent = currentFolders.length + rawFiles.length;
-
-      if (currentFolders.length > 0) {
-        foldersSectionWrapper.style.display = 'block';
-        foldersGrid.innerHTML = currentFolders.map(folder => {
-          return `
-            <div class="folder-card" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')">
-              <div class="folder-card-left">
-                <span class="material-symbols-outlined">folder</span>
-                <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
-              </div>
-              <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
-                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-              </button>
-            </div>
-          `;
-        }).join('');
-      } else {
-        foldersSectionWrapper.style.display = 'none';
-        foldersGrid.innerHTML = '';
-      }
-
-      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
-      if (rawFiles.length > 0) {
-        let filesHtml = `
-          <div class="drive-files-grid">
-            ${currentFiles.map(file => {
-              const isImage = isImageFile(file.name, file.fileId);
-              const isVideo = isVideoFile(file.name, file.fileId);
-              const isHtml = isHtmlFile(file.name, file.fileId);
-              
-              const iconName = getFileIcon(file.name, file.fileId);
-              const extName = getFileExtension(file.name);
-              const formattedSize = formatBytes(file.size);
-              const formattedDate = formatTimestamp(file.timestamp);
-              const themeClass = getThumbnailThemeClass(file.name, file.fileId);
-              const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
-
-              let previewHtml = '';
-              if (isImage) {
-                previewHtml = `<img src="${file.fileId}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
-              } else if (isVideo) {
-                previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
-              } else if (isHtml) {
-                previewHtml = `<iframe src="${file.fileId}" scrolling="no" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></iframe>`;
-              } else {
-                previewHtml = `
-                  <div class="grid-preview-placeholder ${themeClass}">
-                    <span class="material-symbols-outlined" style="${iconColorStyle}">${iconName}</span>
-                    <span class="ext-badge">${extName}</span>
-                  </div>
-                `;
-              }
-
-              return `
-                <div class="drive-file-grid-card" id="file-card-${file.key}">
-                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.name}')" title="Click to preview">
-                    <div class="card-loading-overlay" id="card-loader-${file.key}">
-                      <div class="card-spinner"></div>
-                    </div>
-                    ${previewHtml}
-                  </div>
-                  <div class="grid-card-body">
-                    <div class="file-name" title="${file.name}">${file.name}</div>
-                    ${formattedDate ? `<div class="file-timestamp">${formattedDate}</div>` : ''}
-                    <div class="file-details-row">
-                      <span class="file-type-pill">${extName}</span>
-                      <span>${formattedSize}</span>
-                    </div>
-                  </div>
-                  <div class="grid-card-footer">
-                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Download">
-                      <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
-                    </button>
-                    <div class="card-actions-admin">
-                      <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
-                      </button>
-                      <button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
-
-        if (totalPages > 1) {
-          filesHtml += `
-            <div class="pagination-bar">
-              <div class="pagination-pages-row">
-                <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
-                </button>
-          `;
-
-          let startPage = Math.max(1, currentPage - 1);
-          let endPage = Math.min(totalPages, currentPage + 1);
-
-          if (currentPage === 1) {
-            endPage = Math.min(totalPages, 3);
-          } else if (currentPage === totalPages) {
-            startPage = Math.max(1, totalPages - 2);
-          }
-
-          if (startPage > 1) {
-            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
-            if (startPage > 2) {
-              filesHtml += `<span class="page-ellipsis">...</span>`;
-            }
-          }
-
-          for (let p = startPage; p <= endPage; p++) {
-            filesHtml += `<button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-          }
-
-          if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-              filesHtml += `<span class="page-ellipsis">...</span>`;
-            }
-            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-          }
-
-          filesHtml += `
-                <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
-                </button>
-              </div>
-          `;
-
-          if (totalPages > 3) {
-            filesHtml += `
-              <div class="pagination-jump-row">
-                <span>Go to page:</span>
-                <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
-                <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
-              </div>
-            `;
-          }
-
-          filesHtml += `</div>`;
+      // Initialize Live Clock Updater
+      function updateLiveClock() {
+        const clockEl = document.getElementById("liveClockText");
+        if (clockEl) {
+          const now = new Date();
+          const options = { 
+            weekday: 'short', 
+            day: '2-digit', 
+            month: 'short', 
+            hour: '2-digit', 
+            minute: '2-digit', 
+            second: '2-digit',
+            hour12: true 
+          };
+          clockEl.textContent = now.toLocaleString('en-IN', options);
         }
+      }
+      updateLiveClock();
+      setInterval(updateLiveClock, 1000);
 
-        filesContainerWrapper.innerHTML = filesHtml;
+      // Event Listeners for Hamburger Click & Outside Clicks
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const navMenu = document.getElementById("navMenu");
+      const siteHeader = document.getElementById("siteHeader");
 
-        currentFiles.forEach(file => {
-          const isImage = isImageFile(file.name, file.fileId);
-          const isVideo = isVideoFile(file.name, file.fileId);
-          const isHtml = isHtmlFile(file.name, file.fileId);
-          if (!isImage && !isVideo && !isHtml) {
-            hideCardLoader(file.key);
+      if (hamburgerBtn && navMenu) {
+        hamburgerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = hamburgerBtn.classList.toggle("is-active");
+          navMenu.classList.toggle("open", isOpen);
+          hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        });
+
+        navMenu.querySelectorAll(".nav-link").forEach((link) => {
+          link.addEventListener("click", () => {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          });
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
           }
         });
 
-      } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or add file links above.</div>`;
-      } else {
-        filesContainerWrapper.innerHTML = ``;
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          }
+        });
+      }
+
+      // Hide/reveal on scroll only applies to home page
+      if (isHomePage) {
+        const scrollTriggerDistance = 110;
+        function handleHeaderScroll() {
+          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollY > scrollTriggerDistance) {
+            siteHeader?.classList.add("header-visible");
+          } else {
+            siteHeader?.classList.remove("header-visible");
+            if (navMenu && navMenu.classList.contains("open")) {
+              navMenu.classList.remove("open");
+              if (hamburgerBtn) {
+                hamburgerBtn.classList.remove("is-active");
+                hamburgerBtn.setAttribute("aria-expanded", "false");
+              }
+            }
+          }
+        }
+
+        window.addEventListener("scroll", handleHeaderScroll, { passive: true });
+        handleHeaderScroll();
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      supabaseClient.auth.getSession().then(({ data: { session } }) => {
-        handleUserSession(session ? session.user : null);
-      }).catch(() => {
-        handleUserSession(null);
-      });
+    // 2. INJECT EDGE-TO-EDGE STRETCHED FOOTER
+    const footerContainer = document.getElementById("footer-container");
+    if (footerContainer) {
+      const currentYear = new Date().getFullYear();
+      footerContainer.innerHTML = `
+        <footer class="site-footer-extended">
+          <div class="footer-grid-container">
+            
+            <!-- Left Brand Section -->
+            <div class="footer-brand-col">
+              <div class="footer-brand-heading">
+                <div class="logo-badge" style="width: 32px; height: 32px;">
+                  <img src="logo.svg" alt="APML Hub" style="width: 20px; height: 20px; display: block; object-fit: contain;">
+                </div>
+                <span class="footer-title-text">APML Portal</span>
+              </div>
+              <p class="footer-brand-desc">
+                Enterprise operations workspace designed to simplify quotation drafting, branch directories, and packing logistics standards.
+              </p>
+              <div class="footer-developer-tag">
+                Designed &amp; developed by <span>Prasad Kundar</span>
+              </div>
+            </div>
 
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
-        handleUserSession(session ? session.user : null);
-      });
+            <!-- Right Links Columns -->
+            <div class="footer-links-columns">
+              <div class="footer-link-col">
+                <div class="footer-col-title">Quick Links</div>
+                <a href="index.html" class="footer-item-link">Home Portal</a>
+                <a href="editor.html" class="footer-item-link">Quotation Editor</a>
+                <a href="gallery.html" class="footer-item-link">Packing Gallery</a>
+                <a href="drive-link.html" class="footer-item-link">Cloud Drive</a>
+              </div>
 
-      setTimeout(hidePageLoader, 3000);
+              <div class="footer-link-col">
+                <div class="footer-col-title">Directories</div>
+                <a href="hub-details.html" class="footer-item-link">Hub &amp; Branch Directory</a>
+                <a href="field-officer.html" class="footer-item-link">Field Officer WCRO</a>
+              </div>
+
+              <div class="footer-link-col">
+                <div class="footer-col-title">Resources &amp; Legal</div>
+                <a href="terms.html" class="footer-item-link">Terms &amp; Conditions</a>
+                <a href="privacy.html" class="footer-item-link">Privacy Policy</a>
+                <a href="bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="footer-bottom-bar">
+            <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+            
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <a href="about.html" class="footer-about-pill">
+                <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
+                <span>About Developer</span>
+              </a>
+
+              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON -->
+              <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
+                <span class="material-symbols-outlined">arrow_upward</span>
+              </button>
+            </div>
+          </div>
+        </footer>
+
+        <style>
+          /* EXTENDED STRETCHED FOOTER STYLING */
+          .site-footer-extended {
+            background: var(--md-sys-color-surface-container-low, #f7ede6);
+            border-top: 1px solid var(--md-sys-color-outline-variant, #ede4de);
+            padding: 60px 40px 30px;
+            width: 100%;
+            margin-top: auto;
+            color: var(--text-main, #292524);
+          }
+
+          .footer-grid-container {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.5fr 3fr;
+            gap: 40px;
+            align-items: start;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+          }
+
+          .footer-brand-col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+          }
+
+          .footer-brand-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+
+          .footer-title-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+          }
+
+          .footer-brand-desc {
+            font-size: 13.5px;
+            color: var(--text-muted, #78716c);
+            line-height: 1.6;
+            max-width: 440px;
+          }
+
+          .footer-developer-tag {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted, #78716c);
+            margin-top: 4px;
+          }
+
+          .footer-developer-tag span {
+            color: var(--primary, #b91c1c);
+            font-weight: 700;
+          }
+
+          .footer-links-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+          }
+
+          .footer-col-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14.5px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            color: var(--text-main, #292524);
+            letter-spacing: -0.01em;
+          }
+
+          .footer-link-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .footer-item-link {
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-muted, #78716c);
+            text-decoration: none;
+            transition: color 0.2s ease;
+          }
+
+          .footer-item-link:hover {
+            color: var(--primary, #b91c1c);
+          }
+
+          .footer-bottom-bar {
+            width: 100%;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12.5px;
+            color: var(--text-muted, #78716c);
+            flex-wrap: wrap;
+            gap: 12px;
+          }
+
+          .footer-about-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid var(--md-sys-color-outline-variant, #ede4de);
+            padding: 6px 14px;
+            border-radius: 9999px;
+            color: var(--text-main, #292524);
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+          }
+
+          .footer-about-pill:hover {
+            transform: translateY(-1px);
+          }
+
+          .footer-about-pill img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+
+          /* EMBEDDED FOOTER BACK TO TOP BUTTON */
+          .footer-back-to-top-btn {
+            width: 42px;
+            height: 42px;
+            background: var(--primary, #b91c1c);
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+            transition: all 0.2s ease;
+          }
+
+          .footer-back-to-top-btn:hover {
+            background: #991b1b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
+          }
+
+          @media (max-width: 850px) {
+            .site-footer-extended {
+              padding: 40px 20px 24px;
+            }
+            .footer-grid-container {
+              grid-template-columns: 1fr;
+              gap: 32px;
+            }
+            .footer-links-columns {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        </style>
+      `;
+
+      // Footer Back to Top Click Handler
+      const footerBackToTopBtn = document.getElementById("footerBackToTopBtn");
+      if (footerBackToTopBtn) {
+        footerBackToTopBtn.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+        });
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderHeaderAndFooter);
+  } else {
+    renderHeaderAndFooter();
+  }
+
+  // 3. SERVICE WORKER REGISTRATION (PWA Support)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch((err) => {
+        console.warn('ServiceWorker registration note:', err);
+      });
     });
-  </script>
-</body>
-</html>
+  }
+
+  // 4. HARDWARE BACK BUTTON NAVIGATION TRAP
+  window.addEventListener('popstate', () => {
+    const navMenu = document.getElementById("navMenu");
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    if (navMenu && navMenu.classList.contains('open')) {
+      navMenu.classList.remove('open');
+      if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
+    }
+  });
+})();
