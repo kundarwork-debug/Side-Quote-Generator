@@ -1321,7 +1321,7 @@
 
       <div class="link-form-group">
         <label class="link-form-label">File Name (Optional — leaves auto-extracted if empty)</label>
-        <input type="text" id="linkFileNameInput" class="link-form-input" placeholder="e.g. custom-name.pdf">
+        <input type="text" id="linkFileNameInput" class="link-form-input" placeholder="e.g. custom-name.xlsx">
       </div>
 
       <div class="link-modal-actions">
@@ -1453,7 +1453,7 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("catbox_gdrive_files");
     const driveFoldersRef = db.ref("catbox_gdrive_folders");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1467,8 +1467,8 @@
     let currentUser = null;
     let currentPage = 1;
     let pendingDeleteKey = null;
-    let pendingDeleteType = null; // 'file' or 'folder'
-    const ITEMS_PER_PAGE = 16; // FIXED 4x4 GRID
+    let pendingDeleteType = null;
+    const ITEMS_PER_PAGE = 16;
 
     const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
     const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
@@ -1671,7 +1671,7 @@
       const newNameInput = prompt("Enter new file name:", currentName);
       if (!newNameInput || !newNameInput.trim()) return;
 
-      // Automatically retain original file extension/format
+      // Automatically retain original file extension/format (.xlsx, .pdf, etc.)
       let extension = '';
       if (currentName.includes('.')) {
         extension = currentName.substring(currentName.lastIndexOf('.'));
@@ -1724,7 +1724,6 @@
         if (type === 'file') {
           const fileObj = liveFiles.find(f => f.key === key);
           if (fileObj) {
-            // Push deleted file to dump.html trash archive node
             await dumpBinRef.push({
               fileId: fileObj.fileId,
               url: fileObj.fileId,
@@ -1813,12 +1812,13 @@
       const isVideo = isVideoFile(fileName, fileUrl);
       const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(fileUrl);
       const isHtml = isHtmlFile(fileName, fileUrl);
+      const isExcel = isExcelFile(fileName, fileUrl);
 
       if (isImage) {
         slot.innerHTML = `<img src="${fileUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
       } else if (isVideo) {
         slot.innerHTML = `<video src="${fileUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
-      } else if (isPdf || isHtml) {
+      } else if (isPdf || isHtml || isExcel) {
         slot.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:80vh; border:none; border-radius:12px; background:#ffffff;"></iframe>`;
       } else {
         slot.innerHTML = `
@@ -1902,28 +1902,33 @@
       return pattern.test(filename) || pattern.test(url);
     }
 
+    function isExcelFile(filename, url) {
+      const pattern = /\.(xls|xlsx|csv)(\?.*)?$/i;
+      return pattern.test(filename) || pattern.test(url);
+    }
+
     function getFileIcon(filename, url) {
       if (isImageFile(filename, url)) return 'image';
       if (isVideoFile(filename, url)) return 'movie';
       if (isHtmlFile(filename, url)) return 'code';
+      if (isExcelFile(filename, url)) return 'table_chart';
       if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'picture_as_pdf';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'table_chart';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'folder_zip';
       if (/\.(doc|docx)$/i.test(filename)) return 'article';
       return 'insert_drive_file';
     }
 
     function getThumbnailThemeClass(filename, url) {
+      if (isExcelFile(filename, url)) return 'preview-placeholder-excel';
       if (isHtmlFile(filename, url)) return 'preview-placeholder-doc';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'preview-placeholder-excel';
       if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'preview-placeholder-pdf';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'preview-placeholder-zip';
       return 'preview-placeholder-doc';
     }
 
     function getThumbnailIconColor(filename, url) {
+      if (isExcelFile(filename, url)) return 'color: #059669;'; // Green for Excel
       if (isHtmlFile(filename, url)) return 'color: #7c3aed;';
-      if (/\.(xls|xlsx|csv)$/i.test(filename) || /\.(xls|xlsx|csv)$/i.test(url)) return 'color: #059669;';
       if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'color: #dc2626;';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'color: #d97706;';
       if (/\.(doc|docx)$/i.test(filename)) return 'color: #2563eb;';
@@ -2122,7 +2127,8 @@
           const isImage = isImageFile(file.name, file.fileId);
           const isVideo = isVideoFile(file.name, file.fileId);
           const isHtml = isHtmlFile(file.name, file.fileId);
-          if (!isImage && !isVideo && !isHtml) {
+          const isExcel = isExcelFile(file.name, file.fileId);
+          if (!isImage && !isVideo && !isHtml && !isExcel) {
             hideCardLoader(file.key);
           }
         });
