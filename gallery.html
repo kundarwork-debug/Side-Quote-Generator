@@ -241,6 +241,34 @@
       color: var(--primary);
     }
 
+    .storage-pill-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .storage-pill-link:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
+    }
+
+    .storage-pill-link .material-symbols-outlined {
+      font-size: 14px;
+    }
+
     .admin-action-wrap {
       display: flex;
       align-items: center;
@@ -1197,6 +1225,9 @@
           <span class="stat-pill">Total: <strong id="statTotalCount">0</strong></span>
           <span class="stat-pill">Photos: <strong id="statPhotoCount">0</strong></span>
           <span class="stat-pill">Videos: <strong id="statVideoCount">0</strong></span>
+          <a href="dump.html" class="storage-pill-link" title="Open Trash Archive">
+            <span class="material-symbols-outlined">delete</span> Trash Archive
+          </a>
         </div>
       </div>
 
@@ -1297,6 +1328,7 @@
     }
     const db = firebase.database();
     const mediaRef = db.ref("apml_ranked_gallery");
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1794,15 +1826,25 @@
 
     async function moveToDeletedFolder(firebaseKey) {
       const itemToMove = liveMediaItems.find(i => i.key === firebaseKey);
-      const originalFolder = itemToMove ? itemToMove.folder : 'packing-images';
+      if (!itemToMove) return;
 
       try {
-        await mediaRef.child(firebaseKey).update({ 
+        // Push deleted file to dump.html trash archive node (catbox_dump_gallery_folders)
+        await dumpBinRef.push({
+          fileId: itemToMove.url,
+          url: itemToMove.url,
+          name: itemToMove.name,
+          size: itemToMove.size || 0,
           folder: 'deleted',
-          prevFolder: originalFolder 
+          prevFolder: itemToMove.folder || 'packing-images',
+          timestamp: itemToMove.timestamp || Date.now(),
+          originalKey: firebaseKey
         });
+
+        // Remove from active gallery database
+        await mediaRef.child(firebaseKey).remove();
       } catch (err) {
-        alert("Failed to move item to deleted bin: " + err.message);
+        alert("Failed to move item to trash archive: " + err.message);
       }
     }
 
