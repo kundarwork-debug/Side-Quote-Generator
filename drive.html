@@ -1453,7 +1453,7 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("catbox_gdrive_files");
     const driveFoldersRef = db.ref("catbox_gdrive_folders");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Connected directly to dump.html
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1668,11 +1668,22 @@
     }
 
     async function editFileName(firebaseKey, currentName) {
-      const newName = prompt("Enter new file name (with extension):", currentName);
-      if (!newName || !newName.trim()) return;
+      const newNameInput = prompt("Enter new file name:", currentName);
+      if (!newNameInput || !newNameInput.trim()) return;
+
+      // Automatically retain original file extension/format
+      let extension = '';
+      if (currentName.includes('.')) {
+        extension = currentName.substring(currentName.lastIndexOf('.'));
+      }
+
+      let cleanNewName = newNameInput.trim();
+      if (extension && !cleanNewName.toLowerCase().endsWith(extension.toLowerCase())) {
+        cleanNewName += extension;
+      }
 
       try {
-        await driveFilesRef.child(firebaseKey).update({ name: newName.trim() });
+        await driveFilesRef.child(firebaseKey).update({ name: cleanNewName });
         renderUI();
       } catch (err) {
         alert("Failed to update file name: " + err.message);
