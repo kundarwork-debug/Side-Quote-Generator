@@ -271,41 +271,14 @@
       color: var(--primary);
     }
 
-    .trash-view-tabs {
+    .header-action-buttons {
       display: flex;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .btn-trash-tab {
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: var(--surface-card);
-      border: 1.5px solid var(--border-subtle);
-      padding: 10px 22px;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      box-shadow: var(--shadow-card);
-      transition: all 0.2s ease;
+      gap: 12px;
+      flex-wrap: wrap;
     }
 
-    .btn-trash-tab:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    .btn-trash-tab.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      box-shadow: 0 4px 14px rgba(194, 29, 29, 0.25);
-    }
-
-    .back-btn-link {
+    .back-btn-link, .btn-empty-all {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -321,6 +294,7 @@
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       transition: all 0.2s ease;
+      cursor: pointer;
     }
 
     .back-btn-link:hover {
@@ -329,10 +303,34 @@
       transform: translateY(-1px);
     }
 
+    .btn-empty-all {
+      background: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+
+    .btn-empty-all:hover {
+      background: #dc2626;
+      color: #ffffff;
+      border-color: #dc2626;
+    }
+
     .dump-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 20px;
+    }
+
+    @media (max-width: 1100px) {
+      .dump-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .dump-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .dump-card {
@@ -358,7 +356,7 @@
 
     .dump-preview-box {
       width: 100%;
-      height: 140px;
+      height: 160px;
       background: #0f172a;
       position: relative;
       overflow: hidden;
@@ -372,6 +370,26 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .source-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      z-index: 5;
+    }
+
+    .source-badge.drive {
+      background: rgba(194, 29, 29, 0.85);
     }
 
     .dump-preview-placeholder {
@@ -426,26 +444,30 @@
       padding: 0 16px 16px 16px;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
       gap: 8px;
       border-top: 1px solid var(--border-subtle);
       padding-top: 12px;
     }
 
-    .btn-restore {
+    .btn-restore, .btn-download {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      background: #059669;
-      color: #ffffff;
+      gap: 4px;
       border: none;
-      padding: 7px 16px;
+      padding: 6px 14px;
       border-radius: var(--radius-pill);
-      font-size: 12.5px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-restore {
+      background: #059669;
+      color: #ffffff;
       box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
-      transition: background 0.2s ease, transform 0.2s ease;
     }
 
     .btn-restore:hover {
@@ -453,12 +475,23 @@
       transform: translateY(-1px);
     }
 
+    .btn-download {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(194, 29, 29, 0.2);
+    }
+
+    .btn-download:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
     .btn-perm-delete {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
@@ -554,7 +587,7 @@
           <span class="material-symbols-outlined" style="font-size: 36px;">admin_panel_settings</span>
         </div>
         <h2>Admin Authentication Required</h2>
-        <p>Please authenticate with your Google admin account to access the Unlimited Storage archive.</p>
+        <p>Please authenticate with your Google admin account to access the Trash &amp; Recovery Archive.</p>
         <button type="button" class="btn-google-login" onclick="triggerGoogleLogin()">
           <svg width="18" height="18" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -586,29 +619,23 @@
       <div class="dump-header">
         <h1 class="dump-title">Trash &amp; <span>Recovery Archive</span></h1>
         <div class="dump-sub-row">
-          <p class="dump-sub">Preview, restore, or permanently delete items from trash.</p>
+          <p class="dump-sub">Preview, download, restore, or permanently delete items.</p>
         </div>
         <div class="dump-stats-pills">
-          <span class="stat-pill">Trash Items: <strong id="statTotalCount">0</strong></span>
+          <span class="stat-pill">Total Trash Items: <strong id="statTotalCount">0</strong></span>
         </div>
       </div>
 
-      <div>
-        <a href="drive.html" class="back-btn-link">
+      <div class="header-action-buttons">
+        <button type="button" class="btn-empty-all" onclick="emptyEntireDump()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">delete_sweep</span>
+          <span>Empty Entire Dump</span>
+        </button>
+        <a href="drive-link.html" class="back-btn-link">
           <span class="material-symbols-outlined" style="font-size: 18px;">arrow_back</span>
           <span>Back to Drive</span>
         </a>
       </div>
-    </div>
-
-    <!-- VIEW SWITCHER TABS -->
-    <div class="trash-view-tabs">
-      <button type="button" class="btn-trash-tab active" id="btnTabDrive" onclick="switchTrashView('drive')">
-        <span class="material-symbols-outlined" style="font-size: 18px;">folder_open</span> Cloud Drive Trash
-      </button>
-      <button type="button" class="btn-trash-tab" id="btnTabGallery" onclick="switchTrashView('gallery')">
-        <span class="material-symbols-outlined" style="font-size: 18px;">perm_media</span> Gallery Trash
-      </button>
     </div>
 
     <!-- TRASH GRID -->
@@ -621,7 +648,7 @@
 
   </main>
 
-  <div id="footer-container"></div>
+  <div id="header-container"></div>
 
   <script src="common.js?v=21.37"></script>
 
@@ -642,8 +669,6 @@
       "kundar701@gmail.com"
     ];
 
-    const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
-
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
@@ -656,15 +681,11 @@
     }
     const db = firebase.database();
     
-    const galleryMediaRef = db.ref("telegram_dump_gallery_folders");
-    const driveTrashRef = db.ref("telegram_gdrive_trash");
-    const driveFilesRef = db.ref("telegram_gdrive_files");
-    const driveFoldersRef = db.ref("telegram_gdrive_folders");
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders");
+    const driveFilesRef = db.ref("catbox_gdrive_files");
+    const galleryMediaRef = db.ref("apml_ranked_gallery");
 
-    let activeTrashView = 'drive';
-    let trashItems = [];
-    let galleryTrashItems = [];
-    const fileUrlCache = new Map();
+    let dumpItems = [];
 
     function isUserAdmin(email) {
       if (!email) return false;
@@ -688,11 +709,9 @@
         const { data: { session } } = await supabaseClient.auth.getSession();
         
         if (session && session.user && isUserAdmin(session.user.email)) {
-          // Authorized Admin: Unlock Page
           overlay.classList.add('fade-out');
           initArchiveData();
         } else if (session && session.user) {
-          // Logged in but not admin
           await supabaseClient.auth.signOut();
           document.getElementById('authSpinner').style.display = 'none';
           document.getElementById('authContentArea').innerHTML = `
@@ -701,10 +720,9 @@
             </div>
             <h2>Access Denied</h2>
             <p>The account <strong>${session.user.email}</strong> does not have administrator privileges required for this archive.</p>
-            <button type="button" class="btn-google-login" onclick="window.location.href='drive.html'">Back to Drive</button>
+            <button type="button" class="btn-google-login" onclick="window.location.href='drive-link.html'">Back to Drive</button>
           `;
         } else {
-          // Not logged in: Show Sign In button
           document.getElementById('authSpinner').style.display = 'none';
         }
       } catch (err) {
@@ -713,67 +731,19 @@
     }
 
     function initArchiveData() {
-      driveTrashRef.on('value', (snapshot) => {
+      dumpBinRef.on('value', (snapshot) => {
         const data = snapshot.val();
-        trashItems = [];
+        dumpItems = [];
         if (data) {
           Object.keys(data).forEach(key => {
-            trashItems.push({ key, ...data[key] });
+            dumpItems.push({ key, ...data[key] });
           });
         }
-        if (activeTrashView === 'drive') renderTrash();
-      });
-
-      galleryMediaRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        galleryTrashItems = [];
-        if (data) {
-          Object.keys(data).forEach(key => {
-            const item = data[key];
-            if (item.folder === 'deleted') {
-              galleryTrashItems.push({ key, ...item });
-            }
-          });
-        }
-        if (activeTrashView === 'gallery') renderTrash();
+        renderTrash();
       });
     }
 
-    function switchTrashView(view) {
-      activeTrashView = view;
-      const btnDrive = document.getElementById('btnTabDrive');
-      const btnGallery = document.getElementById('btnTabGallery');
-
-      if (view === 'drive') {
-        btnDrive.classList.add('active');
-        btnGallery.classList.remove('active');
-      } else {
-        btnGallery.classList.add('active');
-        btnDrive.classList.remove('active');
-      }
-      renderTrash();
-    }
-
-    async function resolveFileUrl(fileId, legacyUrl) {
-      if (!fileId) return legacyUrl || '';
-      if (fileUrlCache.has(fileId)) return fileUrlCache.get(fileId);
-
-      try {
-        const pathRes = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getFile?file_id=${fileId}`);
-        const pathData = await pathRes.json();
-        if (pathData.ok && pathData.result.file_path) {
-          const freshUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${pathData.result.file_path}`;
-          fileUrlCache.set(fileId, freshUrl);
-          return freshUrl;
-        }
-      } catch (err) {
-        console.error("Failed to resolve fileId:", fileId, err);
-      }
-      return legacyUrl || '';
-    }
-
-    async function openItemPreview(fileId, legacyUrl, fileName) {
-      const freshUrl = await resolveFileUrl(fileId, legacyUrl);
+    async function openItemPreview(fileUrl, fileName) {
       const overlay = document.getElementById('mediaLightboxModal');
       const slot = document.getElementById('lightboxMediaSlot');
 
@@ -781,14 +751,14 @@
       const isPdf = /\.pdf$/i.test(fileName);
 
       if (isImage) {
-        slot.innerHTML = `<img src="${freshUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
+        slot.innerHTML = `<img src="${fileUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
       } else if (isPdf) {
-        slot.innerHTML = `<iframe src="${freshUrl}" style="width:100%; height:80vh; border:none; border-radius:12px;"></iframe>`;
+        slot.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:80vh; border:none; border-radius:12px;"></iframe>`;
       } else {
         slot.innerHTML = `
           <div style="text-align:center; padding:40px; color:#ffffff;">
             <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type.</p>
-            <a href="${freshUrl}" download="${fileName}" class="btn-restore">Download File</a>
+            <a href="${fileUrl}" download="${fileName}" class="btn-restore">Download File</a>
           </div>
         `;
       }
@@ -805,12 +775,45 @@
       }
     }
 
-    async function restoreDriveItem(trashKey) {
-      const item = trashItems.find(i => i.key === trashKey);
+    async function handleItemDownload(fileUrl, fileName) {
+      if (!fileUrl) {
+        alert("File URL is missing.");
+        return;
+      }
+
+      try {
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName || 'apml-asset';
+        document.body.appendChild(a);
+        a.click();
+        
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = fileName || 'apml-asset';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }
+
+    async function restoreItem(trashKey) {
+      const item = dumpItems.find(i => i.key === trashKey);
       if (!item) return;
 
       try {
+        const isFromGallery = item.folder && item.folder !== 'root' && !item.fileId?.includes('catbox');
+        
         if (item.isFolder) {
+          // Folder restoration logic
           const newFolderRef = await driveFoldersRef.push({
             name: item.name,
             parentId: item.folder || 'root',
@@ -818,70 +821,69 @@
           });
           const restoredFolderKey = newFolderRef.key;
 
-          const childTrashItems = trashItems.filter(i => i.folder === trashKey);
-          for (const child of childTrashItems) {
+          const childItems = dumpItems.filter(i => i.folder === trashKey);
+          for (const child of childItems) {
             await driveFilesRef.push({
-              fileId: child.fileId,
+              fileId: child.fileId || child.url,
               parentId: restoredFolderKey,
               name: child.name,
               size: child.size || 0,
               timestamp: child.timestamp || Date.now()
             });
-            await driveTrashRef.child(child.key).remove();
+            await dumpBinRef.child(child.key).remove();
           }
 
-          await driveTrashRef.child(trashKey).remove();
+          await dumpBinRef.child(trashKey).remove();
           alert(`Successfully restored folder "${item.name}"!`);
+        } else if (item.originalKey && !item.fileId?.includes('catbox') && item.folder === 'deleted') {
+          // Gallery restoration
+          await galleryMediaRef.child(item.originalKey).update({ folder: item.prevFolder || 'packing-images' });
+          await dumpBinRef.child(trashKey).remove();
+          alert(`Successfully restored "${item.name}" to Gallery!`);
         } else {
+          // Cloud Drive file restoration
           await driveFilesRef.push({
-            fileId: item.fileId,
+            fileId: item.fileId || item.url,
             parentId: item.folder || 'root',
             name: item.name,
             size: item.size || 0,
             timestamp: item.timestamp || Date.now()
           });
-          await driveTrashRef.child(trashKey).remove();
-          alert(`Successfully restored "${item.name}"!`);
+          await dumpBinRef.child(trashKey).remove();
+          alert(`Successfully restored "${item.name}" to Cloud Drive!`);
         }
       } catch (err) {
         alert("Restoration failed: " + err.message);
       }
     }
 
-    async function permanentDeleteDrive(trashKey, isFolder) {
+    async function permanentDelete(trashKey, isFolder) {
       if (!confirm("Permanently delete this item?")) return;
       try {
         if (isFolder) {
-          const childTrashItems = trashItems.filter(i => i.folder === trashKey);
-          for (const child of childTrashItems) {
-            await driveTrashRef.child(child.key).remove();
+          const childItems = dumpItems.filter(i => i.folder === trashKey);
+          for (const child of childItems) {
+            await dumpBinRef.child(child.key).remove();
           }
         }
-        await driveTrashRef.child(trashKey).remove();
+        await dumpBinRef.child(trashKey).remove();
       } catch (err) {
         alert("Permanent deletion failed: " + err.message);
       }
     }
 
-    async function restoreGalleryItem(key) {
+    async function emptyEntireDump() {
+      if (!confirm("Are you sure you want to empty the entire trash archive? This cannot be undone.")) return;
       try {
-        await galleryMediaRef.child(key).update({ folder: 'packing-images' });
-        alert("Successfully restored media item to gallery!");
+        await dumpBinRef.remove();
+        alert("Trash archive emptied successfully.");
       } catch (err) {
-        alert("Restoration failed: " + err.message);
-      }
-    }
-
-    async function permanentDeleteGallery(key) {
-      if (!confirm("Permanently delete this gallery item?")) return;
-      try {
-        await galleryMediaRef.child(key).remove();
-      } catch (err) {
-        alert("Deletion failed: " + err.message);
+        alert("Failed to empty trash: " + err.message);
       }
     }
 
     function getFileExtension(filename) {
+      if (!filename) return 'FILE';
       const parts = filename.split('.');
       return parts.length > 1 ? parts.pop().toUpperCase() : 'FILE';
     }
@@ -896,7 +898,7 @@
     }
 
     function formatBytes(bytes, decimals = 1) {
-      if (!bytes || bytes === 0) return '0 KB';
+      if (!bytes || bytes === 0) return 'Link Asset';
       const k = 1024;
       const dm = decimals < 0 ? 0 : decimals;
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -906,108 +908,72 @@
 
     function renderTrash() {
       const dumpGrid = document.getElementById('dumpGrid');
+      const rootItems = dumpItems.filter(item => {
+        if (item.isFolder) return true;
+        const parentInDump = dumpItems.some(p => p.key === item.folder && p.isFolder);
+        return !parentInDump;
+      });
 
-      if (activeTrashView === 'drive') {
-        const rootTrashItems = trashItems.filter(item => {
-          if (item.isFolder) return true;
-          const parentInTrash = trashItems.some(p => p.key === item.folder && p.isFolder);
-          return !parentInTrash;
-        });
+      document.getElementById('statTotalCount').textContent = rootItems.length;
 
-        document.getElementById('statTotalCount').textContent = rootTrashItems.length;
-
-        if (rootTrashItems.length === 0) {
-          dumpGrid.innerHTML = `<div class="state-msg">Cloud Drive trash is empty.</div>`;
-          return;
-        }
-
-        dumpGrid.innerHTML = rootTrashItems.map(item => {
-          const isFolder = item.isFolder === true;
-          const iconName = isFolder ? 'folder' : getFileIcon(item.name);
-          const extName = isFolder ? 'FOLDER' : getFileExtension(item.name);
-          const formattedSize = isFolder ? `${trashItems.filter(c => c.folder === item.key).length} items` : formatBytes(item.size);
-          const isImage = !isFolder && /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
-
-          return `
-            <div class="dump-card">
-              <div class="dump-preview-box" ${!isFolder ? `onclick="openItemPreview('${item.fileId}', '${item.url || ''}', '${item.name}')"` : ''} title="${isFolder ? 'Folder' : 'Click to preview'}">
-                ${isImage 
-                  ? `<img id="dump-preview-img-${item.key}" src="" alt="${item.name}">` 
-                  : `<div class="dump-preview-placeholder">
-                       <span class="material-symbols-outlined">${iconName}</span>
-                       <span class="ext-badge">${extName}</span>
-                     </div>`
-                }
-              </div>
-              <div class="dump-card-body">
-                <div class="dump-name" title="${item.name}">${item.name}</div>
-                <div class="dump-details-sub">
-                  <span>${formattedSize}</span>
-                  <span style="font-size:10.5px; font-weight:800; color:var(--primary); text-transform:uppercase;">${extName}</span>
-                </div>
-              </div>
-              <div class="dump-card-footer">
-                <button type="button" class="btn-restore" onclick="restoreDriveItem('${item.key}')" title="Restore Item">
-                  <span class="material-symbols-outlined" style="font-size: 16px;">settings_backup_restore</span> Restore
-                </button>
-                <button type="button" class="btn-perm-delete" onclick="permanentDeleteDrive('${item.key}', ${isFolder})" title="Delete Permanently">
-                  <span class="material-symbols-outlined" style="font-size: 15px;">delete_forever</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        rootTrashItems.forEach(async item => {
-          if (!item.isFolder && /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name)) {
-            const freshUrl = await resolveFileUrl(item.fileId, item.url);
-            const imgEl = document.getElementById(`dump-preview-img-${item.key}`);
-            if (imgEl) imgEl.src = freshUrl;
-          }
-        });
-
-      } else {
-        document.getElementById('statTotalCount').textContent = galleryTrashItems.length;
-
-        if (galleryTrashItems.length === 0) {
-          dumpGrid.innerHTML = `<div class="state-msg">Gallery trash is empty.</div>`;
-          return;
-        }
-
-        dumpGrid.innerHTML = galleryTrashItems.map(item => {
-          const formattedSize = formatBytes(item.size);
-          const extName = getFileExtension(item.name);
-
-          return `
-            <div class="dump-card">
-              <div class="dump-preview-box" onclick="openItemPreview('${item.fileId}', '${item.url || ''}', '${item.name}')" title="Click to preview">
-                <img id="gallery-preview-img-${item.key}" src="" alt="${item.name}">
-              </div>
-              <div class="dump-card-body">
-                <div class="dump-name" title="${item.name}">${item.name}</div>
-                <div class="dump-details-sub">
-                  <span>${formattedSize}</span>
-                  <span style="font-size:10.5px; font-weight:800; color:var(--primary); text-transform:uppercase;">${extName}</span>
-                </div>
-              </div>
-              <div class="dump-card-footer">
-                <button type="button" class="btn-restore" onclick="restoreGalleryItem('${item.key}')" title="Restore Item">
-                  <span class="material-symbols-outlined" style="font-size: 16px;">settings_backup_restore</span> Restore
-                </button>
-                <button type="button" class="btn-perm-delete" onclick="permanentDeleteGallery('${item.key}')" title="Delete Permanently">
-                  <span class="material-symbols-outlined" style="font-size: 15px;">delete_forever</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        galleryTrashItems.forEach(async item => {
-          const freshUrl = await resolveFileUrl(item.fileId, item.url);
-          const imgEl = document.getElementById(`gallery-preview-img-${item.key}`);
-          if (imgEl) imgEl.src = freshUrl;
-        });
+      if (rootItems.length === 0) {
+        dumpGrid.innerHTML = `<div class="state-msg">Trash &amp; recovery archive is empty.</div>`;
+        return;
       }
+
+      dumpGrid.innerHTML = rootItems.map(item => {
+        const isFolder = item.isFolder === true;
+        const fileUrl = item.fileId || item.url || '';
+        const iconName = isFolder ? 'folder' : getFileIcon(item.name);
+        const extName = isFolder ? 'FOLDER' : getFileExtension(item.name);
+        const formattedSize = isFolder ? `${dumpItems.filter(c => c.folder === item.key).length} items` : formatBytes(item.size);
+        const isImage = !isFolder && /\.(jpg|jpeg|png|webp|gif)$/i.test(item.name);
+
+        // Determine Source Badge
+        let sourceLabel = 'Cloud Drive';
+        let sourceClass = 'drive';
+        if (item.folder === 'deleted' || (!item.fileId?.includes('catbox') && item.originalKey)) {
+          sourceLabel = 'Gallery';
+          sourceClass = 'gallery';
+        }
+
+        return `
+          <div class="dump-card">
+            <div class="dump-preview-box" ${!isFolder && fileUrl ? `onclick="openFilePreview('${fileUrl}', '${item.name}')"` : ''} title="${isFolder ? 'Folder' : 'Click to preview'}">
+              <span class="source-badge ${sourceClass}">${sourceLabel}</span>
+              ${isImage && fileUrl 
+                ? `<img src="${fileUrl}" alt="${item.name}">` 
+                : `<div class="dump-preview-placeholder">
+                     <span class="material-symbols-outlined">${iconName}</span>
+                     <span class="ext-badge">${extName}</span>
+                   </div>`
+              }
+            </div>
+            <div class="dump-card-body">
+              <div class="dump-name" title="${item.name}">${item.name}</div>
+              <div class="dump-details-sub">
+                <span>${formattedSize}</span>
+                <span style="font-size:10.5px; font-weight:800; color:var(--primary); text-transform:uppercase;">${extName}</span>
+              </div>
+            </div>
+            <div class="dump-card-footer">
+              ${!isFolder && fileUrl ? `
+                <button type="button" class="btn-download" onclick="handleItemDownload('${fileUrl}', '${item.name}')" title="Download File">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">download</span> Download
+                </button>
+              ` : '<div></div>'}
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" class="btn-restore" onclick="restoreItem('${item.key}')" title="Restore Item">
+                  <span class="material-symbols-outlined" style="font-size: 15px;">restore</span> Restore
+                </button>
+                <button type="button" class="btn-perm-delete" onclick="permanentDelete('${item.key}', ${isFolder})" title="Delete Permanently">
+                  <span class="material-symbols-outlined" style="font-size: 15px;">delete_forever</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
