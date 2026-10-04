@@ -990,17 +990,36 @@
       transform: translateY(-1px);
     }
 
-    .btn-delete-file {
+    .card-actions-admin {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-edit-file, .btn-delete-file {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       border: none;
       cursor: pointer;
       transition: all 0.2s ease;
       padding: 0;
+    }
+
+    .btn-edit-file {
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .btn-edit-file:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-delete-file {
       color: #dc2626;
       background: #fee2e2;
     }
@@ -1272,6 +1291,11 @@
         <input type="url" id="linkFileUrlInput" class="link-form-input" placeholder="https://files.catbox.moe/xxxxxx.ext">
       </div>
 
+      <div class="link-form-group">
+        <label class="link-form-label">File Name (Optional — leaves auto-extracted if empty)</label>
+        <input type="text" id="linkFileNameInput" class="link-form-input" placeholder="e.g. custom-name.pdf">
+      </div>
+
       <div class="link-modal-actions">
         <button type="button" class="btn-link-cancel" onclick="closeLinkModal()">Cancel</button>
         <button type="button" class="btn-link-submit" onclick="submitCatboxLink()">Save File</button>
@@ -1369,7 +1393,7 @@
 
   </main>
 
-  <div id="footer-container"></div>
+  <div id="header-container"></div>
 
   <script src="common.js?v=22.3"></script>
 
@@ -1398,6 +1422,7 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("catbox_gdrive_files");
     const driveFoldersRef = db.ref("catbox_gdrive_folders");
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1570,6 +1595,7 @@
 
     function openLinkModal() {
       document.getElementById('linkFileUrlInput').value = '';
+      document.getElementById('linkFileNameInput').value = '';
       document.getElementById('linkModalOverlay').classList.add('active');
     }
 
@@ -1579,15 +1605,20 @@
 
     async function submitCatboxLink() {
       const urlInput = document.getElementById('linkFileUrlInput').value.trim();
+      const customNameInput = document.getElementById('linkFileNameInput').value.trim();
+
       if (!urlInput) {
         alert("Please enter a valid direct URL.");
         return;
       }
 
-      const cleanUrl = urlInput.split('?')[0].split('#')[0];
-      const segments = cleanUrl.split('/');
-      const rawFilename = segments.pop();
-      const finalName = (rawFilename && rawFilename.includes('.')) ? decodeURIComponent(rawFilename) : 'uploaded-file';
+      let finalName = customNameInput;
+      if (!finalName) {
+        const cleanUrl = urlInput.split('?')[0].split('#')[0];
+        const segments = cleanUrl.split('/');
+        const rawFilename = segments.pop();
+        finalName = (rawFilename && rawFilename.includes('.')) ? decodeURIComponent(rawFilename) : 'uploaded-file';
+      }
 
       try {
         await driveFilesRef.push({
@@ -1605,11 +1636,19 @@
       }
     }
 
-    function confirmDeleteAction(type, key) {
-      if (!isCurrentUserAdmin()) {
-        alert("Access Denied: Only administrators can delete items.");
-        return;
+    async function editFileName(firebaseKey, currentName) {
+      const newName = prompt("Enter new file name (with extension):", currentName);
+      if (!newName || !newName.trim()) return;
+
+      try {
+        await driveFilesRef.child(firebaseKey).update({ name: newName.trim() });
+        renderUI();
+      } catch (err) {
+        alert("Failed to update file name: " + err.message);
       }
+    }
+
+    function confirmDeleteAction(type, key) {
       pendingDeleteType = type;
       pendingDeleteKey = key;
       document.getElementById('deleteInputKeyword').value = '';
@@ -1641,9 +1680,46 @@
 
       try {
         if (type === 'file') {
-          await driveFilesRef.child(key).remove();
+          const fileObj = liveFiles.find(f => f.key === key);
+          if (fileObj) {
+            // Push deleted file to dump.html storage reference
+            await dumpBinRef.push({
+              fileId: fileObj.fileId,
+              name: fileObj.name,
+              size: fileObj.size || 0,
+              folder: fileObj.parentId || 'root',
+              timestamp: fileObj.timestamp || Date.now(),
+              originalKey: key
+            });
+            await driveFilesRef.child(key).remove();
+          }
         } else if (type === 'folder') {
-          await driveFoldersRef.child(key).remove();
+          const folderObj = liveFolders.find(f => f.key === key);
+          if (folderObj) {
+            const dumpFolderRef = await dumpBinRef.push({
+              name: folderObj.name,
+              folder: folderObj.parentId || 'root',
+              isFolder: true,
+              timestamp: folderObj.timestamp || Date.now(),
+              originalKey: key
+            });
+            const dumpFolderKey = dumpFolderRef.key;
+
+            const childFiles = liveFiles.filter(f => f.parentId === key);
+            for (const cFile of childFiles) {
+              await dumpBinRef.push({
+                fileId: cFile.fileId,
+                name: cFile.name,
+                size: cFile.size || 0,
+                folder: dumpFolderKey,
+                timestamp: cFile.timestamp || Date.now(),
+                originalKey: cFile.key
+              });
+              await driveFilesRef.child(cFile.key).remove();
+            }
+
+            await driveFoldersRef.child(key).remove();
+          }
         }
         renderUI();
       } catch (err) {
@@ -1858,11 +1934,9 @@
                 <span class="material-symbols-outlined">folder</span>
                 <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
               </div>
-              ${isAdmin ? `
-                <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-                </button>
-              ` : ''}
+              <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
+                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+              </button>
             </div>
           `;
         }).join('');
@@ -1927,11 +2001,14 @@
                     <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Download">
                       <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
                     </button>
-                    ${isAdmin ? `
+                    <div class="card-actions-admin">
+                      <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+                      </button>
                       <button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
                         <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
                       </button>
-                    ` : ''}
+                    </div>
                   </div>
                 </div>
               `;
