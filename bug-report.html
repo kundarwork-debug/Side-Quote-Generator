@@ -9,7 +9,7 @@
   <meta http-equiv="Expires" content="0">
 
   <title>APML Portal — Bug Report &amp; Feedback</title>
-  <meta name="description" content="Report bugs, submit feedback, and share screenshots directly with the administrator.">
+  <meta name="description" content="Report bugs, submit feedback, and share media attachments directly with the administrator.">
 
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.45">
   
@@ -29,8 +29,8 @@
       --primary-gradient: linear-gradient(135deg, #b91c1c 0%, #e11d48 50%, #f43f5e 100%);
       --primary-soft: rgba(185, 28, 28, 0.06);
       
-      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
-      --surface-card: #FFFFFF; /* Pure White Tiles */
+      --bg-base: #FDF8F5;
+      --surface-card: #FFFFFF;
       --surface-border: #ede4de;
       --surface-subtle: #f7ede6;
       
@@ -43,7 +43,6 @@
       --radius-pill: 9999px;
       
       --shadow-subtle: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
-      --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-display: 'Space Grotesk', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -69,13 +68,10 @@
       min-height: 100%;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: visible !important;
       position: relative;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Soft Radial Mesh Background */
     .ambient-bg {
       position: fixed;
       top: 0;
@@ -341,28 +337,29 @@
 </head>
 <body>
 
-  <!-- Ambient Soft Radial Mesh Background -->
+  <!-- Ambient Background -->
   <div class="ambient-bg"></div>
 
-  <!-- COMMON HEADER PLACEHOLDER -->
+  <!-- COMMON HEADER -->
   <div id="header-container"></div>
 
   <main>
     <div class="bug-card">
       <div class="bug-header">
         <h1 class="bug-title">Report a <span>Bug</span></h1>
-        <p class="bug-sub">Encountered an issue or glitch? Send the details directly to the administrator.</p>
+        <p class="bug-sub">Encountered an issue or glitch? Submit the details directly to the database.</p>
       </div>
 
       <div class="success-alert" id="successAlert">
         <span class="material-symbols-outlined" style="font-size: 20px; color: #16a34a;">check_circle</span>
-        <span>Bug report successfully transmitted! Thank you.</span>
+        <span>Bug report saved successfully to database! Thank you.</span>
       </div>
 
-      <form id="bugReportForm" onsubmit="submitBugReport(event)">
+      <form id="bugReportForm" onsubmit="submitBugReportToFirebase(event)">
+        
         <div class="form-group">
           <label class="form-label" for="reporterName">Your Name / HOD / Officer</label>
-          <input type="text" id="reporterName" class="form-input" placeholder="" required>
+          <input type="text" id="reporterName" class="form-input" placeholder="Enter your name or designation" required>
         </div>
 
         <div class="form-group">
@@ -374,14 +371,14 @@
           <label class="form-label">Attach Screenshot (Optional)</label>
           <div class="file-upload-box">
             <span class="material-symbols-outlined upload-icon">add_photo_alternate</span>
-            <div class="upload-text">Click or drag image here to attach screenshot</div>
-            <div class="upload-subtext">Supports PNG, JPG, WEBP up to 10MB</div>
-            <input type="file" id="screenshotInput" accept="image/*" onchange="handleFilePreview(this)">
+            <div class="upload-text">Click or drag image here</div>
+            <div class="upload-subtext">Supports PNG, JPG, WEBP images</div>
+            <input type="file" id="mediaInput" accept="image/*" onchange="handleFilePreview(this)">
           </div>
 
           <div class="preview-container" id="filePreviewBox">
-            <img id="previewImage" class="preview-thumb" src="" alt="Screenshot Preview">
-            <span class="preview-info" id="previewFileName">screenshot.png</span>
+            <img id="previewImage" class="preview-thumb" src="" alt="Media Preview">
+            <span class="preview-info" id="previewFileName">attachment.png</span>
             <button type="button" class="btn-remove-file" onclick="clearAttachment()" title="Remove Attachment">
               <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
             </button>
@@ -403,33 +400,53 @@
     </div>
   </main>
 
-  <!-- COMMON FOOTER PLACEHOLDER -->
+  <!-- COMMON FOOTER -->
   <div id="footer-container"></div>
 
-  <!-- YOUR COMMON JS -->
+  <!-- COMMON JS -->
   <script src="common.js?v=21.45"></script>
 
+  <!-- FIREBASE SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <script>
-    const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
-    const CHAT_ID = "-1004302268775";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+      authDomain: "apml-portal.firebaseapp.com",
+      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+    const bugReportsRef = db.ref("apml_bug_reports");
 
     let base64Image = null;
 
     function handleFilePreview(input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
-        if (file.size > 10 * 1024 * 1024) {
-          alert("File size exceeds 10MB limit.");
+        if (file.size > 5 * 1024 * 1024) {
+          alert("File size exceeds 5MB limit. Please choose a smaller screenshot.");
           input.value = "";
           return;
         }
+
+        document.getElementById('previewFileName').textContent = file.name;
+        document.getElementById('filePreviewBox').style.display = 'flex';
 
         const reader = new FileReader();
         reader.onload = function(e) {
           base64Image = e.target.result;
           document.getElementById('previewImage').src = base64Image;
-          document.getElementById('previewFileName').textContent = file.name;
-          document.getElementById('filePreviewBox').style.display = 'flex';
+          document.getElementById('previewImage').style.display = 'block';
         };
         reader.readAsDataURL(file);
       }
@@ -437,14 +454,13 @@
 
     function clearAttachment() {
       base64Image = null;
-      document.getElementById('screenshotInput').value = "";
+      document.getElementById('mediaInput').value = "";
       document.getElementById('filePreviewBox').style.display = 'none';
       document.getElementById('previewImage').src = "";
     }
 
-    async function submitBugReport(event) {
+    async function submitBugReportToFirebase(event) {
       event.preventDefault();
-
       const name = document.getElementById('reporterName').value.trim();
       const message = document.getElementById('bugMessage').value.trim();
       const submitBtn = document.getElementById('submitBugBtn');
@@ -453,38 +469,16 @@
       if (!name || !message) return;
 
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<div class="spinner" style="width:18px; height:18px; border-width:2px; margin:0;"></div><span>Transmitting...</span>`;
-
-      const formattedText = `🚨 *NEW BUG REPORT RECEIVED* 🚨\n\n👤 *Reporter:* ${name}\n💬 *Message:* ${message}\n⏰ *Time:* ${new Date().toLocaleString('en-IN')}`;
+      submitBtn.innerHTML = `<span>Saving report to database...</span>`;
 
       try {
-        if (base64Image) {
-          const blob = dataURItoBlob(base64Image);
-          const formData = new FormData();
-          formData.append('chat_id', CHAT_ID);
-          formData.append('photo', blob, 'screenshot.jpg');
-          formData.append('caption', formattedText);
-          formData.append('parse_mode', 'Markdown');
-
-          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-            method: 'POST',
-            body: formData
-          });
-          const data = await res.json();
-          if (!data.ok) throw new Error(data.description || 'Failed to send photo.');
-        } else {
-          const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: CHAT_ID,
-              text: formattedText,
-              parse_mode: 'Markdown'
-            })
-          });
-          const data = await res.json();
-          if (!data.ok) throw new Error(data.description || 'Failed to send message.');
-        }
+        await bugReportsRef.push({
+          name: name,
+          message: message,
+          imageUrl: base64Image || "",
+          timestamp: Date.now(),
+          dateString: new Date().toLocaleString('en-IN')
+        });
 
         successAlert.style.display = 'flex';
         document.getElementById('bugReportForm').reset();
@@ -496,22 +490,11 @@
         }, 6000);
 
       } catch (err) {
-        alert("Error sending bug report: " + err.message);
+        alert("Failed to save bug report: " + err.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">send</span><span>Send Report</span>`;
       }
-    }
-
-    function dataURItoBlob(dataURI) {
-      const byteString = atob(dataURI.split(',')[1]);
-      const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-      const ab = new ArrayBuffer(byteString.length);
-      const ia = new Uint8Array(ab);
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-      }
-      return new Blob([ab], { type: mimeString });
     }
   </script>
 </body>
