@@ -76,10 +76,6 @@
                 <span class="material-symbols-outlined">badge</span>
                 <span>Field Officer Directory WCRO</span>
               </a>
-              <a href="drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">cloud_queue</span>
-                <span>APML Cloud Drive</span>
-              </a>
               <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
@@ -216,7 +212,6 @@
                 <div class="footer-col-title">Directories</div>
                 <a href="hub-details.html" class="footer-item-link">Hub &amp; Branch Directory</a>
                 <a href="field-officer.html" class="footer-item-link">Field Officer WCRO</a>
-                <a href="drive.html" class="footer-item-link">Cloud Drive</a>
               </div>
 
               <div class="footer-link-col">
