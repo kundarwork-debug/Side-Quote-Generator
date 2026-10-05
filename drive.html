@@ -374,7 +374,6 @@
       gap: 10px;
     }
 
-    /* TINY CATBOX LINK BUTTON */
     .btn-catbox-tiny {
       display: inline-flex;
       align-items: center;
@@ -1362,7 +1361,7 @@
       <div class="drive-header">
         <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
         <div class="drive-sub-row">
-          <p class="drive-sub">Organize files in folders and store references seamlessly via Catbox links.</p>
+          <p class="drive-sub">Organize files in folders and store references seamlessly via links or direct uploads.</p>
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
@@ -1398,6 +1397,15 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">create_new_folder</span>
           <span>New Folder</span>
         </button>
+
+        <!-- HIDDEN FILE INPUT FOR DIRECT UPLOAD -->
+        <input type="file" id="mediaFileInput" accept="image/*" multiple style="display: none;" onchange="handleDirectPhotoUpload(this.files)">
+
+        <button type="button" class="btn-drive-action" onclick="document.getElementById('mediaFileInput').click()">
+          <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
+          <span>Upload Image</span>
+        </button>
+
         <button type="button" class="btn-drive-action btn-drive-primary" onclick="openLinkModal()">
           <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
           <span>Add File</span>
@@ -1439,6 +1447,9 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
       auth: { persistSession: true, autoRefreshToken: true }
     });
+
+    const IMGBB_API_KEY = "58eed290883a293c596b33aa46fb1289";
+    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1667,11 +1678,56 @@
       }
     }
 
+    async function handleDirectPhotoUpload(files) {
+      if (!files || !files.length) return;
+      let successCount = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        try {
+          if (file.size > MAX_FILE_SIZE_BYTES) {
+            alert(`File size exceeds limit (${file.name}). Skipping.`);
+            continue;
+          }
+
+          const formData = new FormData();
+          formData.append('image', file);
+
+          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+
+          if (!data.success || !data.data || !data.data.url) {
+            throw new Error('Upload rejected.');
+          }
+
+          await driveFilesRef.push({
+            fileId: data.data.url,
+            parentId: currentParentId,
+            name: file.name,
+            size: file.size || 0,
+            timestamp: Date.now()
+          });
+
+          successCount++;
+        } catch (err) {
+          console.error(`Error uploading "${file.name}":`, err.message);
+          alert(`Failed to upload ${file.name}.`);
+        }
+      }
+
+      document.getElementById('mediaFileInput').value = '';
+      if (successCount > 0) {
+        renderUI();
+      }
+    }
+
     async function editFileName(firebaseKey, currentName) {
       const newNameInput = prompt("Enter new file name:", currentName);
       if (!newNameInput || !newNameInput.trim()) return;
 
-      // Automatically retain original file extension/format (.xlsx, .pdf, etc.)
       let extension = '';
       if (currentName.includes('.')) {
         extension = currentName.substring(currentName.lastIndexOf('.'));
@@ -1927,7 +1983,7 @@
     }
 
     function getThumbnailIconColor(filename, url) {
-      if (isExcelFile(filename, url)) return 'color: #059669;'; // Green for Excel
+      if (isExcelFile(filename, url)) return 'color: #059669;';
       if (isHtmlFile(filename, url)) return 'color: #7c3aed;';
       if (/\.pdf$/i.test(filename) || /\.pdf$/i.test(url)) return 'color: #dc2626;';
       if (/\.(zip|rar|7z|tar)$/i.test(filename)) return 'color: #d97706;';
@@ -2134,7 +2190,7 @@
         });
 
       } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or add file links above.</div>`;
+        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or add files above.</div>`;
       } else {
         filesContainerWrapper.innerHTML = ``;
       }
