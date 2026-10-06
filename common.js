@@ -433,22 +433,51 @@
   }
 
   // =========================================================
-  // INTELLIGENT FLOATING MASCOT WIDGET (GITHUB AVATAR + LOTTIE GIF + TYPING)
+  // INTELLIGENT FLOATING MASCOT WIDGET (AUTO-HIDE + CLICK FOR NEW TIP)
   // =========================================================
   (function initFloatingMascot() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
-    // Context-aware tips for each page
+    // Multiple rotating tips for each page
     const pageTips = {
-      "index.html": "Welcome to APML Portal! Select any module below to get started. 🚀",
-      "editor.html": "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
-      "gallery.html": "💡 Tip: Select a folder category and click 'Upload Photos' to add media instantly.",
-      "drive.html": "💡 Tip: Use 'Upload Image' to add images directly, or 'Add File' for Catbox links.",
-      "hub-details.html": "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
-      "apml-lite.html": "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit."
+      "index.html": [
+        "Welcome to APML Portal! Select any module below to get started. 🚀",
+        "Tip: Use the hamburger menu on top to quickly navigate anywhere.",
+        "All telemetry systems and personnel metrics are live and synced!"
+      ],
+      "editor.html": [
+        "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
+        "You can save your drafts locally right from this studio.",
+        "Freight calculations compute automatically based on your inputs."
+      ],
+      "gallery.html": [
+        "💡 Tip: Select a folder category and click 'Upload Photos' to add media instantly.",
+        "Click any asset card to preview it in the full-screen lightbox.",
+        "Deleted items are automatically safely archived into the Trash Archive."
+      ],
+      "drive.html": [
+        "💡 Tip: Use 'Upload Image' to add images directly, or 'Add File' for Catbox links.",
+        "All users can securely rename and delete files.",
+        "Deleted files are automatically routed to the Trash Archive for easy recovery."
+      ],
+      "hub-details.html": [
+        "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
+        "Click on location pins to open exact addresses in Google Maps."
+      ],
+      "apml-lite.html": [
+        "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit.",
+        "Destination pricing and floor constraints compute automatically."
+      ]
     };
 
-    const mascotMsg = pageTips[currentPage] || "Welcome to the APML Enterprise workspace! 💼";
+    const defaultTips = [
+      "Welcome to the APML Enterprise workspace! 💼",
+      "Everything is synced in real-time with Firebase and Supabase.",
+      "Click my avatar anytime for another quick hint!"
+    ];
+
+    const tipsArray = pageTips[currentPage] || defaultTips;
+    let tipIndex = 0;
 
     // Inject Lottie player script if not already present
     if (!document.querySelector('script[src*="lottie-player"]')) {
@@ -463,8 +492,8 @@
     supportFab.className = 'support-fab';
     supportFab.id = 'support-fab';
     supportFab.innerHTML = `
-      <a href="about.html" style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px; pointer-events: none;">      
-        <div class="support-msg-bubble show" style="position: relative;">        
+      <div style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
+        <div class="support-msg-bubble" id="supportBubble" style="position: relative;">        
           <lottie-player 
             src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
             background="transparent" 
@@ -473,12 +502,12 @@
             loop 
             autoplay>
           </lottie-player>        
-          <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor">|</span></span>      
+          <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>      
         </div>      
-        <div class="support-btn" style="pointer-events: auto;">        
+        <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
           <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
         </div>    
-      </a>  
+      </div>  
     `;
 
     // Append Mascot Styles
@@ -493,8 +522,6 @@
         flex-direction: column;
         align-items: flex-end;
         gap: 0px;
-        text-decoration: none;
-        pointer-events: none;
         transition: opacity 0.3s ease;
       }
       .support-msg-bubble {
@@ -538,7 +565,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        pointer-events: auto;
       }
       .support-btn img {
         width: 100%;
@@ -573,26 +599,60 @@
       }
     }, { passive: true });
 
-    // Typewriter Effect Controller
-    setTimeout(() => {
-      const typeText = document.getElementById('typewriter-text');
-      if (!typeText) return;
-      let typeIndex = 0;
+    // Typewriter Effect Function with Auto-Hide
+    let hideTimer = null;
+    let isTyping = false;
 
-      function typeWriter() {
-        if (typeIndex < mascotMsg.length) {
-          typeText.innerHTML += mascotMsg.charAt(typeIndex);
+    function playTypewriter(textToType) {
+      const typeText = document.getElementById('typewriter-text');
+      const bubble = document.getElementById('supportBubble');
+      const cursor = document.getElementById('typeCursor');
+      if (!typeText || !bubble) return;
+
+      typeText.innerHTML = "";
+      if (cursor) cursor.style.display = 'inline-block';
+      bubble.classList.add('show');
+      isTyping = true;
+
+      clearTimeout(hideTimer);
+
+      let typeIndex = 0;
+      function step() {
+        if (typeIndex < textToType.length) {
+          typeText.innerHTML += textToType.charAt(typeIndex);
           typeIndex++;
-          setTimeout(typeWriter, 35);
+          setTimeout(step, 30);
         } else {
+          isTyping = false;
           setTimeout(() => {
-            const cursor = document.querySelector('.cursor');
             if (cursor) cursor.style.display = 'none';
-          }, 3000);
+          }, 1500);
+
+          // Auto-hide message after 5 seconds
+          hideTimer = setTimeout(() => {
+            bubble.classList.remove('show');
+          }, 5000);
         }
       }
-      typeWriter();
-    }, 800);
+      step();
+    }
+
+    // Initial trigger on load
+    setTimeout(() => {
+      playTypewriter(tipsArray[0]);
+    }, 1000);
+
+    // Click Avatar for New Message
+    const avatarBtn = document.getElementById('supportAvatarBtn');
+    if (avatarBtn) {
+      avatarBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (isTyping) return; // Prevent overlapping typing triggers
+
+        tipIndex = (tipIndex + 1) % tipsArray.length;
+        playTypewriter(tipsArray[tipIndex]);
+      });
+    }
   })();
 
   // 3. SERVICE WORKER REGISTRATION (PWA Support)
