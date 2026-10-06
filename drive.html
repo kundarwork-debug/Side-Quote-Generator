@@ -325,141 +325,6 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* MODAL STYLES FOR ADD FILE */
-    .link-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .link-modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .link-modal-box {
-      background: #ffffff;
-      max-width: 480px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
-      border: 1.5px solid var(--border-subtle);
-      position: relative;
-    }
-
-    .link-modal-box h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 6px;
-    }
-
-    .link-modal-box p {
-      font-size: 13px;
-      color: #6b7280;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .btn-catbox-tiny {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      background: var(--primary-soft);
-      color: var(--primary);
-      border: 1px solid rgba(194, 29, 29, 0.2);
-      padding: 3px 8px;
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-catbox-tiny:hover {
-      background: var(--primary);
-      color: #ffffff;
-    }
-
-    .link-form-group {
-      margin-bottom: 16px;
-    }
-
-    .link-form-label {
-      font-size: 12.5px;
-      font-weight: 700;
-      color: #374151;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .link-form-input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    .link-form-input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.15);
-    }
-
-    .link-modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 24px;
-    }
-
-    .btn-link-cancel, .btn-link-submit {
-      flex: 1;
-      padding: 12px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-link-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-link-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-link-submit {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
-    }
-
-    .btn-link-submit:hover {
-      background: var(--primary-dark);
-    }
-
     /* GALLERY STYLE DELETE WITH 'YES' CONFIRMATION */
     .delete-confirm-overlay {
       position: fixed;
@@ -1302,34 +1167,6 @@
     </div>
   </div>
 
-  <!-- ADD LINK MODAL DIALOG -->
-  <div class="link-modal-overlay" id="linkModalOverlay">
-    <div class="link-modal-box">
-      <h3>Add File via Catbox Link</h3>
-      <p>
-        <span>Generate a link on Catbox.moe and paste it below.</span>
-        <a href="https://catbox.moe/" target="_blank" class="btn-catbox-tiny" title="Upload to Catbox">
-          <span class="material-symbols-outlined" style="font-size: 13px;">open_in_new</span> Catbox.moe
-        </a>
-      </p>
-
-      <div class="link-form-group">
-        <label class="link-form-label">Direct File URL</label>
-        <input type="url" id="linkFileUrlInput" class="link-form-input" placeholder="https://files.catbox.moe/xxxxxx.ext">
-      </div>
-
-      <div class="link-form-group">
-        <label class="link-form-label">File Name (Optional — leaves auto-extracted if empty)</label>
-        <input type="text" id="linkFileNameInput" class="link-form-input" placeholder="e.g. custom-name.xlsx">
-      </div>
-
-      <div class="link-modal-actions">
-        <button type="button" class="btn-link-cancel" onclick="closeLinkModal()">Cancel</button>
-        <button type="button" class="btn-link-submit" onclick="submitCatboxLink()">Save File</button>
-      </div>
-    </div>
-  </div>
-
   <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
   <div class="auth-warning-overlay" id="authWarningModal">
     <div class="auth-warning-modal">
@@ -1361,7 +1198,7 @@
       <div class="drive-header">
         <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
         <div class="drive-sub-row">
-          <p class="drive-sub">Organize files in folders and store references seamlessly via links or direct uploads.</p>
+          <p class="drive-sub">Organize files in folders and store files seamlessly via Cloudinary upload.</p>
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
@@ -1398,17 +1235,12 @@
           <span>New Folder</span>
         </button>
 
-        <!-- HIDDEN FILE INPUT FOR DIRECT UPLOAD -->
-        <input type="file" id="mediaFileInput" accept="image/*" multiple style="display: none;" onchange="handleDirectPhotoUpload(this.files)">
+        <!-- HIDDEN FILE INPUT FOR DIRECT CATBOX UPLOAD -->
+        <input type="file" id="mediaFileInput" style="display: none;" onchange="handleDirectCatboxUpload(this.files)">
 
-        <button type="button" class="btn-drive-action" onclick="document.getElementById('mediaFileInput').click()">
-          <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
-          <span>Upload Image</span>
-        </button>
-
-        <button type="button" class="btn-drive-action btn-drive-primary" onclick="openLinkModal()">
+        <button type="button" class="btn-drive-action btn-drive-primary" onclick="document.getElementById('mediaFileInput').click()">
           <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
-          <span>Add File</span>
+          <span>Upload File</span>
         </button>
       </div>
     </div>
@@ -1448,8 +1280,14 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    const IMGBB_API_KEY = "58eed290883a293c596b33aa46fb1289";
-    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
+    // ---- Cloudinary (unsigned upload; NEVER put the API secret in this file) ----
+    const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
+    const CLOUDINARY_UPLOAD_PRESET = 'apml_drive'; // create this as an UNSIGNED preset in Cloudinary
+    const CLOUDINARY_FOLDER = 'apml-drive';
+    const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+    // Free plan limits: 10 MB for images and other files, 100 MB for video
+    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1635,76 +1473,35 @@
       }).catch(err => alert("Failed to create folder: " + err.message));
     }
 
-    function openLinkModal() {
-      document.getElementById('linkFileUrlInput').value = '';
-      document.getElementById('linkFileNameInput').value = '';
-      document.getElementById('linkModalOverlay').classList.add('active');
-    }
-
-    function closeLinkModal() {
-      document.getElementById('linkModalOverlay').classList.remove('active');
-    }
-
-    async function submitCatboxLink() {
-      const urlInput = document.getElementById('linkFileUrlInput').value.trim();
-      const customNameInput = document.getElementById('linkFileNameInput').value.trim();
-
-      if (!urlInput) {
-        alert("Please enter a valid direct URL.");
-        return;
-      }
-
-      let finalName = customNameInput;
-      if (!finalName) {
-        const cleanUrl = urlInput.split('?')[0].split('#')[0];
-        const segments = cleanUrl.split('/');
-        const rawFilename = segments.pop();
-        finalName = (rawFilename && rawFilename.includes('.')) ? decodeURIComponent(rawFilename) : 'uploaded-file';
-      }
-
-      try {
-        await driveFilesRef.push({
-          fileId: urlInput,
-          parentId: currentParentId,
-          name: finalName,
-          size: 0,
-          timestamp: Date.now()
-        });
-
-        closeLinkModal();
-        renderUI();
-      } catch (err) {
-        alert("Failed to save file link: " + err.message);
-      }
-    }
-
-    async function handleDirectPhotoUpload(files) {
+    async function handleDirectCatboxUpload(files) {
       if (!files || !files.length) return;
       let successCount = 0;
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         try {
-          if (file.size > MAX_FILE_SIZE_BYTES) {
-            alert(`File size exceeds limit (${file.name}). Skipping.`);
+          const isVideo = (file.type || '').startsWith('video/');
+          const limit = isVideo ? MAX_VIDEO_SIZE_BYTES : MAX_FILE_SIZE_BYTES;
+          if (file.size > limit) {
+            alert(`${file.name} is too big (${(file.size / 1048576).toFixed(1)} MB). Limit is ${limit / 1048576} MB on the free plan. Skipping.`);
             continue;
           }
 
           const formData = new FormData();
-          formData.append('image', file);
+          formData.append('file', file);
+          formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+          formData.append('folder', CLOUDINARY_FOLDER);
 
-          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: 'POST',
-            body: formData
-          });
-          const data = await res.json();
+          const res = await fetch(UPLOAD_ENDPOINT, { method: 'POST', body: formData });
+          const data = await res.json().catch(() => ({}));
 
-          if (!data.success || !data.data || !data.data.url) {
-            throw new Error('Upload rejected.');
+          if (!res.ok || !data.secure_url) {
+            const msg = (data.error && data.error.message) || `HTTP ${res.status}`;
+            throw new Error(msg);
           }
 
           await driveFilesRef.push({
-            fileId: data.data.url,
+            fileId: data.secure_url,
             parentId: currentParentId,
             name: file.name,
             size: file.size || 0,
@@ -1713,8 +1510,8 @@
 
           successCount++;
         } catch (err) {
-          console.error(`Error uploading "${file.name}":`, err.message);
-          alert(`Failed to upload ${file.name}.`);
+          console.error(`Error uploading "${file.name}":`, err);
+          alert(`Failed to upload ${file.name}: ${err.message}`);
         }
       }
 
@@ -1875,7 +1672,14 @@
       } else if (isVideo) {
         slot.innerHTML = `<video src="${fileUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
       } else if (isPdf || isHtml || isExcel) {
-        slot.innerHTML = `<iframe src="${fileUrl}" style="width:100%; height:80vh; border:none; border-radius:12px; background:#ffffff;"></iframe>`;
+        const frameSrc = isExcel
+          ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`
+          : fileUrl;
+        slot.innerHTML = `
+          <iframe src="${frameSrc}" style="width:100%; height:75vh; border:none; border-radius:12px; background:#ffffff;"></iframe>
+          <div style="text-align:center; margin-top:10px; font-size:13px; color:#ffffff;">
+            Not loading? <a href="${fileUrl}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Open in new tab</a>
+          </div>`;
       } else {
         slot.innerHTML = `
           <div style="text-align:center; padding:40px; color:#ffffff;">
@@ -1992,7 +1796,7 @@
     }
 
     function formatBytes(bytes, decimals = 1) {
-      if (!bytes || bytes === 0) return 'Link Asset';
+      if (!bytes || bytes === 0) return 'Asset Link';
       const k = 1024;
       const dm = decimals < 0 ? 0 : decimals;
       const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -2075,8 +1879,6 @@
                 previewHtml = `<img src="${file.fileId}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
               } else if (isVideo) {
                 previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
-              } else if (isHtml) {
-                previewHtml = `<iframe src="${file.fileId}" scrolling="no" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></iframe>`;
               } else {
                 previewHtml = `
                   <div class="grid-preview-placeholder ${themeClass}">
@@ -2182,15 +1984,18 @@
         currentFiles.forEach(file => {
           const isImage = isImageFile(file.name, file.fileId);
           const isVideo = isVideoFile(file.name, file.fileId);
-          const isHtml = isHtmlFile(file.name, file.fileId);
-          const isExcel = isExcelFile(file.name, file.fileId);
-          if (!isImage && !isVideo && !isHtml && !isExcel) {
+          if (!isImage && !isVideo) {
             hideCardLoader(file.key);
           }
         });
 
+        // Safety net: never leave a spinner running forever (slow/blocked thumbnails)
+        setTimeout(() => {
+          currentFiles.forEach(file => hideCardLoader(file.key));
+        }, 6000);
+
       } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or add files above.</div>`;
+        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
       } else {
         filesContainerWrapper.innerHTML = ``;
       }
