@@ -230,33 +230,47 @@
     }
 
     /* =========================================================
-       FLUID STREAMLINED SERVICES & SOLUTIONS SECTION (NATURAL PAGE FLOW)
+       LEFT-ALIGNED BACKGROUND WRAPPER (NO GLASS, FULL WIDTH)
        ========================================================= */
+    .services-custom-bg-wrap {
+      width: 100%;
+      background-image: linear-gradient(90deg, rgba(28, 25, 23, 0.92) 0%, rgba(28, 25, 23, 0.6) 60%, rgba(28, 25, 23, 0.2) 100%), url('https://i.ibb.co/ks12XBGT/Gemini-Generated-Image-ewg87vewg87vewg8-1.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      padding: 110px 48px;
+      margin-top: 40px;
+      display: flex;
+      justify-content: flex-start; /* Aligns content block strictly to the left */
+    }
+
     .services-fluid-section {
       width: 100%;
-      max-width: 1080px;
-      margin: 60px auto 100px;
-      padding: 0 32px;
-      text-align: left;
+      max-width: 680px;
+      background: transparent; /* Removed glass card background */
+      border: none;
+      padding: 0;
+      text-align: left; /* Text forced to left side */
+      box-shadow: none;
     }
 
     .services-content-wrapper {
       padding-left: 24px;
-      border-left: 3px solid var(--primary);
+      border-left: 4px solid var(--primary);
     }
 
     .services-heading,
     .services-subline {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(24px, 4vw, 34px);
+      font-size: clamp(28px, 4.5vw, 40px);
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.35;
+      line-height: 1.3;
     }
 
     .services-heading {
-      color: var(--text-main);
-      margin-bottom: 8px;
+      color: #ffffff;
+      margin-bottom: 6px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -264,15 +278,16 @@
     }
 
     .services-subline {
-      color: var(--primary);
-      margin-bottom: 20px;
+      color: #fca5a5;
+      margin-bottom: 22px;
+      font-size: clamp(20px, 3vw, 28px);
     }
 
     .services-description {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: clamp(16px, 2vw, 18px);
-      color: var(--text-muted);
-      line-height: 1.8;
+      font-size: clamp(16px, 2vw, 18.5px);
+      color: #e7e5e4;
+      line-height: 1.85;
       font-weight: 500;
     }
 
@@ -373,7 +388,8 @@
       .hero-stage { padding: 120px 16px 10px; }
       .interactive-hero-zone { height: 260px; }
       .profile-action-row { max-width: 100%; }
-      .services-fluid-section { padding: 0 20px; margin: 40px auto 80px; }
+      .services-custom-bg-wrap { padding: 60px 20px; background-image: linear-gradient(rgba(28, 25, 23, 0.88), rgba(28, 25, 23, 0.88)), url('https://i.ibb.co/ks12XBGT/Gemini-Generated-Image-ewg87vewg87vewg8-1.png'); }
+      .services-fluid-section { padding: 0; }
       .services-content-wrapper { padding-left: 16px; }
     }
   </style>
@@ -428,22 +444,24 @@
 
     </section>
 
-    <!-- STREAMLINED FLUID SERVICES SECTION WITH TEXT LOOP -->
-    <section class="services-fluid-section">
-      <div class="services-content-wrapper">
-        <h2 class="services-heading">
-          Need 
-          <span class="inline-flex whitespace-pre-wrap">
-            <span id="textLoopSlot">AI Solutions</span>
-          </span>
-          ?
-        </h2>
-        <div class="services-subline">We got you covered!! 🚀</div>
-        <p class="services-description">
-          We build AI solutions, modern websites, and scalable SaaS MVPs that turn ideas into real products. Whether you’re launching something new, automating your business, or taking your digital presence to the next level—we’ve got you covered. Let’s build something impactful together.
-        </p>
-      </div>
-    </section>
+    <!-- STREAMLINED LEFT-ALIGNED SERVICES SECTION WITHOUT GLASS CARD -->
+    <div class="services-custom-bg-wrap">
+      <section class="services-fluid-section">
+        <div class="services-content-wrapper">
+          <h2 class="services-heading">
+            Need 
+            <span class="inline-flex whitespace-pre-wrap">
+              <span id="textLoopSlot">AI Solutions</span>
+            </span>
+            ?
+          </h2>
+          <div class="services-subline">We got you covered!! 🚀</div>
+          <p class="services-description">
+            We build AI solutions, modern websites, and scalable SaaS MVPs that turn ideas into real products. Whether you’re launching something new, automating your business, or taking your digital presence to the next level—we’ve got you covered. Let’s build something impactful together.
+          </p>
+        </div>
+      </section>
+    </div>
 
   </main>
 
@@ -523,11 +541,9 @@
 
       modal.classList.add('active');
       
-      // Reset bar width
       fillBar.style.transition = 'none';
       fillBar.style.width = '0%';
       
-      // Trigger smooth 5s fill
       setTimeout(() => {
         fillBar.style.transition = 'width 5s linear';
         fillBar.style.width = '100%';
