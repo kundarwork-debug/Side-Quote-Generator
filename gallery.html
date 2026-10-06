@@ -1263,11 +1263,11 @@
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
           
-          <input type="file" id="mediaFileInput" accept="image/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
+          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
           
           <button type="button" class="btn-action-primary" id="uploadPhotoBtn" onclick="triggerPhotoUpload()">
             <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
-            <span>Upload Photos</span>
+            <span>Upload Media</span>
           </button>
 
           <button type="button" class="btn-action-secondary" id="uploadVideoBtn" onclick="triggerVideoLinkPrompt()">
@@ -1297,7 +1297,7 @@
 
   </main>
 
-  <div id="footer-container"></div>
+  <div id="header-container"></div>
 
   <script src="common.js?v=22.1"></script>
 
@@ -1313,8 +1313,14 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    const IMGBB_API_KEY = "58eed290883a293c596b33aa46fb1289";
-    const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
+    // Cloudinary configuration (matching drive.html)
+    const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
+    const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
+    const CLOUDINARY_FOLDER = 'apml-drive';
+    const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
+    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1328,7 +1334,7 @@
     }
     const db = firebase.database();
     const mediaRef = db.ref("apml_ranked_gallery");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); // Linked to dump.html
+    const dumpBinRef = db.ref("catbox_dump_gallery_folders"); 
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
     const AUTHORIZED_ADMIN_EMAILS = [
@@ -1357,7 +1363,6 @@
     let pendingDeleteKey = null;
     let currentPage = 1;
 
-    // FIXED TO 16 ITEMS PER PAGE (4x4 GRID LAYOUT)
     function getDynamicItemsPerPage() {
       return 16;
     }
@@ -1679,33 +1684,35 @@
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        statusText.innerHTML = `<span style="color: var(--primary);">Uploading photo ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
+        statusText.innerHTML = `<span style="color: var(--primary);">Uploading asset ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
-          if (file.size > MAX_FILE_SIZE_BYTES) {
-            alert(`File size exceeds limit (${file.name}). Skipping.`);
+          const isVideo = (file.type || '').startsWith('video/');
+          const limit = isVideo ? MAX_VIDEO_SIZE_BYTES : MAX_FILE_SIZE_BYTES;
+          if (file.size > limit) {
+            alert(`${file.name} is too big (${(file.size / 1048576).toFixed(1)} MB). Skipping.`);
             continue;
           }
 
           const formData = new FormData();
-          formData.append('image', file);
+          formData.append('file', file);
+          formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+          formData.append('folder', CLOUDINARY_FOLDER);
 
-          const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: 'POST',
-            body: formData
-          });
-          const data = await res.json();
+          const res = await fetch(UPLOAD_ENDPOINT, { method: 'POST', body: formData });
+          const data = await res.json().catch(() => ({}));
 
-          if (!data.success || !data.data || !data.data.url) {
-            throw new Error('ImgBB upload rejected.');
+          if (!res.ok || !data.secure_url) {
+            const msg = (data.error && data.error.message) || `HTTP ${res.status}`;
+            throw new Error(msg);
           }
 
           await mediaRef.push({
-            url: data.data.url,
+            url: data.secure_url,
             folder: folder,
             name: file.name,
             size: file.size || 0,
-            isVideo: false,
+            isVideo: isVideo,
             viewsCount: 0,
             downloadsCount: 0,
             timestamp: Date.now()
@@ -1713,14 +1720,14 @@
 
           successCount++;
         } catch (err) {
-          console.error(`Error uploading "${file.name}":`, err.message);
-          alert(`Failed to upload ${file.name}.`);
+          console.error(`Error uploading "${file.name}":`, err);
+          alert(`Failed to upload ${file.name}: ${err.message}`);
         }
       }
 
       document.getElementById('mediaFileInput').value = '';
       uploadBtn.disabled = false;
-      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} photos!</span>`;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} assets!</span>`;
       
       setTimeout(() => {
         statusText.textContent = "Select destination category and choose files or add a video link";
@@ -1759,7 +1766,6 @@
       hidePageLoader();
     });
 
-    // RANKING SORT: Higher downloads & views pushed to the front!
     function sortMediaItems() {
       liveMediaItems.sort((a, b) => {
         const scoreA = (a.downloadsCount || 0) * 2 + (a.viewsCount || 0);
@@ -1829,7 +1835,6 @@
       if (!itemToMove) return;
 
       try {
-        // Push deleted file to dump.html trash archive node (catbox_dump_gallery_folders)
         await dumpBinRef.push({
           fileId: itemToMove.url,
           url: itemToMove.url,
@@ -1841,14 +1846,12 @@
           originalKey: firebaseKey
         });
 
-        // Remove from active gallery database
         await mediaRef.child(firebaseKey).remove();
       } catch (err) {
         alert("Failed to move item to trash archive: " + err.message);
       }
     }
 
-    // DOWNLOAD ACTION WITH LOADING FEEDBACK RESPONSE
     async function handleInteractiveDownload(firebaseKey, fileUrl, fileName, isVideo) {
       const btn = document.getElementById(`btn-dl-${firebaseKey}`);
       if (btn) {
@@ -1934,7 +1937,6 @@
         return `
           <div class="media-card" id="card-${item.key}">
             <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
-              <!-- SMOOTH SHIMMER LOADING OVERLAY -->
               <div class="card-loading-overlay" id="card-loader-${item.key}">
                 <div class="card-spinner"></div>
               </div>
