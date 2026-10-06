@@ -492,7 +492,7 @@
     supportFab.className = 'support-fab';
     supportFab.id = 'support-fab';
     supportFab.innerHTML = `
-      <div style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
         <div class="support-msg-bubble" id="supportBubble" style="position: relative;">        
           <lottie-player 
             src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
