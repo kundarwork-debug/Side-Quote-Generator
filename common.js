@@ -433,149 +433,166 @@
   }
 
   // =========================================================
-  // INTELLIGENT PAGE HELPER WIDGET (CONTEXT-AWARE)
+  // INTELLIGENT FLOATING MASCOT WIDGET (GITHUB AVATAR + LOTTIE GIF + TYPING)
   // =========================================================
-  (function initPageHelper() {
+  (function initFloatingMascot() {
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
 
+    // Context-aware tips for each page
     const pageTips = {
-      "index.html": [
-        "Welcome to APML Portal! Select any module below to get started. 🚀",
-        "All operational systems and personnel metrics are live and synced.",
-        "Need help? Click my avatar anytime for a quick tip!"
-      ],
-      "editor.html": [
-        "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
-        "You can save your drafts locally right from this studio.",
-        "Freight calculations compute automatically based on your inputs."
-      ],
-      "gallery.html": [
-        "💡 Tip: Select a folder category, then click 'Upload Photos' or 'Add Video Link' to add media instantly.",
-        "Click any asset card to preview it in the full-screen lightbox, or click Download to fetch it.",
-        "Deleted items are automatically safely archived into the Trash Archive."
-      ],
-      "drive.html": [
-        "💡 Tip: Use 'Upload Image' to add images directly from your device, or 'Add File' for Catbox links.",
-        "All users can securely rename and delete files.",
-        "Deleted files are automatically routed to the Trash Archive for easy recovery."
-      ],
-      "hub-details.html": [
-        "💡 Tip: Use the search bar to instantly look up branch HODs and direct phone contacts.",
-        "Click on location pins to open exact addresses in Google Maps."
-      ],
-      "apml-lite.html": [
-        "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit.",
-        "Destination pricing and floor constraints compute automatically."
-      ]
+      "index.html": "Welcome to APML Portal! Select any module below to get started. 🚀",
+      "editor.html": "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
+      "gallery.html": "💡 Tip: Select a folder category and click 'Upload Photos' to add media instantly.",
+      "drive.html": "💡 Tip: Use 'Upload Image' to add images directly, or 'Add File' for Catbox links.",
+      "hub-details.html": "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
+      "apml-lite.html": "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit."
     };
 
-    const defaultTips = [
-      "Welcome to the APML Enterprise workspace! 💼",
-      "Everything is synced in real-time with Firebase and Supabase.",
-      "Feel free to explore or check out the developer profile."
-    ];
+    const mascotMsg = pageTips[currentPage] || "Welcome to the APML Enterprise workspace! 💼";
 
-    const currentTips = pageTips[currentPage] || defaultTips;
-    let tipIndex = 0;
+    // Inject Lottie player script if not already present
+    if (!document.querySelector('script[src*="lottie-player"]')) {
+      const lottieScript = document.createElement('script');
+      lottieScript.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
+      lottieScript.async = true;
+      document.head.appendChild(lottieScript);
+    }
 
-    const helperContainer = document.createElement('div');
-    helperContainer.id = 'apmlPageHelper';
-    helperContainer.innerHTML = `
-      <div id="helperBubble" class="helper-bubble">${currentTips[0]}</div>
-      <div id="helperAvatar" class="helper-avatar" title="Click for page tips!">
-        <img src="logo.svg" alt="Helper" id="helperAvatarImg">
-      </div>
+    // Create Support FAB Container
+    const supportFab = document.createElement('div');
+    supportFab.className = 'support-fab';
+    supportFab.id = 'support-fab';
+    supportFab.innerHTML = `
+      <a href="about.html" style="text-decoration: none; display: flex; flex-direction: column; align-items: flex-end; gap: 0px; pointer-events: none;">      
+        <div class="support-msg-bubble show" style="position: relative;">        
+          <lottie-player 
+            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
+            background="transparent" 
+            speed="1" 
+            style="width: 75px; height: 75px; position: absolute; top: -52px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none;" 
+            loop 
+            autoplay>
+          </lottie-player>        
+          <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor">|</span></span>      
+        </div>      
+        <div class="support-btn" style="pointer-events: auto;">        
+          <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
+        </div>    
+      </a>  
     `;
 
-    Object.assign(helperContainer.style, {
-      position: 'fixed',
-      bottom: '28px',
-      right: '28px',
-      zIndex: '99999',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-end',
-      gap: '8px',
-      fontFamily: 'var(--font-sans, sans-serif)',
-      cursor: 'pointer',
-      pointerEvents: 'none'
-    });
-
-    const helperStyle = document.createElement('style');
-    helperStyle.innerHTML = `
-      .helper-avatar {
-        width: 60px;
-        height: 60px;
+    // Append Mascot Styles
+    const mascotStyle = document.createElement('style');
+    mascotStyle.innerHTML = `
+      .support-fab {
+        position: fixed;
+        bottom: 32px;
+        right: 32px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0px;
+        text-decoration: none;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .support-msg-bubble {
+        background-color: #ffffff;
+        color: var(--text-main, #1c1917);
+        border: 2px solid var(--text-main, #1c1917);
+        box-shadow: 4px 4px 0px var(--text-main, #1c1917);
+        padding: 16px 24px;
+        border-radius: 20px 20px 0 20px;
+        font-size: 14.5px;
+        font-weight: 600;
+        max-width: 260px;
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+        transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
+        pointer-events: none;
+        line-height: 1.5;
+      }
+      .support-msg-bubble.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+      .cursor {
+        display: inline-block;
+        width: 2px;
+        background-color: var(--text-main, #1c1917);
+        margin-left: 2px;
+        animation: blink 1s step-end infinite;
+      }
+      @keyframes blink { 50% { opacity: 0; } }
+      .support-btn {
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
+        border: 3px solid var(--text-main, #1c1917);
+        box-shadow: 4px 4px 0px var(--text-main, #1c1917);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
         background: #ffffff;
-        border: 3px solid var(--primary, #b91c1c);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
         display: flex;
         align-items: center;
         justify-content: center;
         pointer-events: auto;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-        animation: floatHelper 4s ease-in-out infinite;
       }
-      .helper-avatar img {
-        width: 32px;
-        height: 32px;
-        object-fit: contain;
+      .support-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
       }
-      .helper-avatar:hover {
-        transform: scale(1.1) rotate(6deg);
-        box-shadow: 0 14px 30px rgba(185, 28, 28, 0.3);
-      }
-      .helper-bubble {
-        background: #ffffff;
-        color: #141210;
-        padding: 12px 18px;
-        border-radius: 20px 20px 4px 20px;
-        font-size: 13.5px;
-        font-weight: 700;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        border: 1.5px solid rgba(185, 28, 28, 0.2);
-        pointer-events: auto;
-        max-width: 280px;
-        line-height: 1.5;
-        opacity: 0;
-        transform: translateY(8px) scale(0.95);
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .helper-bubble.show {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      @keyframes floatHelper {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-6px); }
+      @media (hover: hover) {
+        .support-fab:hover .support-btn {
+          transform: translateY(-4px);
+          box-shadow: 6px 6px 0px var(--text-main, #1c1917);
+        }
       }
     `;
 
-    document.head.appendChild(helperStyle);
-    document.body.appendChild(helperContainer);
+    document.head.appendChild(mascotStyle);
+    document.body.appendChild(supportFab);
 
-    const avatar = document.getElementById('helperAvatar');
-    const bubble = document.getElementById('helperBubble');
+    // Scroll Controller for FAB
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const bodyHeight = document.body.offsetHeight;
+      const footer = document.querySelector('footer') || document.getElementById('footer-container');
+      const footerHeight = footer ? footer.offsetHeight : 0;
+      const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
 
-    let autoHideTimer;
+      const fab = document.getElementById('support-fab');
+      if (fab) {
+        fab.style.opacity = isNearBottom ? '0' : '1';
+        const supportBtn = fab.querySelector('.support-btn');
+        if (supportBtn) supportBtn.style.pointerEvents = isNearBottom ? 'none' : 'auto';
+      }
+    }, { passive: true });
+
+    // Typewriter Effect Controller
     setTimeout(() => {
-      bubble.classList.add('show');
-      autoHideTimer = setTimeout(() => {
-        bubble.classList.remove('show');
-      }, 6000);
-    }, 1200);
+      const typeText = document.getElementById('typewriter-text');
+      if (!typeText) return;
+      let typeIndex = 0;
 
-    avatar.addEventListener('click', () => {
-      clearTimeout(autoHideTimer);
-      tipIndex = (tipIndex + 1) % currentTips.length;
-      bubble.textContent = currentTips[tipIndex];
-      bubble.classList.add('show');
-
-      autoHideTimer = setTimeout(() => {
-        bubble.classList.remove('show');
-      }, 6000);
-    });
+      function typeWriter() {
+        if (typeIndex < mascotMsg.length) {
+          typeText.innerHTML += mascotMsg.charAt(typeIndex);
+          typeIndex++;
+          setTimeout(typeWriter, 35);
+        } else {
+          setTimeout(() => {
+            const cursor = document.querySelector('.cursor');
+            if (cursor) cursor.style.display = 'none';
+          }, 3000);
+        }
+      }
+      typeWriter();
+    }, 800);
   })();
 
   // 3. SERVICE WORKER REGISTRATION (PWA Support)
