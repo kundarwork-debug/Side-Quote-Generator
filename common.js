@@ -363,6 +363,8 @@
             font-weight: 600;
             text-decoration: none;
             transition: transform 0.2s ease;
+            position: relative;
+            z-index: 10;
           }
 
           .footer-about-pill:hover {
@@ -390,6 +392,8 @@
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
             transition: all 0.2s ease;
+            position: relative;
+            z-index: 10;
           }
 
           .footer-back-to-top-btn:hover {
@@ -510,19 +514,23 @@
       </div>  
     `;
 
-    // Append Mascot Styles
+    // Append Mascot Styles with pointer-events protection for footer buttons
     const mascotStyle = document.createElement('style');
     mascotStyle.innerHTML = `
       .support-fab {
         position: fixed;
         bottom: 32px;
         right: 32px;
-        z-index: 1000;
+        z-index: 100;
         display: flex;
         flex-direction: column;
         align-items: flex-end;
         gap: 0px;
         transition: opacity 0.3s ease;
+        pointer-events: none;
+      }
+      .support-fab > div {
+        pointer-events: none;
       }
       .support-msg-bubble {
         background-color: #ffffff;
@@ -537,13 +545,12 @@
         opacity: 0;
         transform: translateY(10px) scale(0.9);
         transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
-        pointer-events: none;
+        pointer-events: auto;
         line-height: 1.5;
       }
       .support-msg-bubble.show {
         opacity: 1;
         transform: translateY(0) scale(1);
-        pointer-events: auto;
       }
       .cursor {
         display: inline-block;
@@ -565,6 +572,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        pointer-events: auto;
       }
       .support-btn img {
         width: 100%;
@@ -647,7 +655,7 @@
     if (avatarBtn) {
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (isTyping) return; // Prevent overlapping typing triggers
+        if (isTyping) return;
 
         tipIndex = (tipIndex + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex]);
