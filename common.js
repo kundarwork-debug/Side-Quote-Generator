@@ -432,6 +432,152 @@
     renderHeaderAndFooter();
   }
 
+  // =========================================================
+  // INTELLIGENT PAGE HELPER WIDGET (CONTEXT-AWARE)
+  // =========================================================
+  (function initPageHelper() {
+    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+
+    const pageTips = {
+      "index.html": [
+        "Welcome to APML Portal! Select any module below to get started. 🚀",
+        "All operational systems and personnel metrics are live and synced.",
+        "Need help? Click my avatar anytime for a quick tip!"
+      ],
+      "editor.html": [
+        "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
+        "You can save your drafts locally right from this studio.",
+        "Freight calculations compute automatically based on your inputs."
+      ],
+      "gallery.html": [
+        "💡 Tip: Select a folder category, then click 'Upload Photos' or 'Add Video Link' to add media instantly.",
+        "Click any asset card to preview it in the full-screen lightbox, or click Download to fetch it.",
+        "Deleted items are automatically safely archived into the Trash Archive."
+      ],
+      "drive.html": [
+        "💡 Tip: Use 'Upload Image' to add images directly from your device, or 'Add File' for Catbox links.",
+        "All users can securely rename and delete files.",
+        "Deleted files are automatically routed to the Trash Archive for easy recovery."
+      ],
+      "hub-details.html": [
+        "💡 Tip: Use the search bar to instantly look up branch HODs and direct phone contacts.",
+        "Click on location pins to open exact addresses in Google Maps."
+      ],
+      "apml-lite.html": [
+        "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit.",
+        "Destination pricing and floor constraints compute automatically."
+      ]
+    };
+
+    const defaultTips = [
+      "Welcome to the APML Enterprise workspace! 💼",
+      "Everything is synced in real-time with Firebase and Supabase.",
+      "Feel free to explore or check out the developer profile."
+    ];
+
+    const currentTips = pageTips[currentPage] || defaultTips;
+    let tipIndex = 0;
+
+    const helperContainer = document.createElement('div');
+    helperContainer.id = 'apmlPageHelper';
+    helperContainer.innerHTML = `
+      <div id="helperBubble" class="helper-bubble">${currentTips[0]}</div>
+      <div id="helperAvatar" class="helper-avatar" title="Click for page tips!">
+        <img src="logo.svg" alt="Helper" id="helperAvatarImg">
+      </div>
+    `;
+
+    Object.assign(helperContainer.style, {
+      position: 'fixed',
+      bottom: '28px',
+      right: '28px',
+      zIndex: '99999',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+      gap: '8px',
+      fontFamily: 'var(--font-sans, sans-serif)',
+      cursor: 'pointer',
+      pointerEvents: 'none'
+    });
+
+    const helperStyle = document.createElement('style');
+    helperStyle.innerHTML = `
+      .helper-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #ffffff;
+        border: 3px solid var(--primary, #b91c1c);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: auto;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+        animation: floatHelper 4s ease-in-out infinite;
+      }
+      .helper-avatar img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+      .helper-avatar:hover {
+        transform: scale(1.1) rotate(6deg);
+        box-shadow: 0 14px 30px rgba(185, 28, 28, 0.3);
+      }
+      .helper-bubble {
+        background: #ffffff;
+        color: #141210;
+        padding: 12px 18px;
+        border-radius: 20px 20px 4px 20px;
+        font-size: 13.5px;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border: 1.5px solid rgba(185, 28, 28, 0.2);
+        pointer-events: auto;
+        max-width: 280px;
+        line-height: 1.5;
+        opacity: 0;
+        transform: translateY(8px) scale(0.95);
+        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .helper-bubble.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      @keyframes floatHelper {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+      }
+    `;
+
+    document.head.appendChild(helperStyle);
+    document.body.appendChild(helperContainer);
+
+    const avatar = document.getElementById('helperAvatar');
+    const bubble = document.getElementById('helperBubble');
+
+    let autoHideTimer;
+    setTimeout(() => {
+      bubble.classList.add('show');
+      autoHideTimer = setTimeout(() => {
+        bubble.classList.remove('show');
+      }, 6000);
+    }, 1200);
+
+    avatar.addEventListener('click', () => {
+      clearTimeout(autoHideTimer);
+      tipIndex = (tipIndex + 1) % currentTips.length;
+      bubble.textContent = currentTips[tipIndex];
+      bubble.classList.add('show');
+
+      autoHideTimer = setTimeout(() => {
+        bubble.classList.remove('show');
+      }, 6000);
+    });
+  })();
+
   // 3. SERVICE WORKER REGISTRATION (PWA Support)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
