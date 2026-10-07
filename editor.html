@@ -786,6 +786,7 @@ const DRIVE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${DRIVE_CLOUD_NAME}/au
 const DRIVE_QUOTATION_FOLDER_NAME = 'Quotation';
 const DRIVE_QUOTATION_FOLDER_KEY = 'quotation_folder';
 const DRIVE_MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free plan limit
+const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev'; // Worker that trims the folder to 200
 
 async function getOrCreateQuotationFolderId(database) {
   const foldersRef = database.ref('catbox_gdrive_folders');
@@ -838,6 +839,10 @@ function saveQuotationToDrive(pdfBlob, fileName) {
         size: pdfBlob.size || 0,
         timestamp: Date.now()
       });
+
+      // Keep only the newest 200 quotations; the Worker removes the oldest (also from Cloudinary)
+      fetch(`${DRIVE_API_URL}/trim-quotations`, { method: 'POST' })
+        .catch((e) => console.warn('Quotation trim skipped:', e));
     } catch (err) {
       console.error('Drive autosave error:', err);
     }
