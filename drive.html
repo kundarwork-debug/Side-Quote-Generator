@@ -1543,7 +1543,65 @@
       }
     }
 
+    // ---------- Protected folders: only admin may delete these (and everything inside) ----------
+    const PROTECTED_FOLDER_NAMES = ['quotation', 'quotations', 'prasad'];
+    const PROTECTED_FOLDER_KEYS = ['quotation_folder', 'quotations_archive_protected'];
+
+    function isProtectedFolderObj(folder) {
+      if (!folder) return false;
+      if (PROTECTED_FOLDER_KEYS.includes(folder.key)) return true;
+      return PROTECTED_FOLDER_NAMES.includes(String(folder.name || '').trim().toLowerCase());
+    }
+
+    // true if this folder id, or any folder above it, is protected
+    function isInsideProtectedTree(folderId) {
+      let id = folderId;
+      const seen = new Set();
+      while (id && id !== 'root' && !seen.has(id)) {
+        seen.add(id);
+        const folder = liveFolders.find(f => f.key === id);
+        if (!folder) return PROTECTED_FOLDER_KEYS.includes(id);
+        if (isProtectedFolderObj(folder)) return true;
+        id = folder.parentId;
+      }
+      return false;
+    }
+
+    // true if any folder below this one is protected
+    function containsProtectedFolder(folderId) {
+      const seen = new Set();
+      const stack = [folderId];
+      while (stack.length) {
+        const current = stack.pop();
+        if (seen.has(current)) continue;
+        seen.add(current);
+        liveFolders.filter(f => f.parentId === current).forEach(child => {
+          if (isProtectedFolderObj(child)) { seen.add('__found__'); }
+          stack.push(child.key);
+        });
+      }
+      return seen.has('__found__');
+    }
+
+    function canDeleteItem(type, key) {
+      if (isCurrentUserAdmin()) return true;
+      if (type === 'file') {
+        const file = liveFiles.find(f => f.key === key);
+        return !(file && isInsideProtectedTree(file.parentId));
+      }
+      if (type === 'folder') {
+        const folder = liveFolders.find(f => f.key === key);
+        if (!folder) return true;
+        return !(isProtectedFolderObj(folder) || isInsideProtectedTree(folder.parentId) || containsProtectedFolder(key));
+      }
+      return true;
+    }
+
     function confirmDeleteAction(type, key) {
+      if (!canDeleteItem(type, key)) {
+        alert('Only the admin can delete the Quotation or Prasad folders and the files inside them. Please use Admin Login.');
+        return;
+      }
       pendingDeleteType = type;
       pendingDeleteKey = key;
       document.getElementById('deleteInputKeyword').value = '';
@@ -1572,6 +1630,11 @@
       const type = pendingDeleteType;
       const key = pendingDeleteKey;
       closeDeleteModal();
+
+      if (!canDeleteItem(type, key)) {
+        alert('Only the admin can delete this item.');
+        return;
+      }
 
       try {
         if (type === 'file') {
@@ -1843,9 +1906,9 @@
                 <span class="material-symbols-outlined">folder</span>
                 <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
               </div>
-              <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
+              ${canDeleteItem('folder', folder.key) ? `<button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
                 <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-              </button>
+              </button>` : `<span class="material-symbols-outlined" style="font-size: 16px; opacity:0.5;" title="Protected - admin only">lock</span>`}
             </div>
           `;
         }).join('');
@@ -1912,9 +1975,9 @@
                       <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
                         <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
                       </button>
-                      <button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
+                      ${canDeleteItem('file', file.key) ? `<button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
                         <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>
+                      </button>` : ''}
                     </div>
                   </div>
                 </div>
