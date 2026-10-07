@@ -1254,7 +1254,7 @@
           </div>
           <div>
             <h3>Upload Media Assets</h3>
-            <p id="uploadStatusText">Select destination category and choose files or add a video link</p>
+            <p id="uploadStatusText">Select destination category and choose photos or videos</p>
           </div>
         </div>
 
@@ -1263,6 +1263,7 @@
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
           
+          <!-- STRICT ACCEPT FOR IMAGES AND VIDEOS ONLY -->
           <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
           
           <button type="button" class="btn-action-primary" id="uploadPhotoBtn" onclick="triggerPhotoUpload()">
@@ -1313,14 +1314,13 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    // Cloudinary configuration (matching drive.html)
     const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
     const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
-    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
+    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB for photos
+    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB for videos
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1653,7 +1653,7 @@
 
         statusText.innerHTML = `<span style="color: #10b981;">Video link added successfully!</span>`;
         setTimeout(() => {
-          statusText.textContent = "Select destination category and choose files or add a video link";
+          statusText.textContent = "Select destination category and choose photos or videos";
         }, 3000);
       } catch (err) {
         alert("Failed to save video link: " + err.message);
@@ -1684,13 +1684,23 @@
 
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
-        statusText.innerHTML = `<span style="color: var(--primary);">Uploading asset ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
+        
+        // STRICT VALIDATION: ONLY ALLOW IMAGES AND VIDEOS
+        const fileType = file.type || '';
+        const isImage = fileType.startsWith('image/');
+        const isVideo = fileType.startsWith('video/');
+
+        if (!isImage && !isVideo) {
+          alert(`Only photo and video files are allowed. Skipped: ${file.name}`);
+          continue;
+        }
+
+        statusText.innerHTML = `<span style="color: var(--primary);">Uploading media ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
 
         try {
-          const isVideo = (file.type || '').startsWith('video/');
           const limit = isVideo ? MAX_VIDEO_SIZE_BYTES : MAX_FILE_SIZE_BYTES;
           if (file.size > limit) {
-            alert(`${file.name} is too big (${(file.size / 1048576).toFixed(1)} MB). Skipping.`);
+            alert(`${file.name} exceeds the size limit (${(limit / (1024*1024)).toFixed(0)} MB). Skipping.`);
             continue;
           }
 
@@ -1727,10 +1737,10 @@
 
       document.getElementById('mediaFileInput').value = '';
       uploadBtn.disabled = false;
-      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} assets!</span>`;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} media files!</span>`;
       
       setTimeout(() => {
-        statusText.textContent = "Select destination category and choose files or add a video link";
+        statusText.textContent = "Select destination category and choose photos or videos";
       }, 4000);
     }
 
@@ -1852,11 +1862,12 @@
       }
     }
 
+    // DIRECT LOCAL STORAGE DOWNLOAD HANDLER FOR BOTH PHOTOS & VIDEOS
     async function handleInteractiveDownload(firebaseKey, fileUrl, fileName, isVideo) {
       const btn = document.getElementById(`btn-dl-${firebaseKey}`);
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border-width:2px; margin:0; display:inline-block;"></span> Preparing...`;
+        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border-width:2px; margin:0; display:inline-block;"></span> Downloading...`;
       }
 
       totalMediaDownloadsRef.transaction((currentValue) => {
@@ -1873,15 +1884,6 @@
         return;
       }
 
-      if (isVideo) {
-        window.open(fileUrl, '_blank');
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 18px;">download</span> Open`;
-        }
-        return;
-      }
-
       try {
         const response = await fetch(fileUrl);
         const blob = await response.blob();
@@ -1889,13 +1891,20 @@
 
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = fileName || 'apml-media-asset';
+        a.download = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(blobUrl);
       } catch (err) {
-        window.open(fileUrl, '_blank');
+        // Fallback direct link download
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1955,7 +1964,7 @@
               </div>
               <div class="card-actions-row">
                 <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleInteractiveDownload('${item.key}', '${item.url}', '${item.name}', ${item.isVideo})" title="Download File">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">download</span> ${item.isVideo ? 'Open' : 'Download'}
+                  <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
                 </button>
                 <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
                   <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
