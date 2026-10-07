@@ -857,11 +857,77 @@
       }
     }
 
+    // ---------- Cloudinary clean-up (via the apml-drive-api Worker) ----------
+    const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
+
+    // URLs still used by a live Drive file or Gallery item must never be wiped from Cloudinary
+    async function getUrlsStillInUse() {
+      const used = new Set();
+      const [driveSnap, gallerySnap] = await Promise.all([
+        driveFilesRef.once('value'),
+        galleryMediaRef.once('value')
+      ]);
+      const addAll = (snap, field) => {
+        const data = snap.val() || {};
+        Object.values(data).forEach(v => { if (v && v[field]) used.add(v[field]); });
+      };
+      addAll(driveSnap, 'fileId');
+      addAll(gallerySnap, 'url');
+      return used;
+    }
+
+    // Returns { ok, message }. Never throws.
+    async function deleteFromCloudinary(urls) {
+      try {
+        const unique = [...new Set(urls.filter(Boolean))];
+        if (!unique.length) return { ok: true, message: 'nothing to delete' };
+
+        const inUse = await getUrlsStillInUse();
+        const toDelete = unique.filter(u => !inUse.has(u));
+        if (!toDelete.length) return { ok: true, message: 'all files still in use elsewhere' };
+
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session || !session.access_token) {
+          return { ok: false, message: 'Admin session expired. Please sign in again.' };
+        }
+
+        const res = await fetch(`${DRIVE_API_URL}/delete`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ urls: toDelete })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || data.ok === false) {
+          return { ok: false, message: data.error || `HTTP ${res.status}` };
+        }
+        return { ok: true, message: `${data.deleted || 0} removed from Cloudinary` };
+      } catch (err) {
+        return { ok: false, message: err.message };
+      }
+    }
+
     async function permanentDelete(trashKey, isFolder) {
       if (!confirm("Permanently delete this item?")) return;
       try {
+        const item = dumpItems.find(i => i.key === trashKey);
+        const childItems = isFolder ? dumpItems.filter(i => i.folder === trashKey) : [];
+        const urls = isFolder
+          ? childItems.map(c => c.fileId || c.url)
+          : [item && (item.fileId || item.url)];
+
+        const result = await deleteFromCloudinary(urls);
+        if (!result.ok) {
+          const goOn = confirm(
+            `Could not delete the file from Cloudinary (${result.message}).\n\n` +
+            `Remove it from the trash list anyway? The file will stay in Cloudinary storage.`
+          );
+          if (!goOn) return;
+        }
+
         if (isFolder) {
-          const childItems = dumpItems.filter(i => i.folder === trashKey);
           for (const child of childItems) {
             await dumpBinRef.child(child.key).remove();
           }
@@ -875,6 +941,16 @@
     async function emptyEntireDump() {
       if (!confirm("Are you sure you want to empty the entire trash archive? This cannot be undone.")) return;
       try {
+        const urls = dumpItems.map(i => i.fileId || i.url);
+        const result = await deleteFromCloudinary(urls);
+        if (!result.ok) {
+          const goOn = confirm(
+            `Could not delete the files from Cloudinary (${result.message}).\n\n` +
+            `Empty the trash list anyway? The files will stay in Cloudinary storage.`
+          );
+          if (!goOn) return;
+        }
+
         await dumpBinRef.remove();
         alert("Trash archive emptied successfully.");
       } catch (err) {
