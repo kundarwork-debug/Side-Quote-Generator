@@ -778,6 +778,73 @@ function saveQuotationInBackground(pdfBlob, clientName, companyName) {
 }
 
 // =========================================================
+// AUTOSAVE TO APML CLOUD DRIVE (drive.html) -> "Quotation" folder
+// =========================================================
+const DRIVE_CLOUD_NAME = 'wbrmw2pm';
+const DRIVE_UPLOAD_PRESET = 'apml_drive'; // same unsigned preset used by drive.html
+const DRIVE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${DRIVE_CLOUD_NAME}/auto/upload`;
+const DRIVE_QUOTATION_FOLDER_NAME = 'Quotation';
+const DRIVE_QUOTATION_FOLDER_KEY = 'quotation_folder';
+const DRIVE_MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free plan limit
+
+async function getOrCreateQuotationFolderId(database) {
+  const foldersRef = database.ref('catbox_gdrive_folders');
+  const snap = await foldersRef.once('value');
+  const folders = snap.val() || {};
+
+  // Reuse an existing root-level "Quotation" folder (case-insensitive) if there is one
+  for (const key of Object.keys(folders)) {
+    const f = folders[key];
+    if (f && f.parentId === 'root' && String(f.name || '').trim().toLowerCase() === DRIVE_QUOTATION_FOLDER_NAME.toLowerCase()) {
+      return key;
+    }
+  }
+
+  // Otherwise create it once, under a fixed key so it can never be duplicated
+  await foldersRef.child(DRIVE_QUOTATION_FOLDER_KEY).set({
+    name: DRIVE_QUOTATION_FOLDER_NAME,
+    parentId: 'root',
+    timestamp: Date.now()
+  });
+  return DRIVE_QUOTATION_FOLDER_KEY;
+}
+
+function saveQuotationToDrive(pdfBlob, fileName) {
+  setTimeout(async () => {
+    try {
+      if (!pdfBlob || pdfBlob.size > DRIVE_MAX_BYTES) {
+        console.warn('Drive autosave skipped: PDF missing or larger than 10 MB.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', pdfBlob, fileName);
+      formData.append('upload_preset', DRIVE_UPLOAD_PRESET);
+      formData.append('folder', 'apml-drive');
+
+      const res = await fetch(DRIVE_UPLOAD_URL, { method: 'POST', body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.secure_url) {
+        throw new Error((data.error && data.error.message) || `HTTP ${res.status}`);
+      }
+
+      const database = firebase.database();
+      const folderId = await getOrCreateQuotationFolderId(database);
+
+      await database.ref('catbox_gdrive_files').push({
+        fileId: data.secure_url,
+        parentId: folderId,
+        name: fileName,
+        size: pdfBlob.size || 0,
+        timestamp: Date.now()
+      });
+    } catch (err) {
+      console.error('Drive autosave error:', err);
+    }
+  }, 300);
+}
+
+// =========================================================
 // FIREBASE REALTIME INITIALIZATION
 // =========================================================
 const firebaseConfig = {
@@ -1232,9 +1299,11 @@ document.getElementById('costRows').addEventListener('input', (e) => {
 });
 
 document.getElementById('costRows').addEventListener('click', (e) => {
-  const idx = e.target.dataset.removeCost;
-  if (idx === undefined) return;
-  state[active].costItems.splice(Number(idx), 1);
+  const btn = e.target.closest('[data-remove-cost]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeCost);
+  if (Number.isNaN(idx)) return;
+  state[active].costItems.splice(idx, 1);
   renderAll();
 });
 
@@ -1251,9 +1320,11 @@ document.getElementById('termRows').addEventListener('input', (e) => {
 });
 
 document.getElementById('termRows').addEventListener('click', (e) => {
-  const idx = e.target.dataset.removeTerm;
-  if (idx === undefined) return;
-  state[active].terms.splice(Number(idx), 1);
+  const btn = e.target.closest('[data-remove-term]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeTerm);
+  if (Number.isNaN(idx)) return;
+  state[active].terms.splice(idx, 1);
   renderAll();
 });
 
@@ -1345,6 +1416,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
     // 2. Background sync to Telegram and Firebase Cloud Drive (Quotations Archive)
     saveQuotationInBackground(pdfBlob, shared.custName, d.companyName);
+    saveQuotationToDrive(pdfBlob, filename);
 
     incrementPdfDownloadCount();
 
