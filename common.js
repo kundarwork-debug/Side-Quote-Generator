@@ -440,48 +440,107 @@
   // INTELLIGENT FLOATING MASCOT WIDGET (AUTO-HIDE + CLICK FOR NEW TIP)
   // =========================================================
   (function initFloatingMascot() {
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
+    const currentPage = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
 
-    // Multiple rotating tips for each page
+    // Five rotating tips for each page
     const pageTips = {
       "index.html": [
         "Welcome to APML Portal! Select any module below to get started. 🚀",
         "Tip: Use the hamburger menu on top to quickly navigate anywhere.",
-        "All telemetry systems and personnel metrics are live and synced!"
+        "All telemetry systems and personnel metrics are live and synced!",
+        "Need a quotation? Open the Quotation Editor, and your PDF is saved to the Drive automatically. 📄",
+        "Click my avatar anytime for another quick hint!"
       ],
       "editor.html": [
         "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
         "You can save your drafts locally right from this studio.",
-        "Freight calculations compute automatically based on your inputs."
+        "Freight calculations compute automatically based on your inputs.",
+        "Every PDF you download is also saved to Drive in the Quotation folder. 📁",
+        "Delete any charge line you don't need with the red bin icon, and the totals update instantly."
       ],
       "gallery.html": [
-        "💡 Tip: Select a folder category and click 'Upload Photos' to add media instantly.",
+        "💡 Tip: Select a folder category and click 'Upload Media' to add photos or videos instantly.",
         "Click any asset card to preview it in the full-screen lightbox.",
-        "Deleted items are automatically safely archived into the Trash Archive."
+        "Deleted items are automatically safely archived into the Trash Archive.",
+        "You can select several photos or videos at once and upload them in one go. 📸",
+        "Views and downloads are counted for every media item."
       ],
       "drive.html": [
-        "💡 Tip: Use 'Upload Image' to add images directly, or 'Add File' for Catbox links.",
-        "All users can securely rename and delete files.",
-        "Deleted files are automatically routed to the Trash Archive for easy recovery."
+        "💡 Tip: Use 'Upload File' to add documents, images and videos straight into the current folder.",
+        "Create folders with 'New Folder' to keep your files organised.",
+        "Deleted files are automatically routed to the Trash Archive for easy recovery.",
+        "Quotation PDFs from the editor land in the Quotation folder automatically. 📁",
+        "The Quotation and Prasad folders are protected, and only an admin can delete them. 🔒"
       ],
       "hub-details.html": [
         "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
-        "Click on location pins to open exact addresses in Google Maps."
+        "Click on location pins to open exact addresses in Google Maps.",
+        "Search works on city, in-charge name, phone number or designation.",
+        "Use the hamburger menu to jump to any other module quickly.",
+        "Click my avatar anytime for another quick hint!"
       ],
       "apml-lite.html": [
         "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit.",
-        "Destination pricing and floor constraints compute automatically."
+        "Destination pricing and floor constraints compute automatically.",
+        "This calculator covers the Mumbai & Pune hub rates.",
+        "Enter a CFT volume between 1 and 450 to see the rate straight away.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "local-rate.html": [
+        "💡 Tip: Enter the volume in CFT to calculate the local shifting rate.",
+        "Rates update instantly as you change the values.",
+        "Double-check the volume, since it drives the whole estimate.",
+        "Use the hamburger menu to switch to the other calculators.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "car-rate.html": [
+        "💡 Tip: Type the vehicle model, for example Nexon, Creta or Brezza, to pick the car.",
+        "Enter the distance in KM to get the transport estimate.",
+        "Vehicle type and distance together decide the final rate.",
+        "Use the hamburger menu to switch to the other calculators.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "directory.html": [
+        "💡 Tip: Search by city, in-charge name, phone or designation to find a contact fast.",
+        "Operations and field contacts are all kept in this one directory.",
+        "Tap a phone number to call straight from your device.",
+        "Use the hamburger menu to jump to other modules.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "field-officer.html": [
+        "💡 Tip: Search by name, branch (MUM, PUN, AHMD), APM code, designation or phone.",
+        "Type a branch code like MUM or PUN to see its field officers.",
+        "Every field officer's APM code is listed for quick reference.",
+        "Use the hamburger menu to jump to other modules.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "wcro-consignment-status-old.html": [
+        "💡 Tip: Filter records by any keyword to find a consignment quickly.",
+        "This is the older WCRO status view, kept for reference.",
+        "Try a consignment number, city or status word in the filter box.",
+        "Use the hamburger menu to jump to other modules.",
+        "Click my avatar anytime for another quick hint!"
+      ],
+      "about.html": [
+        "Hi! This page tells the story behind the APML Portal. 👋",
+        "Scroll down to see how the portal is built and what powers it.",
+        "Everything is synced in real-time with Firebase and Supabase.",
+        "Use the hamburger menu to explore the other modules.",
+        "Click my avatar anytime for another quick hint!"
       ]
     };
 
     const defaultTips = [
       "Welcome to the APML Enterprise workspace! 💼",
       "Everything is synced in real-time with Firebase and Supabase.",
+      "Use the hamburger menu to jump between modules.",
+      "Quotation PDFs are saved to the Drive automatically. 📁",
       "Click my avatar anytime for another quick hint!"
     ];
 
     const tipsArray = pageTips[currentPage] || defaultTips;
-    let tipIndex = 0;
+    // Start on a random tip each time a page opens
+    let tipIndex = Math.floor(Math.random() * tipsArray.length);
 
     // Inject Lottie player script if not already present
     if (!document.querySelector('script[src*="lottie-player"]')) {
@@ -607,9 +666,10 @@
       }
     }, { passive: true });
 
-    // Typewriter Effect Function with Auto-Hide
+    // Typewriter Effect Function with Auto-Hide (cancellable)
     let hideTimer = null;
     let isTyping = false;
+    let typeToken = 0;
 
     function playTypewriter(textToType) {
       const typeText = document.getElementById('typewriter-text');
@@ -617,7 +677,8 @@
       const cursor = document.getElementById('typeCursor');
       if (!typeText || !bubble) return;
 
-      typeText.innerHTML = "";
+      const myToken = ++typeToken; // a newer message cancels this one
+      typeText.textContent = "";
       if (cursor) cursor.style.display = 'inline-block';
       bubble.classList.add('show');
       isTyping = true;
@@ -626,28 +687,38 @@
 
       let typeIndex = 0;
       function step() {
+        if (myToken !== typeToken) return;
         if (typeIndex < textToType.length) {
-          typeText.innerHTML += textToType.charAt(typeIndex);
+          typeText.textContent += textToType.charAt(typeIndex);
           typeIndex++;
           setTimeout(step, 30);
         } else {
           isTyping = false;
           setTimeout(() => {
-            if (cursor) cursor.style.display = 'none';
+            if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
 
           // Auto-hide message after 5 seconds
           hideTimer = setTimeout(() => {
-            bubble.classList.remove('show');
+            if (myToken === typeToken) bubble.classList.remove('show');
           }, 5000);
         }
       }
       step();
     }
 
+    // Public hook so any page can make the avatar say something:
+    //   window.APMLMascot.say("Hello!")
+    window.APMLMascot = {
+      say: function (text) {
+        if (!text) return;
+        playTypewriter(String(text));
+      }
+    };
+
     // Initial trigger on load
     setTimeout(() => {
-      playTypewriter(tipsArray[0]);
+      if (!isTyping && typeToken === 0) playTypewriter(tipsArray[tipIndex]);
     }, 1000);
 
     // Click Avatar for New Message
