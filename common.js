@@ -441,6 +441,7 @@
   // =========================================================
   (function initFloatingMascot() {
     const currentPage = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+    const isIndexPage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
 
     // Five rotating tips for each page
     const pageTips = {
@@ -538,7 +539,6 @@
     ];
 
     const tipsArray = pageTips[currentPage] || defaultTips;
-    // Start on a random tip each time a page opens
     let tipIndex = Math.floor(Math.random() * tipsArray.length);
 
     // Inject Lottie player script if not already present
@@ -553,6 +553,10 @@
     const supportFab = document.createElement('div');
     supportFab.className = 'support-fab';
     supportFab.id = 'support-fab';
+    if (!isIndexPage) {
+      supportFab.classList.add('visible'); // On other pages, start visible
+    }
+
     supportFab.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
         <div class="support-msg-bubble" id="supportBubble" style="position: relative;">        
@@ -572,7 +576,7 @@
       </div>  
     `;
 
-    // Append Mascot Styles with scroll-dependent visibility (hidden on hero page, revealed when scrolled down)
+    // Append Mascot Styles
     const mascotStyle = document.createElement('style');
     mascotStyle.innerHTML = `
       .support-fab {
@@ -656,7 +660,9 @@
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // Scroll Controller for FAB (Hide on hero section / top of page, reveal when scrolled down past ~250px, hide near footer)
+    // Scroll Controller for FAB:
+    // - On index.html: Hidden on hero section, reveals when scrolled down past ~250px, hides near footer.
+    // - On other pages: Always visible unless near the footer.
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const scrollPosition = scrollY + window.innerHeight;
@@ -664,14 +670,19 @@
       const footer = document.querySelector('footer') || document.getElementById('footer-container');
       const footerHeight = footer ? footer.offsetHeight : 0;
       const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
-      const isPastHero = scrollY > 250;
 
       const fab = document.getElementById('support-fab');
       if (fab) {
-        if (isPastHero && !isNearBottom) {
-          fab.classList.add('visible');
-        } else {
+        if (isNearBottom) {
           fab.classList.remove('visible');
+        } else if (isIndexPage) {
+          if (scrollY > 250) {
+            fab.classList.add('visible');
+          } else {
+            fab.classList.remove('visible');
+          }
+        } else {
+          fab.classList.add('visible');
         }
       }
     }, { passive: true });
@@ -724,7 +735,7 @@
     };
 
     setTimeout(() => {
-      if (!isTyping && typeToken === 0 && window.scrollY > 250) {
+      if (!isTyping && typeToken === 0 && (!isIndexPage || window.scrollY > 250)) {
         playTypewriter(tipsArray[tipIndex]);
       }
     }, 1000);
