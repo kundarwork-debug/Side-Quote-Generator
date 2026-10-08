@@ -1,755 +1,1451 @@
-// =========================================================
-// APML STANDALONE APK DETECTION
-// =========================================================
-(function detectStandaloneApp() {
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches 
-                    || window.navigator.standalone 
-                    || document.referrer.includes('android-app://');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Quotation Editor - APML Support Page</title>
+<meta name="description" content="APML Quotation Editor lets you draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers estimates as ready-to-share PDF documents.">
+<meta name="keywords" content="APML Quotation Editor, APML Estimate Generator, Exact Container Logistics Quotation, Maxcare Packers Movers Estimate, APML PDF Quote">
+<link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
-  if (isStandalone) {
-    document.documentElement.classList.add('is-native-apk');
-  }
-})();
+<!-- Open Graph / social preview -->
+<meta property="og:title" content="Quotation Editor - APML Support Page">
+<meta property="og:description" content="Draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers quotations as ready-to-share PDF documents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
-// =========================================================
-// APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
-// =========================================================
-(function initCommonLayout() {
-  function renderHeaderAndFooter() {
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-    const isHomePage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
+<!-- Network/Hub SVG Favicon from root folder -->
+<link rel="icon" type="image/svg+xml" href="logo.svg?v=18.0">
+<link rel="manifest" href="./manifest.json">
 
-    // Add flag to <html> if on home page
-    if (isHomePage) {
-      document.documentElement.classList.add("is-home-page");
-    } else {
-      document.documentElement.classList.remove("is-home-page");
-    }
+<link rel="stylesheet" href="common.css?v=18.0">
 
-    // 1. INJECT HEADER (Rotating Hub Logo + Live Clock + Navigation)
-    const headerContainer = document.getElementById("header-container");
-    if (headerContainer) {
-      headerContainer.innerHTML = `
-        <header class="site-header" id="siteHeader">
-          <div class="header-inner">
-            <div style="display: flex; align-items: center; gap: 20px;">
-              <a href="index.html" class="site-logo">
-                <div class="logo-badge">
-                  <img src="logo.svg" alt="APML Hub" style="width: 24px; height: 24px; display: block; object-fit: contain;">
-                </div>
-                <div class="logo-text">APML <span>Portal</span></div>
-              </a>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-              <!-- Live Header Date & Time Display -->
-              <div class="header-live-clock" id="headerLiveClock" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted, #78716c); background: var(--md-sys-color-surface-container-low, #f7ede6); padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--md-sys-color-outline-variant, #ede4de);">
-                <span class="material-symbols-outlined" style="font-size: 15px; color: var(--primary, #b91c1c);">schedule</span>
-                <span id="liveClockText">Loading time...</span>
-              </div>
-            </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-            <!-- Animated Rotating Hamburger Button -->
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span class="bar"></span>
-              <span class="bar"></span>
-              <span class="bar"></span>
-            </button>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-            <!-- Navigation Menu Dropdown -->
-            <nav class="nav-menu" id="navMenu">
-              <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
-                <span class="material-symbols-outlined">home</span>
-                <span>Home</span>
-              </a>
-              <a href="editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">edit_note</span>
-                <span>Quotation Editor</span>
-              </a>
-              <a href="gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">photo_library</span>
-                <span>Gallery</span>
-              </a>
-              <a href="drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">cloud</span>
-                <span>Cloud Drive</span>
-              </a>
-              <a href="hub-details.html" class="nav-link ${currentPage === 'hub-details.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">location_city</span>
-                <span>Hub &amp; Branch Directory</span>
-              </a>
-              <a href="field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">badge</span>
-                <span>Field Officer Directory WCRO</span>
-              </a>
-              <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">grid_view</span>
-                <span>APML Lite</span>
-              </a>
-              <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">directions_car</span>
-                <span>Car Rate</span>
-              </a>
-              <a href="local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
-                <span class="material-symbols-outlined">local_shipping</span>
-                <span>APML Local Rate</span>
-              </a>
-            </nav>
-          </div>
-        </header>
-      `;
+<style>
+  /* =========================================================
+     MATCHED WARM CREAM / MAIN PAGE COLOR SYSTEM
+     ========================================================= */
+  :root {
+    --primary: #b91c1c;
+    --primary-dark: #881337;
+    --primary-soft: rgba(185, 28, 28, 0.06);
+    --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+    --surface-card: #ffffff;
+    --surface-border: #ede4de;
+    --surface-subtle: #f7ede6;
+    --text-main: #292524;
+    --text-muted: #78716c;
+    --radius-xl: 20px;
+    --radius-pill: 9999px;
+    --shadow-soft: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+    --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 
-      // Initialize Live Clock Updater
-      function updateLiveClock() {
-        const clockEl = document.getElementById("liveClockText");
-        if (clockEl) {
-          const now = new Date();
-          const options = { 
-            weekday: 'short', 
-            day: '2-digit', 
-            month: 'short', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: true 
-          };
-          clockEl.textContent = now.toLocaleString('en-IN', options);
-        }
-      }
-      updateLiveClock();
-      setInterval(updateLiveClock, 1000);
-
-      // Event Listeners for Hamburger Click & Outside Clicks
-      const hamburgerBtn = document.getElementById("hamburgerBtn");
-      const navMenu = document.getElementById("navMenu");
-      const siteHeader = document.getElementById("siteHeader");
-
-      if (hamburgerBtn && navMenu) {
-        hamburgerBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const isOpen = hamburgerBtn.classList.toggle("is-active");
-          navMenu.classList.toggle("open", isOpen);
-          hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-        });
-
-        navMenu.querySelectorAll(".nav-link").forEach((link) => {
-          link.addEventListener("click", () => {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          });
-        });
-
-        document.addEventListener("click", (e) => {
-          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          }
-        });
-
-        document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          }
-        });
-      }
-
-      // Hide/reveal on scroll only applies to home page
-      if (isHomePage) {
-        const scrollTriggerDistance = 110;
-        function handleHeaderScroll() {
-          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-          if (scrollY > scrollTriggerDistance) {
-            siteHeader?.classList.add("header-visible");
-          } else {
-            siteHeader?.classList.remove("header-visible");
-            if (navMenu && navMenu.classList.contains("open")) {
-              navMenu.classList.remove("open");
-              if (hamburgerBtn) {
-                hamburgerBtn.classList.remove("is-active");
-                hamburgerBtn.setAttribute("aria-expanded", "false");
-              }
-            }
-          }
-        }
-
-        window.addEventListener("scroll", handleHeaderScroll, { passive: true });
-        handleHeaderScroll();
-      }
-    }
-
-    // 2. INJECT EDGE-TO-EDGE STRETCHED FOOTER
-    const footerContainer = document.getElementById("footer-container");
-    if (footerContainer) {
-      const currentYear = new Date().getFullYear();
-      footerContainer.innerHTML = `
-        <footer class="site-footer-extended">
-          <div class="footer-grid-container">
-            
-            <!-- Left Brand Section -->
-            <div class="footer-brand-col">
-              <div class="footer-brand-heading">
-                <div class="logo-badge" style="width: 32px; height: 32px;">
-                  <img src="logo.svg" alt="APML Hub" style="width: 20px; height: 20px; display: block; object-fit: contain;">
-                </div>
-                <span class="footer-title-text">APML Portal</span>
-              </div>
-              <p class="footer-brand-desc">
-                Enterprise operations workspace designed to simplify quotation drafting, branch directories, and packing logistics standards.
-              </p>
-              <div class="footer-developer-tag">
-                Designed &amp; developed by <span>Prasad Kundar</span>
-              </div>
-            </div>
-
-            <!-- Right Links Columns -->
-            <div class="footer-links-columns">
-              <div class="footer-link-col">
-                <div class="footer-col-title">Quick Links</div>
-                <a href="index.html" class="footer-item-link">Home Portal</a>
-                <a href="editor.html" class="footer-item-link">Quotation Editor</a>
-                <a href="gallery.html" class="footer-item-link">Packing Gallery</a>
-                <a href="drive.html" class="footer-item-link">Cloud Drive</a>
-              </div>
-
-              <div class="footer-link-col">
-                <div class="footer-col-title">Directories</div>
-                <a href="hub-details.html" class="footer-item-link">Hub &amp; Branch Directory</a>
-                <a href="field-officer.html" class="footer-item-link">Field Officer WCRO</a>
-              </div>
-
-              <div class="footer-link-col">
-                <div class="footer-col-title">Resources &amp; Legal</div>
-                <a href="terms.html" class="footer-item-link">Terms &amp; Conditions</a>
-                <a href="privacy.html" class="footer-item-link">Privacy Policy</a>
-                <a href="bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="footer-bottom-bar">
-            <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
-            
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <a href="about.html" class="footer-about-pill">
-                <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
-                <span>About Developer</span>
-              </a>
-
-              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON -->
-              <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
-                <span class="material-symbols-outlined">arrow_upward</span>
-              </button>
-            </div>
-          </div>
-        </footer>
-
-        <style>
-          /* EXTENDED STRETCHED FOOTER STYLING */
-          .site-footer-extended {
-            background: var(--md-sys-color-surface-container-low, #f7ede6);
-            border-top: 1px solid var(--md-sys-color-outline-variant, #ede4de);
-            padding: 60px 40px 30px;
-            width: 100%;
-            margin-top: auto;
-            color: var(--text-main, #292524);
-          }
-
-          .footer-grid-container {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1.5fr 3fr;
-            gap: 40px;
-            align-items: start;
-            padding-bottom: 40px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-          }
-
-          .footer-brand-col {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-          }
-
-          .footer-brand-heading {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .footer-title-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-          }
-
-          .footer-brand-desc {
-            font-size: 13.5px;
-            color: var(--text-muted, #78716c);
-            line-height: 1.6;
-            max-width: 440px;
-          }
-
-          .footer-developer-tag {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted, #78716c);
-            margin-top: 4px;
-          }
-
-          .footer-developer-tag span {
-            color: var(--primary, #b91c1c);
-            font-weight: 700;
-          }
-
-          .footer-links-columns {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            width: 100%;
-          }
-
-          .footer-col-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14.5px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            color: var(--text-main, #292524);
-            letter-spacing: -0.01em;
-          }
-
-          .footer-link-col {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-          }
-
-          .footer-item-link {
-            font-size: 13.5px;
-            font-weight: 500;
-            color: var(--text-muted, #78716c);
-            text-decoration: none;
-            transition: color 0.2s ease;
-          }
-
-          .footer-item-link:hover {
-            color: var(--primary, #b91c1c);
-          }
-
-          .footer-bottom-bar {
-            width: 100%;
-            margin-top: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12.5px;
-            color: var(--text-muted, #78716c);
-            flex-wrap: wrap;
-            gap: 12px;
-          }
-
-          .footer-about-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-            border: 1px solid var(--md-sys-color-outline-variant, #ede4de);
-            padding: 6px 14px;
-            border-radius: 9999px;
-            color: var(--text-main, #292524);
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-            position: relative;
-            z-index: 10;
-          }
-
-          .footer-about-pill:hover {
-            transform: translateY(-1px);
-          }
-
-          .footer-about-pill img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
-
-          /* EMBEDDED FOOTER BACK TO TOP BUTTON */
-          .footer-back-to-top-btn {
-            width: 42px;
-            height: 42px;
-            background: var(--primary, #b91c1c);
-            color: #ffffff;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 10;
-          }
-
-          .footer-back-to-top-btn:hover {
-            background: #991b1b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
-          }
-
-          @media (max-width: 850px) {
-            .site-footer-extended {
-              padding: 40px 20px 24px;
-            }
-            .footer-grid-container {
-              grid-template-columns: 1fr;
-              gap: 32px;
-            }
-            .footer-links-columns {
-              grid-template-columns: repeat(2, 1fr);
-            }
-          }
-        </style>
-      `;
-
-      // Footer Back to Top Click Handler
-      const footerBackToTopBtn = document.getElementById("footerBackToTopBtn");
-      if (footerBackToTopBtn) {
-        footerBackToTopBtn.addEventListener("click", () => {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-        });
-      }
-    }
+    /* Legacy bindings */
+    --accent-exact: #b91c1c;
+    --accent-exact-dark: #881337;
+    --accent-max-blue: #1e40af;
+    --accent-max-dark: #1e3a8a;
+    --accent-max-yellow: #f4d93e;
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", renderHeaderAndFooter);
-  } else {
-    renderHeaderAndFooter();
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background: var(--bg-base);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
   }
 
-  // =========================================================
-  // INTELLIGENT FLOATING MASCOT WIDGET (AUTO-HIDE + CLICK FOR NEW TIP)
-  // =========================================================
-  (function initFloatingMascot() {
-    const currentPage = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+  .ambient-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none !important;
+    z-index: 0;
+    background: 
+      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+  }
 
-    // Five rotating tips for each page
-    const pageTips = {
-      "index.html": [
-        "Welcome to APML Portal! Select any module below to get started. 🚀",
-        "Tip: Use the hamburger menu on top to quickly navigate anywhere.",
-        "All telemetry systems and personnel metrics are live and synced!",
-        "Need a quotation? Open the Quotation Editor, and your PDF is saved to the Drive automatically. 📄",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "editor.html": [
-        "💡 Pro Tip: Fill out quotation line items and click 'Preview A4' to generate an official PDF.",
-        "You can save your drafts locally right from this studio.",
-        "Freight calculations compute automatically based on your inputs.",
-        "Every PDF you download is also saved to Drive in the Quotation folder. 📁",
-        "Delete any charge line you don't need with the red bin icon, and the totals update instantly."
-      ],
-      "gallery.html": [
-        "💡 Tip: Select a folder category and click 'Upload Media' to add photos or videos instantly.",
-        "Click any asset card to preview it in the full-screen lightbox.",
-        "Deleted items are automatically safely archived into the Trash Archive.",
-        "You can select several photos or videos at once and upload them in one go. 📸",
-        "Views and downloads are counted for every media item."
-      ],
-      "drive.html": [
-        "💡 Tip: Use 'Upload File' to add documents, images and videos straight into the current folder.",
-        "Create folders with 'New Folder' to keep your files organised.",
-        "Deleted files are automatically routed to the Trash Archive for easy recovery.",
-        "Quotation PDFs from the editor land in the Quotation folder automatically. 📁",
-        "The Quotation and Prasad folders are protected, and only an admin can delete them. 🔒"
-      ],
-      "hub-details.html": [
-        "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
-        "Click on location pins to open exact addresses in Google Maps.",
-        "Search works on city, in-charge name, phone number or designation.",
-        "Use the hamburger menu to jump to any other module quickly.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "apml-lite.html": [
-        "💡 Tip: Enter volume dimensions to calculate CFT up to the 450 CFT ceiling limit.",
-        "Destination pricing and floor constraints compute automatically.",
-        "This calculator covers the Mumbai & Pune hub rates.",
-        "Enter a CFT volume between 1 and 450 to see the rate straight away.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "local-rate.html": [
-        "💡 Tip: Enter the volume in CFT to calculate the local shifting rate.",
-        "Rates update instantly as you change the values.",
-        "Double-check the volume, since it drives the whole estimate.",
-        "Use the hamburger menu to switch to the other calculators.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "car-rate.html": [
-        "💡 Tip: Type the vehicle model, for example Nexon, Creta or Brezza, to pick the car.",
-        "Enter the distance in KM to get the transport estimate.",
-        "Vehicle type and distance together decide the final rate.",
-        "Use the hamburger menu to switch to the other calculators.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "directory.html": [
-        "💡 Tip: Search by city, in-charge name, phone or designation to find a contact fast.",
-        "Operations and field contacts are all kept in this one directory.",
-        "Tap a phone number to call straight from your device.",
-        "Use the hamburger menu to jump to other modules.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "field-officer.html": [
-        "💡 Tip: Search by name, branch (MUM, PUN, AHMD), APM code, designation or phone.",
-        "Type a branch code like MUM or PUN to see its field officers.",
-        "Every field officer's APM code is listed for quick reference.",
-        "Use the hamburger menu to jump to other modules.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "wcro-consignment-status-old.html": [
-        "💡 Tip: Filter records by any keyword to find a consignment quickly.",
-        "This is the older WCRO status view, kept for reference.",
-        "Try a consignment number, city or status word in the filter box.",
-        "Use the hamburger menu to jump to other modules.",
-        "Click my avatar anytime for another quick hint!"
-      ],
-      "about.html": [
-        "Hi! This page tells the story behind the APML Portal. 👋",
-        "Scroll down to see how the portal is built and what powers it.",
-        "Everything is synced in real-time with Firebase and Supabase.",
-        "Use the hamburger menu to explore the other modules.",
-        "Click my avatar anytime for another quick hint!"
-      ]
-    };
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
 
-    const defaultTips = [
-      "Welcome to the APML Enterprise workspace! 💼",
-      "Everything is synced in real-time with Firebase and Supabase.",
-      "Use the hamburger menu to jump between modules.",
-      "Quotation PDFs are saved to the Drive automatically. 📁",
-      "Click my avatar anytime for another quick hint!"
-    ];
+  /* ---------- MAIN APP LAYOUT ---------- */
+  .app {
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 64px;
+    position: relative;
+    z-index: 1;
+  }
 
-    const tipsArray = pageTips[currentPage] || defaultTips;
-    // Start on a random tip each time a page opens
-    let tipIndex = Math.floor(Math.random() * tipsArray.length);
+  /* ---------- LEFT: CONTROL PANEL ---------- */
+  .panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid var(--surface-border);
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    box-shadow: var(--shadow-soft);
+    z-index: 10;
+  }
 
-    // Inject Lottie player script if not already present
-    if (!document.querySelector('script[src*="lottie-player"]')) {
-      const lottieScript = document.createElement('script');
-      lottieScript.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
-      lottieScript.async = true;
-      document.head.appendChild(lottieScript);
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .brand-row h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 21px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-main);
+  }
+
+  .brand-row span {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    background: var(--primary-soft);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(185, 28, 28, 0.15);
+  }
+
+  /* Segmented Buttons / Tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 24px;
+    background: var(--surface-subtle);
+    padding: 6px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--surface-border);
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.35;
+    transition: var(--transition-m3);
+  }
+
+  .tab-btn.active[data-company="exact"] {
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .tab-btn.active[data-company="maxcare"] {
+    background: #ffffff;
+    color: var(--accent-max-blue);
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Form Field Groups */
+  .field-group {
+    margin-bottom: 24px;
+  }
+
+  /* =========================================================
+     HIGHLIGHTED CUSTOMER & DETAILS CARD
+     ========================================================= */
+  #sharedFieldGroup {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.85) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.28);
+    border-radius: var(--radius-xl);
+    padding: 18px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(185, 28, 28, 0.06);
+    position: relative;
+  }
+
+  #sharedFieldGroup h2 {
+    color: var(--primary);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  #sharedFieldGroup h2::after {
+    background: rgba(185, 28, 28, 0.2);
+  }
+
+  #sharedFieldGroup input {
+    background: #ffffff;
+    border-color: rgba(185, 28, 28, 0.22);
+  }
+
+  #sharedFieldGroup input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+  }
+
+  /* QUICK PRICING CONTAINER */
+  .quick-pricing-card {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.9) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.05);
+    position: relative;
+  }
+
+  .quick-pricing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .field-group h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .field-group h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+  }
+
+  .field { margin-bottom: 14px; }
+  
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .field input, .field textarea, .cost-row input, .term-row textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: #ffffff;
+    transition: var(--transition-m3);
+  }
+
+  .field input:focus, .field textarea:focus, .cost-row input:focus, .term-row textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .cost-row, .term-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .cost-row input.label-in { flex: 1.6; min-width: 0; }
+  .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
+  .term-row textarea { flex: 1; min-height: 42px; resize: vertical; }
+
+  /* Icon Buttons */
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-m3);
+  }
+
+  .icon-btn:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    transform: scale(1.08);
+  }
+
+  .add-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px dashed var(--surface-border);
+    background: #ffffff;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-m3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .add-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  /* Totals Container */
+  .totals-box {
+    background: #ffffff;
+    border: 1.5px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    padding: 16px 18px;
+    font-size: 13px;
+    margin-top: 16px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .totals-box .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--text-main);
+  }
+
+  .totals-box .line.total {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--primary);
+    border-top: 1px dashed var(--surface-border);
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 12px;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: var(--transition-m3);
+  }
+
+  .reset-btn:hover {
+    color: var(--text-main);
+    background: var(--surface-subtle);
+  }
+
+  /* Download Toolbar */
+  .download-bar {
+    position: sticky;
+    bottom: -1px;
+    margin-top: 28px;
+    padding: 16px 0;
+    border-top: 1px solid var(--surface-border);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .download-btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--transition-m3);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .download-btn[data-company="exact"] { background: var(--accent-exact); }
+  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .download-btn[data-company="maxcare"] { background: var(--accent-max-blue); }
+  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+  .download-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+  .status-msg {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    color: var(--text-muted);
+    min-height: 14px;
+  }
+
+  /* ---------- RIGHT: PREVIEW STAGE ---------- */
+  .stage {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    background: transparent;
+  }
+
+  .sheet-wrap { width: 100%; max-width: 794px; }
+
+  .sheet-shadow {
+    background: #fff;
+    box-shadow: 0 16px 36px -8px rgba(120, 113, 108, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    border: 1px solid var(--surface-border);
+    overflow: hidden;
+  }
+
+  /* PDF Preview Page */
+  #previewA4 {
+    width: 794px;
+    min-height: 1123px;
+    margin: 0 auto;
+    background: #ffffff !important;
+    color: #111111 !important;
+    position: relative;
+    padding: 0;
+    transform-origin: top left;
+  }
+
+  /* ===== PDF TEMPLATE STYLES ===== */
+  .doc-exact {
+    font-family: Calibri, Carlito, Arial, sans-serif;
+    color: #111;
+    padding: 0 0 40px;
+  }
+  .doc-exact .letterhead {
+    background: #fffdf8; padding: 16px 46px 10px; text-align: center;
+    border-bottom: 3px solid #1a1a1a;
+  }
+  .doc-exact .letterhead .cname {
+    color: var(--accent-exact); font-weight: 700; font-size: 20pt; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 4px; font-family: Calibri, Carlito, Arial, sans-serif;
+  }
+  .doc-exact .letterhead .cin {
+    font-weight: 700; font-size: 10pt; letter-spacing: .02em;
+  }
+  .doc-exact .body { padding: 14px 46px 0; font-size: 10pt; }
+  .doc-exact .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 10px; }
+  .doc-exact .meta-block { font-size: 10pt; line-height: 1.55; margin-bottom: 8px; }
+  .doc-exact .quotation-label {
+    text-decoration: underline; font-weight: 700; font-size: 14pt; margin: 6px 0 10px;
+    text-align: center;
+  }
+  .doc-exact .salut { font-weight: 700; font-size: 10pt; margin-bottom: 6px; }
+  .doc-exact .intro { font-size: 10pt; line-height: 1.4; margin-bottom: 12px; text-align: justify; }
+  .doc-exact .intro b { font-weight: 700; }
+  table.exact-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 12px; }
+  table.exact-table th, table.exact-table td {
+    border: 1px solid #1a1a1a; padding: 4px 12px;
+  }
+  table.exact-table th { background: #f1ede3; font-weight: 700; text-align: left; }
+  table.exact-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.exact-table tr.total-row td { font-weight: 700; }
+  table.exact-table tr.grand-row td { font-weight: 700; background: #f7f3ea; }
+  .doc-exact .terms-title { font-weight: 700; font-size: 11pt; margin: 4px 0 6px; letter-spacing: .01em; }
+  .doc-exact ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.35; }
+  .doc-exact ol.terms li { margin-bottom: 3px; text-align: justify; }
+  .doc-exact .footer { margin-top: 12px; font-size: 10pt; line-height: 1.5; }
+  .doc-exact .footer b { font-weight: 700; }
+
+  /* MAXCARE PACKERS LETTERHEAD STYLING (COMPANY NAME TOP, ADDRESS DOWN) */
+  .doc-max {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #141414;
+    padding: 0 0 40px;
+  }
+  .doc-max .letterhead {
+    background: linear-gradient(180deg, #fff7cf 0%, #fdf0a8 100%);
+    padding: 18px 36px 14px;
+    border-bottom: 4px solid var(--accent-max-blue);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .doc-max .letterhead .cname {
+    color: var(--accent-max-blue);
+    font-weight: 800;
+    font-size: 21pt;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+    line-height: 1.15;
+  }
+  .doc-max .letterhead .sub {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #222222;
+    line-height: 1.45;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+  .doc-max .body { padding: 20px 40px 0; font-size: 10pt; }
+  .doc-max .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 12px; font-weight: 700; }
+  .doc-max .meta-block { font-size: 10pt; line-height: 1.7; margin-bottom: 8px; }
+  .doc-max .quotation-label {
+    font-weight: 700; font-size: 15pt; margin: 10px 0 14px; color: var(--accent-max-blue);
+    text-align: center; letter-spacing: .04em;
+  }
+  .doc-max .intro { font-size: 10pt; line-height: 1.5; margin-bottom: 16px; text-align: justify; }
+  .doc-max .intro b { font-weight: 700; }
+  table.max-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 18px; }
+  table.max-table th, table.max-table td {
+    border: 1px solid #16234a; padding: 6px 10px;
+  }
+  table.max-table th { background: var(--accent-max-blue); color: #fff; font-weight: 700; text-align: left; }
+  table.max-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.max-table td.sno { text-align: center; width: 34px; }
+  table.max-table tr.total-row td { font-weight: 700; background: #fff7cf; }
+  table.max-table tr.grand-row td { font-weight: 700; background: var(--accent-max-yellow); }
+  .doc-max .terms-title { font-weight: 700; font-size: 13.5pt; margin: 6px 0 8px; color: var(--accent-max-blue); }
+  .doc-max ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.5; }
+  .doc-max ol.terms li { margin-bottom: 6px; text-align: justify; }
+  .doc-max .footer { margin-top: 18px; font-size: 10pt; line-height: 1.6; }
+  .doc-max .footer .sign { margin-top: 14px; font-weight: 700; }
+
+  /* ---------- RESPONSIVE MEDIA QUERIES (MOBILE) ---------- */
+  @media (max-width: 768px) {
+    .app {
+      grid-template-columns: 1fr !important;
+      width: 100% !important;
+      min-height: auto;
+      padding-top: 64px !important;
     }
 
-    // Create Support FAB Container
-    const supportFab = document.createElement('div');
-    supportFab.className = 'support-fab';
-    supportFab.id = 'support-fab';
-    supportFab.innerHTML = `
-      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
-        <div class="support-msg-bubble" id="supportBubble" style="position: relative;">        
-          <lottie-player 
-            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
-            background="transparent" 
-            speed="1" 
-            style="width: 75px; height: 75px; position: absolute; top: -52px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none;" 
-            loop 
-            autoplay>
-          </lottie-player>        
-          <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>      
-        </div>      
-        <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
-          <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
-        </div>    
-      </div>  
-    `;
-
-    // Append Mascot Styles with pointer-events protection for footer buttons
-    const mascotStyle = document.createElement('style');
-    mascotStyle.innerHTML = `
-      .support-fab {
-        position: fixed;
-        bottom: 32px;
-        right: 32px;
-        z-index: 100;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0px;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-      }
-      .support-fab > div {
-        pointer-events: none;
-      }
-      .support-msg-bubble {
-        background-color: #ffffff;
-        color: var(--text-main, #1c1917);
-        border: 2px solid var(--text-main, #1c1917);
-        box-shadow: 4px 4px 0px var(--text-main, #1c1917);
-        padding: 16px 24px;
-        border-radius: 20px 20px 0 20px;
-        font-size: 14.5px;
-        font-weight: 600;
-        max-width: 260px;
-        opacity: 0;
-        transform: translateY(10px) scale(0.9);
-        transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
-        pointer-events: auto;
-        line-height: 1.5;
-      }
-      .support-msg-bubble.show {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-      .cursor {
-        display: inline-block;
-        width: 2px;
-        background-color: var(--text-main, #1c1917);
-        margin-left: 2px;
-        animation: blink 1s step-end infinite;
-      }
-      @keyframes blink { 50% { opacity: 0; } }
-      .support-btn {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: 3px solid var(--text-main, #1c1917);
-        box-shadow: 4px 4px 0px var(--text-main, #1c1917);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        overflow: hidden;
-        background: #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        pointer-events: auto;
-      }
-      .support-btn img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-      @media (hover: hover) {
-        .support-fab:hover .support-btn {
-          transform: translateY(-4px);
-          box-shadow: 6px 6px 0px var(--text-main, #1c1917);
-        }
-      }
-    `;
-
-    document.head.appendChild(mascotStyle);
-    document.body.appendChild(supportFab);
-
-    // Scroll Controller for FAB
-    window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY + window.innerHeight;
-      const bodyHeight = document.body.offsetHeight;
-      const footer = document.querySelector('footer') || document.getElementById('footer-container');
-      const footerHeight = footer ? footer.offsetHeight : 0;
-      const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
-
-      const fab = document.getElementById('support-fab');
-      if (fab) {
-        fab.style.opacity = isNearBottom ? '0' : '1';
-        const supportBtn = fab.querySelector('.support-btn');
-        if (supportBtn) supportBtn.style.pointerEvents = isNearBottom ? 'none' : 'auto';
-      }
-    }, { passive: true });
-
-    // Typewriter Effect Function with Auto-Hide (cancellable)
-    let hideTimer = null;
-    let isTyping = false;
-    let typeToken = 0;
-
-    function playTypewriter(textToType) {
-      const typeText = document.getElementById('typewriter-text');
-      const bubble = document.getElementById('supportBubble');
-      const cursor = document.getElementById('typeCursor');
-      if (!typeText || !bubble) return;
-
-      const myToken = ++typeToken; // a newer message cancels this one
-      typeText.textContent = "";
-      if (cursor) cursor.style.display = 'inline-block';
-      bubble.classList.add('show');
-      isTyping = true;
-
-      clearTimeout(hideTimer);
-
-      let typeIndex = 0;
-      function step() {
-        if (myToken !== typeToken) return;
-        if (typeIndex < textToType.length) {
-          typeText.textContent += textToType.charAt(typeIndex);
-          typeIndex++;
-          setTimeout(step, 30);
-        } else {
-          isTyping = false;
-          setTimeout(() => {
-            if (myToken === typeToken && cursor) cursor.style.display = 'none';
-          }, 1500);
-
-          // Auto-hide message after 5 seconds
-          hideTimer = setTimeout(() => {
-            if (myToken === typeToken) bubble.classList.remove('show');
-          }, 5000);
-        }
-      }
-      step();
+    .panel {
+      width: 100% !important;
+      max-height: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid var(--surface-border);
+      padding: 20px 16px 40px !important;
+      box-sizing: border-box;
     }
 
-    // Public hook so any page can make the avatar say something:
-    //   window.APMLMascot.say("Hello!")
-    window.APMLMascot = {
-      say: function (text) {
-        if (!text) return;
-        playTypewriter(String(text));
-      }
-    };
+    .totals-box {
+      width: 100% !important;
+      padding: 12px 14px !important;
+      font-size: 12px !important;
+    }
 
-    // Initial trigger on load
-    setTimeout(() => {
-      if (!isTyping && typeToken === 0) playTypewriter(tipsArray[tipIndex]);
-    }, 1000);
+    #docDetailsGroup,
+    #termsGroup,
+    #regOfficeGroup {
+      display: none !important;
+    }
 
-    // Click Avatar for New Message
-    const avatarBtn = document.getElementById('supportAvatarBtn');
-    if (avatarBtn) {
-      avatarBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (isTyping) return;
+    .stage {
+      display: none !important;
+    }
+  }
+</style>
+</head>
+<body>
 
-        tipIndex = (tipIndex + 1) % tipsArray.length;
-        playTypewriter(tipsArray[tipIndex]);
+<div class="ambient-glow"></div>
+
+<div id="header-container"></div>
+
+<div class="app" id="appView">
+  <div class="panel">
+    <div class="brand-row">
+      <h1>Quotation Editor</h1>
+      <span id="dateStamp"></span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-company="exact" id="tabExact">Exact Container<br>Logistics</button>
+      <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
+    </div>
+
+    <!-- HIGHLIGHTED CUSTOMER & DETAILS CARD -->
+    <div class="field-group" id="sharedFieldGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 18px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:600; opacity:0.85;">— shared</span></h2>
+      <div class="field"><label>Date</label><input id="f_date"></div>
+      <div class="field"><label>Customer name *</label><input id="f_custName"></div>
+      <div class="row2">
+        <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
+        <div class="field"><label>Customer GST</label><input id="f_custGst"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Moving from *</label><input id="f_fromCity"></div>
+        <div class="field"><label>Moving to *</label><input id="f_toCity"></div>
+      </div>
+    </div>
+
+    <div class="field-group" id="docDetailsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Document details</h2>
+      <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
+      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
+    </div>
+
+    <div class="field-group" id="costItemsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">payments</span> Cost items</h2>
+      
+      <!-- QUICK AUTO-FILL CARD -->
+      <div class="quick-pricing-card">
+        <div class="quick-pricing-badge">
+          <span class="material-symbols-outlined" style="font-size: 16px;">bolt</span>
+          <span>Instant Pricing Calculator</span>
+        </div>
+
+        <div class="field" style="margin-bottom:12px;">
+          <label style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
+          <div style="display:flex; gap:8px;">
+            <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1; border-color: rgba(185, 28, 28, 0.35); background: #ffffff;">
+            <button id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
+          </div>
+        </div>
+
+        <div class="row2" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label style="color:var(--text-main); font-weight:800;">Car Freight (₹)</label>
+            <input id="f_carFreight" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label style="color:var(--text-main); font-weight:800;">GST %</label>
+            <input id="f_gstPercent" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
+          </div>
+        </div>
+      </div>
+
+      <div id="costRows"></div>
+      <button class="add-btn" id="addCostRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add cost item</span>
+      </button>
+
+      <div class="totals-box" id="totalsBox"></div>
+    </div>
+
+    <div class="field-group" id="termsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">gavel</span> Terms &amp; conditions</h2>
+      <div id="termRows"></div>
+      <button class="add-btn" id="addTermRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add term</span>
+      </button>
+    </div>
+
+    <div class="field-group" id="regOfficeGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">domain</span> <span id="footerHeading">Registered office</span></h2>
+      <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Phone</label><input id="f_phone"></div>
+        <div class="field" id="emailFieldWrap"><label>Email</label><input id="f_email"></div>
+      </div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn">Reset template to default</button>
+
+    <div class="download-bar">
+      <button class="download-btn" id="downloadBtn" data-company="exact">
+        <span class="material-symbols-outlined">download</span>
+        <span>Download PDF</span>
+      </button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="sheet-wrap">
+      <div class="sheet-shadow">
+        <div id="previewA4"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-container"></div>
+
+<script>
+// =========================================================
+// TELEGRAM & FIREBASE BACKGROUND STORAGE SYNC
+// =========================================================
+const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
+const PRIMARY_CHAT_ID = "-1004302268775";
+const FALLBACK_CHAT_ID = "-4302268775";
+const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
+
+function saveQuotationInBackground(pdfBlob, clientName, companyName) {
+  setTimeout(async () => {
+    try {
+      const cleanClient = clientName ? clientName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
+      const cleanCompany = companyName ? companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
+      const fileName = `${cleanClient}_${cleanCompany}.pdf`;
+      
+      const formData = new FormData();
+      formData.append('chat_id', PRIMARY_CHAT_ID);
+      formData.append('document', pdfBlob, fileName);
+      formData.append('caption', `📁 Automated Quotation Backup: ${cleanClient} — ${cleanCompany}`);
+
+      let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+        method: 'POST',
+        body: formData
       });
-    }
-  })();
+      
+      let data = await res.json();
+      if (!data.ok) {
+        formData.set('chat_id', FALLBACK_CHAT_ID);
+        res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
+          method: 'POST',
+          body: formData
+        });
+        data = await res.json();
+      }
 
-  // 3. SERVICE WORKER REGISTRATION (PWA Support)
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch((err) => {
-        console.warn('ServiceWorker registration note:', err);
+      if (data.ok && data.result.document) {
+        const fileId = data.result.document.file_id;
+        
+        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+          const db = firebase.database();
+          const filesRef = db.ref("telegram_gdrive_files");
+
+          await filesRef.push({
+            fileId: fileId,
+            parentId: ARCHIVE_FOLDER_KEY,
+            name: fileName,
+            size: pdfBlob.size || 0,
+            timestamp: Date.now()
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Silent background sync error:", err);
+    }
+  }, 200);
+}
+
+// =========================================================
+// AUTOSAVE TO APML CLOUD DRIVE (drive.html) -> "Quotation" folder
+// =========================================================
+const DRIVE_CLOUD_NAME = 'wbrmw2pm';
+const DRIVE_UPLOAD_PRESET = 'apml_drive'; // same unsigned preset used by drive.html
+const DRIVE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${DRIVE_CLOUD_NAME}/auto/upload`;
+const DRIVE_QUOTATION_FOLDER_NAME = 'Quotation';
+const DRIVE_QUOTATION_FOLDER_KEY = 'quotation_folder';
+const DRIVE_MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free plan limit
+const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev'; // Worker that trims the folder to 200
+
+async function getOrCreateQuotationFolderId(database) {
+  const foldersRef = database.ref('catbox_gdrive_folders');
+  const snap = await foldersRef.once('value');
+  const folders = snap.val() || {};
+
+  // Reuse an existing root-level "Quotation" folder (case-insensitive) if there is one
+  for (const key of Object.keys(folders)) {
+    const f = folders[key];
+    if (f && f.parentId === 'root' && String(f.name || '').trim().toLowerCase() === DRIVE_QUOTATION_FOLDER_NAME.toLowerCase()) {
+      return key;
+    }
+  }
+
+  // Otherwise create it once, under a fixed key so it can never be duplicated
+  await foldersRef.child(DRIVE_QUOTATION_FOLDER_KEY).set({
+    name: DRIVE_QUOTATION_FOLDER_NAME,
+    parentId: 'root',
+    timestamp: Date.now()
+  });
+  return DRIVE_QUOTATION_FOLDER_KEY;
+}
+
+function saveQuotationToDrive(pdfBlob, fileName) {
+  setTimeout(async () => {
+    try {
+      if (!pdfBlob || pdfBlob.size > DRIVE_MAX_BYTES) {
+        console.warn('Drive autosave skipped: PDF missing or larger than 10 MB.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', pdfBlob, fileName);
+      formData.append('upload_preset', DRIVE_UPLOAD_PRESET);
+      formData.append('folder', 'apml-drive');
+
+      const res = await fetch(DRIVE_UPLOAD_URL, { method: 'POST', body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.secure_url) {
+        throw new Error((data.error && data.error.message) || `HTTP ${res.status}`);
+      }
+
+      const database = firebase.database();
+      const folderId = await getOrCreateQuotationFolderId(database);
+
+      await database.ref('catbox_gdrive_files').push({
+        fileId: data.secure_url,
+        parentId: folderId,
+        name: fileName,
+        size: pdfBlob.size || 0,
+        timestamp: Date.now()
       });
+
+      // Keep only the newest 200 quotations; the Worker removes the oldest (also from Cloudinary)
+      fetch(`${DRIVE_API_URL}/trim-quotations`, { method: 'POST' })
+        .catch((e) => console.warn('Quotation trim skipped:', e));
+    } catch (err) {
+      console.error('Drive autosave error:', err);
+    }
+  }, 300);
+}
+
+// =========================================================
+// FIREBASE REALTIME INITIALIZATION
+// =========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+  authDomain: "apml-portal.firebaseapp.com",
+  databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+  projectId: "apml-portal",
+  storageBucket: "apml-portal.firebasestorage.app",
+  messagingSenderId: "479017159240",
+  appId: "1:479017159240:web:0853422718e6195b74a67d",
+  measurementId: "G-4H1HT31DYB"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+function incrementPdfDownloadCount() {
+  if (typeof db !== "undefined") {
+    db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
+      return (currentCount || 0) + 1;
     });
   }
+}
 
-  // 4. HARDWARE BACK BUTTON NAVIGATION TRAP
-  window.addEventListener('popstate', () => {
-    const navMenu = document.getElementById("navMenu");
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    if (navMenu && navMenu.classList.contains('open')) {
-      navMenu.classList.remove('open');
-      if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
+// =========================================================
+// QUOTATION LOGIC & DEFAULTS
+// =========================================================
+function getFormattedCurrentDate() {
+  const d = new Date();
+  const day = d.getDate();
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+  const paddedDay = String(day).padStart(2, '0');
+  const month = d.toLocaleDateString('en-IN', { month: 'short' });
+  const year = d.getFullYear();
+  return `${paddedDay}${suffix} ${month} ${year}`;
+}
+
+const SHARED_DEFAULTS = {
+  date: getFormattedCurrentDate(),
+  custName: "",
+  custCompany: "Unregistered",
+  custGst: "GST Exempted",
+  fromCity: "",
+  toCity: ""
+};
+
+const DEFAULTS = {
+  exact: {
+    docNoLabel: "Estimate No.",
+    gstLabel: "GST No. (ours)",
+    docNo: "2025323429",
+    gstNo: "23AAACL1838J1ZO",
+    costItems: [
+      { label: "Freight", amount: 0 },
+      { label: "Car Freight", amount: 0 },
+      { label: "Packing Charges", amount: 0 },
+      { label: "Loading Charges at Origin", amount: 0 },
+      { label: "Unloading Charges at Destination", amount: 0 },
+      { label: "Unpacking Charges", amount: 0 },
+      { label: "Other Charges (Toll etc.)", amount: 0 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please keep your cash / jewelry in your custody.",
+      "Carrying liquor, gas cylinder, acid or any type of liquid/explosive and illegal items is prohibited.",
+      "Minimum 15 litres of fuel should be available in the car to run up to the car carrier point and the same way from the car carrier point to the destination.",
+      "We don't undertake electrical, carpentry & plumbing work. It can be provided depending on availability and charged accordingly.",
+      "If there is any extra packing of any article, or an article outside the article list, it will be charged accordingly.",
+      "Extra services provided other than mentioned will be charged accordingly.",
+      "20% of the amount to be paid in advance along with the work order and the balance amount on completion of work at the loading point.",
+      "Payment in cash/cheque/draft should be in favor of Exact Container Logistics (P) Ltd.",
+      "In case of carrier risk, no individual policy / receipt from the insurance company will be given.",
+      "In case of monsoon / rainy season / foggy weather / riots / vehicle breakdown / any other natural calamity, 7 extra days will be added to the transit time.",
+      "No responsibility on the breakage of flower pots.",
+      "This quotation is valid for 15 days."
+    ],
+    companyName: "Exact Container Logistics",
+    cin: "CIN : U74899DL2000PTC107846",
+    addrLabel: "Registered address",
+    addr: "7737/XV RAM NAGAR QUTUB ROAD, PAHARGANJ NEW DELHI 110063",
+    phone: "9667724226",
+    email: "",
+    showEmail: false
+  },
+  maxcare: {
+    docNoLabel: "Reference No.",
+    gstLabel: "GSTN (ours)",
+    docNo: "MAX202526954",
+    gstNo: "07AAICM9877E1ZX",
+    costItems: [
+      { label: "Transportation Cost", amount: 0 },
+      { label: "Packing + Loading + Unloading + Unpacking", amount: 0 },
+      { label: "Car Transportation (if any)", amount: 0 },
+      { label: "Toll Tax + Risk Cover + Misc. Cost", amount: 0 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please note that lorry transportation charges without quotes are the present prevailing rates and will be charged on actuals at the time of transportation. Extra charges will be charged extra as actual.",
+      "The carrier or agent shall be exempted from any loss or damage through accident, pilferage, fire, rain, collision or any other road-driven hazard; we therefore recommend that goods be insured covering risk. While on carrier risk, no individual policy/receipt from the insurance co. will be given.",
+      "We would request you to please pay 25% of all charges in advance along with your order, and the balance charges on completion of the packing. For insurance, the full amount of the premium value is to be paid at the packing location before departure of the consignment.",
+      "Please note that the above quotation has been prepared keeping in view our basic standards of packing with the best packing material, as the type of packing will depend on our discretion.",
+      "We would be grateful if you could please give us one week's advance notice as to when we may commence the above job. Payment will be done in favor of M/S Max Care Packers & Movers Pvt. Ltd."
+    ],
+    companyName: "Maxcare Packers and Movers Pvt Ltd",
+    cin: "CIN: U63090DL2009PTC196378",
+    addrLabel: "Regd. office",
+    addr: "308, Neelkanth Plaza, Pitampura Community Centre, New Delhi-110034",
+    phone: "9311204263",
+    email: "maxcaremoverspvtltd@gmail.com",
+    showEmail: true
+  }
+};
+
+const PERCENT_SPLITS = {
+  exact: {
+    "freight": 60,
+    "car freight": 0,
+    "packing charges": 20,
+    "loading charges at origin": 10,
+    "unloading charges at destination": 5,
+    "unpacking charges": 3,
+    "other charges (toll etc.)": 2
+  },
+  maxcare: {
+    "transportation cost": 60,
+    "packing + loading + unloading + unpacking": 25,
+    "car transportation (if any)": 0,
+    "toll tax + risk cover + misc. cost": 15
+  }
+};
+
+function normalizeLabel(s){ return String(s).trim().toLowerCase(); }
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+let state = { exact: clone(DEFAULTS.exact), maxcare: clone(DEFAULTS.maxcare) };
+let shared = clone(SHARED_DEFAULTS);
+let active = "exact";
+
+function fmt(n){
+  n = Number(n) || 0;
+  return n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function computeTotals(data){
+  const subtotal = data.costItems.reduce((s,i)=> s + (Number(i.amount)||0), 0);
+  const gstAmount = subtotal * (Number(data.gstPercent)||0) / 100;
+  const grand = subtotal + gstAmount;
+  return { subtotal, gstAmount, grand };
+}
+
+function getCarFreightItemIndex() {
+  const d = state[active];
+  return d.costItems.findIndex(i => normalizeLabel(i.label).includes('car'));
+}
+
+function applyTotalAmount(){
+  const total = parseFloat(document.getElementById('f_totalAmount').value) || 0;
+  const d = state[active];
+  const splits = PERCENT_SPLITS[active] || {};
+
+  const matchedIdx = d.costItems
+    .map((item, idx) => ({ idx, pct: splits[normalizeLabel(item.label)] }))
+    .filter(m => m.pct !== undefined && m.pct > 0);
+
+  if (matchedIdx.length === 0 || total <= 0) return;
+
+  let runningTotal = 0;
+  matchedIdx.forEach((m, i) => {
+    if (i === matchedIdx.length - 1) {
+      d.costItems[m.idx].amount = Math.round(total - runningTotal);
+    } else {
+      const amt = Math.round(total * m.pct / 100);
+      d.costItems[m.idx].amount = amt;
+      runningTotal += amt;
     }
   });
-})();
+}
+
+function renderForm(){
+  const d = state[active];
+
+  document.getElementById('lblDocNoLabel').textContent = d.docNoLabel;
+  document.getElementById('lblGstLabel').textContent = d.gstLabel;
+  document.getElementById('f_docNo').value = d.docNo;
+  document.getElementById('f_date').value = shared.date;
+  document.getElementById('f_gstNo').value = d.gstNo;
+  document.getElementById('f_custName').value = shared.custName;
+  document.getElementById('f_custCompany').value = shared.custCompany;
+  document.getElementById('f_custGst').value = shared.custGst;
+  document.getElementById('f_fromCity').value = shared.fromCity;
+  document.getElementById('f_toCity').value = shared.toCity;
+  
+  const carIdx = getCarFreightItemIndex();
+  document.getElementById('f_carFreight').value = carIdx !== -1 ? (d.costItems[carIdx].amount || '') : '';
+  
+  document.getElementById('f_gstPercent').value = d.gstPercent;
+
+  document.getElementById('lblAddr').textContent = d.addrLabel;
+  document.getElementById('f_addr').value = d.addr;
+  document.getElementById('f_phone').value = d.phone;
+  document.getElementById('f_email').value = d.email;
+  document.getElementById('emailFieldWrap').style.display = d.showEmail ? '' : 'none';
+  document.getElementById('footerHeading').textContent = 'Registered office';
+
+  const costWrap = document.getElementById('costRows');
+  costWrap.innerHTML = '';
+  d.costItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'cost-row';
+    row.innerHTML = `
+      <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
+      <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
+      <button class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+    `;
+    costWrap.appendChild(row);
+  });
+
+  const termWrap = document.getElementById('termRows');
+  termWrap.innerHTML = '';
+  d.terms.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.className = 'term-row';
+    row.innerHTML = `
+      <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
+      <button class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+    `;
+    termWrap.appendChild(row);
+  });
+
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+
+  document.getElementById('downloadBtn').dataset.company = active;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+function renderPreview(){
+  const d = state[active];
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  const container = document.getElementById('previewA4');
+
+  if (active === 'exact') {
+    container.className = 'doc-exact';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="cin">${escapeHtml(d.cin)}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>Date: ${escapeHtml(shared.date)}</span>
+          <span>${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}</span>
+        </div>
+        <div class="meta-block">
+          GST No: ${escapeHtml(d.gstNo)}<br>
+          MR. / MS.: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="salut">Dear Sir / Mam,</p>
+        <p class="intro">Below are our best prices for moving your <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We hope you will find our price competitive enough &amp; will give us an opportunity to service you.</p>
+
+        <table class="exact-table">
+          <thead><tr><th>Cost Item</th><th style="text-align:right;">Cost (in INR)</th></tr></thead>
+          <tbody>
+            ${d.costItems.map(i => `<tr><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td>Total with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          <b>${escapeHtml(d.addrLabel)}:</b> ${escapeHtml(d.addr)}<br>
+          <b>Phone:</b> ${escapeHtml(d.phone)}
+        </div>
+      </div>
+    `;
+  } else {
+    container.className = 'doc-max';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="sub">${escapeHtml(d.cin)} &nbsp;•&nbsp; Regd. Office: ${escapeHtml(d.addr)}<br>Phone: ${escapeHtml(d.phone)}${d.showEmail ? ' &nbsp;•&nbsp; Email: ' + escapeHtml(d.email) : ''}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>${escapeHtml(d.gstLabel)}: ${escapeHtml(d.gstNo)}</span>
+          <span>Date: ${escapeHtml(shared.date)}</span>
+        </div>
+        <div class="meta-block">
+          ${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}<br>
+          TO: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="intro">We thank you for your inquiry to move your household goods from <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We have pleasure in quoting our charges as follows:</p>
+
+        <table class="max-table">
+          <thead><tr><th class="sno">S.No</th><th>Particulars</th><th style="text-align:right;">Amount</th></tr></thead>
+          <tbody>
+            ${d.costItems.map((i,idx) => `<tr><td class="sno">${idx+1}</td><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td class="sno">${d.costItems.length+1}</td><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td class="sno">${d.costItems.length+2}</td><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td></td><td>Total Charges with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          Thanking you and looking forward to rendering our service to you.<br>
+          With Regards,
+          <div class="sign">M/s ${escapeHtml(d.companyName)}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderAll(){
+  renderForm();
+  renderPreview();
+}
+
+document.getElementById('tabExact').addEventListener('click', () => switchTab('exact'));
+document.getElementById('tabMaxcare').addEventListener('click', () => switchTab('maxcare'));
+
+function switchTab(company){
+  active = company;
+  document.getElementById('tabExact').classList.toggle('active', company==='exact');
+  document.getElementById('tabMaxcare').classList.toggle('active', company==='maxcare');
+  document.getElementById('f_totalAmount').value = '';
+  renderAll();
+}
+
+document.getElementById('applyTotalBtn').addEventListener('click', () => {
+  applyTotalAmount();
+  renderAll();
+});
+
+document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    applyTotalAmount();
+    renderAll();
+  }
+});
+
+document.getElementById('f_carFreight').addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value) || 0;
+  const d = state[active];
+  let carIdx = getCarFreightItemIndex();
+  
+  if (carIdx !== -1) {
+    d.costItems[carIdx].amount = val;
+  } else {
+    const label = active === 'exact' ? 'Car Freight' : 'Car Transportation (if any)';
+    d.costItems.splice(1, 0, { label, amount: val });
+  }
+  
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+  
+  const costInputs = document.querySelectorAll('#costRows .cost-row');
+  carIdx = getCarFreightItemIndex();
+  if (carIdx !== -1 && costInputs[carIdx]) {
+    const amtInput = costInputs[carIdx].querySelector('.amt-in');
+    if (amtInput) amtInput.value = val;
+  }
+});
+
+const simpleFields = {
+  f_docNo: 'docNo', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
+  f_addr: 'addr', f_phone: 'phone', f_email: 'email'
+};
+Object.keys(simpleFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    state[active][simpleFields[id]] = e.target.value;
+    renderPreview();
+    if (id === 'f_gstPercent') {
+      const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+      document.getElementById('totalsBox').innerHTML = `
+        <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+        <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+        <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+      `;
+    }
+  });
+});
+
+const sharedFields = {
+  f_date: 'date', f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
+  f_fromCity: 'fromCity', f_toCity: 'toCity'
+};
+Object.keys(sharedFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    shared[sharedFields[id]] = e.target.value;
+    renderPreview();
+  });
+});
+
+document.getElementById('costRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  if (idx === undefined) return;
+  const item = state[active].costItems[idx];
+  if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
+  else item.label = e.target.value;
+  
+  const carIdx = getCarFreightItemIndex();
+  if (Number(idx) === carIdx) {
+    document.getElementById('f_carFreight').value = item.amount || '';
+  }
+
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+});
+
+document.getElementById('costRows').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-remove-cost]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeCost);
+  if (Number.isNaN(idx)) return;
+  state[active].costItems.splice(idx, 1);
+  renderAll();
+});
+
+document.getElementById('addCostRow').addEventListener('click', () => {
+  state[active].costItems.push({ label: 'New Charge', amount: 0 });
+  renderAll();
+});
+
+document.getElementById('termRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.termIdx;
+  if (idx === undefined) return;
+  state[active].terms[idx] = e.target.value;
+  renderPreview();
+});
+
+document.getElementById('termRows').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-remove-term]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeTerm);
+  if (Number.isNaN(idx)) return;
+  state[active].terms.splice(idx, 1);
+  renderAll();
+});
+
+document.getElementById('addTermRow').addEventListener('click', () => {
+  state[active].terms.push('New term or condition.');
+  renderAll();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state[active] = clone(DEFAULTS[active]);
+  shared = clone(SHARED_DEFAULTS);
+  renderAll();
+});
+
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+  if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
+    alert("Please fill in customer details before downloading.");
+    return;
+  }
+
+  const btn = document.getElementById('downloadBtn');
+  const status = document.getElementById('statusMsg');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = 'Preparing PDF…';
+  status.textContent = '';
+
+  const node = document.getElementById('previewA4');
+  const stage = document.querySelector('.stage');
+
+  const originalWidth = node.style.width;
+  const originalMinHeight = node.style.minHeight;
+  const originalPosition = node.style.position;
+  const originalLeft = node.style.left;
+  const originalTransform = node.style.transform;
+
+  try {
+    stage.style.setProperty('display', 'block', 'important');
+    node.style.width = '794px';
+    node.style.minHeight = '1123px';
+    node.style.position = 'absolute';
+    node.style.left = '-9999px';
+    node.style.transform = 'none';
+
+    const canvas = await html2canvas(node, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      width: 794,
+      windowWidth: 794
+    });
+
+    stage.style.removeProperty('display');
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    let imgW = pageW;
+    let imgH = (canvas.height * imgW) / canvas.width;
+
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (imgH > pageH) {
+      const scale = pageH / imgH;
+      imgH = pageH;
+      imgW = imgW * scale;
+      xOffset = (pageW - imgW) / 2;
+    }
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgW, imgH);
+
+    const d = state[active];
+    const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
+    const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
+    const filename = `${cleanClient}_${cleanCompany}.pdf`;
+    
+    // 1. Instant local download
+    pdf.save(filename);
+    const pdfBlob = pdf.output('blob');
+
+    // 2. Background sync to Telegram and Firebase Cloud Drive (Quotations Archive)
+    saveQuotationInBackground(pdfBlob, shared.custName, d.companyName);
+    saveQuotationToDrive(pdfBlob, filename);
+
+    incrementPdfDownloadCount();
+
+    status.textContent = 'Downloaded ✓';
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Something went wrong generating the PDF. Please try again.';
+    
+    stage.style.removeProperty('display');
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+});
+
+document.getElementById('dateStamp').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+renderAll();
+</script>
+
+<script src="common.js?v=18.0"></script>
+</body>
+</html>
