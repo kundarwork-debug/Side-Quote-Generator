@@ -119,8 +119,8 @@
     }
 
     .rotating-logo-container {
-      width: 72px;
-      height: 72px;
+      width: 96px;
+      height: 96px;
       margin-bottom: 0;
       position: relative;
       z-index: 1;
@@ -128,7 +128,7 @@
       align-items: center;
       justify-content: center;
       animation: smoothRotate 28s linear infinite;
-      filter: drop-shadow(0 4px 12px rgba(185, 28, 28, 0.15));
+      filter: drop-shadow(0 4px 16px rgba(185, 28, 28, 0.18));
     }
 
     .rotating-logo-container img {
@@ -227,11 +227,11 @@
     @keyframes cursorIn { to { opacity: 1; } }
     @keyframes cursorOut { to { opacity: 0; } }
 
-    /* Logo stage: breathing halo + orbit ring with a travelling dot */
+    /* Logo stage: breathing halo only (small ring removed, logo size increased) */
     .logo-stage {
       position: relative;
-      width: 128px;
-      height: 128px;
+      width: 140px;
+      height: 140px;
       margin-bottom: 24px;
       display: grid;
       place-items: center;
@@ -244,28 +244,8 @@
       background: radial-gradient(circle, rgba(185, 28, 28, 0.16) 0%, rgba(185, 28, 28, 0) 65%);
       animation: haloBreathe 5s ease-in-out infinite alternate;
     }
-    .logo-orbit {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 1px solid rgba(185, 28, 28, 0.18);
-      animation: orbitSpin 14s linear infinite;
-    }
-    .logo-orbit::after {
-      content: "";
-      position: absolute;
-      top: -4px;
-      left: 50%;
-      width: 7px;
-      height: 7px;
-      margin-left: -3.5px;
-      border-radius: 50%;
-      background: var(--primary);
-      box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.12), 0 0 14px rgba(244, 63, 94, 0.55);
-    }
     @keyframes stageIn { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: scale(1); } }
     @keyframes haloBreathe { from { opacity: 0.55; transform: scale(0.94); } to { opacity: 1; transform: scale(1.08); } }
-    @keyframes orbitSpin { to { transform: rotate(360deg); } }
 
     /* Gradient word: underline draws in once, after the words land */
     .hero-main-title span.gradient-word { position: relative; }
@@ -304,7 +284,7 @@
     .cursor-glow.active { opacity: 1; }
 
     @media (prefers-reduced-motion: reduce) {
-      .rotating-logo-container, .logo-stage, .logo-orbit, .logo-halo { animation: none; }
+      .rotating-logo-container, .logo-stage, .logo-halo { animation: none; }
       .word-effect, .sub-word-effect { animation: none; opacity: 1; filter: none; transform: none; }
       .gradient-word::after { animation: none; transform: scaleX(1); }
       .typing-cursor { animation: none; opacity: 0; }
@@ -653,10 +633,9 @@
     <!-- EXPANDED HERO SECTION -->
     <section class="hero-center">
       
-      <!-- Big Rotating SVG Logo -->
+      <!-- Larger Logo Stage with Ring Removed & Increased Size -->
       <div class="logo-stage">
         <div class="logo-halo" aria-hidden="true"></div>
-        <div class="logo-orbit" aria-hidden="true"></div>
         <div class="rotating-logo-container">
           <img src="logo.svg" alt="APML Logo">
         </div>
