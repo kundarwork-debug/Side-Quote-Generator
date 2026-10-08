@@ -442,6 +442,10 @@
   (function initFloatingMascot() {
     const currentPage = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
     const isIndexPage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
+    const is404Page = (currentPage === "404.html" || currentPage === "404");
+
+    // Completely hide avatar on 404.html
+    if (is404Page) return;
 
     // Five rotating tips for each page
     const pageTips = {
