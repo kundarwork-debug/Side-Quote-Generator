@@ -13,914 +13,240 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-  <!-- LOTTIE PLAYER SCRIPT -->
-  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js" type="module" async></script>
-
   <style>
     :root {
       --primary: #b91c1c;
       --primary-dark: #881337;
       --primary-soft: rgba(185, 28, 28, 0.08);
-      --primary-glow: rgba(185, 28, 28, 0.28);
       --bg-base: #FDF8F5;
-      --surface-card: rgba(255, 255, 255, 0.95);
+      --surface-card: rgba(255, 255, 255, 0.96);
       --surface-card-subtle: #f8fafc;
-      --surface-border: rgba(226, 232, 240, 0.9);
+      --surface-border: rgba(226, 232, 240, 0.95);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --radius-pill: 9999px;
-      --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-      --shadow-hover: 0 20px 35px -10px rgba(185, 28, 28, 0.14), 0 1px 3px rgba(0, 0, 0, 0.04);
-      --theme-transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.06);
+      --board-base: #d8c4b6;
+      --cell: #fffaf5;
+      --cell-last: #fde2cf;
+      --goal-me: rgba(185, 28, 28, 0.16);
+      --goal-opp: rgba(51, 65, 85, 0.14);
+      --wall-mine: #b45309;
+      --wall-theirs: #334155;
+      --pawn-me: #b91c1c;
+      --pawn-opp: #334155;
     }
-
-    /* =========================================================
-       PAGE-SPECIFIC DARK MODE TOKENS
-       ========================================================= */
     html[data-theme="dark"] {
       --primary: #ef4444;
       --primary-dark: #dc2626;
-      --primary-soft: rgba(239, 68, 68, 0.12);
-      --primary-glow: rgba(239, 68, 68, 0.35);
+      --primary-soft: rgba(239, 68, 68, 0.14);
       --bg-base: #090d16;
-      --surface-card: rgba(15, 23, 42, 0.92);
+      --surface-card: rgba(15, 23, 42, 0.94);
       --surface-card-subtle: #131b2e;
       --surface-border: #1e293b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --shadow-subtle: 0 10px 30px -4px rgba(0, 0, 0, 0.5);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    html, body {
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    body {
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      transition: var(--theme-transition);
-    }
-
-    /* HIDE FOOTER COMPLETELY ON THIS PAGE */
-    #footer-container {
-      display: none !important;
-    }
-
-    /* =========================================================
-       HIDE MOUSE COMPLETELY DURING GAMEPLAY
-       ========================================================= */
-    body.game-active, 
-    body.game-active * {
-      cursor: none !important;
-    }
-
-    /* FULLSCREEN GAME CANVAS */
-    #game-canvas {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    /* COMPACT MINI ROCKET CURSOR */
-    #failed-rocket-cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 24px;
-      height: 24px;
-      margin-top: -12px;
-      margin-left: -12px;
-      pointer-events: none;
-      z-index: 999999;
-      will-change: transform, opacity;
-      transform: translate3d(-100px, -100px, 0);
-      opacity: 0;
-      transition: opacity 0.2s ease-out;
-    }
-
-    /* Ambient Light Mesh Background */
-    .ambient-bg {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      background: 
-        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
-      transition: background 0.6s ease;
-    }
-
-    html[data-theme="dark"] .ambient-bg {
-      background: 
-        radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.12) 0%, transparent 65%),
-        radial-gradient(circle at 85% 85%, rgba(15, 23, 42, 0.8) 0%, transparent 60%);
-    }
-
-    /* 3D Perspective Matrix Floor */
-    .perspective-grid-layer {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      perspective: 1000px;
-      overflow: hidden;
-      opacity: 0.6;
-      transition: opacity 0.6s ease;
-    }
-
-    .matrix-plane {
-      position: absolute;
-      top: -20%;
-      left: -20%;
-      width: 140%;
-      height: 140%;
-      background-image: 
-        linear-gradient(to right, rgba(185, 28, 28, 0.05) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
-      background-size: 50px 50px;
-      transform: rotateX(45deg) scale(1.1);
-      transform-origin: center top;
-      transition: background-image 0.6s ease;
-    }
-
-    html[data-theme="dark"] .matrix-plane {
-      background-image: 
-        linear-gradient(to right, rgba(239, 68, 68, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    }
-
-    /* HEADER BLAST ANIMATION */
-    #header-container {
-      position: relative;
-      z-index: 20;
-      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.35s ease;
-      will-change: opacity, transform, filter;
-    }
-
-    #header-container.fired-up {
-      opacity: 0 !important;
-      transform: translateY(-40px) scale(0.96) !important;
-      filter: blur(4px) brightness(1.6);
-      pointer-events: none !important;
-    }
-
-    /* SCREEN VIEWS */
-    .screen-view {
-      position: relative;
-      z-index: 10;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      text-align: center;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .screen-view.hidden-view {
-      display: none !important;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* =========================================================
-       FIXED TOP ARCADE SCOREBOARD (ALWAYS VISIBLE DURING GAME)
-       ========================================================= */
-    .arcade-scoreboard {
-      position: fixed;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-30px);
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 8px 14px 8px 20px;
-      background: var(--surface-card);
-      border: 1.5px solid var(--surface-border);
-      border-radius: var(--radius-pill);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
-      z-index: 99999;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-      color: var(--text-main);
-    }
-
-    body.game-active .arcade-scoreboard {
-      opacity: 1 !important;
-      transform: translateX(-50%) translateY(0) !important;
-      pointer-events: auto !important;
-    }
-
-    .score-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .score-label {
-      color: var(--text-muted);
-    }
-
-    .score-val {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      color: var(--primary);
-    }
-
-    .score-divider {
-      width: 1px;
-      height: 14px;
-      background: var(--surface-border);
-    }
-
-    .level-badge {
-      color: #0284c7;
-    }
-
-    html[data-theme="dark"] .level-badge {
-      color: #38bdf8;
-    }
-
-    .lives-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      color: #e11d48;
-    }
-
-    .lives-badge .material-symbols-outlined {
-      font-size: 16px;
-      font-variation-settings: 'FILL' 1;
-    }
-
-    .btn-scoreboard-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--surface-card-subtle);
-      border: 1px solid var(--surface-border);
-      color: var(--text-main);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-scoreboard-toggle:hover {
-      background: var(--primary-soft);
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    .btn-quit-game {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 5px 12px;
-      background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, 0.3);
-      color: var(--primary);
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      transition: all 0.2s ease;
-    }
-
-    .btn-quit-game:hover {
-      background: var(--primary);
-      color: #ffffff;
-      transform: scale(1.04);
-    }
-
-    .level-toast {
-      position: fixed;
-      top: 72px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: linear-gradient(135deg, #b91c1c 0%, #ea580c 100%);
-      color: #ffffff;
-      padding: 6px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 0 20px rgba(234, 88, 12, 0.5);
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 10000;
-    }
-
-    .level-toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* OPEN SPACE LOTTIE STAGE (BIGGER SIZE ON MAIN PAGE, COMPACT IN GAME) */
-    .open-space-stage {
-      position: relative;
-      width: 360px;
-      height: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      margin-bottom: 2px;
-      transition: transform 0.3s ease;
-    }
-
-    body.game-active .open-space-stage {
-      transform: scale(0.65);
-    }
-
-    .broken-planet-center {
-      position: relative;
-      width: 320px;
-      height: 320px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 8;
-      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    dotlottie-wc {
-      width: 340px;
-      height: 340px;
-      pointer-events: none;
-      filter: drop-shadow(0 12px 35px rgba(185, 28, 28, 0.22));
-    }
-
-    .blast-ui-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      transition: opacity 0.3s ease, transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
-      will-change: opacity, transform, filter;
-    }
-
-    .blast-ui-group.blasted {
-      opacity: 0 !important;
-      transform: scale(0.6) translateY(32px) !important;
-      filter: blur(4px) brightness(1.8);
-      pointer-events: none !important;
-    }
-
-    .badge-capsule {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 12px;
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-pill);
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      box-shadow: var(--shadow-subtle);
-      margin-bottom: 4px;
-    }
-
-    .error-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(18px, 2.8vw, 22px);
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-
-    .error-description {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.45;
-      max-width: 380px;
-      margin-bottom: 14px;
-    }
-
-    .action-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .btn-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 15px;
-      border-radius: var(--radius-pill);
-      font-size: 11.5px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-      border: 1px solid var(--primary);
-      box-shadow: 0 3px 10px rgba(185, 28, 28, 0.22);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
-    }
-
-    .btn-secondary {
-      background: var(--surface-card);
-      color: var(--text-main);
-      border: 1px solid var(--surface-border);
-      box-shadow: var(--shadow-subtle);
-    }
-
-    .btn-secondary:hover {
-      background: var(--primary-soft);
-      border-color: rgba(185, 28, 28, 0.25);
-      color: var(--primary);
-      transform: translateY(-2px);
-    }
-
-    /* SCORE / LEADERBOARD VIEW */
-    #scoreView {
-      z-index: 1000;
-      pointer-events: auto !important;
-    }
-
-    .score-page-container {
-      max-width: 520px;
-      width: 100%;
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 1001;
-      pointer-events: auto !important;
-      animation: scorePageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes scorePageFadeIn {
-      from { opacity: 0; transform: translateY(16px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .score-card-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .score-headline {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--primary);
-      margin-top: 4px;
-    }
-
-    .metrics-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      width: 100%;
-      margin-bottom: 16px;
-    }
-
-    .metric-card {
-      background: var(--surface-card-subtle);
-      border: 1px solid var(--surface-border);
-      border-radius: 14px;
-      padding: 12px 10px;
-      text-align: center;
-    }
-
-    .metric-card span {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      display: block;
-    }
-
-    .metric-card b {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 20px;
-      color: var(--text-main);
-    }
-
-    .save-score-form {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-      margin-bottom: 14px;
-      position: relative;
-      z-index: 1002;
-    }
-
-    .pilot-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1.5px solid var(--surface-border);
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      outline: none;
-      transition: border-color 0.2s ease, background-color 0.2s ease;
-      color: var(--text-main);
-      background: var(--surface-card-subtle);
-    }
-
-    .pilot-input:focus {
-      border-color: var(--primary);
-      background: var(--surface-card);
-    }
-
-    .btn-submit-score {
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: background-color 0.2s ease;
-      flex-shrink: 0;
-    }
-
-    .btn-submit-score:hover {
-      background: var(--primary-dark);
-    }
-
-    .status-toast {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: #16a34a;
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      padding: 8px 14px;
-      border-radius: var(--radius-pill);
-      margin-bottom: 14px;
-      display: none;
-      width: 100%;
-      text-align: center;
-    }
-
-    .leaderboard-wrap {
-      width: 100%;
-      background: var(--surface-card-subtle);
-      border: 1px solid var(--surface-border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      max-height: 240px;
-      overflow-y: auto;
-    }
-
-    .leaderboard-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 8px;
-      border-bottom: 1px dashed var(--surface-border);
-      padding-bottom: 4px;
-    }
-
-    .leaderboard-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .leaderboard-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-main);
-      padding: 2px 0;
-    }
-
-    .leaderboard-row .rank-name {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-      text-align: left;
-    }
-
-    .leaderboard-row .rank-num {
-      font-size: 10px;
-      font-weight: 800;
-      color: var(--primary);
-      width: 18px;
-    }
-
-    .entry-badge {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      background: rgba(148, 163, 184, 0.15);
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-
-    .entry-date {
-      font-size: 9.5px;
-      color: var(--text-muted);
-      font-weight: 600;
-      font-family: 'Space Grotesk', monospace;
-    }
-
-    .leaderboard-row .entry-score {
-      font-family: 'Space Grotesk', sans-serif;
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 13px;
-      margin-left: 8px;
-    }
-
-    .esc-prompt-bar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      background: var(--surface-card-subtle);
-      border: 1px solid var(--surface-border);
-      padding: 8px 16px;
-      border-radius: var(--radius-pill);
-      box-shadow: var(--shadow-subtle);
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.2s ease;
-      width: 100%;
-    }
-
-    .esc-prompt-bar:hover {
-      background: var(--primary-soft);
-      border-color: rgba(185, 28, 28, 0.3);
-      color: var(--primary);
-    }
-
-    .esc-key {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-bottom: 2px solid var(--text-muted);
-      border-radius: 5px;
-      padding: 2px 5px;
-      font-size: 10px;
-      font-family: monospace;
-      font-weight: 800;
-      color: var(--text-main);
-    }
-
-    @media (max-width: 768px) {
-      .open-space-stage { transform: scale(0.9); margin-bottom: 0; }
-      .perspective-grid-layer { opacity: 0.35; }
-      #failed-rocket-cursor { display: none !important; }
-      body.game-active, 
-      body.game-active a, 
-      body.game-active button { cursor: none !important; }
-      .error-description { max-width: 270px; }
-      .arcade-scoreboard { gap: 6px; padding: 6px 10px; top: 12px; }
-      .score-page-container { padding: 18px 16px; }
-      .metrics-row { gap: 6px; }
-      .leaderboard-wrap { max-height: 200px; }
-    }
+      --board-base: #0b1222;
+      --cell: #1c2740;
+      --cell-last: #3a2a35;
+      --goal-me: rgba(239, 68, 68, 0.22);
+      --goal-opp: rgba(148, 163, 184, 0.18);
+      --wall-mine: #f59e0b;
+      --wall-theirs: #94a3b8;
+      --pawn-me: #ef4444;
+      --pawn-opp: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; }
+    html, body { min-height: 100%; }
+    body { background: var(--bg-base); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; position: relative; transition: background-color .4s ease, color .4s ease; }
+    #footer-container { display: none !important; }
+
+    .ambient-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background: radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%), radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%); }
+    html[data-theme="dark"] .ambient-bg { background: radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.12) 0%, transparent 65%), radial-gradient(circle at 85% 85%, rgba(15, 23, 42, 0.8) 0%, transparent 60%); }
+    #header-container { position: relative; z-index: 20; }
+
+    main { position: relative; z-index: 10; flex: 1; width: 100%; max-width: 560px; margin: 0 auto; padding: 14px 14px 32px; }
+    [hidden] { display: none !important; }
+
+    /* 404 notice */
+    .nf { text-align: center; padding: 6px 0 14px; }
+    .nf .badge { display: inline-block; font-family: 'Space Grotesk', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: .12em; color: var(--primary); background: var(--primary-soft); padding: 4px 12px; border-radius: var(--radius-pill); }
+    .nf h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(20px, 4vw, 26px); font-weight: 800; margin: 8px 0 4px; }
+    .nf p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .nf a { color: var(--primary); font-weight: 700; text-decoration: none; }
+
+    .panel { background: var(--surface-card); border: 1px solid var(--surface-border); border-radius: 18px; box-shadow: var(--shadow-subtle); padding: 16px; margin-bottom: 12px; }
+    .panel h2 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+    .panel .sub { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+
+    .qbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: var(--radius-pill); border: 1px solid var(--surface-border); background: var(--surface-card-subtle); color: var(--text-main); font-size: 13px; font-weight: 700; cursor: pointer; transition: all .2s ease; }
+    .qbtn:hover:not(:disabled) { border-color: var(--primary); color: var(--primary); }
+    .qbtn.primary { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px rgba(185, 28, 28, .22); }
+    .qbtn.primary:hover:not(:disabled) { background: var(--primary-dark); color: #fff; }
+    .qbtn.on { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+    .qbtn:disabled { opacity: .45; cursor: not-allowed; }
+    .qbtn.block { width: 100%; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .row > .qbtn { flex: 1; min-width: 90px; }
+    .level small { display: block; font-size: 10.5px; font-weight: 600; opacity: .75; margin-top: 1px; }
+    .level { flex-direction: column; gap: 0; padding: 10px 8px; }
+
+    .field { width: 100%; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--surface-border); background: var(--surface-card-subtle); color: var(--text-main); font-size: 14px; font-weight: 600; outline: none; }
+    .field:focus { border-color: var(--primary); }
+    .label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; margin: 10px 0 5px; display: block; }
+    .or { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; margin: 12px 0; }
+    .msg { margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--primary); }
+    details.how summary { cursor: pointer; font-weight: 800; font-family: 'Space Grotesk', sans-serif; font-size: 14px; }
+    details.how ul { margin: 10px 0 0 18px; font-size: 12.5px; line-height: 1.65; color: var(--text-muted); }
+    details.how li { margin-bottom: 4px; }
+
+    /* waiting */
+    .wait { text-align: center; }
+    .big-code { font-family: 'Space Grotesk', sans-serif; font-size: 56px; font-weight: 800; letter-spacing: .18em; color: var(--primary); margin: 10px 0 4px; padding-left: .18em; }
+    .spin { width: 28px; height: 28px; border: 3px solid var(--surface-border); border-top-color: var(--primary); border-radius: 50%; margin: 14px auto 6px; animation: sp 1s linear infinite; }
+    @keyframes sp { to { transform: rotate(360deg); } }
+
+    /* game */
+    .pbar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 14px; background: var(--surface-card); border: 1px solid var(--surface-border); margin: 8px 0; transition: all .2s ease; }
+    .pbar.active { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+    .pbar .dot { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+    .pbar.me .dot { background: var(--pawn-me); }
+    .pbar.opp .dot { background: var(--pawn-opp); }
+    .pbar b { flex: 1; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .pbar .walls { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+    .gtop { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
+    .gtop .room { font-size: 12px; font-weight: 800; color: var(--text-muted); letter-spacing: .04em; }
+    .gtop button { padding: 6px 12px; font-size: 12px; }
+
+    #board { display: block; width: 100%; max-width: 520px; margin: 6px auto; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+    .bd-base { fill: var(--board-base); }
+    .cell { fill: var(--cell); }
+    .cell.last { fill: var(--cell-last); }
+    .goal-me { fill: var(--goal-me); }
+    .goal-opp { fill: var(--goal-opp); }
+    .hint { fill: var(--primary); opacity: .55; animation: pulse 1.3s ease-in-out infinite; pointer-events: none; }
+    @keyframes pulse { 50% { opacity: .9; } }
+    .wall { pointer-events: none; }
+    .wall.mine { fill: var(--wall-mine); }
+    .wall.theirs { fill: var(--wall-theirs); }
+    .wall.fresh { stroke: var(--primary); stroke-width: 2; }
+    .wall.ghost.ok { fill: #16a34a; opacity: .75; }
+    .wall.ghost.bad { fill: #dc2626; opacity: .6; }
+    .pawn { transition: transform .22s cubic-bezier(.2, 0, 0, 1); pointer-events: none; }
+    .pawn-body.p0 { fill: var(--pawn-me); stroke: #fff; stroke-width: 3; }
+    .pawn-body.p1 { fill: var(--pawn-opp); stroke: #fff; stroke-width: 3; }
+    html[data-theme="dark"] .pawn-body { stroke: #0b1222; }
+    .pawn-core { fill: rgba(255, 255, 255, .35); }
+    .status { text-align: center; font-size: 13px; font-weight: 700; margin: 6px 0 10px; min-height: 18px; }
+    .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+    .controls .qbtn { flex: 1; min-width: 96px; }
+
+    .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(15, 23, 42, .55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 18px; }
+    .modal { width: 100%; max-width: 360px; background: var(--surface-card); border: 1px solid var(--surface-border); border-radius: 20px; padding: 22px; text-align: center; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+    .modal h2 { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; margin-bottom: 6px; }
+    .modal p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+    .modal .qbtn { margin-top: 8px; }
+    #toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 300; background: #0f172a; color: #fff; padding: 10px 16px; border-radius: 12px; font-size: 12.5px; font-weight: 600; max-width: 90vw; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,.3); }
   </style>
 </head>
 <body>
-
-  <!-- GAME INTERACTION CANVAS -->
-  <canvas id="game-canvas"></canvas>
-
-  <!-- FIXED TOP ARCADE SCOREBOARD (ALWAYS VISIBLE DURING GAME) -->
-  <div class="arcade-scoreboard">
-    <div class="score-item">
-      <span class="score-label">Score:</span>
-      <span class="score-val" id="currentScore">0</span>
-    </div>
-    <div class="score-divider"></div>
-    <div class="score-item">
-      <span class="score-label">High:</span>
-      <span class="score-val" id="globalHighScore">0</span>
-    </div>
-    <div class="score-divider"></div>
-    <div class="score-item">
-      <span class="score-label">Lvl:</span>
-      <span class="score-val level-badge" id="currentLevel">1</span>
-    </div>
-    <div class="score-divider"></div>
-    <div class="score-item">
-      <span class="score-label">Lives:</span>
-      <span class="score-val lives-badge" id="livesDisplay">
-        <span class="material-symbols-outlined">favorite</span>
-        <span id="livesCountText">5</span>
-      </span>
-    </div>
-    <div class="score-divider"></div>
-
-    <!-- Mini theme toggle button inside active scoreboard -->
-    <button type="button" class="btn-scoreboard-toggle" id="btnScoreboardThemeToggle" title="Toggle Theme (Light / Dark)">
-      <span class="material-symbols-outlined" style="font-size: 15px;" id="scoreboardThemeIcon">dark_mode</span>
-    </button>
-    <div class="score-divider"></div>
-
-    <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
-      <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
-      <span>Close</span>
-    </button>
-  </div>
-
-  <!-- LEVEL UP TOAST -->
-  <div class="level-toast" id="levelToast">Level 1 • Velocity Increased!</div>
-
-  <!-- MINI FAILING ENGINE ROCKET CURSOR (24px) -->
-  <div id="failed-rocket-cursor">
-    <svg width="24" height="24" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.35));">
-      <path d="M19 3C19 3 26 9.5 26 22.5L22.5 25.5L19 23.5L15.5 25.5L12 22.5C12 9.5 19 3 19 3Z" fill="#b91c1c" stroke="#0f172a" stroke-width="1.3"/>
-      <circle cx="19" cy="11.5" r="2.8" fill="#e2e8f0" stroke="#0f172a" stroke-width="0.9"/>
-      <path d="M17.8 10.5L20.2 12.5M19 9.5L18.5 13.5" stroke="#0f172a" stroke-width="0.7"/>
-      <path d="M12 18L6 23.5V27L12 25.5V18Z" fill="#334155" stroke="#0f172a" stroke-width="1"/>
-      <path d="M26 18L32 23.5V27L26 25.5V18Z" fill="#0f172a" stroke="#0f172a" stroke-width="1"/>
-      <path d="M16 25.5L19 31L22 25.5H16Z" fill="#475569"/>
-      <path d="M17.5 25.5L19 28.5L20.5 25.5H17.5Z" fill="#f59e0b"/>
-    </svg>
-  </div>
-
-  <!-- Ambient Light Mesh Background -->
   <div class="ambient-bg"></div>
-
-  <!-- 3D Perspective Matrix Floor -->
-  <div class="perspective-grid-layer" aria-hidden="true">
-    <div class="matrix-plane" id="matrixPlane"></div>
-  </div>
 
   <!-- Header Injected via common.js -->
   <div id="header-container"></div>
 
-  <!-- =========================================================
-       VIEW 1: PRIMARY 404 ORBIT & GAME STAGE
-       ========================================================= -->
-  <main class="screen-view" id="gameView">
-    
-    <!-- OPEN SPACE LOTTIE STAGE (BIGGER SIZE) -->
-    <div class="open-space-stage" id="spaceStage">
-      <div class="broken-planet-center" id="planetCenter">
-        <dotlottie-wc 
-          src="https://lottie.host/11b05400-33ac-4185-a8ef-6484729b3576/1PtJikL0WX.lottie" 
-          autoplay 
-          loop>
-        </dotlottie-wc>
-      </div>
-    </div>
+  <main>
+    <section class="nf">
+      <span class="badge">ERROR 404</span>
+      <h1>Signal Lost in Deep Orbit</h1>
+      <p>That page has drifted out of range. While you are here, play a round of Quoridor, or <a href="index.html">head back to the Home Hub</a>.</p>
+    </section>
 
-    <div class="blast-ui-group" id="blastUiGroup">
-      
-      <h1 class="error-title">Signal Lost in Deep Orbit</h1>
-
-      <p class="error-description" id="gameDescText">
-        The logistics route or module has drifted out of range. Launch defense to clear incoming fire-comets before they breach the station core!
-      </p>
-
-      <div class="action-group" id="actionGroupBar">
-        <button type="button" class="btn-action btn-primary" id="btnStartGame">
-          <span class="material-symbols-outlined" style="font-size: 16px;">play_arrow</span>
-          <span>Start Game</span>
-        </button>
-        <button type="button" class="btn-action btn-secondary" id="btnCheckScores">
-          <span class="material-symbols-outlined" style="font-size: 16px;">leaderboard</span>
-          <span>Check Scores</span>
-        </button>
-        <a href="index.html" class="btn-action btn-secondary">
-          <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
-          <span>Home Hub</span>
-        </a>
-        <button type="button" onclick="window.history.back()" class="btn-action btn-secondary">
-          <span class="material-symbols-outlined" style="font-size: 15px;">history</span>
-          <span>Return</span>
-        </button>
+    <!-- ===== LOBBY ===== -->
+    <section id="lobby">
+      <div class="panel">
+        <h2>Play against the AI</h2>
+        <p class="sub">Race your pawn to the far side of the board before the AI does.</p>
+        <label class="label" for="nick">Your name</label>
+        <input id="nick" class="field" maxlength="14" placeholder="Player" autocomplete="off">
+        <div class="row" style="margin-top:12px">
+          <button class="qbtn level" data-ai="easy">🙂 Easy<small>Relaxed</small></button>
+          <button class="qbtn level primary" data-ai="normal">😎 Normal<small>Thinks ahead</small></button>
+          <button class="qbtn level" data-ai="hard">🔥 Hard<small>Plays to win</small></button>
+        </div>
       </div>
 
-    </div>
+      <div class="panel">
+        <h2>Play a friend</h2>
+        <p class="sub">Works across two computers. One player creates a room and shares the 4-digit code, the other types the same code to join.</p>
+        <button class="qbtn primary block" id="btnCreate">Create a room</button>
+        <div class="or">OR ENTER A FRIEND'S CODE</div>
+        <div class="row">
+          <input id="joinCode" class="field" style="flex:2" inputmode="numeric" maxlength="4" placeholder="4-digit code" autocomplete="off">
+          <button class="qbtn" id="btnJoin">Join</button>
+        </div>
+        <p class="msg" id="joinMsg" hidden></p>
+      </div>
 
+      <details class="panel how">
+        <summary>How to play</summary>
+        <ul>
+          <li>Move your pawn one square at a time. Reach the opposite edge first to win.</li>
+          <li>On your turn you may either move your pawn <b>or</b> place one wall (you have 10).</li>
+          <li>Walls block movement between squares. They cannot overlap or cross, and you may never block a pawn's path completely.</li>
+          <li>If the pawns face each other you jump over; if a wall is behind them you can step diagonally.</li>
+          <li>To place a wall: press <b>Wall</b>, pick flat or upright with <b>Rotate</b> (or the R key), then click the spot. On a touch screen, tap once to preview and tap again to confirm.</li>
+        </ul>
+      </details>
+    </section>
+
+    <!-- ===== WAITING FOR A FRIEND ===== -->
+    <section id="waiting" hidden>
+      <div class="panel wait">
+        <h2>Room created</h2>
+        <p class="sub">On the other computer open this page, choose "Play a friend" and enter this code:</p>
+        <div class="big-code" id="wCode">0000</div>
+        <div class="spin"></div>
+        <p class="sub">Waiting for your friend to join…</p>
+        <div class="row">
+          <button class="qbtn" id="wCopy">Copy code</button>
+          <button class="qbtn" id="wCancel">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GAME ===== -->
+    <section id="game" hidden>
+      <div class="gtop">
+        <span class="room" id="roomLabel"></span>
+        <button class="qbtn" id="btnLeave">Leave</button>
+      </div>
+      <div class="pbar opp" id="barOpp"><span class="dot"></span><b id="oppName"></b><span class="walls">🧱 <span id="oppWalls">10</span></span></div>
+      <svg id="board" role="img" aria-label="Quoridor board"></svg>
+      <div class="pbar me" id="barMe"><span class="dot"></span><b id="meName"></b><span class="walls">🧱 <span id="meWalls">10</span></span></div>
+      <div class="status" id="status"></div>
+      <div class="controls">
+        <button class="qbtn on" id="btnMove">♟ Move</button>
+        <button class="qbtn" id="btnWall">▬ Wall</button>
+        <button class="qbtn" id="btnRot" hidden>↔ Flat (R)</button>
+        <button class="qbtn" id="btnResign">⚑ Resign</button>
+      </div>
+    </section>
   </main>
 
-  <!-- =========================================================
-       VIEW 2: DEDICATED SCORE & GLOBAL LEADERBOARD PAGE
-       ========================================================= -->
-  <main class="screen-view hidden-view" id="scoreView">
-    <div class="score-page-container">
-      
-      <div class="score-card-header">
-        <div class="badge-capsule">
-          <span class="material-symbols-outlined" style="font-size: 13px;">military_tech</span>
-          <span id="scoreCardBadge">Mission Debrief</span>
-        </div>
-        <h2 class="score-headline" id="scoreCardHeading">Defense Over</h2>
-      </div>
-
-      <div class="metrics-row">
-        <div class="metric-card">
-          <span>Current Score</span>
-          <b id="pageFinalScore">0</b>
-        </div>
-        <div class="metric-card">
-          <span>Wave Level</span>
-          <b id="pageFinalLevel">1</b>
-        </div>
-      </div>
-
-      <!-- FORM TO SAVE CURRENT SCORE GLOBALLY TO FIREBASE -->
-      <form class="save-score-form" id="saveScoreForm">
-        <input type="text" id="pilotCallsignInput" class="pilot-input" placeholder="Enter pilot callsign..." maxlength="18" required autocomplete="off">
-        <button type="submit" id="btnSubmitScore" class="btn-submit-score">
-          <span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span>
-          <span>Save Score</span>
-        </button>
-      </form>
-
-      <div class="status-toast" id="globalStatusToast">✓ Score saved! Reloading mission...</div>
-
-      <!-- GLOBAL REAL-TIME LEADERBOARD (TOP 30) -->
-      <div class="leaderboard-wrap">
-        <div class="leaderboard-title">
-          <span>Top 30 Global Scoreboard</span>
-          <span>Score</span>
-        </div>
-        <div class="leaderboard-list" id="leaderboardList">
-          <div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 10px 0;">Syncing scoreboard...</div>
-        </div>
-      </div>
-
-      <!-- ESC RETURN CONTROLLER -->
-      <div class="esc-prompt-bar" id="pageEscBtn">
-        <span>Press</span>
-        <kbd class="esc-key">Esc</kbd>
-        <span>to replay 404 mission</span>
-      </div>
-
+  <div class="overlay" id="result" hidden>
+    <div class="modal">
+      <h2 id="resTitle"></h2>
+      <p id="resSub"></p>
+      <button class="qbtn primary block" id="resAgain">Play again</button>
+      <p id="resNote" style="margin:10px 0 0" hidden></p>
+      <button class="qbtn block" id="resLobby">Back to menu</button>
     </div>
-  </main>
+  </div>
+  <div id="toast" hidden></div>
 
   <!-- Footer Injected via common.js (Hidden via CSS) -->
   <div id="footer-container"></div>
@@ -928,7 +254,6 @@
   <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -940,17 +265,15 @@
       appId: "1:479017159240:web:0853422718e6195b74a67d",
       measurementId: "G-4H1HT31DYB"
     };
-
-    if (!firebase.apps.length) {
+    if (typeof firebase !== 'undefined' && !firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
-    const db = firebase.database();
   </script>
 
   <!-- Common Navigation Scripts -->
   <script src="common.js?v=5.0"></script>
 
-  <!-- DIRECT 404 THEME TOGGLE CONTROLLER -->
+  <!-- THEME TOGGLE (same storage key as before) -->
   <script>
     const THEME_STORAGE_KEY = 'apml_404_page_theme';
     let currentPageTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
@@ -960,31 +283,15 @@
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.setAttribute('data-theme-mode', theme);
       localStorage.setItem(THEME_STORAGE_KEY, theme);
-
-      const scoreboardIcon = document.getElementById('scoreboardThemeIcon');
-      if (scoreboardIcon) {
-        scoreboardIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-      }
-
       const headerIcon = document.getElementById('themeToggleIcon');
       const headerBadge = document.querySelector('.theme-toggle-badge');
       if (headerIcon) headerIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
       if (headerBadge) headerBadge.style.display = 'none';
     }
-
     setPageTheme(currentPageTheme);
 
     window.addEventListener('DOMContentLoaded', () => {
       setPageTheme(currentPageTheme);
-
-      const scoreboardToggle = document.getElementById('btnScoreboardThemeToggle');
-      if (scoreboardToggle) {
-        scoreboardToggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setPageTheme(currentPageTheme === 'light' ? 'dark' : 'light');
-        });
-      }
-
       const headerToggle = document.getElementById('themeToggleBtn');
       if (headerToggle) {
         const clone = headerToggle.cloneNode(true);
@@ -997,981 +304,693 @@
     });
   </script>
 
-  <!-- PLANET ATTRACTION & MOUSE RIG -->
+  <!-- QUORIDOR RULES + AI -->
   <script>
-    let globalRocketX = window.innerWidth / 2;
-    let globalRocketY = window.innerHeight / 2;
-    let globalRocketAngle = 0;
+// ==ENGINE-START==
+const QEngine = (function () {
+  'use strict';
+  const GOAL = [0, 8];                       // player 0 walks to row 0, player 1 to row 8
+  const START = [[8, 4], [0, 4]];
+  const DIRS = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+  const WALLS_EACH = 10;
 
-    (function initPhysicsAndAttraction() {
-      const stage = document.getElementById('spaceStage');
-      const planetCenter = document.getElementById('planetCenter');
+  function newState(first) {
+    return {
+      p: [START[0].slice(), START[1].slice()],
+      hb: new Uint8Array(81),   // blocked between row r and r+1 at column c  (index r*9+c)
+      vb: new Uint8Array(81),   // blocked between col c and c+1 at row r     (index r*9+c)
+      hc: new Uint8Array(64),   // centres of horizontal walls (index r*8+c)
+      vc: new Uint8Array(64),   // centres of vertical walls
+      left: [WALLS_EACH, WALLS_EACH],
+      turn: first || 0,
+      winner: -1,
+      walls: [],
+      last: null,
+      reason: ''
+    };
+  }
 
-      let coreOffsetX = 0;
-      let coreOffsetY = 0;
+  function canStep(s, r, c, dr, dc) {
+    const nr = r + dr, nc = c + dc;
+    if (nr < 0 || nr > 8 || nc < 0 || nc > 8) return false;
+    if (dr === 1) return !s.hb[r * 9 + c];
+    if (dr === -1) return !s.hb[nr * 9 + c];
+    if (dc === 1) return !s.vb[r * 9 + c];
+    return !s.vb[r * 9 + nc];
+  }
 
-      function render() {
-        if (stage && !stage.closest('.hidden-view')) {
-          const rect = stage.getBoundingClientRect();
-          const centerX = rect.left + rect.width / 2;
-          const centerY = rect.top + rect.height / 2;
-          const relX = globalRocketX - centerX;
-          const relY = globalRocketY - centerY;
-
-          const pullDist = Math.hypot(relX, relY) || 1;
-          const pullStrength = Math.min(14, 900 / (pullDist + 60));
-          const pullAngle = Math.atan2(relY, relX);
-
-          const targetCoreX = Math.cos(pullAngle) * pullStrength * 0.5;
-          const targetCoreY = Math.sin(pullAngle) * pullStrength * 0.5;
-          coreOffsetX += (targetCoreX - coreOffsetX) * 0.1;
-          coreOffsetY += (targetCoreY - coreOffsetY) * 0.1;
-
-          if (planetCenter) {
-            planetCenter.style.transform = `translate(${coreOffsetX}px, ${coreOffsetY}px) rotate(${coreOffsetX * 0.8}deg)`;
-          }
+  // ---- shortest path (pawns ignored, as the official rule for "is there a path") ----
+  const seen = new Int32Array(81), par = new Int16Array(81), queue = new Int16Array(81), dd = new Int16Array(81);
+  let stamp = 0;
+  function bfs(s, pl, wantPath) {
+    const goal = GOAL[pl], sr = s.p[pl][0], sc = s.p[pl][1];
+    if (sr === goal) return wantPath ? [[sr, sc]] : 0;
+    stamp++;
+    let h = 0, t = 0;
+    const si = sr * 9 + sc;
+    queue[t++] = si; seen[si] = stamp; dd[si] = 0; par[si] = -1;
+    while (h < t) {
+      const cur = queue[h++];
+      const r = (cur / 9) | 0, c = cur - r * 9;
+      for (let k = 0; k < 4; k++) {
+        const dr = DIRS[k][0], dc = DIRS[k][1];
+        if (!canStep(s, r, c, dr, dc)) continue;
+        const nr = r + dr, nc = c + dc, ni = nr * 9 + nc;
+        if (seen[ni] === stamp) continue;
+        seen[ni] = stamp; dd[ni] = dd[cur] + 1; par[ni] = cur;
+        if (nr === goal) {
+          if (!wantPath) return dd[ni];
+          const out = [];
+          let x = ni;
+          while (x !== -1) { out.push([(x / 9) | 0, x % 9]); x = par[x]; }
+          return out.reverse();
         }
-        requestAnimationFrame(render);
+        queue[t++] = ni;
       }
-      requestAnimationFrame(render);
-    })();
+    }
+    return wantPath ? null : Infinity;
+  }
+  const dist = (s, pl) => bfs(s, pl, false);
+
+  // ---- pawn moves, with jumps and diagonal side-steps ----
+  function pawnMoves(s, pl) {
+    const r = s.p[pl][0], c = s.p[pl][1], orow = s.p[1 - pl][0], ocol = s.p[1 - pl][1];
+    const out = [];
+    for (let k = 0; k < 4; k++) {
+      const dr = DIRS[k][0], dc = DIRS[k][1];
+      if (!canStep(s, r, c, dr, dc)) continue;
+      const nr = r + dr, nc = c + dc;
+      if (nr === orow && nc === ocol) {
+        if (canStep(s, nr, nc, dr, dc)) {
+          out.push([nr + dr, nc + dc]);
+        } else {
+          const side = dr !== 0 ? [[0, 1], [0, -1]] : [[1, 0], [-1, 0]];
+          for (const sd of side) if (canStep(s, nr, nc, sd[0], sd[1])) out.push([nr + sd[0], nc + sd[1]]);
+        }
+      } else out.push([nr, nc]);
+    }
+    return out;
+  }
+
+  // ---- walls ----
+  function wallFits(s, r, c, o) {
+    if (r < 0 || r > 7 || c < 0 || c > 7) return false;
+    if (o === 'h') {
+      if (s.hc[r * 8 + c] || s.vc[r * 8 + c]) return false;
+      if (c > 0 && s.hc[r * 8 + c - 1]) return false;
+      if (c < 7 && s.hc[r * 8 + c + 1]) return false;
+    } else {
+      if (s.vc[r * 8 + c] || s.hc[r * 8 + c]) return false;
+      if (r > 0 && s.vc[(r - 1) * 8 + c]) return false;
+      if (r < 7 && s.vc[(r + 1) * 8 + c]) return false;
+    }
+    return true;
+  }
+  function setWall(s, r, c, o, v) {
+    if (o === 'h') { s.hc[r * 8 + c] = v; s.hb[r * 9 + c] = v; s.hb[r * 9 + c + 1] = v; }
+    else { s.vc[r * 8 + c] = v; s.vb[r * 9 + c] = v; s.vb[(r + 1) * 9 + c] = v; }
+  }
+  function wallLegal(s, pl, r, c, o) {
+    if (s.left[pl] <= 0 || !wallFits(s, r, c, o)) return false;
+    setWall(s, r, c, o, 1);
+    const ok = dist(s, 0) !== Infinity && dist(s, 1) !== Infinity;
+    setWall(s, r, c, o, 0);
+    return ok;
+  }
+
+  // ---- game flow ----
+  function validMove(s, m) {
+    if (!m || s.winner >= 0) return false;
+    if (m.t === 'r') return m.by === 0 || m.by === 1;
+    const pl = s.turn;
+    if (m.t === 'm') return pawnMoves(s, pl).some(x => x[0] === m.r && x[1] === m.c);
+    if (m.t === 'w') return (m.o === 'h' || m.o === 'v') && wallLegal(s, pl, m.r, m.c, m.o);
+    return false;
+  }
+  function applyMove(s, m) {
+    if (m.t === 'r') { s.winner = 1 - m.by; s.reason = 'resign'; s.last = m; return; }
+    const pl = s.turn;
+    if (m.t === 'm') {
+      s.p[pl] = [m.r, m.c];
+      if (m.r === GOAL[pl]) s.winner = pl;
+    } else {
+      setWall(s, m.r, m.c, m.o, 1);
+      s.left[pl]--;
+      s.walls.push({ r: m.r, c: m.c, o: m.o, by: pl });
+    }
+    s.last = { t: m.t, r: m.r, c: m.c, o: m.o, by: pl };
+    if (s.winner < 0) s.turn = 1 - pl;
+  }
+
+  // ================= AI =================
+  function doM(s, pl, m) {
+    if (m.t === 'm') { const old = s.p[pl]; s.p[pl] = [m.r, m.c]; return old; }
+    setWall(s, m.r, m.c, m.o, 1); s.left[pl]--; return null;
+  }
+  function undoM(s, pl, m, old) {
+    if (m.t === 'm') s.p[pl] = old;
+    else { setWall(s, m.r, m.c, m.o, 0); s.left[pl]++; }
+  }
+  function evalState(s, me) {
+    const a = dist(s, me), b = dist(s, 1 - me);
+    return (b - a) * 100 + (s.left[me] - s.left[1 - me]) * 5 - a;
+  }
+  // walls that cut the opponent's current shortest path: the only ones worth looking at
+  function attackWalls(s, target) {
+    const p = bfs(s, target, true);
+    const out = [], seenKey = new Set();
+    if (!p) return out;
+    function add(o, r, c) {
+      if (r < 0 || r > 7 || c < 0 || c > 7) return;
+      const k = o + r + c;
+      if (seenKey.has(k)) return;
+      seenKey.add(k); out.push({ t: 'w', r: r, c: c, o: o });
+    }
+    for (let i = 0; i < p.length - 1; i++) {
+      const a = p[i], b = p[i + 1];
+      if (a[0] !== b[0]) { const rr = Math.min(a[0], b[0]); add('h', rr, a[1]); add('h', rr, a[1] - 1); }
+      else { const cc = Math.min(a[1], b[1]); add('v', a[0], cc); add('v', a[0] - 1, cc); }
+    }
+    return out;
+  }
+  function genMoves(s, pl) {
+    const ms = pawnMoves(s, pl).map(x => ({ t: 'm', r: x[0], c: x[1] }));
+    if (s.left[pl] > 0) {
+      for (const w of attackWalls(s, 1 - pl)) if (wallLegal(s, pl, w.r, w.c, w.o)) ms.push(w);
+    }
+    return ms;
+  }
+  function ordered(s, pl, me) {
+    const scored = [];
+    for (const m of genMoves(s, pl)) {
+      let sc;
+      if (m.t === 'm' && m.r === GOAL[pl]) sc = pl === me ? 1e5 : -1e5;
+      else { const old = doM(s, pl, m); sc = evalState(s, me); undoM(s, pl, m, old); }
+      scored.push([sc, m]);
+    }
+    scored.sort(pl === me ? (a, b) => b[0] - a[0] : (a, b) => a[0] - b[0]);
+    return scored;
+  }
+  function minimax(s, pl, depth, me, alpha, beta, K) {
+    if (depth === 0) return evalState(s, me);
+    const moves = ordered(s, pl, me).slice(0, K);
+    if (!moves.length) return evalState(s, me);
+    let best = pl === me ? -Infinity : Infinity;
+    for (const pair of moves) {
+      const m = pair[1];
+      let val;
+      if (m.t === 'm' && m.r === GOAL[pl]) val = pl === me ? 10000 + depth : -10000 - depth;
+      else {
+        const old = doM(s, pl, m);
+        val = minimax(s, 1 - pl, depth - 1, me, alpha, beta, K);
+        undoM(s, pl, m, old);
+      }
+      if (pl === me) { if (val > best) best = val; if (best > alpha) alpha = best; }
+      else { if (val < best) best = val; if (best < beta) beta = best; }
+      if (beta <= alpha) break;
+    }
+    return best;
+  }
+  function aiChoose(s, pl, level) {
+    const scored = ordered(s, pl, pl);
+    if (!scored.length) return null;
+    if (scored[0][0] >= 1e5) return scored[0][1];          // win on the spot
+    if (level === 'easy') {
+      // mostly sensible, sometimes careless - but always trends toward the goal
+      const pawns = scored.filter(x => x[1].t === 'm');
+      if (Math.random() < 0.2 && pawns.length) return pawns[(Math.random() * pawns.length) | 0][1];
+      const roll = Math.random();
+      const idx = roll < 0.6 ? 0 : roll < 0.85 ? 1 : 2;
+      return scored[Math.min(idx, scored.length - 1)][1];
+    }
+    const depth = level === 'hard' ? 3 : 2, K = level === 'hard' ? 8 : 6;
+    let best = null, bestVal = -Infinity;
+    for (const pair of scored.slice(0, K)) {
+      const m = pair[1], old = doM(s, pl, m);
+      const val = minimax(s, 1 - pl, depth - 1, pl, -Infinity, Infinity, K) + Math.random() * 2;
+      undoM(s, pl, m, old);
+      if (val > bestVal) { bestVal = val; best = m; }
+    }
+    return best;
+  }
+
+  return { newState, pawnMoves, wallLegal, wallFits, validMove, applyMove, dist, aiChoose, GOAL, START };
+})();
+// ==ENGINE-END==
+
   </script>
 
-  <!-- 5-LIFELINE FIRE-COMET ARCADE ENGINE -->
+  <!-- QUORIDOR SCREEN LOGIC + ONLINE ROOMS -->
   <script>
-    (function initAsteroidArcade() {
-      const canvas = document.getElementById('game-canvas');
-      const rocket = document.getElementById('failed-rocket-cursor');
-      const curScoreEl = document.getElementById('currentScore');
-      const globalHighScoreEl = document.getElementById('globalHighScore');
-      const levelEl = document.getElementById('currentLevel');
-      const livesTextEl = document.getElementById('livesCountText');
-      const toastEl = document.getElementById('levelToast');
-      
-      const headerContainer = document.getElementById('header-container');
-      const footerContainer = document.getElementById('footer-container');
-      const gameView = document.getElementById('gameView');
-      const scoreView = document.getElementById('scoreView');
-      const pageFinalScore = document.getElementById('pageFinalScore');
-      const pageFinalLevel = document.getElementById('pageFinalLevel');
-      const saveScoreForm = document.getElementById('saveScoreForm');
-      const pilotCallsignInput = document.getElementById('pilotCallsignInput');
-      const btnSubmitScore = document.getElementById('btnSubmitScore');
-      const btnCheckScores = document.getElementById('btnCheckScores');
-      const btnStartGame = document.getElementById('btnStartGame');
-      const btnQuitLiveGame = document.getElementById('btnQuitLiveGame');
-      const blastUiGroup = document.getElementById('blastUiGroup');
-      const globalStatusToast = document.getElementById('globalStatusToast');
-      const leaderboardList = document.getElementById('leaderboardList');
-      const pageEscBtn = document.getElementById('pageEscBtn');
-      const scoreCardBadge = document.getElementById('scoreCardBadge');
-      const scoreCardHeading = document.getElementById('scoreCardHeading');
-      const planetCenterEl = document.getElementById('planetCenter');
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const PITCH = 50, CELL = 40, VB = 440;
+  const ROOMS = 'quoridor_rooms';
+  const STALE_MS = 6 * 60 * 60 * 1000;
 
-      if (!canvas) return;
+  // ---------- state ----------
+  let G = null;              // game state (see QEngine.newState)
+  let mode = null;           // 'ai' | 'online'
+  let aiLevel = 'normal';
+  let myRole = 0;            // 0 = bottom / first, 1 = top
+  let flip = false;          // guest sees the board turned round so they sit at the bottom too
+  let names = ['You', 'Opponent'];
+  let selMode = 'move';      // 'move' | 'wall'
+  let orient = 'h';
+  let ghost = null;          // { r, c, o, ok }
+  let aiBusy = false;
+  let resultShown = false;
+  let lastPT = 'mouse';
+  const myId = Math.random().toString(36).slice(2) + Date.now().toString(36);
 
-      const ctx = canvas.getContext('2d');
+  // ---------- small helpers ----------
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => { t.hidden = true; }, 2600);
+  }
+  function getName() {
+    let n = ($('nick').value || '').trim().slice(0, 14);
+    if (!n) n = 'Player';
+    try { localStorage.setItem('apml_quoridor_name', n); } catch (e) {}
+    return n;
+  }
+  function show(id) {
+    ['lobby', 'waiting', 'game'].forEach((x) => { $(x).hidden = x !== id; });
+    window.scrollTo(0, 0);
+  }
+  const isMyTurn = () => !!G && G.winner < 0 && G.turn === myRole && !aiBusy &&
+    (mode !== 'online' || OL.live);
 
-      function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+  // ---------- board drawing ----------
+  const svg = $('board');
+  const L = {};   // layers
+  function mk(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  const cellEls = [];
+  const pawnEls = [];
+  function buildBoard() {
+    svg.setAttribute('viewBox', '0 0 ' + VB + ' ' + VB);
+    mk('rect', { x: -6, y: -6, width: VB + 12, height: VB + 12, rx: 14, class: 'bd-base' }, svg);
+    mk('rect', { x: 0, y: 0, width: VB, height: CELL, rx: 6, class: 'goal-me' }, svg);
+    mk('rect', { x: 0, y: 8 * PITCH, width: VB, height: CELL, rx: 6, class: 'goal-opp' }, svg);
+    L.cells = mk('g', {}, svg);
+    for (let r = 0; r < 9; r++) {
+      for (let c = 0; c < 9; c++) {
+        cellEls[r * 9 + c] = mk('rect', { x: c * PITCH, y: r * PITCH, width: CELL, height: CELL, rx: 6, class: 'cell' }, L.cells);
       }
-      resize();
-      window.addEventListener('resize', resize);
+    }
+    L.hints = mk('g', {}, svg);
+    L.walls = mk('g', {}, svg);
+    L.ghost = mk('g', {}, svg);
+    L.pawns = mk('g', {}, svg);
+    for (let i = 0; i < 2; i++) {
+      const g = mk('g', { class: 'pawn' }, L.pawns);
+      mk('circle', { cx: 20, cy: 20, r: 15, class: 'pawn-body ' + (i === 0 ? 'p0' : 'p1') }, g);
+      mk('circle', { cx: 20, cy: 20, r: 7, class: 'pawn-core' }, g);
+      pawnEls[i] = g;
+    }
+  }
+  const dispPos = (r, c) => (flip ? [8 - r, 8 - c] : [r, c]);
+  const dispJ = (r, c) => (flip ? [7 - r, 7 - c] : [r, c]);
 
-      if (pilotCallsignInput) {
-        pilotCallsignInput.value = localStorage.getItem('apml_pilot_name') || '';
-      }
+  function wallRect(r, c, o, cls, parent) {
+    const d = dispJ(r, c);
+    if (o === 'h') return mk('rect', { x: d[1] * PITCH, y: d[0] * PITCH + CELL, width: 2 * CELL + 10, height: 10, rx: 3, class: cls }, parent);
+    return mk('rect', { x: d[1] * PITCH + CELL, y: d[0] * PITCH, width: 10, height: 2 * CELL + 10, rx: 3, class: cls }, parent);
+  }
 
-      let score = 0;
-      let lives = 5;
-      let level = 1;
-      let isGameActive = false;
-      let isGameOver = false;
-      let spawnTimer = null;
-      let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
-      if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
+  function render() {
+    if (!G) return;
+    // pawns
+    for (let i = 0; i < 2; i++) {
+      const d = dispPos(G.p[i][0], G.p[i][1]);
+      pawnEls[i].style.transform = 'translate(' + d[1] * PITCH + 'px,' + d[0] * PITCH + 'px)';
+      pawnEls[i].classList.toggle('mine', i === myRole);
+    }
+    // walls
+    L.walls.textContent = '';
+    G.walls.forEach((w, idx) => {
+      const isLast = G.last && G.last.t === 'w' && idx === G.walls.length - 1;
+      wallRect(w.r, w.c, w.o, 'wall ' + (w.by === myRole ? 'mine' : 'theirs') + (isLast ? ' fresh' : ''), L.walls);
+    });
+    // last pawn move marker
+    cellEls.forEach((e) => e.classList.remove('last'));
+    if (G.last && G.last.t === 'm') {
+      const d = dispPos(G.last.r, G.last.c);
+      cellEls[d[0] * 9 + d[1]].classList.add('last');
+    }
+    renderHints();
+    renderGhost();
+    renderBars();
+  }
 
-      const missiles = [];
-      const asteroids = [];
-      const smokeParticles = [];
-      const blastParticles = [];
-      const flameTrailParticles = [];
+  function renderHints() {
+    L.hints.textContent = '';
+    if (selMode !== 'move' || !isMyTurn()) return;
+    QEngine.pawnMoves(G, myRole).forEach((m) => {
+      const d = dispPos(m[0], m[1]);
+      mk('circle', { cx: d[1] * PITCH + 20, cy: d[0] * PITCH + 20, r: 9, class: 'hint' }, L.hints);
+    });
+  }
+  function renderGhost() {
+    L.ghost.textContent = '';
+    if (!ghost || selMode !== 'wall' || !isMyTurn()) return;
+    wallRect(ghost.r, ghost.c, ghost.o, 'wall ghost ' + (ghost.ok ? 'ok' : 'bad'), L.ghost);
+  }
+  function renderBars() {
+    const opp = 1 - myRole;
+    $('meName').textContent = names[myRole];
+    $('oppName').textContent = names[opp];
+    $('meWalls').textContent = G.left[myRole];
+    $('oppWalls').textContent = G.left[opp];
+    $('barMe').classList.toggle('active', G.winner < 0 && G.turn === myRole);
+    $('barOpp').classList.toggle('active', G.winner < 0 && G.turn === opp);
+    $('btnWall').disabled = G.left[myRole] <= 0;
+    $('btnMove').classList.toggle('on', selMode === 'move');
+    $('btnWall').classList.toggle('on', selMode === 'wall');
+    $('btnRot').hidden = selMode !== 'wall';
+    $('btnRot').textContent = (orient === 'h' ? '↔ Flat' : '↕ Upright') + ' (R)';
+    const st = $('status');
+    if (G.winner >= 0) st.textContent = G.winner === myRole ? 'You won!' : 'Game over';
+    else if (mode === 'ai' && aiBusy) st.textContent = 'AI is thinking…';
+    else if (G.turn === myRole) st.textContent = selMode === 'move' ? 'Your turn: tap a dot to move your pawn' : 'Your turn: pick a spot for your wall';
+    else st.textContent = mode === 'online' ? names[opp] + ' is thinking…' : 'AI is thinking…';
+  }
 
-      let currentX = window.innerWidth / 2;
-      let currentY = window.innerHeight / 2;
-      let targetX = currentX;
-      let targetY = currentY;
-      let currentAngle = 0;
-      let lastSmokeTime = 0;
+  // ---------- pointer → board ----------
+  function toBoard(e) {
+    const rect = svg.getBoundingClientRect();
+    return [(e.clientX - rect.left) * VB / rect.width, (e.clientY - rect.top) * VB / rect.height];
+  }
+  function cellFromEvent(e) {
+    const p = toBoard(e);
+    const dc = Math.max(0, Math.min(8, Math.floor(p[0] / PITCH)));
+    const dr = Math.max(0, Math.min(8, Math.floor(p[1] / PITCH)));
+    return flip ? [8 - dr, 8 - dc] : [dr, dc];
+  }
+  function junctionFromEvent(e) {
+    const p = toBoard(e);
+    const dc = Math.max(0, Math.min(7, Math.round((p[0] - 45) / PITCH)));
+    const dr = Math.max(0, Math.min(7, Math.round((p[1] - 45) / PITCH)));
+    return flip ? [7 - dr, 7 - dc] : [dr, dc];
+  }
+  function setGhostFrom(e) {
+    const j = junctionFromEvent(e);
+    ghost = { r: j[0], c: j[1], o: orient, ok: QEngine.wallLegal(G, myRole, j[0], j[1], orient) };
+    renderGhost();
+  }
 
-      document.addEventListener('mouseenter', () => { if (rocket && isGameActive && !isGameOver) rocket.style.opacity = '1'; });
-      document.addEventListener('mouseleave', () => { if (rocket) rocket.style.opacity = '0'; });
-      
-      window.addEventListener('mousemove', (e) => {
-        targetX = e.clientX;
-        targetY = e.clientY;
-        if (rocket && isGameActive && !isGameOver) {
-          rocket.style.opacity = '1';
-        }
-      });
+  svg.addEventListener('pointerdown', (e) => { lastPT = e.pointerType || 'mouse'; });
+  svg.addEventListener('pointermove', (e) => {
+    if (selMode === 'wall' && e.pointerType === 'mouse' && isMyTurn()) setGhostFrom(e);
+  });
+  svg.addEventListener('pointerleave', (e) => {
+    if (e.pointerType === 'mouse' && ghost) { ghost = null; renderGhost(); }
+  });
+  svg.addEventListener('contextmenu', (e) => { if (selMode === 'wall') { e.preventDefault(); toggleOrient(); } });
+  svg.addEventListener('click', (e) => {
+    if (!isMyTurn()) return;
+    if (selMode === 'move') {
+      const c = cellFromEvent(e);
+      if (QEngine.pawnMoves(G, myRole).some((m) => m[0] === c[0] && m[1] === c[1])) submit({ t: 'm', r: c[0], c: c[1] });
+      return;
+    }
+    const j = junctionFromEvent(e);
+    const sameSpot = ghost && ghost.r === j[0] && ghost.c === j[1] && ghost.o === orient;
+    if (lastPT === 'mouse' || sameSpot) {
+      if (QEngine.wallLegal(G, myRole, j[0], j[1], orient)) submit({ t: 'w', r: j[0], c: j[1], o: orient });
+      else { setGhostFrom(e); toast('A wall cannot go there (overlap, or it would block a pawn completely).'); }
+    } else {
+      setGhostFrom(e);   // first tap on a touch screen only previews
+    }
+  });
 
-      window.addEventListener('mousedown', (e) => {
-        if (!isGameActive || isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game, .arcade-scoreboard')) return;
-        if (e.button === 0) fireMissile();
-      });
+  function setSel(m) {
+    if (m === 'wall' && G && G.left[myRole] <= 0) { toast('You have no walls left.'); return; }
+    selMode = m; ghost = null; render();
+  }
+  function toggleOrient() { orient = orient === 'h' ? 'v' : 'h'; if (ghost) { ghost.o = orient; ghost.ok = QEngine.wallLegal(G, myRole, ghost.r, ghost.c, orient); } render(); }
+  $('btnMove').onclick = () => setSel('move');
+  $('btnWall').onclick = () => setSel('wall');
+  $('btnRot').onclick = toggleOrient;
+  $('btnResign').onclick = () => {
+    if (!G || G.winner >= 0) return;
+    if (!confirm('Resign this game?')) return;
+    if (mode === 'ai') { QEngine.applyMove(G, { t: 'r', by: myRole }); afterMove(); }
+    else OL.send({ t: 'r', by: myRole });
+  };
+  document.addEventListener('keydown', (e) => {
+    if ($('game').hidden) return;
+    const k = e.key.toLowerCase();
+    if (k === 'r') toggleOrient();
+    else if (k === 'w') setSel(selMode === 'wall' ? 'move' : 'wall');
+    else if (k === 'escape') setSel('move');
+  });
 
-      window.addEventListener('touchstart', (e) => {
-        if (!isGameActive || isGameOver) return;
-        if (e.target.closest('a, button, input, .site-header, .site-footer, #scoreView, .btn-quit-game, .arcade-scoreboard')) return;
-        if (e.touches.length > 0) {
-          targetX = e.touches[0].clientX;
-          targetY = e.touches[0].clientY;
-          fireMissile();
-        }
-      }, { passive: true });
+  // ---------- making moves ----------
+  function submit(m) {
+    if (!isMyTurn()) return;
+    if (!QEngine.validMove(G, m)) { toast('That move is not allowed.'); return; }
+    if (mode === 'ai') {
+      QEngine.applyMove(G, m);
+      selMode = 'move'; ghost = null;
+      afterMove();
+      if (G.winner < 0) scheduleAI();
+    } else {
+      selMode = 'move'; ghost = null;
+      OL.send(m);
+    }
+  }
+  function afterMove() { render(); checkEnd(); }
+  function scheduleAI() {
+    aiBusy = true; render();
+    setTimeout(() => {
+      const m = QEngine.aiChoose(G, 1, aiLevel);
+      aiBusy = false;
+      if (m && QEngine.validMove(G, m)) QEngine.applyMove(G, m);
+      afterMove();
+    }, 450);
+  }
 
-      function formatScoreDate(item) {
-        if (item.date && /^\d{2}\/\d{2}\/\d{4}$/.test(item.date)) {
-          return item.date;
-        }
-        if (item.timestamp || item.isoDate || item.date) {
-          const d = new Date(item.timestamp || item.isoDate || item.date);
-          if (!isNaN(d.getTime())) {
-            const day = String(d.getDate()).padStart(2, '0');
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const year = d.getFullYear();
-            return `${day}/${month}/${year}`;
-          }
-        }
-        const now = new Date();
-        return `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-      }
+  // ---------- end of game ----------
+  function checkEnd() {
+    if (!G || G.winner < 0 || resultShown) return;
+    resultShown = true;
+    const win = G.winner === myRole;
+    let sub = win ? 'You reached the far side first.' : (mode === 'ai' ? 'The AI got across first.' : names[1 - myRole] + ' got across first.');
+    if (G.reason === 'resign') sub = win ? 'Your opponent resigned.' : 'You resigned.';
+    if (G.reason === 'left') sub = 'Your opponent left the game.';
+    $('resTitle').textContent = win ? '🏆 You win!' : (mode === 'ai' ? '🤖 AI wins' : '😅 You lost');
+    $('resSub').textContent = sub;
+    $('resAgain').textContent = mode === 'ai' ? 'Play again' : 'Rematch';
+    $('resAgain').hidden = G.reason === 'left';
+    $('resNote').hidden = true;
+    $('result').hidden = false;
+  }
+  $('resAgain').onclick = () => {
+    if (mode === 'ai') { $('result').hidden = true; startAI(aiLevel); }
+    else { OL.rematch(); $('resNote').textContent = 'Waiting for ' + names[1 - myRole] + '…'; $('resNote').hidden = false; $('resAgain').disabled = true; }
+  };
+  $('resLobby').onclick = () => { $('result').hidden = true; toLobby(); };
+  function toLobby() {
+    if (mode === 'online') OL.leave();
+    mode = null; G = null; aiBusy = false;
+    $('result').hidden = true;
+    show('lobby');
+  }
+  $('btnLeave').onclick = () => {
+    if (G && G.winner < 0 && !confirm('Leave this game? It will count as a loss.')) return;
+    toLobby();
+  };
 
-      function renderLeaderboard(entries) {
-        if (!leaderboardList) return;
-        if (!entries || entries.length === 0) {
-          leaderboardList.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-align: center; padding: 6px 0;">No global scores yet. Be the first to save!</div>';
-          return;
-        }
-        leaderboardList.innerHTML = entries.map((item, idx) => `
-          <div class="leaderboard-row">
-            <div class="rank-name">
-              <span class="rank-num">#${idx + 1}</span>
-              <span>${escapeHtml(item.pilot || 'Pilot')}</span>
-              <span class="entry-badge">Lvl ${item.level || 1}</span>
-              <span class="entry-date">${formatScoreDate(item)}</span>
-            </div>
-            <span class="entry-score">${(item.score || 0).toLocaleString()}</span>
-          </div>
-        `).join('');
-      }
+  // ---------- vs AI ----------
+  function startAI(level) {
+    mode = 'ai'; aiLevel = level; myRole = 0; flip = false;
+    names = [getName(), 'AI · ' + level];
+    G = QEngine.newState(0);
+    beginGame('vs AI · ' + level);
+  }
+  function beginGame(label) {
+    selMode = 'move'; orient = 'h'; ghost = null; aiBusy = false; resultShown = false;
+    $('roomLabel').textContent = label;
+    $('result').hidden = true; $('resAgain').disabled = false;
+    show('game');
+    render();
+    if (mode === 'ai' && G.turn === 1) scheduleAI();
+  }
+  document.querySelectorAll('[data-ai]').forEach((b) => { b.onclick = () => startAI(b.getAttribute('data-ai')); });
 
-      function escapeHtml(str) {
-        return String(str || '').replace(/[&<>'"]/g, tag => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          "'": '&#39;',
-          '"': '&quot;'
-        }[tag] || tag));
-      }
+  // ---------- online (Firebase realtime database, one node per 4-digit code) ----------
+  const toList = (v) => {
+    if (!v) return [];
+    if (Array.isArray(v)) return v.filter(Boolean);
+    return Object.keys(v).sort((a, b) => a - b).map((k) => v[k]);
+  };
+  const OL = {
+    db: null, ref: null, cb: null, code: null, role: 0, live: false,
+    applied: 0, round: -1, names: {}, closed: false,
 
-      function initGlobalScoreSync() {
-        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json?orderBy="score"&limitToLast=30')
-          .then(res => res.json())
-          .then(data => {
-            if (data && typeof data === 'object') {
-              const entries = Object.values(data);
-              entries.sort((a, b) => (b.score || 0) - (a.score || 0));
-              if (entries.length > 0) {
-                globalHighestScore = Math.max(globalHighestScore, entries[0].score || 0);
-                localStorage.setItem('apml_global_highest_score', globalHighestScore);
-                if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
-              }
-              renderLeaderboard(entries);
-            }
-          })
-          .catch(() => {});
+    init() {
+      try {
+        if (typeof firebase === 'undefined') throw new Error('no firebase');
+        OL.db = firebase.database();
+      } catch (e) { OL.db = null; }
+      return !!OL.db;
+    },
+    key(role) { return role === 0 ? 'host' : 'guest'; },
+    first(round) { return round % 2 === 0 ? 0 : 1; },
 
-        if (window.db) {
-          db.ref('arcade_scores').orderByChild('score').limitToLast(30).on('value', (snapshot) => {
-            const entries = [];
-            snapshot.forEach((child) => {
-              entries.push(child.val());
-            });
-            entries.reverse();
-
-            if (entries.length > 0) {
-              const topScore = entries[0].score || 0;
-              globalHighestScore = Math.max(globalHighestScore, topScore);
-              localStorage.setItem('apml_global_highest_score', globalHighestScore);
-              if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
-            }
-
-            renderLeaderboard(entries);
-          }, (err) => {
-            console.warn('Firebase sync note:', err);
-            const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-            renderLeaderboard(localSaved);
+    async create() {
+      if (!OL.init()) { setMsg('Online play is not available right now. Check your connection.'); return; }
+      const name = getName();
+      for (let attempt = 0; attempt < 12; attempt++) {
+        const code = String(1000 + Math.floor(Math.random() * 9000));
+        const ref = OL.db.ref(ROOMS + '/' + code);
+        const now = Date.now();
+        let res;
+        try {
+          res = await ref.transaction((cur) => {
+            if (cur && cur.createdAt && now - cur.createdAt < STALE_MS && cur.status !== 'closed') return;   // taken
+            return { createdAt: now, status: 'waiting', round: 0, hostId: myId, names: { host: name } };
           });
-        }
+        } catch (e) { setMsg('Could not reach the server. Try again.'); return; }
+        if (!res.committed) continue;
+        OL.attach(ref, code, 0);
+        ref.onDisconnect().remove();      // an unjoined room vanishes if the host closes the tab
+        $('wCode').textContent = code;
+        show('waiting');
+        return;
       }
+      setMsg('Could not create a room. Please try again.');
+    },
 
-      initGlobalScoreSync();
+    async join(code) {
+      if (!/^\d{4}$/.test(code)) { setMsg('Enter the 4-digit code from your friend.'); return; }
+      if (!OL.init()) { setMsg('Online play is not available right now. Check your connection.'); return; }
+      const name = getName();
+      const ref = OL.db.ref(ROOMS + '/' + code);
+      let snap;
+      try { snap = await ref.once('value'); } catch (e) { setMsg('Could not reach the server. Try again.'); return; }
+      const v = snap.val();
+      if (!v || v.status === 'closed' || Date.now() - (v.createdAt || 0) > STALE_MS) { setMsg('No open room with that code.'); return; }
+      if (v.hostId === myId) { setMsg('That is your own room. Open the game on the other computer.'); return; }
+      let res;
+      try {
+        res = await ref.transaction((cur) => {
+          if (!cur || cur.status !== 'waiting' || cur.guestId) return;
+          cur.guestId = myId; cur.status = 'playing';
+          cur.names = cur.names || {}; cur.names.guest = name;
+          return cur;
+        });
+      } catch (e) { setMsg('Could not join. Try again.'); return; }
+      if (!res.committed) { setMsg('That room is full or no longer available.'); return; }
+      setMsg('');
+      OL.attach(ref, code, 1);
+    },
 
-      function triggerUiBlastEffect(el, intensity = 42) {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        if (rect.width === 0 || rect.height === 0) return;
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+    attach(ref, code, role) {
+      OL.ref = ref; OL.code = code; OL.role = role; OL.live = false;
+      OL.applied = 0; OL.round = -1; OL.closed = false;
+      mode = 'online'; myRole = role; flip = role === 1;
+      ref.child('left/' + OL.key(role)).onDisconnect().set(true);
+      OL.cb = (snap) => OL.onRoom(snap.val());
+      ref.on('value', OL.cb);
+    },
 
-        for (let i = 0; i < intensity; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const spd = Math.random() * 7 + 2.5;
-          blastParticles.push({
-            x: centerX + (Math.random() - 0.5) * rect.width * 0.8,
-            y: centerY + (Math.random() - 0.5) * rect.height * 0.8,
-            vx: Math.cos(angle) * spd,
-            vy: Math.sin(angle) * spd,
-            radius: Math.random() * 4 + 2,
-            alpha: 1,
-            color: Math.random() > 0.4 ? '#ef4444' : (Math.random() > 0.5 ? '#f59e0b' : '#fbbf24')
-          });
-        }
+    onRoom(v) {
+      if (OL.closed || mode !== 'online') return;
+      if (!v) {   // room deleted underneath us
+        if (G && G.winner < 0) { G.winner = myRole; G.reason = 'left'; render(); checkEnd(); }
+        else if (!G) { toast('The room was closed.'); toLobby(); }
+        return;
       }
-
-      function startGame() {
-        if (headerContainer) {
-          triggerUiBlastEffect(headerContainer, 36);
-          headerContainer.classList.add('fired-up');
-        }
-        if (blastUiGroup) {
-          triggerUiBlastEffect(btnStartGame, 45);
-          triggerUiBlastEffect(blastUiGroup, 55);
-          blastUiGroup.classList.add('blasted');
-        }
-
-        setTimeout(() => {
-          if (blastUiGroup) blastUiGroup.style.display = 'none';
-          if (headerContainer) headerContainer.style.display = 'none';
-        }, 340);
-
-        isGameActive = true;
-        isGameOver = false;
-        score = 0;
-        lives = 5;
-        level = 1;
-
-        if (curScoreEl) curScoreEl.textContent = '0';
-        if (livesTextEl) livesTextEl.textContent = '5';
-        if (levelEl) levelEl.textContent = '1';
-
-        document.body.classList.add('game-active');
-        if (rocket) rocket.style.opacity = '1';
-
-        asteroids.length = 0;
-        missiles.length = 0;
-        smokeParticles.length = 0;
-        flameTrailParticles.length = 0;
-
-        resetSpawnTimer();
-        showToast("Defense Initialized • Clear Incoming Comets!");
+      if (v.status !== 'playing') return;           // still waiting for a guest
+      names = [(v.names && v.names.host) || 'Host', (v.names && v.names.guest) || 'Friend'];
+      const round = v.round || 0;
+      if (!OL.live || round !== OL.round) {         // first time here, or a rematch started
+        if (OL.role === 0) OL.ref.onDisconnect().cancel();
+        OL.ref.child('left/' + OL.key(OL.role)).onDisconnect().set(true);
+        OL.live = true; OL.round = round; OL.applied = 0;
+        G = QEngine.newState(OL.first(round));
+        beginGame('Room ' + OL.code);
       }
-
-      if (btnStartGame) {
-        btnStartGame.addEventListener('click', startGame);
+      const list = toList(v.moves);
+      while (OL.applied < list.length && G.winner < 0) {
+        const m = list[OL.applied++];
+        if (QEngine.validMove(G, m)) QEngine.applyMove(G, m);
+        else console.warn('Ignored invalid move', m);
       }
-
-      function quitLiveGameSession() {
-        if (!isGameActive) return;
-        isGameActive = false;
-        isGameOver = false;
-        if (spawnTimer) clearInterval(spawnTimer);
-        
-        asteroids.length = 0;
-        missiles.length = 0;
-        smokeParticles.length = 0;
-        flameTrailParticles.length = 0;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        showToast("Mission Aborted");
-        switchToGameView();
-      }
-
-      if (btnQuitLiveGame) {
-        btnQuitLiveGame.addEventListener('click', (e) => {
-          e.stopPropagation();
-          quitLiveGameSession();
+      const other = OL.key(1 - OL.role);
+      if (G.winner < 0 && v.left && v.left[other]) { G.winner = myRole; G.reason = 'left'; }
+      // both asked for a rematch: the host starts the next round
+      if (OL.role === 0 && v.rematch && v.rematch.host && v.rematch.guest) {
+        OL.ref.transaction((cur) => {
+          if (!cur || !cur.rematch || !cur.rematch.host || !cur.rematch.guest) return;
+          delete cur.moves; delete cur.rematch; cur.round = (cur.round || 0) + 1;
+          return cur;
         });
       }
+      render(); checkEnd();
+    },
 
-      function executeScoreSubmission(e) {
-        if (e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        
-        const callsign = (pilotCallsignInput ? pilotCallsignInput.value : '').trim() || 'Pilot_' + Math.random().toString(36).substring(2, 6).toUpperCase();
-        localStorage.setItem('apml_pilot_name', callsign);
+    send(m) {
+      if (!OL.ref) return;
+      const expected = OL.applied;
+      OL.ref.child('moves').transaction((cur) => {
+        const list = toList(cur);
+        if (list.length !== expected) return;       // somebody else got there first
+        list.push(m);
+        return list;
+      }, (err, committed) => { if (err || !committed) toast('Move not sent, please try again.'); });
+    },
 
-        const currentScoreToSave = score;
-        const currentLevelToSave = level;
-        
-        const now = new Date();
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const year = now.getFullYear();
-        const formattedDate = `${day}/${month}/${year}`;
-        const currentIsoDate = now.toISOString();
-        const currentTimestamp = Date.now();
+    rematch() { if (OL.ref) OL.ref.child('rematch/' + OL.key(OL.role)).set(true); },
 
-        const localSaved = JSON.parse(localStorage.getItem('apml_local_leaderboard') || '[]');
-        localSaved.push({ 
-          pilot: callsign, 
-          score: currentScoreToSave, 
-          level: currentLevelToSave, 
-          date: formattedDate,
-          timestamp: currentTimestamp 
-        });
-        localSaved.sort((a, b) => b.score - a.score);
-        localStorage.setItem('apml_local_leaderboard', JSON.stringify(localSaved.slice(0, 30)));
-
-        if (btnSubmitScore) {
-          btnSubmitScore.disabled = true;
-          btnSubmitScore.style.opacity = '0.7';
-          btnSubmitScore.innerHTML = '<span>Saving...</span>';
-        }
-
-        const scorePayload = {
-          pilot: callsign,
-          score: currentScoreToSave,
-          level: currentLevelToSave,
-          date: formattedDate,
-          isoDate: currentIsoDate,
-          timestamp: currentTimestamp
-        };
-
-        function completeAndReload() {
-          if (saveScoreForm) saveScoreForm.style.display = 'none';
-          if (globalStatusToast) {
-            globalStatusToast.textContent = `✓ Recorded: ${callsign}'s score (${currentScoreToSave.toLocaleString()}) saved globally! Refreshing...`;
-            globalStatusToast.style.display = 'block';
-          }
-          setTimeout(() => {
-            window.location.reload();
-          }, 900);
-        }
-
-        fetch('https://apml-portal-default-rtdb.firebaseio.com/arcade_scores.json', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(scorePayload)
-        })
-        .then(() => {
-          completeAndReload();
-        })
-        .catch(() => {
-          if (window.db) {
-            db.ref('arcade_scores').push(scorePayload)
-              .then(() => completeAndReload())
-              .catch(() => completeAndReload());
-          } else {
-            completeAndReload();
-          }
-        });
+    leave() {
+      const ref = OL.ref;
+      OL.closed = true; OL.live = false;
+      if (!ref) return;
+      if (OL.cb) ref.off('value', OL.cb);
+      const waiting = !G;
+      ref.onDisconnect().cancel();
+      if (waiting && OL.role === 0) { ref.remove(); }
+      else {
+        ref.child('left/' + OL.key(OL.role)).set(true).then(() => ref.child('left').once('value')).then((s) => {
+          const l = s.val() || {};
+          if (l.host && l.guest) ref.remove();
+        }).catch(() => {});
       }
+      OL.ref = null;
+    }
+  };
+
+  function setMsg(t) { const m = $('joinMsg'); m.textContent = t; m.hidden = !t; }
+  $('btnCreate').onclick = () => { setMsg(''); OL.create(); };
+  $('btnJoin').onclick = () => OL.join($('joinCode').value.trim());
+  $('joinCode').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); setMsg(''); });
+  $('joinCode').addEventListener('keydown', (e) => { if (e.key === 'Enter') OL.join($('joinCode').value.trim()); });
+  $('wCancel').onclick = () => { OL.leave(); mode = null; show('lobby'); };
+  $('wCopy').onclick = () => {
+    const code = $('wCode').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(code).then(() => toast('Code copied'), () => toast('Code: ' + code));
+    else toast('Code: ' + code);
+  };
+
+  // ---------- boot ----------
+  try { $('nick').value = localStorage.getItem('apml_quoridor_name') || ''; } catch (e) {}
+  buildBoard();
+  window.addEventListener('beforeunload', () => { /* onDisconnect handles the server side */ });
+  window.__quoridor = { OL: OL, get G() { return G; }, startAI: startAI };   // handy for debugging in the console
+})();
 
-      if (saveScoreForm) {
-        saveScoreForm.addEventListener('submit', executeScoreSubmission);
-      }
-      if (btnSubmitScore) {
-        btnSubmitScore.addEventListener('click', executeScoreSubmission);
-      }
-
-      if (btnCheckScores) {
-        btnCheckScores.addEventListener('click', () => {
-          isGameOver = true;
-          isGameActive = false;
-          if (spawnTimer) clearInterval(spawnTimer);
-          if (rocket) rocket.style.opacity = '0';
-          document.body.classList.remove('game-active');
-
-          asteroids.length = 0;
-          missiles.length = 0;
-          blastParticles.length = 0;
-          smokeParticles.length = 0;
-          flameTrailParticles.length = 0;
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-          if (headerContainer) {
-            headerContainer.style.display = 'block';
-            headerContainer.classList.remove('fired-up');
-          }
-          if (blastUiGroup) blastUiGroup.classList.remove('blasted');
-
-          if (scoreCardBadge) scoreCardBadge.textContent = "Global Rankings";
-          if (scoreCardHeading) scoreCardHeading.textContent = "APML Scoreboard";
-          if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
-          if (pageFinalLevel) pageFinalLevel.textContent = level;
-
-          if (saveScoreForm) saveScoreForm.style.display = 'flex';
-          if (btnSubmitScore) {
-            btnSubmitScore.disabled = false;
-            btnSubmitScore.style.opacity = '1';
-            btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
-          }
-          if (globalStatusToast) globalStatusToast.style.display = 'none';
-
-          if (gameView) gameView.classList.add('hidden-view');
-          if (scoreView) scoreView.classList.remove('hidden-view');
-        });
-      }
-
-      function switchToGameView() {
-        isGameOver = false;
-        isGameActive = false;
-        score = 0;
-        lives = 5;
-        level = 1;
-
-        if (curScoreEl) curScoreEl.textContent = '0';
-        if (livesTextEl) livesTextEl.textContent = '5';
-        if (levelEl) levelEl.textContent = '1';
-
-        document.body.classList.remove('game-active');
-        if (scoreView) scoreView.classList.add('hidden-view');
-        if (gameView) gameView.classList.remove('hidden-view');
-        
-        if (headerContainer) {
-          headerContainer.style.display = 'block';
-          headerContainer.classList.remove('fired-up');
-        }
-        if (blastUiGroup) {
-          blastUiGroup.style.display = 'flex';
-          blastUiGroup.classList.remove('blasted');
-        }
-        if (rocket) rocket.style.opacity = '0';
-
-        if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
-        if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
-
-        if (saveScoreForm) {
-          saveScoreForm.style.display = 'flex';
-          if (btnSubmitScore) {
-            btnSubmitScore.disabled = false;
-            btnSubmitScore.style.opacity = '1';
-            btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
-          }
-        }
-        if (globalStatusToast) globalStatusToast.style.display = 'none';
-
-        asteroids.length = 0;
-        missiles.length = 0;
-        blastParticles.length = 0;
-        smokeParticles.length = 0;
-        flameTrailParticles.length = 0;
-
-        if (spawnTimer) clearInterval(spawnTimer);
-      }
-
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          if (document.activeElement === pilotCallsignInput) {
-            pilotCallsignInput.blur();
-            return;
-          }
-          if (isGameActive) {
-            quitLiveGameSession();
-          } else if (isGameOver) {
-            switchToGameView();
-          }
-        }
-      });
-
-      if (pageEscBtn) {
-        pageEscBtn.addEventListener('click', switchToGameView);
-      }
-
-      function fireMissile() {
-        const rad = (currentAngle - 90) * (Math.PI / 180);
-        const speed = 15;
-        missiles.push({
-          x: currentX + Math.cos(rad) * 12,
-          y: currentY + Math.sin(rad) * 12,
-          vx: Math.cos(rad) * speed,
-          vy: Math.sin(rad) * speed,
-          radius: 3,
-          life: 90
-        });
-
-        for (let i = 0; i < 5; i++) {
-          blastParticles.push({
-            x: currentX,
-            y: currentY,
-            vx: (Math.random() - 0.5) * 4,
-            vy: (Math.random() - 0.5) * 4,
-            radius: Math.random() * 2 + 1,
-            alpha: 1,
-            color: '#38bdf8'
-          });
-        }
-      }
-
-      function updateDifficulty() {
-        const newLevel = Math.floor(score / 250) + 1;
-        if (newLevel > level) {
-          level = newLevel;
-          if (levelEl) levelEl.textContent = level;
-          showToast(`Level ${level} • Comet Velocity Surged!`);
-          resetSpawnTimer();
-        }
-      }
-
-      function showToast(text) {
-        if (!toastEl) return;
-        toastEl.textContent = text;
-        toastEl.classList.add('show');
-        setTimeout(() => toastEl.classList.remove('show'), 2400);
-      }
-
-      function addScore(pts) {
-        score += pts;
-        if (curScoreEl) curScoreEl.textContent = score;
-        if (score > globalHighestScore) {
-          globalHighestScore = score;
-          if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
-        }
-        updateDifficulty();
-      }
-
-      function deductLife(reason) {
-        if (!isGameActive || isGameOver) return;
-        lives--;
-        if (livesTextEl) livesTextEl.textContent = `${lives}`;
-
-        if (lives <= 0) {
-          triggerGameOver();
-        } else {
-          showToast(`Lifeline Lost! (${lives}/5 Remaining)`);
-        }
-      }
-
-      function triggerGameOver() {
-        if (isGameOver) return;
-        isGameOver = true;
-        isGameActive = false;
-        
-        if (spawnTimer) clearInterval(spawnTimer);
-        if (rocket) rocket.style.opacity = '0';
-        document.body.classList.remove('game-active');
-
-        asteroids.length = 0;
-        missiles.length = 0;
-        blastParticles.length = 0;
-        smokeParticles.length = 0;
-        flameTrailParticles.length = 0;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (headerContainer) {
-          headerContainer.style.display = 'block';
-          headerContainer.classList.remove('fired-up');
-        }
-        if (blastUiGroup) {
-          blastUiGroup.classList.remove('blasted');
-        }
-
-        if (scoreCardBadge) scoreCardBadge.textContent = "Mission Debrief";
-        if (scoreCardHeading) scoreCardHeading.textContent = "Defense Over";
-
-        if (pageFinalScore) pageFinalScore.textContent = score.toLocaleString();
-        if (pageFinalLevel) pageFinalLevel.textContent = level;
-
-        if (saveScoreForm) saveScoreForm.style.display = 'flex';
-        if (btnSubmitScore) {
-          btnSubmitScore.disabled = false;
-          btnSubmitScore.style.opacity = '1';
-          btnSubmitScore.innerHTML = '<span class="material-symbols-outlined" style="font-size: 16px;">cloud_upload</span><span>Save Score</span>';
-        }
-        if (globalStatusToast) globalStatusToast.style.display = 'none';
-
-        if (gameView) gameView.classList.add('hidden-view');
-        if (scoreView) scoreView.classList.remove('hidden-view');
-      }
-
-      function spawnAsteroid() {
-        if (!isGameActive || isGameOver) return;
-        const maxAsteroids = 8 + level * 2;
-        if (asteroids.length >= maxAsteroids) return;
-
-        const side = Math.floor(Math.random() * 4);
-        let x, y;
-        const margin = 50;
-
-        if (side === 0) { x = Math.random() * canvas.width; y = -margin; }
-        else if (side === 1) { x = canvas.width + margin; y = Math.random() * canvas.height; }
-        else if (side === 2) { x = Math.random() * canvas.width; y = canvas.height + margin; }
-        else { x = -margin; y = Math.random() * canvas.height; }
-
-        let coreX = canvas.width / 2;
-        let coreY = canvas.height / 2;
-        if (planetCenterEl) {
-          const rect = planetCenterEl.getBoundingClientRect();
-          coreX = rect.left + rect.width / 2;
-          coreY = rect.top + rect.height / 2;
-        }
-
-        const targetX = coreX + (Math.random() - 0.5) * 40;
-        const targetY = coreY + (Math.random() - 0.5) * 40;
-        const angle = Math.atan2(targetY - y, targetX - x);
-
-        const baseSpeed = Math.random() * 1.0 + 0.85;
-        const levelSpeedMultiplier = 1 + (level - 1) * 0.25;
-        const speed = baseSpeed * levelSpeedMultiplier;
-
-        const numPoints = Math.floor(Math.random() * 3) + 7;
-        const radius = Math.random() * 10 + 14;
-        const offsets = [];
-        for (let i = 0; i < numPoints; i++) {
-          offsets.push(0.75 + Math.random() * 0.5);
-        }
-
-        asteroids.push({
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          angle,
-          radius,
-          numPoints,
-          offsets,
-          rot: Math.random() * Math.PI * 2,
-          rotSpeed: (Math.random() - 0.5) * (0.03 + level * 0.008),
-          trailHistory: []
-        });
-      }
-
-      function resetSpawnTimer() {
-        if (spawnTimer) clearInterval(spawnTimer);
-        const interval = Math.max(550, 1350 - (level - 1) * 160);
-        spawnTimer = setInterval(spawnAsteroid, interval);
-      }
-
-      function createEngineFailureSmoke(x, y, angleDeg) {
-        const exhaustDist = 10;
-        const rad = (angleDeg - 90) * (Math.PI / 180);
-        const spawnX = x - Math.cos(rad) * exhaustDist;
-        const spawnY = y - Math.sin(rad) * exhaustDist;
-        const isSpark = Math.random() < 0.3;
-
-        smokeParticles.push({
-          x: spawnX + (Math.random() - 0.5) * 3,
-          y: spawnY + (Math.random() - 0.5) * 3,
-          vx: -Math.cos(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
-          vy: -Math.sin(rad) * (Math.random() * 1.1 + 0.3) + (Math.random() - 0.5) * 0.6,
-          radius: isSpark ? Math.random() * 1.4 + 0.8 : Math.random() * 2.4 + 1.4,
-          alpha: isSpark ? 1 : 0.6,
-          color: isSpark 
-            ? (Math.random() > 0.5 ? '#f97316' : '#eab308') 
-            : (Math.random() > 0.4 ? '#475569' : '#94a3b8'),
-          isSpark
-        });
-      }
-
-      function createExplosion(x, y, isRam = false) {
-        const count = isRam ? 32 : 22;
-        for (let i = 0; i < count; i++) {
-          const angle = Math.random() * Math.PI * 2;
-          const spd = (Math.random() * 5.5 + 2) * (isRam ? 1.4 : 1);
-          blastParticles.push({
-            x, y,
-            vx: Math.cos(angle) * spd,
-            vy: Math.sin(angle) * spd,
-            radius: Math.random() * 4 + 1.5,
-            alpha: 1,
-            color: Math.random() > 0.6 ? '#fef08a' : (Math.random() > 0.3 ? '#f97316' : '#ef4444')
-          });
-        }
-      }
-
-      function gameLoop() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (let i = blastParticles.length - 1; i >= 0; i--) {
-          const bp = blastParticles[i];
-          bp.x += bp.vx;
-          bp.y += bp.vy;
-          bp.vx *= 0.95;
-          bp.vy *= 0.95;
-          bp.alpha -= 0.025;
-
-          if (bp.alpha <= 0) {
-            blastParticles.splice(i, 1);
-            continue;
-          }
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(bp.x, bp.y, bp.radius, 0, Math.PI * 2);
-          ctx.fillStyle = bp.color;
-          ctx.globalAlpha = Math.max(0, bp.alpha);
-          ctx.shadowColor = bp.color;
-          ctx.shadowBlur = 8;
-          ctx.fill();
-          ctx.restore();
-        }
-
-        for (let i = flameTrailParticles.length - 1; i >= 0; i--) {
-          const fp = flameTrailParticles[i];
-          fp.x += fp.vx;
-          fp.y += fp.vy;
-          fp.radius *= 0.93;
-          fp.alpha -= 0.035;
-
-          if (fp.alpha <= 0 || fp.radius <= 0.4) {
-            flameTrailParticles.splice(i, 1);
-            continue;
-          }
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(fp.x, fp.y, fp.radius, 0, Math.PI * 2);
-          ctx.fillStyle = fp.color;
-          ctx.globalAlpha = Math.max(0, fp.alpha);
-          ctx.shadowColor = '#f97316';
-          ctx.shadowBlur = 6;
-          ctx.fill();
-          ctx.restore();
-        }
-
-        if (!isGameActive || isGameOver) {
-          requestAnimationFrame(gameLoop);
-          return;
-        }
-
-        let coreX = canvas.width / 2;
-        let coreY = canvas.height / 2;
-        const coreHitRadius = 34;
-        const rocketHitRadius = 14;
-
-        if (planetCenterEl) {
-          const rect = planetCenterEl.getBoundingClientRect();
-          coreX = rect.left + rect.width / 2;
-          coreY = rect.top + rect.height / 2;
-        }
-
-        const dx = targetX - currentX;
-        const dy = targetY - currentY;
-        const dist = Math.hypot(dx, dy);
-
-        currentX += dx * 0.45;
-        currentY += dy * 0.45;
-        globalRocketX = currentX;
-        globalRocketY = currentY;
-
-        if (dist > 1 && isGameActive && !isGameOver) {
-          const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
-          let diff = (targetAngle - currentAngle) % 360;
-          if (diff > 180) diff -= 360;
-          if (diff < -180) diff += 360;
-          
-          const sputter = (Math.random() - 0.5) * 8;
-          currentAngle += diff * 0.25 + sputter;
-          globalRocketAngle = currentAngle;
-
-          const now = performance.now();
-          if (now - lastSmokeTime > 18) {
-            createEngineFailureSmoke(currentX, currentY, currentAngle);
-            lastSmokeTime = now;
-          }
-        }
-
-        if (rocket && isGameActive && !isGameOver) {
-          rocket.style.transform = `translate3d(${currentX}px, ${currentY}px, 0) rotate(${currentAngle}deg)`;
-        }
-
-        for (let i = smokeParticles.length - 1; i >= 0; i--) {
-          const p = smokeParticles[i];
-          p.x += p.vx;
-          p.y += p.vy;
-
-          if (p.isSpark) {
-            p.radius *= 0.94;
-            p.alpha -= 0.04;
-          } else {
-            p.radius += 0.16;
-            p.alpha -= 0.022;
-          }
-
-          if (p.alpha <= 0 || p.radius <= 0.2) {
-            smokeParticles.splice(i, 1);
-            continue;
-          }
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-          ctx.fillStyle = p.color;
-          ctx.globalAlpha = Math.max(0, p.alpha);
-          ctx.fill();
-          ctx.restore();
-        }
-
-        for (let i = missiles.length - 1; i >= 0; i--) {
-          const m = missiles[i];
-          m.x += m.vx;
-          m.y += m.vy;
-          m.life--;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(m.x, m.y, m.radius + 2, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
-          ctx.fill();
-
-          ctx.beginPath();
-          ctx.arc(m.x, m.y, m.radius, 0, Math.PI * 2);
-          ctx.fillStyle = '#38bdf8';
-          ctx.shadowColor = '#38bdf8';
-          ctx.shadowBlur = 10;
-          ctx.fill();
-          ctx.restore();
-
-          if (m.life <= 0 || m.x < -50 || m.x > canvas.width + 50 || m.y < -50 || m.y > canvas.height + 50) {
-            missiles.splice(i, 1);
-          }
-        }
-
-        for (let i = asteroids.length - 1; i >= 0; i--) {
-          const a = asteroids[i];
-          a.x += a.vx;
-          a.y += a.vy;
-          a.rot += a.rotSpeed;
-
-          a.trailHistory.push({ x: a.x, y: a.y });
-          if (a.trailHistory.length > 8) a.trailHistory.shift();
-
-          if (Math.random() < 0.6) {
-            const oppAngle = a.angle + Math.PI + (Math.random() - 0.5) * 0.8;
-            const spd = Math.random() * 2.5 + 1;
-            flameTrailParticles.push({
-              x: a.x + (Math.random() - 0.5) * (a.radius * 0.8),
-              y: a.y + (Math.random() - 0.5) * (a.radius * 0.8),
-              vx: Math.cos(oppAngle) * spd,
-              vy: Math.sin(oppAngle) * spd,
-              radius: Math.random() * (a.radius * 0.35) + 1.5,
-              alpha: 0.85,
-              color: Math.random() > 0.5 ? '#f59e0b' : (Math.random() > 0.3 ? '#ea580c' : '#ef4444')
-            });
-          }
-
-          if (a.trailHistory.length > 2) {
-            const oppX = Math.cos(a.angle + Math.PI);
-            const oppY = Math.sin(a.angle + Math.PI);
-            const tailLength = a.radius * 3.8;
-
-            const flameGrad = ctx.createLinearGradient(
-              a.x, a.y, 
-              a.x + oppX * tailLength, 
-              a.y + oppY * tailLength
-            );
-            flameGrad.addColorStop(0, 'rgba(254, 240, 138, 0.85)');
-            flameGrad.addColorStop(0.3, 'rgba(249, 115, 22, 0.65)');
-            flameGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.35)');
-            flameGrad.addColorStop(1, 'transparent');
-
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            const perpX = -oppY * (a.radius * 0.75);
-            const perpY = oppX * (a.radius * 0.75);
-
-            ctx.lineTo(a.x + perpX, a.y + perpY);
-            ctx.lineTo(a.x + oppX * tailLength, a.y + oppY * tailLength);
-            ctx.lineTo(a.x - perpX, a.y - perpY);
-            ctx.closePath();
-            ctx.fillStyle = flameGrad;
-            ctx.shadowColor = '#f97316';
-            ctx.shadowBlur = 14;
-            ctx.fill();
-            ctx.restore();
-          }
-
-          ctx.save();
-          ctx.translate(a.x, a.y);
-          ctx.rotate(a.rot);
-          ctx.beginPath();
-          for (let j = 0; j < a.numPoints; j++) {
-            const theta = (j / a.numPoints) * Math.PI * 2;
-            const r = a.radius * a.offsets[j];
-            const px = Math.cos(theta) * r;
-            const py = Math.sin(theta) * r;
-            if (j === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-          }
-          ctx.closePath();
-
-          const rockGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, a.radius);
-          rockGrad.addColorStop(0, '#fef08a');
-          rockGrad.addColorStop(0.4, '#dc2626');
-          rockGrad.addColorStop(0.85, '#1e1b4b');
-          rockGrad.addColorStop(1, '#0f172a');
-
-          ctx.fillStyle = rockGrad;
-          ctx.fill();
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = '#f97316';
-          ctx.shadowColor = '#ef4444';
-          ctx.shadowBlur = 10;
-          ctx.stroke();
-          ctx.restore();
-
-          const distToRocket = Math.hypot(a.x - currentX, a.y - currentY);
-          if (distToRocket < a.radius + rocketHitRadius && isGameActive && !isGameOver) {
-            createExplosion(a.x, a.y, true);
-            addScore(15);
-            asteroids.splice(i, 1);
-            continue;
-          }
-
-          const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
-          if (distToCenter < a.radius + coreHitRadius) {
-            createExplosion(a.x, a.y);
-            asteroids.splice(i, 1);
-            deductLife("Center Station Breached! A Fire Comet slammed into the core!");
-            continue;
-          }
-
-          let asteroidDestroyed = false;
-          for (let k = missiles.length - 1; k >= 0; k--) {
-            const m = missiles[k];
-            const dist = Math.hypot(a.x - m.x, a.y - m.y);
-            if (dist < a.radius + m.radius) {
-              createExplosion(a.x, a.y);
-              addScore(10);
-              missiles.splice(k, 1);
-              asteroidDestroyed = true;
-              break;
-            }
-          }
-
-          if (asteroidDestroyed) {
-            asteroids.splice(i, 1);
-            continue;
-          }
-
-          if (a.x < -90 || a.x > canvas.width + 90 || a.y < -90 || a.y > canvas.height + 90) {
-            asteroids.splice(i, 1);
-            deductLife("Defense Failed! A Fire Comet slipped past containment!");
-          }
-        }
-
-        requestAnimationFrame(gameLoop);
-      }
-
-      requestAnimationFrame(gameLoop);
-    })();
   </script>
 </body>
 </html>
