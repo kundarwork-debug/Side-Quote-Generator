@@ -469,8 +469,7 @@
         "💡 Tip: Use 'Upload File' to add documents, images and videos straight into the current folder.",
         "Create folders with 'New Folder' to keep your files organised.",
         "Deleted files are automatically routed to the Trash Archive for easy recovery.",
-        "Quotation PDFs from the editor land in the Quotation folder automatically. 📁",
-        "The Quotation and Prasad folders are protected, and only an admin can delete them. 🔒"
+        "Quotation PDFs from the editor land in the Quotation folder automatically. 📁"
       ],
       "hub-details.html": [
         "💡 Tip: Use the search bar to look up branch HODs and direct phone contacts.",
