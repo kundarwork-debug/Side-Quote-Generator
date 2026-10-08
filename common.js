@@ -572,7 +572,7 @@
       </div>  
     `;
 
-    // Append Mascot Styles with pointer-events protection for footer buttons
+    // Append Mascot Styles with scroll-dependent visibility (hidden on hero page, revealed when scrolled down)
     const mascotStyle = document.createElement('style');
     mascotStyle.innerHTML = `
       .support-fab {
@@ -584,11 +584,18 @@
         flex-direction: column;
         align-items: flex-end;
         gap: 0px;
-        transition: opacity 0.3s ease;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.35s ease, visibility 0.35s ease;
         pointer-events: none;
       }
+      .support-fab.visible {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
       .support-fab > div {
-        pointer-events: none;
+        pointer-events: inherit;
       }
       .support-msg-bubble {
         background-color: #ffffff;
@@ -649,19 +656,23 @@
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // Scroll Controller for FAB
+    // Scroll Controller for FAB (Hide on hero section / top of page, reveal when scrolled down past ~250px, hide near footer)
     window.addEventListener('scroll', () => {
-      const scrollPosition = window.scrollY + window.innerHeight;
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const scrollPosition = scrollY + window.innerHeight;
       const bodyHeight = document.body.offsetHeight;
       const footer = document.querySelector('footer') || document.getElementById('footer-container');
       const footerHeight = footer ? footer.offsetHeight : 0;
       const isNearBottom = scrollPosition > (bodyHeight - footerHeight + 20);
+      const isPastHero = scrollY > 250;
 
       const fab = document.getElementById('support-fab');
       if (fab) {
-        fab.style.opacity = isNearBottom ? '0' : '1';
-        const supportBtn = fab.querySelector('.support-btn');
-        if (supportBtn) supportBtn.style.pointerEvents = isNearBottom ? 'none' : 'auto';
+        if (isPastHero && !isNearBottom) {
+          fab.classList.add('visible');
+        } else {
+          fab.classList.remove('visible');
+        }
       }
     }, { passive: true });
 
@@ -676,7 +687,7 @@
       const cursor = document.getElementById('typeCursor');
       if (!typeText || !bubble) return;
 
-      const myToken = ++typeToken; // a newer message cancels this one
+      const myToken = ++typeToken;
       typeText.textContent = "";
       if (cursor) cursor.style.display = 'inline-block';
       bubble.classList.add('show');
@@ -697,7 +708,6 @@
             if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
 
-          // Auto-hide message after 5 seconds
           hideTimer = setTimeout(() => {
             if (myToken === typeToken) bubble.classList.remove('show');
           }, 5000);
@@ -706,8 +716,6 @@
       step();
     }
 
-    // Public hook so any page can make the avatar say something:
-    //   window.APMLMascot.say("Hello!")
     window.APMLMascot = {
       say: function (text) {
         if (!text) return;
@@ -715,12 +723,12 @@
       }
     };
 
-    // Initial trigger on load
     setTimeout(() => {
-      if (!isTyping && typeToken === 0) playTypewriter(tipsArray[tipIndex]);
+      if (!isTyping && typeToken === 0 && window.scrollY > 250) {
+        playTypewriter(tipsArray[tipIndex]);
+      }
     }, 1000);
 
-    // Click Avatar for New Message
     const avatarBtn = document.getElementById('supportAvatarBtn');
     if (avatarBtn) {
       avatarBtn.addEventListener('click', (e) => {
