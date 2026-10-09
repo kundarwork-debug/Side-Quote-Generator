@@ -1363,6 +1363,13 @@
     let pendingDeleteKey = null;
     let currentPage = 1;
 
+    // BANDWIDTH OPTIMIZATION: Helper function for Cloudinary dynamic transformations
+    function getOptimizedUrl(originalUrl, width = 400) {
+      if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
+      // Inserts f_auto (modern formats like WebP/AVIF), q_auto (optimal compression), and responsive width resizing
+      return originalUrl.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
+    }
+
     function getDynamicItemsPerPage() {
       return 16;
     }
@@ -1685,7 +1692,6 @@
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         
-        // STRICT VALIDATION: ONLY ALLOW IMAGES AND VIDEOS
         const fileType = file.type || '';
         const isImage = fileType.startsWith('image/');
         const isVideo = fileType.startsWith('video/');
@@ -1862,7 +1868,6 @@
       }
     }
 
-    // DIRECT LOCAL STORAGE DOWNLOAD HANDLER FOR BOTH PHOTOS & VIDEOS
     async function handleInteractiveDownload(firebaseKey, fileUrl, fileName, isVideo) {
       const btn = document.getElementById(`btn-dl-${firebaseKey}`);
       if (btn) {
@@ -1897,7 +1902,6 @@
         document.body.removeChild(a);
         window.URL.revokeObjectURL(blobUrl);
       } catch (err) {
-        // Fallback direct link download
         const a = document.createElement('a');
         a.href = fileUrl;
         a.download = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
@@ -1943,6 +1947,9 @@
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const formattedSize = formatBytes(item.size);
 
+        // BANDWIDTH OPTIMIZATION: Transform image preview URL for lightweight 400px thumbnail delivery
+        const optimizedThumbUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 400);
+
         return `
           <div class="media-card" id="card-${item.key}">
             <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
@@ -1951,8 +1958,8 @@
               </div>
 
               ${item.isVideo 
-                ? `<video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" autoplay loop muted playsinline preload="none" onloadeddata="hideCardLoader('${item.key}')"></video>` 
-                : `<img id="media-el-${item.key}" src="${item.url}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">`
+                ? `<video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline onloadeddata="hideCardLoader('${item.key}')"></video>` 
+                : `<img id="media-el-${item.key}" src="${optimizedThumbUrl}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">`
               }
             </div>
             <div class="media-info">
@@ -2049,7 +2056,9 @@
       const item = liveMediaItems.find(i => i.key === firebaseKey);
       if (!item) return;
       recordInteraction(firebaseKey, 'viewsCount');
-      openLightbox(item.url, isVideo);
+      // BANDWIDTH OPTIMIZATION: When opening lightbox view, request a higher-res optimized preview (e.g. 900px) instead of raw original file
+      const lightboxUrl = isVideo ? item.url : getOptimizedUrl(item.url, 900);
+      openLightbox(lightboxUrl, isVideo);
     }
 
     function openLightbox(url, isVideo) {
