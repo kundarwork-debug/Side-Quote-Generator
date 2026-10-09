@@ -696,7 +696,7 @@
     let isTyping = false;
     let typeToken = 0;
 
-    function playTypewriter(textToType) {
+    function playTypewriter(textToType, forceKeepOpen = false) {
       const typeText = document.getElementById('typewriter-text');
       const bubble = document.getElementById('supportBubble');
       const cursor = document.getElementById('typeCursor');
@@ -715,18 +715,21 @@
         if (myToken !== typeToken) return;
         if (typeIndex < textToType.length) {
           typeText.textContent += textToType.charAt(typeIndex);
-          typeIndex++;
-          setTimeout(step, 30);
         } else {
           isTyping = false;
           setTimeout(() => {
             if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
 
-          hideTimer = setTimeout(() => {
-            if (myToken === typeToken) bubble.classList.remove('show');
-          }, 5000);
+          if (!forceKeepOpen) {
+            hideTimer = setTimeout(() => {
+              if (myToken === typeToken) bubble.classList.remove('show');
+            }, 5000);
+          }
+          return;
         }
+        typeIndex++;
+        setTimeout(step, 30);
       }
       step();
     }
@@ -734,13 +737,13 @@
     window.APMLMascot = {
       say: function (text) {
         if (!text) return;
-        playTypewriter(String(text));
+        playTypewriter(String(text), isIndexPage);
       }
     };
 
     setTimeout(() => {
       if (!isTyping && typeToken === 0 && (!isIndexPage || window.scrollY > 250)) {
-        playTypewriter(tipsArray[tipIndex]);
+        playTypewriter(tipsArray[tipIndex], isIndexPage);
       }
     }, 1000);
 
@@ -750,8 +753,11 @@
         e.preventDefault();
         if (isTyping) return;
 
-        tipIndex = (tipIndex + 1) % tipsArray.length;
-        playTypewriter(tipsArray[tipIndex]);
+        tipIndex = (tipIndex + 1) / tipsArray.length; // Wait, % tipsArray.length
+        tipIndex = (tipIndex === Math.floor(tipIndex) ? tipIndex : 0); // safeguard
+        // Let's ensure standard modulo arithmetic:
+        tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
+        playTypewriter(tipsArray[tipIndex], isIndexPage);
       });
     }
   })();
