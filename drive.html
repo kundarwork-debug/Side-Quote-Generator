@@ -1235,7 +1235,7 @@
           <span>New Folder</span>
         </button>
 
-        <!-- HIDDEN FILE INPUT FOR DIRECT CATBOX UPLOAD -->
+        <!-- HIDDEN FILE INPUT -->
         <input type="file" id="mediaFileInput" style="display: none;" onchange="handleDirectCatboxUpload(this.files)">
 
         <button type="button" class="btn-drive-action btn-drive-primary" onclick="document.getElementById('mediaFileInput').click()">
@@ -1280,12 +1280,11 @@
       auth: { persistSession: true, autoRefreshToken: true }
     });
 
-    // ---- Cloudinary (unsigned upload; NEVER put the API secret in this file) ----
     const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
-    const CLOUDINARY_UPLOAD_PRESET = 'apml_drive'; // create this as an UNSIGNED preset in Cloudinary
+    const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-    // Free plan limits: 10 MB for images and other files, 100 MB for video
+    
     const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
     const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 
@@ -1321,6 +1320,12 @@
 
     const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
     const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
+
+    // BANDWIDTH OPTIMIZATION: Helper function for Cloudinary dynamic transformations
+    function getOptimizedUrl(originalUrl, width = 400) {
+      if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
+      return originalUrl.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
+    }
 
     function hidePageLoader() {
       const overlay = document.getElementById('appLoadingOverlay');
@@ -1511,7 +1516,7 @@
           successCount++;
         } catch (err) {
           console.error(`Error uploading "${file.name}":`, err);
-          alert(`Failed to upload ${file.name}: ${err.message}`);
+          alert(`Failed to upload ${file.name}:${err.message}`);
         }
       }
 
@@ -1543,7 +1548,6 @@
       }
     }
 
-    // ---------- Protected folders: only admin may delete these (and everything inside) ----------
     const PROTECTED_FOLDER_NAMES = ['quotation', 'quotations', 'prasad'];
     const PROTECTED_FOLDER_KEYS = ['quotation_folder', 'quotations_archive_protected'];
 
@@ -1553,7 +1557,6 @@
       return PROTECTED_FOLDER_NAMES.includes(String(folder.name || '').trim().toLowerCase());
     }
 
-    // true if this folder id, or any folder above it, is protected
     function isInsideProtectedTree(folderId) {
       let id = folderId;
       const seen = new Set();
@@ -1567,7 +1570,6 @@
       return false;
     }
 
-    // true if any folder below this one is protected
     function containsProtectedFolder(folderId) {
       const seen = new Set();
       const stack = [folderId];
@@ -1730,14 +1732,17 @@
       const isHtml = isHtmlFile(fileName, fileUrl);
       const isExcel = isExcelFile(fileName, fileUrl);
 
+      // BANDWIDTH OPTIMIZATION: Request an optimized 900px asset limit for lightboxes instead of raw original files
+      const previewUrl = isImage ? getOptimizedUrl(fileUrl, 900) : fileUrl;
+
       if (isImage) {
-        slot.innerHTML = `<img src="${fileUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
+        slot.innerHTML = `<img src="${previewUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
       } else if (isVideo) {
-        slot.innerHTML = `<video src="${fileUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
+        slot.innerHTML = `<video src="${previewUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
       } else if (isPdf || isHtml || isExcel) {
         const frameSrc = isExcel
-          ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fileUrl)}`
-          : fileUrl;
+          ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`
+          : previewUrl;
         slot.innerHTML = `
           <iframe src="${frameSrc}" style="width:100%; height:75vh; border:none; border-radius:12px; background:#ffffff;"></iframe>
           <div style="text-align:center; margin-top:10px; font-size:13px; color:#ffffff;">
@@ -1937,9 +1942,12 @@
               const themeClass = getThumbnailThemeClass(file.name, file.fileId);
               const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
 
+              // BANDWIDTH OPTIMIZATION: Transform image preview URL for lightweight 400px thumbnail delivery
+              const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 400) : file.fileId;
+
               let previewHtml = '';
               if (isImage) {
-                previewHtml = `<img src="${file.fileId}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
+                previewHtml = `<img src="${optimizedThumbUrl}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
               } else if (isVideo) {
                 previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
               } else {
@@ -2052,7 +2060,6 @@
           }
         });
 
-        // Safety net: never leave a spinner running forever (slow/blocked thumbnails)
         setTimeout(() => {
           currentFiles.forEach(file => hideCardLoader(file.key));
         }, 6000);
