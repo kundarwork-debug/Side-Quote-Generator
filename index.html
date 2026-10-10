@@ -356,10 +356,11 @@
       border-radius: var(--radius-pill);
     }
 
+    /* BENTO GRID MODULES LAYOUT (REDUCED GAP) */
     .modules-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px; /* Reduced gap between modules */
       width: 100%;
     }
 
@@ -367,7 +368,7 @@
       background: var(--surface-card) !important;
       border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-xl);
-      padding: 32px 28px;
+      padding: 24px 20px; /* Compact padding */
       text-decoration: none;
       color: inherit;
       box-shadow: var(--shadow-subtle);
@@ -378,10 +379,27 @@
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      grid-column: span 4;
+    }
+
+    .module-card.bento-wide {
+      grid-column: span 6;
+    }
+
+    @media (max-width: 1100px) {
+      .module-card {
+        grid-column: span 6 !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .module-card, .module-card.bento-wide {
+        grid-column: span 12 !important;
+      }
     }
 
     .module-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px);
       border-color: rgba(185, 28, 28, 0.35);
       box-shadow: var(--shadow-hover);
     }
@@ -390,13 +408,13 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .card-icon-pill {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
       background: var(--primary-soft);
       border: 1px solid rgba(185, 28, 28, 0.1);
       display: flex;
@@ -444,34 +462,34 @@
     }
 
     .card-title {
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 800;
       color: var(--text-main);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       letter-spacing: -0.02em;
     }
 
     .card-description {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 22px;
+      line-height: 1.5;
+      margin-bottom: 16px;
     }
 
     .tags-flow {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 24px;
+      gap: 5px;
+      margin-bottom: 16px;
     }
 
     .micro-tag {
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
-      padding: 4px 10px;
+      padding: 3px 8px;
       background: var(--surface-subtle);
       border: 1px solid var(--surface-border);
-      border-radius: 8px;
+      border-radius: 6px;
       color: var(--text-secondary);
     }
 
@@ -479,9 +497,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: 18px;
+      padding-top: 14px;
       border-top: 1px solid var(--surface-border);
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 700;
     }
 
@@ -494,8 +512,8 @@
     }
 
     .cta-arrow {
-      width: 30px;
-      height: 30px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: var(--primary-soft);
       display: flex;
@@ -702,7 +720,7 @@
 
     </section>
 
-    <!-- OPERATIONS MODULES GRID -->
+    <!-- OPERATIONS MODULES BENTO GRID -->
     <section class="workspace-section">
       
       <div class="section-bar">
@@ -715,8 +733,8 @@
 
       <div class="modules-grid" id="modulesGrid">
         
-        <!-- 1. QUOTATION -->
-        <a href="editor.html" class="module-card" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
+        <!-- 1. QUOTATION (BENTO WIDE) -->
+        <a href="editor.html" class="module-card bento-wide" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -747,21 +765,25 @@
           </div>
         </a>
 
-        <!-- 2. GALLERY -->
-        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <!-- 2. CLOUD DRIVE (BENTO WIDE) -->
+        <a href="drive.html" class="module-card bento-wide" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
-                <span class="material-symbols-outlined">photo_library</span>
+                <span class="material-symbols-outlined">cloud</span>
               </div>
-              <span class="status-tag">Media Assets</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span class="status-tag">Storage Hub</span>
+                <span class="badge-sync">Cloud Drive</span>
+              </div>
             </div>
-            <h2 class="card-title">Packing Standards Gallery</h2>
-            <p class="card-description">Visual packaging standards, fleet logistics documentation, and operational video references with live download counters.</p>
+            <h2 class="card-title">APML Cloud Drive</h2>
+            <p class="card-description">Organize assets into custom folders and manage documents, media, and web files seamlessly via Cloudinary links.</p>
             <div class="tags-flow">
-              <span class="micro-tag">Fleet Logistics</span>
-              <span class="micro-tag">ImgBB Sync</span>
-              <span class="micro-tag">Media Archive</span>
+              <span class="micro-tag">Direct Links</span>
+              <span class="micro-tag">Folder Tree</span>
+              <span class="micro-tag">Blob Download</span>
+              <span class="micro-tag">Trash Recovery</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -775,25 +797,20 @@
           </div>
         </a>
 
-        <!-- 3. CLOUD DRIVE -->
-        <a href="drive.html" class="module-card" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
+        <!-- 3. GALLERY -->
+        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
-                <span class="material-symbols-outlined">cloud</span>
+                <span class="material-symbols-outlined">photo_library</span>
               </div>
-              <div style="display: flex; gap: 6px; align-items: center;">
-                <span class="status-tag">Storage Hub</span>
-                <span class="badge-sync">Cloud Drive</span>
-              </div>
+              <span class="status-tag">Media Assets</span>
             </div>
-            <h2 class="card-title">APML Cloud Drive</h2>
-            <p class="card-description">Organize assets into custom folders and manage documents, media, and web files seamlessly via Catbox direct links.</p>
+            <h2 class="card-title">Packing Standards Gallery</h2>
+            <p class="card-description">Visual packaging standards and operational video references with live download counters.</p>
             <div class="tags-flow">
-              <span class="micro-tag">Direct Links</span>
-              <span class="micro-tag">Folder Tree</span>
-              <span class="micro-tag">Blob Download</span>
-              <span class="micro-tag">Trash Recovery</span>
+              <span class="micro-tag">Fleet Logistics</span>
+              <span class="micro-tag">Cloud Sync</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -817,12 +834,10 @@
               <span class="status-tag">Directory</span>
             </div>
             <h2 class="card-title">Hub &amp; Branch Directory</h2>
-            <p class="card-description">Instant lookup for nationwide warehouse hubs, branch HODs, direct phone contacts, and Google Map location pins.</p>
+            <p class="card-description">Instant lookup for nationwide warehouse hubs and branch HOD direct contacts.</p>
             <div class="tags-flow">
               <span class="micro-tag">Pan-India Hubs</span>
-              <span class="micro-tag">HOD Contacts</span>
-              <span class="micro-tag">Map Navigation</span>
-              <span class="micro-tag">Live Status</span>
+              <span class="micro-tag">Map Pins</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -846,12 +861,10 @@
               <span class="status-tag">Directory</span>
             </div>
             <h2 class="card-title">Field Officer Directory WCRO</h2>
-            <p class="card-description">Western Central Regional Office field officers directory with direct WhatsApp contact, mobile numbers, and designated areas.</p>
+            <p class="card-description">Western Central Regional Office field officers with direct WhatsApp contact numbers.</p>
             <div class="tags-flow">
               <span class="micro-tag">WCRO Region</span>
-              <span class="micro-tag">Officer Contacts</span>
-              <span class="micro-tag">Direct WhatsApp</span>
-              <span class="micro-tag">Coverage Area</span>
+              <span class="micro-tag">WhatsApp</span>
             </div>
           </div>
           <div class="card-footer-cta static">
@@ -875,12 +888,10 @@
               <span class="status-tag">Volume Pricing</span>
             </div>
             <h2 class="card-title">APML Lite Rate Calculator</h2>
-            <p class="card-description">Instant CFT volume calculator with floor constraints, destination routing, and a 450 CFT maximum capacity ceiling.</p>
+            <p class="card-description">Instant CFT volume calculator with floor constraints and a 450 CFT limit ceiling.</p>
             <div class="tags-flow">
               <span class="micro-tag">450 CFT Limit</span>
-              <span class="micro-tag">4 Major Hubs</span>
               <span class="micro-tag">Base Floor</span>
-              <span class="micro-tag">Cube Estimation</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -904,12 +915,10 @@
               <span class="status-tag">Vehicle Freight</span>
             </div>
             <h2 class="card-title">Car Rate Calculator</h2>
-            <p class="card-description">Automated vehicle transport rate estimation with intelligent category detection and 600 KM baseline formulas.</p>
+            <p class="card-description">Automated vehicle transport rate estimation with 600 KM baseline formulas.</p>
             <div class="tags-flow">
               <span class="micro-tag">Model Detection</span>
               <span class="micro-tag">600 KM Base</span>
-              <span class="micro-tag">Per-KM Slabs</span>
-              <span class="micro-tag">Car Carrier Transit</span>
             </div>
           </div>
           <div class="card-footer-cta interactive">
@@ -933,11 +942,9 @@
               <span class="status-tag">Local Shifting</span>
             </div>
             <h2 class="card-title">APML Local Rate</h2>
-            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates, CFT limits, and add-on services.</p>
+            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates and CFT limits.</p>
             <div class="tags-flow">
               <span class="micro-tag">Intra-City</span>
-              <span class="micro-tag">CFT Slabs</span>
-              <span class="micro-tag">Minimum Floor</span>
               <span class="micro-tag">SOP Guidelines</span>
             </div>
           </div>
