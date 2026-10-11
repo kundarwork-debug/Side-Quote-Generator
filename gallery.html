@@ -1066,6 +1066,35 @@
       background: rgba(15, 23, 42, 0.08);
       color: #0f172a;
     }
+    .media-badge.src {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      text-transform: none;
+      max-width: 96px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .media-badge.src .material-symbols-outlined { font-size: 11px; }
+    .media-badge.src-cloudinary { background: #eff6ff; color: #1d4ed8; }
+    .media-badge.src-catbox { background: #fff7ed; color: #c2410c; }
+    .media-badge.src-other { background: #f1f5f9; color: #475569; }
+
+    /* ---- Add a Catbox photo / video link ---- */
+    .link-card { border-color: var(--border-subtle) !important; text-align: left !important; }
+    .link-card h3, .link-card > p { text-align: center; }
+    .link-icon { width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .link-label { display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 6px; }
+    .link-field { width: 100%; padding: 12px 16px; border: 1.5px solid #d1d5db; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 14px; transition: border-color 0.2s ease; font-family: inherit; }
+    .link-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.12); }
+    .link-open { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin: 0 auto 16px; }
+    .link-open:hover { text-decoration: underline; }
+    .link-dest { text-align: center; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin: -6px 0 14px; }
+    .link-error { color: #dc2626; font-size: 12.5px; font-weight: 700; margin: -6px 0 12px; }
+    .btn-link-save { flex: 1; padding: 11px 16px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; background: var(--primary); color: #fff; transition: all 0.2s ease; }
+    .btn-link-save:hover { background: var(--primary-dark); }
+    .btn-link-save:disabled { opacity: 0.6; cursor: wait; }
 
     .media-size-label {
       font-size: 10px;
@@ -1170,6 +1199,30 @@
     <div class="loading-sub-text">Loading standards &amp; media assets...</div>
   </div>
 
+  <!-- ADD A CATBOX PHOTO / VIDEO LINK -->
+  <div class="delete-confirm-overlay" id="catboxModal">
+    <div class="delete-confirm-modal link-card">
+      <div class="link-icon">
+        <span class="material-symbols-outlined" style="font-size: 32px;">add_link</span>
+      </div>
+      <h3>Add from Catbox</h3>
+      <p>Upload your photo or video at catbox.moe, then paste its file link here. Only photos and videos are accepted.</p>
+      <a class="link-open" href="https://catbox.moe" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span> Open catbox.moe to upload
+      </a>
+      <div class="link-dest" id="catboxDest"></div>
+      <label class="link-label" for="catboxUrlInput">Catbox file link</label>
+      <input type="url" id="catboxUrlInput" class="link-field" placeholder="https://files.catbox.moe/abc123.jpg" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label class="link-label" for="catboxNameInput">Name (optional)</label>
+      <input type="text" id="catboxNameInput" class="link-field" placeholder="Leave empty to use the name from the link" maxlength="120" autocomplete="off">
+      <div class="link-error" id="catboxError" hidden></div>
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeCatboxModal()">Cancel</button>
+        <button type="button" class="btn-link-save" id="btnSaveCatbox" onclick="saveCatboxLink()">Add to Gallery</button>
+      </div>
+    </div>
+  </div>
+
   <div id="header-container"></div>
 
   <!-- DELETE CONFIRMATION MODAL -->
@@ -1271,9 +1324,9 @@
             <span>Upload Media</span>
           </button>
 
-          <button type="button" class="btn-action-secondary" id="uploadVideoBtn" onclick="triggerVideoLinkPrompt()">
-            <span class="material-symbols-outlined" style="font-size: 18px;">video_library</span>
-            <span>Add Video Link</span>
+          <button type="button" class="btn-action-secondary" id="catboxLinkBtn" onclick="openCatboxModal()" title="Add a photo or video from a Catbox link">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add_link</span>
+            <span>Catbox Link</span>
           </button>
         </div>
 
@@ -1318,6 +1371,11 @@
     const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
+    // Catbox links, and the Worker that can fetch Catbox files when the browser is not allowed to
+    const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
+    const CATBOX_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp'];
+    const CATBOX_VIDEO_EXT = ['mp4', 'webm', 'mov', 'm4v', 'ogv'];
 
     const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB for photos
     const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB for videos
@@ -1624,48 +1682,116 @@
       document.getElementById('mediaFileInput').click();
     }
 
-    async function triggerVideoLinkPrompt() {
+    // ---------- Add a Catbox photo / video ----------
+    function getFileSource(url) {
+      let host = '';
+      try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
+      if (host === 'cloudinary.com' || host.endsWith('.cloudinary.com')) return { label: 'Cloudinary', icon: 'cloud', cls: 'src-cloudinary' };
+      if (host === 'catbox.moe' || host.endsWith('.catbox.moe')) return { label: 'Catbox', icon: 'link', cls: 'src-catbox' };
+      return { label: host.replace(/^www\./, '') || 'Link', icon: 'link', cls: 'src-other' };
+    }
+
+    function isCatboxLink(url) {
+      try { return /(^|\.)catbox\.moe$/i.test(new URL(url).hostname); } catch (e) { return false; }
+    }
+
+    // Accepts only permanent Catbox links (files.catbox.moe) that point at a photo or a video
+    function checkCatboxMediaLink(raw) {
+      let u;
+      try { u = new URL(raw); } catch (e) { return { error: 'Please paste a full link that starts with https://' }; }
+      if (u.protocol !== 'https:' || u.hostname.toLowerCase() !== 'files.catbox.moe') {
+        return { error: 'Only links from files.catbox.moe are accepted here.' };
+      }
+      let file = '';
+      try { file = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || ''); } catch (e) { file = ''; }
+      const m = file.match(/\.([A-Za-z0-9]+)$/);
+      const ext = m ? m[1].toLowerCase() : '';
+      if (CATBOX_IMAGE_EXT.indexOf(ext) !== -1) return { url: u.href, file: file, ext: ext, isVideo: false };
+      if (CATBOX_VIDEO_EXT.indexOf(ext) !== -1) return { url: u.href, file: file, ext: ext, isVideo: true };
+      return { error: 'Only photos (' + CATBOX_IMAGE_EXT.join(', ') + ') and videos (' + CATBOX_VIDEO_EXT.join(', ') + ') can be added to the gallery.' };
+    }
+
+    // typed name (extension added if missing) or the file name inside the link; quotes are removed
+    // because names are placed inside page buttons
+    function deriveCatboxName(info, typedName) {
+      let name = (typedName || '').trim();
+      if (!name) name = info.file;
+      else if (!/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + info.ext;
+      return name.replace(/['"`<>\\]/g, '').trim() || info.file;
+    }
+
+    function setCatboxError(msg) {
+      const el = document.getElementById('catboxError');
+      el.textContent = msg;
+      el.hidden = !msg;
+    }
+
+    function openCatboxModal() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const statusText = document.getElementById('uploadStatusText');
-
       if (!uploadSelect.value) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
         return;
       }
-
       uploadSelect.classList.remove('select-highlight-error');
-      const folder = uploadSelect.value;
+      const folder = foldersList.find(f => f.id === uploadSelect.value);
+      document.getElementById('catboxDest').textContent = 'Adding to: ' + (folder ? folder.label : uploadSelect.value);
+      document.getElementById('catboxUrlInput').value = '';
+      document.getElementById('catboxNameInput').value = '';
+      setCatboxError('');
+      document.getElementById('btnSaveCatbox').disabled = false;
+      document.getElementById('catboxModal').classList.add('active');
+      setTimeout(() => document.getElementById('catboxUrlInput').focus(), 60);
+    }
 
-      const videoUrl = prompt("Enter direct video URL or YouTube link:", "");
-      if (!videoUrl || !videoUrl.trim()) return;
+    function closeCatboxModal() {
+      document.getElementById('catboxModal').classList.remove('active');
+    }
 
-      const videoName = prompt("Enter a title/name for this video:", "Operation Video");
-      const title = videoName && videoName.trim() ? videoName.trim() : "Operation Video";
+    async function saveCatboxLink() {
+      const folder = document.getElementById('uploadFolderSelect').value;
+      if (!folder) { setCatboxError('Please close this box and select a folder first.'); return; }
 
-      statusText.innerHTML = `<span style="color: var(--primary);">Adding video link...</span>`;
+      const info = checkCatboxMediaLink(document.getElementById('catboxUrlInput').value.trim());
+      if (info.error) { setCatboxError(info.error); return; }
+      if (liveMediaItems.some(item => item.url === info.url && item.folder === folder)) {
+        setCatboxError('This link is already in this folder.');
+        return;
+      }
 
+      const btn = document.getElementById('btnSaveCatbox');
+      const statusText = document.getElementById('uploadStatusText');
+      btn.disabled = true;
+      setCatboxError('');
       try {
         await mediaRef.push({
-          url: videoUrl.trim(),
+          url: info.url,
           folder: folder,
-          name: title,
+          name: deriveCatboxName(info, document.getElementById('catboxNameInput').value),
           size: 0,
-          isVideo: true,
+          isVideo: info.isVideo,
           viewsCount: 0,
           downloadsCount: 0,
           timestamp: Date.now()
         });
-
-        statusText.innerHTML = `<span style="color: #10b981;">Video link added successfully!</span>`;
+        closeCatboxModal();
+        statusText.innerHTML = `<span style="color: #10b981;">${info.isVideo ? 'Video' : 'Photo'} added from Catbox!</span>`;
         setTimeout(() => {
           statusText.textContent = "Select destination category and choose photos or videos";
         }, 3000);
       } catch (err) {
-        alert("Failed to save video link: " + err.message);
+        setCatboxError('Could not save the link: ' + err.message);
+        btn.disabled = false;
       }
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (!document.getElementById('catboxModal').classList.contains('active')) return;
+      if (e.key === 'Escape') closeCatboxModal();
+      if (e.key === 'Enter') saveCatboxLink();
+    });
 
     function formatBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return '0 KB';
@@ -1889,26 +2015,42 @@
         return;
       }
 
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
+      const saveName = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
+      const saveBlob = (blob) => {
         const blobUrl = window.URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = blobUrl;
-        a.download = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
+        a.download = saveName;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      } catch (err) {
-        const a = document.createElement('a');
-        a.href = fileUrl;
-        a.download = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 4000);
+      };
+      const fetchBlob = async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.blob();
+      };
+
+      try {
+        let done = false;
+        try { saveBlob(await fetchBlob(fileUrl)); done = true; } catch (err) { /* try the next way */ }
+
+        // Catbox files the browser is not allowed to read directly come through the Worker
+        if (!done && isCatboxLink(fileUrl)) {
+          try { saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`)); done = true; } catch (err) { /* open it instead */ }
+        }
+
+        if (!done) {
+          const a = document.createElement('a');
+          a.href = fileUrl;
+          a.download = saveName;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -1946,6 +2088,7 @@
         const matchedFolder = foldersList.find(f => f.id === item.folder);
         const folderLabel = matchedFolder ? matchedFolder.label : 'Standard';
         const formattedSize = formatBytes(item.size);
+        const source = getFileSource(item.url);
 
         // BANDWIDTH OPTIMIZATION: Transform image preview URL for lightweight 400px thumbnail delivery
         const optimizedThumbUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 400);
@@ -1966,6 +2109,7 @@
               <div class="media-badges-group">
                 <div class="media-badges-row">
                   <span class="media-badge ${item.isVideo ? 'video-tag' : ''}">${item.isVideo ? 'SD Video' : 'Image'}</span>
+                  <span class="media-badge src ${source.cls}" title="Stored on ${source.label}"><span class="material-symbols-outlined">${source.icon}</span>${source.label}</span>
                 </div>
                 <span class="media-size-label">${formattedSize}</span>
               </div>
