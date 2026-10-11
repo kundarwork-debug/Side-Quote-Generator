@@ -612,6 +612,20 @@
       color: #ffffff;
     }
 
+    /* ---- Save a link (Catbox) ---- */
+    .link-card { border-color: var(--border-subtle) !important; text-align: left !important; }
+    .link-card h3, .link-card > p { text-align: center; }
+    .link-icon { width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .link-label { display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 6px; }
+    .link-field { width: 100%; padding: 12px 16px; border: 1.5px solid #d1d5db; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 14px; transition: border-color 0.2s ease; font-family: inherit; }
+    .link-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.12); }
+    .link-open { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin: 0 auto 16px; }
+    .link-open:hover { text-decoration: underline; }
+    .link-error { color: #dc2626; font-size: 12.5px; font-weight: 700; margin: -6px 0 12px; min-height: 0; }
+    .btn-link-save { flex: 1; padding: 11px 16px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; background: var(--primary); color: #fff; transition: all 0.2s ease; }
+    .btn-link-save:hover { background: var(--primary-dark); }
+    .btn-link-save:disabled { opacity: 0.6; cursor: wait; }
+
     .drive-section-title {
       font-size: 13px;
       font-weight: 800;
@@ -1151,6 +1165,29 @@
 
   <div id="header-container"></div>
 
+  <!-- SAVE A LINK MODAL (Catbox or any direct file link) -->
+  <div class="delete-confirm-overlay" id="linkModal">
+    <div class="delete-confirm-modal link-card">
+      <div class="link-icon">
+        <span class="material-symbols-outlined" style="font-size: 32px;">add_link</span>
+      </div>
+      <h3>Save a file link</h3>
+      <p>Upload any file type at catbox.moe (up to 200 MB), then paste its link here. It is saved in the current folder and can be downloaded from the drive.</p>
+      <a class="link-open" href="https://catbox.moe" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span> Open catbox.moe to upload
+      </a>
+      <label class="link-label" for="linkUrlInput">File link</label>
+      <input type="url" id="linkUrlInput" class="link-field" placeholder="https://files.catbox.moe/abc123.pdf" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label class="link-label" for="linkNameInput">File name (optional)</label>
+      <input type="text" id="linkNameInput" class="link-field" placeholder="Leave empty to use the name from the link" maxlength="120" autocomplete="off">
+      <div class="link-error" id="linkError" hidden></div>
+      <div class="delete-modal-actions">
+        <button type="button" class="btn-modal-cancel" onclick="closeLinkModal()">Cancel</button>
+        <button type="button" class="btn-link-save" id="btnSaveLink" onclick="saveLinkToDrive()">Save Link</button>
+      </div>
+    </div>
+  </div>
+
   <!-- DELETE CONFIRMATION MODAL (GALLERY STYLE TYPE 'YES') -->
   <div class="delete-confirm-overlay" id="deleteConfirmModal">
     <div class="delete-confirm-modal">
@@ -1242,6 +1279,11 @@
           <span class="material-symbols-outlined" style="font-size: 18px;">upload_file</span>
           <span>Upload File</span>
         </button>
+
+        <button type="button" class="btn-drive-action" onclick="openLinkModal()" title="Save a Catbox (or any file) link into this folder">
+          <span class="material-symbols-outlined" style="font-size: 18px;">add_link</span>
+          <span>Catbox Link</span>
+        </button>
       </div>
     </div>
 
@@ -1284,6 +1326,9 @@
     const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
+    // Saved links (Catbox etc.) and the Worker that can fetch Catbox files when the browser is not allowed to
+    const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
     
     const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
     const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
@@ -1688,6 +1733,84 @@
       }
     }
 
+    // ---------- Save a link ----------
+    function openLinkModal() {
+      document.getElementById('linkUrlInput').value = '';
+      document.getElementById('linkNameInput').value = '';
+      setLinkError('');
+      document.getElementById('btnSaveLink').disabled = false;
+      document.getElementById('linkModal').classList.add('active');
+      setTimeout(() => document.getElementById('linkUrlInput').focus(), 60);
+    }
+
+    function closeLinkModal() {
+      document.getElementById('linkModal').classList.remove('active');
+    }
+
+    function setLinkError(msg) {
+      const el = document.getElementById('linkError');
+      el.textContent = msg;
+      el.hidden = !msg;
+    }
+
+    // Name shown in the drive: what you typed, otherwise the file name inside the link.
+    // If you typed a name without an extension, the extension from the link is added so the
+    // file keeps its type (needed for the badge, preview and the downloaded file).
+    function deriveLinkName(rawUrl, typedName) {
+      let fromUrl = '';
+      try {
+        const u = new URL(rawUrl);
+        fromUrl = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
+      } catch (e) {}
+      const urlExt = (fromUrl.match(/\.([A-Za-z0-9]{1,8})$/) || [])[1] || '';
+      let name = (typedName || '').trim();
+      if (!name) return fromUrl || 'Saved link';
+      if (urlExt && !/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + urlExt;
+      return name;
+    }
+
+    function isCatboxLink(url) {
+      try { return /(^|\.)catbox\.moe$/i.test(new URL(url).hostname); } catch (e) { return false; }
+    }
+
+    async function saveLinkToDrive() {
+      const raw = document.getElementById('linkUrlInput').value.trim();
+      let parsed;
+      try { parsed = new URL(raw); } catch (e) { parsed = null; }
+      if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')) {
+        setLinkError('Please paste a full link that starts with https://');
+        return;
+      }
+      const name = deriveLinkName(parsed.href, document.getElementById('linkNameInput').value);
+      const btn = document.getElementById('btnSaveLink');
+      btn.disabled = true;
+      setLinkError('');
+      try {
+        await driveFilesRef.push({
+          fileId: parsed.href,
+          parentId: currentParentId,
+          name: name,
+          size: 0,
+          timestamp: Date.now(),
+          source: 'link'
+        });
+        closeLinkModal();
+      } catch (err) {
+        setLinkError('Could not save the link: ' + err.message);
+        btn.disabled = false;
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const open = document.getElementById('linkModal').classList.contains('active');
+      if (!open) return;
+      if (e.key === 'Escape') closeLinkModal();
+      if (e.key === 'Enter') saveLinkToDrive();
+    });
+
+    // ---------- Download ----------
+    // 1) straight from the file's host  2) Catbox files through the Worker (when the browser is blocked)
+    // 3) last resort: open the link so the browser can handle it
     async function handleItemDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -1698,28 +1821,49 @@
         return;
       }
 
-      try {
-        const response = await fetch(fileUrl);
-        const blob = await response.blob();
+      const saveBlob = (blob) => {
         const blobUrl = window.URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = blobUrl;
         a.download = fileName || 'apml-asset';
         document.body.appendChild(a);
         a.click();
-        
         document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
+        setTimeout(() => window.URL.revokeObjectURL(blobUrl), 4000);
+      };
+      const fetchBlob = async (url) => {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.blob();
+      };
+
+      let firstError = null;
+      try {
+        saveBlob(await fetchBlob(fileUrl));
+        return;
       } catch (err) {
-        const a = document.createElement('a');
-        a.href = fileUrl;
-        a.download = fileName || 'apml-asset';
-        a.target = '_blank';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        firstError = err;
       }
+
+      if (isCatboxLink(fileUrl)) {
+        try {
+          saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`));
+          return;
+        } catch (err) { /* fall through to opening the link */ }
+      }
+
+      if (/cloudinary\.com/.test(fileUrl) && /401|403|404/.test(String(firstError && firstError.message))) {
+        alert('Cloudinary blocked this download (' + firstError.message + '). For PDF or ZIP files, enable "PDF and ZIP files delivery" in Cloudinary under Settings > Security.');
+      }
+
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = fileName || 'apml-asset';
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 
     async function openFilePreview(fileUrl, fileName) {
