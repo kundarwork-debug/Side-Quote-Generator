@@ -865,6 +865,29 @@
       font-weight: 800;
       text-transform: uppercase;
     }
+    .file-pill-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-width: 0;
+    }
+    .file-source-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 800;
+      max-width: 96px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-source-pill .material-symbols-outlined { font-size: 11px; }
+    .src-cloudinary { background: #eff6ff; color: #1d4ed8; }
+    .src-catbox { background: #fff7ed; color: #c2410c; }
+    .src-other { background: #f1f5f9; color: #475569; }
 
     .grid-card-footer {
       padding: 0 16px 16px 16px;
@@ -2007,6 +2030,15 @@
       return 'color: var(--primary);';
     }
 
+    // Where a file really lives: shown on every card so you can tell Cloudinary and Catbox files apart
+    function getFileSource(url) {
+      let host = '';
+      try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
+      if (host === 'cloudinary.com' || host.endsWith('.cloudinary.com')) return { label: 'Cloudinary', icon: 'cloud', cls: 'src-cloudinary' };
+      if (host === 'catbox.moe' || host.endsWith('.catbox.moe')) return { label: 'Catbox', icon: 'link', cls: 'src-catbox' };
+      return { label: host.replace(/^www\./, '') || 'Link', icon: 'link', cls: 'src-other' };
+    }
+
     function formatBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return 'Asset Link';
       const k = 1024;
@@ -2082,6 +2114,7 @@
               const iconName = getFileIcon(file.name, file.fileId);
               const extName = getFileExtension(file.name);
               const formattedSize = formatBytes(file.size);
+              const source = getFileSource(file.fileId);
               const formattedDate = formatTimestamp(file.timestamp);
               const themeClass = getThumbnailThemeClass(file.name, file.fileId);
               const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
@@ -2115,7 +2148,10 @@
                     <div class="file-name" title="${file.name}">${file.name}</div>
                     ${formattedDate ? `<div class="file-timestamp">${formattedDate}</div>` : ''}
                     <div class="file-details-row">
-                      <span class="file-type-pill">${extName}</span>
+                      <span class="file-pill-group">
+                        <span class="file-type-pill">${extName}</span>
+                        <span class="file-source-pill ${source.cls}" title="Stored on ${source.label}"><span class="material-symbols-outlined">${source.icon}</span>${source.label}</span>
+                      </span>
                       <span>${formattedSize}</span>
                     </div>
                   </div>
