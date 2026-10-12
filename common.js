@@ -230,7 +230,11 @@
           </div>
 
           <div class="footer-bottom-bar">
-            <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+            <!-- Left side with Cat Animation & Copyright -->
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <img src="https://echomusic.fun/assets/cat.gif" alt="Cute Cat Animation" style="width: 36px; height: 36px; object-fit: contain; image-rendering: pixelated;" />
+              <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+            </div>
             
             <div style="display: flex; align-items: center; gap: 16px;">
               <a href="about.html" class="footer-about-pill">
@@ -753,10 +757,7 @@
         e.preventDefault();
         if (isTyping) return;
 
-        tipIndex = (tipIndex + 1) / tipsArray.length; // Wait, % tipsArray.length
-        tipIndex = (tipIndex === Math.floor(tipIndex) ? tipIndex : 0); // safeguard
-        // Let's ensure standard modulo arithmetic:
-        tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
+        tipIndex = (tipIndex + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
       });
     }
