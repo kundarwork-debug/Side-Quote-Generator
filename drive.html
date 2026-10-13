@@ -8,6 +8,11 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.3">
   <link rel="stylesheet" href="common.css?v=22.3">
 
+  // 👉 TRIGGER FORMSPREE NOTIFICATION EMAIL ON DOWNLOAD
+if (window.sendPortalNotification) {
+  window.sendPortalNotification('Cloud Drive File Downloaded', `File Name: ${fileName || 'Unnamed'} | URL: ${fileUrl}`);
+}
+
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
