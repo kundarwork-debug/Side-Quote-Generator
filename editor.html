@@ -599,11 +599,28 @@
       display: none !important;
     }
   }
+
+/* "Creating your PDF" indicator: the spinner turns on the GPU, so it keeps moving even while the page is busy */
+.pdf-busy { position: fixed; inset: 0; z-index: 9999; background: rgba(15, 23, 42, 0.45); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; }
+.pdf-busy[hidden] { display: none; }
+.pdf-busy-card { background: #fff; color: #0f172a; border-radius: 18px; padding: 22px 28px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,.3); min-width: 220px; }
+.pdf-busy-card b { display: block; font-size: 15px; margin-top: 12px; }
+.pdf-busy-card span { display: block; font-size: 12px; color: #64748b; margin-top: 3px; }
+.pdf-spin { width: 34px; height: 34px; margin: 0 auto; border: 4px solid #fee2e2; border-top-color: #b91c1c; border-radius: 50%; animation: pdfspin .8s linear infinite; will-change: transform; }
+@keyframes pdfspin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
 <div class="ambient-glow"></div>
+
+<div class="pdf-busy" id="pdfBusy" hidden>
+  <div class="pdf-busy-card">
+    <div class="pdf-spin"></div>
+    <b>Creating your PDF…</b>
+    <span>This takes a few seconds</span>
+  </div>
+</div>
 
 <div id="header-container"></div>
 
@@ -720,63 +737,6 @@
 <div id="footer-container"></div>
 
 <script>
-// =========================================================
-// TELEGRAM & FIREBASE BACKGROUND STORAGE SYNC
-// =========================================================
-const BOT_TOKEN = "8937016793:AAG9mcEjxXh7GEY3m-c-8SuzdCaKTA5tw9M";
-const PRIMARY_CHAT_ID = "-1004302268775";
-const FALLBACK_CHAT_ID = "-4302268775";
-const ARCHIVE_FOLDER_KEY = 'quotations_archive_protected';
-
-function saveQuotationInBackground(pdfBlob, clientName, companyName) {
-  setTimeout(async () => {
-    try {
-      const cleanClient = clientName ? clientName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
-      const cleanCompany = companyName ? companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
-      const fileName = `${cleanClient}_${cleanCompany}.pdf`;
-      
-      const formData = new FormData();
-      formData.append('chat_id', PRIMARY_CHAT_ID);
-      formData.append('document', pdfBlob, fileName);
-      formData.append('caption', `📁 Automated Quotation Backup: ${cleanClient} — ${cleanCompany}`);
-
-      let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-        method: 'POST',
-        body: formData
-      });
-      
-      let data = await res.json();
-      if (!data.ok) {
-        formData.set('chat_id', FALLBACK_CHAT_ID);
-        res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, {
-          method: 'POST',
-          body: formData
-        });
-        data = await res.json();
-      }
-
-      if (data.ok && data.result.document) {
-        const fileId = data.result.document.file_id;
-        
-        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
-          const db = firebase.database();
-          const filesRef = db.ref("telegram_gdrive_files");
-
-          await filesRef.push({
-            fileId: fileId,
-            parentId: ARCHIVE_FOLDER_KEY,
-            name: fileName,
-            size: pdfBlob.size || 0,
-            timestamp: Date.now()
-          });
-        }
-      }
-    } catch (err) {
-      console.error("Silent background sync error:", err);
-    }
-  }, 200);
-}
-
 // =========================================================
 // AUTOSAVE TO APML CLOUD DRIVE (drive.html) -> "Quotation" folder
 // =========================================================
@@ -1344,6 +1304,24 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   renderAll();
 });
 
+// ---- PDF settings (lower PDF_SCALE = faster but slightly softer text; 2 is sharp, 1.5 is a good "fast" setting) ----
+const PDF_SCALE = 2;
+const PDF_JPEG_QUALITY = 0.9;
+
+// lets the browser actually draw the spinner before the heavy work starts
+const nextPaint = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+function saveBlobAsFile(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
     alert("Please fill in customer details before downloading.");
@@ -1352,10 +1330,13 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
   const btn = document.getElementById('downloadBtn');
   const status = document.getElementById('statusMsg');
+  const busy = document.getElementById('pdfBusy');
   btn.disabled = true;
   const originalText = btn.textContent;
   btn.textContent = 'Preparing PDF…';
   status.textContent = '';
+  busy.hidden = false;
+  await nextPaint();                       // show the spinner first, then start the heavy part
 
   const node = document.getElementById('previewA4');
   const stage = document.querySelector('.stage');
@@ -1365,7 +1346,16 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const originalPosition = node.style.position;
   const originalLeft = node.style.left;
   const originalTransform = node.style.transform;
+  const restorePreview = () => {
+    stage.style.removeProperty('display');
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
+  };
 
+  const marks = { start: performance.now() };
   try {
     stage.style.setProperty('display', 'block', 'important');
     node.style.width = '794px';
@@ -1375,19 +1365,22 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     node.style.transform = 'none';
 
     const canvas = await html2canvas(node, {
-      scale: 2,
+      scale: PDF_SCALE,
       useCORS: true,
       backgroundColor: '#ffffff',
       width: 794,
-      windowWidth: 794
+      windowWidth: 794,
+      logging: false
     });
+    marks.captured = performance.now();
 
-    stage.style.removeProperty('display');
-    node.style.width = originalWidth;
-    node.style.minHeight = originalMinHeight;
-    node.style.position = originalPosition;
-    node.style.left = originalLeft;
-    node.style.transform = originalTransform;
+    restorePreview();
+
+    // encode the picture off the main thread, and hand the bytes to jsPDF without a base64 detour
+    let jpegBytes;
+    const jpegBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', PDF_JPEG_QUALITY));
+    if (jpegBlob) jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+    marks.encoded = performance.now();
 
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
@@ -1407,36 +1400,42 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       xOffset = (pageW - imgW) / 2;
     }
 
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    pdf.addImage(imgData, 'JPEG', xOffset, yOffset, imgW, imgH);
+    pdf.addImage(jpegBytes || canvas.toDataURL('image/jpeg', PDF_JPEG_QUALITY), 'JPEG', xOffset, yOffset, imgW, imgH);
 
     const d = state[active];
     const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
     const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
     const filename = `${cleanClient}_${cleanCompany}.pdf`;
-    
-    // 1. Instant local download
-    pdf.save(filename);
-    const pdfBlob = pdf.output('blob');
 
-    // 2. Background sync to Telegram and Firebase Cloud Drive (Quotations Archive)
-    saveQuotationInBackground(pdfBlob, shared.custName, d.companyName);
+    // build the file once; the same copy is downloaded and sent to the archive
+    const pdfBlob = pdf.output('blob');
+    marks.built = performance.now();
+
+    // 1. Instant local download
+    saveBlobAsFile(pdfBlob, filename);
+
+    // 2. Background copy into the Drive (Quotation folder)
     saveQuotationToDrive(pdfBlob, filename);
 
     incrementPdfDownloadCount();
 
     status.textContent = 'Downloaded ✓';
+
+    // where the time went, visible in the browser console (F12)
+    console.log('[PDF timing ms]', {
+      pageCapture: Math.round(marks.captured - marks.start),
+      jpegEncode: Math.round(marks.encoded - marks.captured),
+      buildPdf: Math.round(marks.built - marks.encoded),
+      total: Math.round(marks.built - marks.start),
+      scale: PDF_SCALE,
+      sizeKB: Math.round(pdfBlob.size / 1024)
+    });
   } catch (err) {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
-    
-    stage.style.removeProperty('display');
-    node.style.width = originalWidth;
-    node.style.minHeight = originalMinHeight;
-    node.style.position = originalPosition;
-    node.style.left = originalLeft;
-    node.style.transform = originalTransform;
+    restorePreview();
   } finally {
+    busy.hidden = true;
     btn.disabled = false;
     btn.textContent = originalText;
   }
