@@ -12,6 +12,29 @@
 })();
 
 // =========================================================
+// FORMSPREE NOTIFICATION HELPER
+// =========================================================
+window.sendPortalNotification = async function(actionType, details) {
+  try {
+    await fetch('https://formspree.io/f/xljgpnak', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        subject: `🔔 APML Portal Alert: ${actionType}`,
+        action: actionType,
+        details: details,
+        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+      })
+    });
+  } catch (err) {
+    console.warn('Notification dispatch failed:', err);
+  }
+};
+
+// =========================================================
 // APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
 // =========================================================
 (function initCommonLayout() {
@@ -664,9 +687,6 @@
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // Scroll Controller for FAB:
-    // - On index.html: Hidden on hero section, reveals when scrolled down past ~250px, hides near footer.
-    // - On other pages: Always visible unless near the footer.
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const scrollPosition = scrollY + window.innerHeight;
@@ -691,7 +711,6 @@
       }
     }, { passive: true });
 
-    // Typewriter Effect Function with Auto-Hide (cancellable)
     let hideTimer = null;
     let isTyping = false;
     let typeToken = 0;
@@ -753,9 +772,6 @@
         e.preventDefault();
         if (isTyping) return;
 
-        tipIndex = (tipIndex + 1) / tipsArray.length; // Wait, % tipsArray.length
-        tipIndex = (tipIndex === Math.floor(tipIndex) ? tipIndex : 0); // safeguard
-        // Let's ensure standard modulo arithmetic:
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
       });
