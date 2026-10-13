@@ -23,6 +23,7 @@ window.sendPortalNotification = async function(actionType, details) {
         'Accept': 'application/json'
       },
       body: JSON.stringify({
+        email: 'kundar.work@gmail.com', // Required by Formspree to route notifications correctly
         subject: `🔔 APML Portal Alert: ${actionType}`,
         action: actionType,
         details: details,
