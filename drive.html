@@ -1776,9 +1776,6 @@
       el.hidden = !msg;
     }
 
-    // Name shown in the drive: what you typed, otherwise the file name inside the link.
-    // If you typed a name without an extension, the extension from the link is added so the
-    // file keeps its type (needed for the badge, preview and the downloaded file).
     function deriveLinkName(rawUrl, typedName) {
       let fromUrl = '';
       try {
@@ -1832,12 +1829,15 @@
     });
 
     // ---------- Download ----------
-    // 1) straight from the file's host  2) Catbox files through the Worker (when the browser is blocked)
-    // 3) last resort: open the link so the browser can handle it
     async function handleItemDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
+
+      // 👉 TRIGGER FORMSPREE NOTIFICATION EMAIL ON DOWNLOAD
+      if (window.sendPortalNotification) {
+        window.sendPortalNotification('Cloud Drive File Downloaded', `File Name: ${fileName \vert{}\vert{} 'Unnamed'} \vert{} URL:${fileUrl}`);
+      }
 
       if (!fileUrl) {
         alert("File URL is missing.");
@@ -2030,7 +2030,6 @@
       return 'color: var(--primary);';
     }
 
-    // Where a file really lives: shown on every card so you can tell Cloudinary and Catbox files apart
     function getFileSource(url) {
       let host = '';
       try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
