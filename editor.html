@@ -1414,6 +1414,18 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     // 1. Instant local download
     saveBlobAsFile(pdfBlob, filename);
 
+    // email alert: a quotation PDF was made
+    try {
+      if (window.APMNotify) {
+        window.APMNotify.send({
+          type: 'pdf',
+          title: 'PDF generated',
+          file: filename,
+          details: { Customer: shared.custName, Company: d.companyName, Route: shared.fromCity + ' to ' + shared.toCity }
+        });
+      }
+    } catch (e) {}
+
     // 2. Background copy into the Drive (Quotation folder)
     saveQuotationToDrive(pdfBlob, filename);
 
@@ -1445,6 +1457,7 @@ document.getElementById('dateStamp').textContent = new Date().toLocaleDateString
 renderAll();
 </script>
 
+<script src="notify.js?v=1"></script>
 <script src="common.js?v=18.0"></script>
 </body>
 </html>
