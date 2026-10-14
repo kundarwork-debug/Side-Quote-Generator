@@ -1353,6 +1353,7 @@
 
   <div id="header-container"></div>
 
+  <script src="notify.js?v=1"></script>
   <script src="common.js?v=22.1"></script>
 
   <!-- FIREBASE SDKs -->
@@ -2014,6 +2015,25 @@
         }
         return;
       }
+
+      // email alert: a photo or video was downloaded from the Gallery
+      try {
+        if (window.APMNotify) {
+          const itemRec = liveMediaItems.find(x => x.key === firebaseKey);
+          const folderRec = itemRec ? foldersList.find(f => f.id === itemRec.folder) : null;
+          window.APMNotify.send({
+            type: 'gallery',
+            title: isVideo ? 'Gallery video downloaded' : 'Gallery photo downloaded',
+            file: fileName,
+            link: fileUrl,
+            details: {
+              Folder: folderRec ? folderRec.label : (itemRec ? itemRec.folder : ''),
+              Stored_on: getFileSource(fileUrl).label,
+              Size: itemRec && itemRec.size ? formatBytes(itemRec.size) : ''
+            }
+          });
+        }
+      } catch (e) {}
 
       const saveName = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
       const saveBlob = (blob) => {
