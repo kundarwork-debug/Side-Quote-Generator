@@ -163,4 +163,3 @@ function offlineResponse() {
     { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
   );
 }
-```[cite: 7]
