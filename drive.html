@@ -8,11 +8,6 @@
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.3">
   <link rel="stylesheet" href="common.css?v=22.3">
 
-  // 👉 TRIGGER FORMSPREE NOTIFICATION EMAIL ON DOWNLOAD
-if (window.sendPortalNotification) {
-  window.sendPortalNotification('Cloud Drive File Downloaded', `File Name: ${fileName || 'Unnamed'} | URL: ${fileUrl}`);
-}
-
   <!-- GOOGLE FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -1336,6 +1331,7 @@ if (window.sendPortalNotification) {
 
   <div id="header-container"></div>
 
+  <script src="notify.js?v=1"></script>
   <script src="common.js?v=22.3"></script>
 
   <!-- FIREBASE SDKs -->
@@ -1792,9 +1788,11 @@ if (window.sendPortalNotification) {
       } catch (e) {}
       const urlExt = (fromUrl.match(/\.([A-Za-z0-9]{1,8})$/) || [])[1] || '';
       let name = (typedName || '').trim();
-      if (!name) return fromUrl || 'Saved link';
-      if (urlExt && !/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + urlExt;
-      return name;
+      if (name && urlExt && !/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + urlExt;
+      if (!name) name = fromUrl;
+      // quotes and brackets are removed because names are placed inside page buttons
+      name = name.replace(/['"`<>\\]/g, '').trim();
+      return name || 'Saved link';
     }
 
     function isCatboxLink(url) {
@@ -1836,6 +1834,21 @@ if (window.sendPortalNotification) {
       if (e.key === 'Enter') saveLinkToDrive();
     });
 
+    // "My Drive / Quotation / 2026" for a folder id, used in the download alert email
+    function driveFolderPath(parentId) {
+      const names = [];
+      let id = parentId;
+      const seen = new Set();
+      while (id && id !== 'root' && !seen.has(id)) {
+        seen.add(id);
+        const f = liveFolders.find(x => x.key === id);
+        if (!f) break;
+        names.unshift(f.name);
+        id = f.parentId;
+      }
+      return ['My Drive'].concat(names).join(' / ');
+    }
+
     // ---------- Download ----------
     // 1) straight from the file's host  2) Catbox files through the Worker (when the browser is blocked)
     // 3) last resort: open the link so the browser can handle it
@@ -1848,6 +1861,24 @@ if (window.sendPortalNotification) {
         alert("File URL is missing.");
         return;
       }
+
+      // email alert: a file was downloaded from the Drive
+      try {
+        if (window.APMNotify) {
+          const fileRec = liveFiles.find(x => x.key === firebaseKey);
+          window.APMNotify.send({
+            type: 'drive',
+            title: 'Drive file downloaded',
+            file: fileName,
+            link: fileUrl,
+            details: {
+              Folder: driveFolderPath(fileRec ? fileRec.parentId : 'root'),
+              Stored_on: getFileSource(fileUrl).label,
+              Size: fileRec && fileRec.size ? formatBytes(fileRec.size) : ''
+            }
+          });
+        }
+      } catch (e) {}
 
       const saveBlob = (blob) => {
         const blobUrl = window.URL.createObjectURL(blob);
