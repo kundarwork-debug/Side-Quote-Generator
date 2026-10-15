@@ -1,7 +1,8 @@
 /* =====================================================================
    APML download alerts (Telegram)
-   Sends a short Telegram message whenever a file is downloaded: a PDF made in
-   the editor, or a file taken from the Drive or the Gallery.
+   Sends a short Telegram message whenever a file is downloaded (a PDF made in the
+   editor, or a file taken from the Drive or the Gallery) and when someone opens the
+   portal ("someone is online").
 
    The message goes to your Cloudflare Worker (/notify), which holds the bot token
    as a secret and talks to Telegram. No token or chat id is ever in a web page.
@@ -13,7 +14,10 @@
   'use strict';
 
   // ---------------- settings ----------------
-  var ENABLED = { pdf: true, drive: true, gallery: true };   // switch a kind off with false
+  var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
+
+  // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
+  var VISIT = { cooldownHours: 6, delayMs: 1500 };
   var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)
 
   // Limits that keep us well inside Telegram's rules (about 1 message a second per chat and
@@ -133,6 +137,55 @@
       } catch (e) {}
     }
   });
+
+  // ---------------- someone is online ----------------
+  function deviceText() {
+    var ua = navigator.userAgent || '';
+    var os = /Android/i.test(ua) ? 'Android' : /iPhone|iPad|iPod/i.test(ua) ? 'iOS' : /CrOS/i.test(ua) ? 'ChromeOS' : /Windows/i.test(ua) ? 'Windows' : /Mac OS X/i.test(ua) ? 'Mac' : /Linux/i.test(ua) ? 'Linux' : 'Unknown OS';
+    var br = /Edg\//i.test(ua) ? 'Edge' : /OPR\//i.test(ua) ? 'Opera' : /Firefox\//i.test(ua) ? 'Firefox' : /Chrome\//i.test(ua) ? 'Chrome' : /Safari\//i.test(ua) ? 'Safari' : 'Browser';
+    return os + ' / ' + br;
+  }
+  function pageName() {
+    return window.location.pathname.split('/').pop() || 'index.html';
+  }
+  // search engines, link previews and monitoring services are not people
+  function looksLikeBot() {
+    try {
+      if (navigator.webdriver === true) return true;
+      return /bot\b|crawl|spider|slurp|headless|lighthouse|pagespeed|facebookexternalhit|TelegramBot|WhatsApp\/|Pingdom|UptimeRobot/i.test(navigator.userAgent || '');
+    } catch (e) { return false; }
+  }
+
+  function announceVisit() {
+    try {
+      if (ENABLED.visit === false || muted() || looksLikeBot()) return;
+      var now = Date.now();
+      var last = Number(localStorage.getItem('apml_visit_last') || 0);
+      if (last && now - last < VISIT.cooldownHours * 3600 * 1000) return;
+      localStorage.setItem('apml_visit_last', String(now));
+      // the Worker adds the rough location from the connection, and the time
+      send({ type: 'visit', title: 'Someone is online', file: pageName(), folder: deviceText() });
+    } catch (e) { /* ignore */ }
+  }
+
+  // wait a moment, and until the tab is really on screen, so pre-loads and instant bounces do not count
+  function startVisit() {
+    setTimeout(function () {
+      if (document.visibilityState === 'hidden') {
+        var onShow = function () {
+          if (document.visibilityState === 'visible') {
+            document.removeEventListener('visibilitychange', onShow);
+            announceVisit();
+          }
+        };
+        document.addEventListener('visibilitychange', onShow);
+      } else {
+        announceVisit();
+      }
+    }, VISIT.delayMs);
+  }
+  if (document.readyState === 'complete') startVisit();
+  else window.addEventListener('load', startVisit);
 
   window.APMNotify = { send: send };
 })();
