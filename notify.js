@@ -17,7 +17,7 @@
   var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
 
   // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
-  var VISIT = { cooldownHours: 6, delayMs: 1500 };
+  var VISIT = { cooldownHours: 0.5, delayMs: 1500 };
   var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)
 
   // Limits that keep us well inside Telegram's rules (about 1 message a second per chat and
