@@ -794,7 +794,7 @@ window.sendPortalNotification = function () {};
     if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
   }
   var s = document.createElement('script');
-  s.src = base + 'notify.js?v=3';
+  s.src = base + 'notify.js?v=4';
   s.async = true;
   document.head.appendChild(s);
 })();
