@@ -12,28 +12,11 @@
 })();
 
 // =========================================================
-// FORMSPREE NOTIFICATION HELPER
+// EMAIL ALERTS REMOVED
+// Alerts now go to Telegram through notify.js. This empty function stays only so that any page
+// that still calls window.sendPortalNotification(...) keeps working: it sends nothing anywhere.
 // =========================================================
-window.sendPortalNotification = async function(actionType, details) {
-  try {
-    await fetch('https://formspree.io/f/xljgpnak', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        email: 'kundar.work@gmail.com', // Required by Formspree to route notifications correctly
-        subject: `🔔 APML Portal Alert: ${actionType}`,
-        action: actionType,
-        details: details,
-        timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
-      })
-    });
-  } catch (err) {
-    console.warn('Notification dispatch failed:', err);
-  }
-};
+window.sendPortalNotification = function () {};
 
 // =========================================================
 // APML COMMON HEADER, FOOTER & ROUTE DETECTION SCRIPT
@@ -797,4 +780,21 @@ window.sendPortalNotification = async function(actionType, details) {
       if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
     }
   });
+})();
+
+// ---------------------------------------------------------------------
+// ALERTS: make sure notify.js (Telegram download + "someone is online" alerts) is loaded on every
+// page. Pages that already include it themselves are skipped.
+// ---------------------------------------------------------------------
+(function loadNotify() {
+  if (window.APMNotify) return;
+  var base = '';
+  var tags = document.getElementsByTagName('script');
+  for (var i = 0; i < tags.length; i++) {
+    if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
+  }
+  var s = document.createElement('script');
+  s.src = base + 'notify.js?v=3';
+  s.async = true;
+  document.head.appendChild(s);
 })();
