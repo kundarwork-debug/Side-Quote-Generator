@@ -2,7 +2,8 @@
    APML download alerts (Telegram)
    Sends a short Telegram message whenever a file is downloaded (a PDF made in the
    editor, or a file taken from the Drive or the Gallery) and when someone opens the
-   portal ("someone is online").
+   portal. The Worker adds the live numbers to every message: people online now, total
+   PDFs generated and total media downloaded.
 
    The message goes to your Cloudflare Worker (/notify), which holds the bot token
    as a secret and talks to Telegram. No token or chat id is ever in a web page.
@@ -17,7 +18,17 @@
   var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
 
   // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
-  var VISIT = { cooldownHours: 0.5, delayMs: 1500 };
+  var VISIT = { cooldownHours: 6, delayMs: 1500 };
+
+  // Live "online now" count. Every open, visible page checks in with your Firebase database every few seconds;
+  // a visitor counts as online while their last check-in is recent. Only a random id, the page name and the
+  // time are stored (nothing personal). The Worker reads these check-ins and cleans up old ones.
+  var PRESENCE = {
+    enabled: true,
+    dbUrl: 'https://apml-portal-default-rtdb.firebaseio.com',
+    path: 'apml_presence',
+    beatSeconds: 20        // how often a visible page checks in (the Worker counts a visitor as online for 50 seconds after that)
+  };
   var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)
 
   // Limits that keep us well inside Telegram's rules (about 1 message a second per chat and
@@ -156,6 +167,44 @@
     } catch (e) { return false; }
   }
 
+  // ---------------- who is online right now ----------------
+  function presenceOn() {
+    return PRESENCE.enabled && ENABLED.visit !== false && !muted() && !looksLikeBot();
+  }
+  function presenceId() {
+    try {
+      var id = localStorage.getItem('apml_presence_id');
+      if (!id) {
+        id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+        localStorage.setItem('apml_presence_id', id);   // one id per browser, so several tabs count as one person
+      }
+      return id;
+    } catch (e) {
+      window.__apmPresenceId = window.__apmPresenceId || Math.random().toString(36).slice(2, 10);
+      return window.__apmPresenceId;
+    }
+  }
+  function presenceUrl(id) {
+    return PRESENCE.dbUrl + '/' + PRESENCE.path + (id ? '/' + encodeURIComponent(id) : '') + '.json';
+  }
+  // check in: the time comes from Firebase's own clock, so wrong clocks on phones cannot skew the count
+  function beat() {
+    if (document.visibilityState === 'hidden') return Promise.resolve();
+    return fetch(presenceUrl(presenceId()), {
+      method: 'PUT',
+      body: JSON.stringify({ t: { '.sv': 'timestamp' }, p: pageName() }),
+      keepalive: true
+    }).then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); });
+  }
+  function startPresence() {
+    if (!presenceOn()) return;
+    beat().catch(function () {});
+    setInterval(function () { beat().catch(function () {}); }, PRESENCE.beatSeconds * 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') beat().catch(function () {});
+    });
+  }
+
   function announceVisit() {
     try {
       if (ENABLED.visit === false || muted() || looksLikeBot()) return;
@@ -163,8 +212,11 @@
       var last = Number(localStorage.getItem('apml_visit_last') || 0);
       if (last && now - last < VISIT.cooldownHours * 3600 * 1000) return;
       localStorage.setItem('apml_visit_last', String(now));
-      // the Worker adds the rough location from the connection, and the time
-      send({ type: 'visit', title: 'Someone is online', file: pageName(), folder: deviceText() });
+
+      var evt = { type: 'visit', title: 'Someone is online', file: pageName(), folder: deviceText() };
+      if (!PRESENCE.enabled) { send(evt); return; }
+      // check in first, so this visitor is part of the count the Worker reads; if that fails, send the alert anyway
+      beat().then(function () { send(evt); }, function () { send(evt); });
     } catch (e) { /* ignore */ }
   }
 
@@ -184,8 +236,9 @@
       }
     }, VISIT.delayMs);
   }
-  if (document.readyState === 'complete') startVisit();
-  else window.addEventListener('load', startVisit);
+  function startAll() { startPresence(); startVisit(); }
+  if (document.readyState === 'complete') startAll();
+  else window.addEventListener('load', startAll);
 
   window.APMNotify = { send: send };
 })();
