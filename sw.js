@@ -7,9 +7,9 @@
    - Live data (Firebase, Supabase, Cloudinary, your Workers): never touched.
 
    To force every visitor to drop old copies after a big change, just bump
-   VERSION below (for example 'v3').
+   VERSION below (for example 'v4').
    ===================================================================== */
-const VERSION = 'v3';
+const VERSION = 'v4';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
@@ -31,6 +31,7 @@ const PRECACHE = [
   'gallery.html',
   'dump.html',
   'common.js',
+  'notify.js',
   'common.css',
   'logo.svg',
   'manifest.json'
