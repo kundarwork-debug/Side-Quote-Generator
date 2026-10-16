@@ -240,5 +240,5 @@
   if (document.readyState === 'complete') startAll();
   else window.addEventListener('load', startAll);
 
-  window.APMNotify = { send: send };
+  window.APMNotify = { send: send, version: 4 };   // type APMNotify.version in the browser console to see which copy a page is running
 })();
