@@ -2,8 +2,11 @@
    APML download alerts (Telegram)
    Sends a short Telegram message whenever a file is downloaded (a PDF made in the
    editor, or a file taken from the Drive or the Gallery) and when someone opens the
-   portal. The Worker adds the live numbers to every message: people online now, total
-   PDFs generated and total media downloaded.
+   portal. The Worker adds the live numbers to every message: people online now (the same
+   count the home page shows), total PDFs generated and total media downloaded.
+
+   It also shows announcements: a message sent to the Telegram group with /announce appears in
+   the floating avatar's speech bubble on every page, until it expires or /cancel is sent.
 
    The message goes to your Cloudflare Worker (/notify), which holds the bot token
    as a secret and talks to Telegram. No token or chat id is ever in a web page.
@@ -20,16 +23,16 @@
   // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
   var VISIT = { cooldownHours: 6, delayMs: 1500 };
 
-  // Live "online now" count. Every open, visible page checks in with your Firebase database every few seconds;
-  // a visitor counts as online while their last check-in is recent. Only a random id, the page name and the
-  // time are stored (nothing personal). The Worker reads these check-ins and cleans up old ones.
-  var PRESENCE = {
+  // Announcements: shown by the floating avatar. The page asks your Worker whether one is live.
+  var ANNOUNCE = {
     enabled: true,
-    dbUrl: 'https://apml-portal-default-rtdb.firebaseio.com',
-    path: 'apml_presence',
-    beatSeconds: 20        // how often a visible page checks in (the Worker counts a visitor as online for 50 seconds after that)
+    url: 'https://apml-drive-api.kundar-work.workers.dev/announcement',
+    pollSeconds: 180,      // how often a page checks for a new or cancelled announcement
+    repeatSeconds: 300,    // while one is live, the avatar says it again this often (page open and visible)
+    firstDelayMs: 2500,    // wait after the page opens before saying it
+    quietSeconds: 120,     // opening another page within this time does not repeat it straight away
+    holdMs: 20000          // how long the speech bubble stays open (on pages where it normally closes by itself)
   };
-  var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)
 
   // Limits that keep us well inside Telegram's rules (about 1 message a second per chat and
   // 20 a minute in a group). A quick burst of downloads becomes ONE summary message.
@@ -167,44 +170,6 @@
     } catch (e) { return false; }
   }
 
-  // ---------------- who is online right now ----------------
-  function presenceOn() {
-    return PRESENCE.enabled && ENABLED.visit !== false && !muted() && !looksLikeBot();
-  }
-  function presenceId() {
-    try {
-      var id = localStorage.getItem('apml_presence_id');
-      if (!id) {
-        id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
-        localStorage.setItem('apml_presence_id', id);   // one id per browser, so several tabs count as one person
-      }
-      return id;
-    } catch (e) {
-      window.__apmPresenceId = window.__apmPresenceId || Math.random().toString(36).slice(2, 10);
-      return window.__apmPresenceId;
-    }
-  }
-  function presenceUrl(id) {
-    return PRESENCE.dbUrl + '/' + PRESENCE.path + (id ? '/' + encodeURIComponent(id) : '') + '.json';
-  }
-  // check in: the time comes from Firebase's own clock, so wrong clocks on phones cannot skew the count
-  function beat() {
-    if (document.visibilityState === 'hidden') return Promise.resolve();
-    return fetch(presenceUrl(presenceId()), {
-      method: 'PUT',
-      body: JSON.stringify({ t: { '.sv': 'timestamp' }, p: pageName() }),
-      keepalive: true
-    }).then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); });
-  }
-  function startPresence() {
-    if (!presenceOn()) return;
-    beat().catch(function () {});
-    setInterval(function () { beat().catch(function () {}); }, PRESENCE.beatSeconds * 1000);
-    document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'visible') beat().catch(function () {});
-    });
-  }
-
   function announceVisit() {
     try {
       if (ENABLED.visit === false || muted() || looksLikeBot()) return;
@@ -213,10 +178,8 @@
       if (last && now - last < VISIT.cooldownHours * 3600 * 1000) return;
       localStorage.setItem('apml_visit_last', String(now));
 
-      var evt = { type: 'visit', title: 'Someone is online', file: pageName(), folder: deviceText() };
-      if (!PRESENCE.enabled) { send(evt); return; }
-      // check in first, so this visitor is part of the count the Worker reads; if that fails, send the alert anyway
-      beat().then(function () { send(evt); }, function () { send(evt); });
+      // the Worker adds the rough location, the time and the live numbers
+      send({ type: 'visit', title: 'Someone is online', file: pageName(), folder: deviceText() });
     } catch (e) { /* ignore */ }
   }
 
@@ -236,9 +199,63 @@
       }
     }, VISIT.delayMs);
   }
-  function startAll() { startPresence(); startVisit(); }
+  // ---------------- announcements ----------------
+  var annNow = null, annLastPoll = 0, annLastShown = 0;
+
+  function annAvatarMark() {
+    var b = document.getElementById('supportAvatarBtn');
+    if (b) b.classList.toggle('apml-announce', !!annNow);
+  }
+  function annPoll() {
+    annLastPoll = Date.now();
+    return fetch(ANNOUNCE.url, { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : { active: false }; })
+      .then(function (j) {
+        annNow = (j && j.active && j.text && (!j.expiresAt || j.expiresAt > Date.now())) ? j : null;
+        annAvatarMark();
+      })
+      .catch(function () { /* offline or Worker down: keep what we had */ });
+  }
+  function annSeen() {
+    try { return JSON.parse(localStorage.getItem('apml_ann_seen') || '{}'); } catch (e) { return {}; }
+  }
+  function annShow(force) {
+    if (!annNow || document.visibilityState === 'hidden') return;
+    if (!window.APMLMascot || typeof window.APMLMascot.say !== 'function') return;
+    var seen = annSeen(), now = Date.now();
+    // the same announcement is not repeated straight away when someone moves between pages
+    if (!force && seen.id === annNow.id && now - (seen.t || 0) < ANNOUNCE.quietSeconds * 1000) { annLastShown = seen.t; return; }
+    window.APMLMascot.say(annNow.text, { hold: ANNOUNCE.holdMs });
+    annLastShown = now;
+    try { localStorage.setItem('apml_ann_seen', JSON.stringify({ id: annNow.id, t: now })); } catch (e) {}
+  }
+  function startAnnouncements() {
+    if (!ANNOUNCE.enabled) return;
+    try {
+      var st = document.createElement('style');
+      st.textContent = '.support-btn.apml-announce{animation:apmlPing 1.8s ease-in-out infinite}' +
+        '@keyframes apmlPing{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.55)}50%{box-shadow:0 0 0 12px rgba(185,28,28,0)}}';
+      document.head.appendChild(st);
+    } catch (e) {}
+    annPoll().then(function () { setTimeout(function () { annShow(false); }, ANNOUNCE.firstDelayMs); });
+    setInterval(function () {
+      if (document.visibilityState === 'hidden') return;
+      var now = Date.now();
+      if (now - annLastPoll >= ANNOUNCE.pollSeconds * 1000) {
+        annPoll().then(function () { if (annNow && Date.now() - annLastShown >= ANNOUNCE.repeatSeconds * 1000) annShow(true); });
+      } else {
+        annAvatarMark();
+        if (annNow && now - annLastShown >= ANNOUNCE.repeatSeconds * 1000) annShow(true);
+      }
+    }, 15000);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && Date.now() - annLastPoll >= 30000) annPoll();
+    });
+  }
+
+  function startAll() { startVisit(); startAnnouncements(); }
   if (document.readyState === 'complete') startAll();
   else window.addEventListener('load', startAll);
 
-  window.APMNotify = { send: send, version: 4 };   // type APMNotify.version in the browser console to see which copy a page is running
+  window.APMNotify = { send: send, version: 5 };   // type APMNotify.version in the browser console to see which copy a page is running
 })();
