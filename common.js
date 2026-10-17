@@ -699,7 +699,7 @@ window.sendPortalNotification = function () {};
     let isTyping = false;
     let typeToken = 0;
 
-    function playTypewriter(textToType, forceKeepOpen = false) {
+    function playTypewriter(textToType, forceKeepOpen = false, holdMs = 5000) {
       const typeText = document.getElementById('typewriter-text');
       const bubble = document.getElementById('supportBubble');
       const cursor = document.getElementById('typeCursor');
@@ -727,7 +727,7 @@ window.sendPortalNotification = function () {};
           if (!forceKeepOpen) {
             hideTimer = setTimeout(() => {
               if (myToken === typeToken) bubble.classList.remove('show');
-            }, 5000);
+            }, holdMs);
           }
           return;
         }
@@ -738,9 +738,10 @@ window.sendPortalNotification = function () {};
     }
 
     window.APMLMascot = {
-      say: function (text) {
+      // say("text") or say("text", { hold: 20000 }): hold = how long the bubble stays open (ms)
+      say: function (text, opts) {
         if (!text) return;
-        playTypewriter(String(text), isIndexPage);
+        playTypewriter(String(text), isIndexPage, (opts && Number(opts.hold)) || 5000);
       }
     };
 
@@ -794,7 +795,7 @@ window.sendPortalNotification = function () {};
     if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
   }
   var s = document.createElement('script');
-  s.src = base + 'notify.js?v=4';
+  s.src = base + 'notify.js?v=5';
   s.async = true;
   document.head.appendChild(s);
 })();
