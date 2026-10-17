@@ -5,8 +5,9 @@
    portal. The Worker adds the live numbers to every message: people online now (the same
    count the home page shows), total PDFs generated and total media downloaded.
 
-   It also shows announcements: a message sent to the Telegram group with /announce appears in
-   the floating avatar's speech bubble on every page, until it expires or /cancel is sent.
+   It also shows announcements: a message sent to the Telegram group with /announce is pinned in
+   the floating avatar's speech bubble on every page, and stays there until it expires (12 hours
+   by default) or /cancel is sent.
 
    The message goes to your Cloudflare Worker (/notify), which holds the bot token
    as a secret and talks to Telegram. No token or chat id is ever in a web page.
@@ -20,29 +21,24 @@
   // ---------------- settings ----------------
   var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
 
-  // "Someone is online": one alert per device, then quiet for this many hours (0.25 hours = 15 minutes)
-  var VISIT = { cooldownHours: 0.25, delayMs: 1500 };
-  var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)[cite: 3]
+  // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
+  var VISIT = { cooldownHours: 0.5, delayMs: 1500 };
 
-  // Announcements: shown by the floating avatar. The page asks your Worker whether one is live.
+  // Announcements: pinned in the floating avatar. The page asks your Worker whether one is live.
   var ANNOUNCE = {
     enabled: true,
     url: 'https://apml-drive-api.kundar-work.workers.dev/announcement',
-    pollSeconds: 180,      // how often a page checks for a new or cancelled announcement
-    repeatSeconds: 300,    // while one is live, the avatar says it again this often (page open and visible)
-    firstDelayMs: 2500,    // wait after the page opens before saying it
-    quietSeconds: 120,     // opening another page within this time does not repeat it straight away
-    holdMs: 20000          // how long the speech bubble stays open (on pages where it normally closes by itself)
+    pollSeconds: 60        // how often a visible page checks for a new or cancelled announcement
   };
 
   // Limits that keep us well inside Telegram's rules (about 1 message a second per chat and
   // 20 a minute in a group). A quick burst of downloads becomes ONE summary message.
   var TELEGRAM = {
     url: 'https://apml-drive-api.kundar-work.workers.dev/notify',
-    minGapMs: 1500,        // least time between two messages from one device[cite: 3]
-    maxPerMinute: 10,      // messages per minute from one device[cite: 3]
-    maxPerDay: 150,        // messages per day from one device[cite: 3]
-    digestMax: 15          // downloads shown in one summary message[cite: 3]
+    minGapMs: 1500,        // least time between two messages from one device
+    maxPerMinute: 10,      // messages per minute from one device
+    maxPerDay: 150,        // messages per day from one device
+    digestMax: 15          // downloads shown in one summary message
   };
 
   // Silence the alerts on one device (your own computer): open any page once with ?notify=off
@@ -104,11 +100,11 @@
     if (!pending.length) return;
     var now = Date.now();
     sentTimes = sentTimes.filter(function (t) { return now - t < 60000; });
-    if (sentTimes.length >= TELEGRAM.maxPerMinute) {            // per-minute limit reached: wait it out[cite: 3]
+    if (sentTimes.length >= TELEGRAM.maxPerMinute) {            // per-minute limit reached: wait it out
       timer = setTimeout(pump, 60000 - (now - sentTimes[0]) + 50);
       return;
     }
-    if (!dayAllowed()) { pending.length = 0; return; }           // daily limit reached: stop for today[cite: 3]
+    if (!dayAllowed()) { pending.length = 0; return; }           // daily limit reached: stop for today
     var batch = pending.splice(0, TELEGRAM.digestMax);
     lastSent = now;
     sentTimes.push(now);
@@ -122,11 +118,11 @@
 
   function post(batch) {
     try {
-      // text/plain keeps this a "simple" request, so the browser needs no extra permission check first[cite: 3]
+      // text/plain keeps this a "simple" request, so the browser needs no extra permission check first
       fetch(TELEGRAM.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: payload(batch), keepalive: true })
         .then(function (res) {
           return res.json().catch(function () { return {}; }).then(function (j) {
-            if (res.status === 429 && retries < 3) {              // told to wait: pause, then try this batch again[cite: 3]
+            if (res.status === 429 && retries < 3) {              // told to wait: pause, then try this batch again
               retries++;
               var secs = Math.min(60, Math.max(1, Number(j.retry_after) || 5));
               pausedUntil = Date.now() + secs * 1000;
@@ -200,36 +196,42 @@
       }
     }, VISIT.delayMs);
   }
-
   // ---------------- announcements ----------------
-  var annNow = null, annLastPoll = 0, annLastShown = 0;
+  var annNow = null, annPinned = '', annLastPoll = 0, annTries = 0;
 
   function annAvatarMark() {
     var b = document.getElementById('supportAvatarBtn');
     if (b) b.classList.toggle('apml-announce', !!annNow);
   }
+  // pin it in the avatar's bubble (the avatar is built a moment after the page opens, so wait for it)
+  function annApply() {
+    annAvatarMark();
+    var m = window.APMLMascot;
+    if (annNow) {
+      if (m && typeof m.pin === 'function') {
+        if (annPinned !== annNow.id) { m.pin(annNow.text); annPinned = annNow.id; }
+        else m.pin(annNow.text);               // harmless if it is already showing; brings it back if something replaced it
+      } else if (m && typeof m.say === 'function' && annPinned !== annNow.id) {
+        m.say(annNow.text, { hold: 20000 });   // an older common.js without pinning: show it once
+        annPinned = annNow.id;
+      } else if (!m && annTries < 40) {
+        annTries++; setTimeout(annApply, 300);
+      }
+    } else if (annPinned) {
+      if (m && typeof m.unpin === 'function') m.unpin();
+      annPinned = '';
+    }
+  }
   function annPoll() {
     annLastPoll = Date.now();
     return fetch(ANNOUNCE.url, { cache: 'no-store' })
-      .then(function (r) { return r.ok ? r.json() : { active: false }; })
+      .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (j) {
-        annNow = (j && j.active && j.text && (!j.expiresAt || j.expiresAt > Date.now())) ? j : null;
-        annAvatarMark();
+        if (!j) return;                        // Worker unreachable: keep showing what we had
+        annNow = (j.active && j.text && (!j.expiresAt || j.expiresAt > Date.now())) ? j : null;
+        annApply();
       })
-      .catch(function () { /* offline or Worker down: keep what we had */ });
-  }
-  function annSeen() {
-    try { return JSON.parse(localStorage.getItem('apml_ann_seen') || '{}'); } catch (e) { return {}; }
-  }
-  function annShow(force) {
-    if (!annNow || document.visibilityState === 'hidden') return;
-    if (!window.APMLMascot || typeof window.APMLMascot.say !== 'function') return;
-    var seen = annSeen(), now = Date.now();
-    // the same announcement is not repeated straight away when someone moves between pages
-    if (!force && seen.id === annNow.id && now - (seen.t || 0) < ANNOUNCE.quietSeconds * 1000) { annLastShown = seen.t; return; }
-    window.APMLMascot.say(annNow.text, { hold: ANNOUNCE.holdMs });
-    annLastShown = now;
-    try { localStorage.setItem('apml_ann_seen', JSON.stringify({ id: annNow.id, t: now })); } catch (e) {}
+      .catch(function () { /* offline: keep what we had */ });
   }
   function startAnnouncements() {
     if (!ANNOUNCE.enabled) return;
@@ -239,19 +241,14 @@
         '@keyframes apmlPing{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.55)}50%{box-shadow:0 0 0 12px rgba(185,28,28,0)}}';
       document.head.appendChild(st);
     } catch (e) {}
-    annPoll().then(function () { setTimeout(function () { annShow(false); }, ANNOUNCE.firstDelayMs); });
+    annPoll();
     setInterval(function () {
       if (document.visibilityState === 'hidden') return;
-      var now = Date.now();
-      if (now - annLastPoll >= ANNOUNCE.pollSeconds * 1000) {
-        annPoll().then(function () { if (annNow && Date.now() - annLastShown >= ANNOUNCE.repeatSeconds * 1000) annShow(true); });
-      } else {
-        annAvatarMark();
-        if (annNow && now - annLastShown >= ANNOUNCE.repeatSeconds * 1000) annShow(true);
-      }
-    }, 15000);
+      if (Date.now() - annLastPoll >= ANNOUNCE.pollSeconds * 1000) annPoll();
+      else if (annNow) annApply();             // keeps it pinned even if the avatar was rebuilt or replaced
+    }, 5000);
     document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'visible' && Date.now() - annLastPoll >= 30000) annPoll();
+      if (document.visibilityState === 'visible' && Date.now() - annLastPoll >= 20000) annPoll();
     });
   }
 
@@ -259,5 +256,5 @@
   if (document.readyState === 'complete') startAll();
   else window.addEventListener('load', startAll);
 
-  window.APMNotify = { send: send, version: 6 };
+  window.APMNotify = { send: send, version: 6 };   // type APMNotify.version in the browser console to see which copy a page is running
 })();
