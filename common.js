@@ -671,7 +671,8 @@ window.sendPortalNotification = function () {};
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // A pinned announcement keeps the avatar on screen and its speech bubble open until it is unpinned
+    // A pinned announcement keeps the speech bubble open until it is unpinned. The avatar itself still follows
+    // its normal show/hide rules (hidden at the top of the home page, hidden near the footer, and so on).
     let pinnedText = '';
     let pinnedShowing = false;
 
@@ -685,9 +686,7 @@ window.sendPortalNotification = function () {};
 
       const fab = document.getElementById('support-fab');
       if (fab) {
-        if (pinnedText) {
-          fab.classList.add('visible');
-        } else if (isNearBottom) {
+        if (isNearBottom) {
           fab.classList.remove('visible');
         } else if (isIndexPage) {
           if (scrollY > 250) {
@@ -754,12 +753,10 @@ window.sendPortalNotification = function () {};
         if (!text) return;
         playTypewriter(String(text), isIndexPage, (opts && Number(opts.hold)) || 5000);
       },
-      // pin("text"): keep an announcement on screen (avatar always visible, bubble always open) until unpin()
+      // pin("text"): keep an announcement open in the speech bubble until unpin() (the avatar still hides and shows as usual)
       pin: function (text) {
         text = String(text || '').trim();
         if (!text) return;
-        const fab = document.getElementById('support-fab');
-        if (fab) fab.classList.add('visible');
         if (pinnedText === text && pinnedShowing) return;
         pinnedText = text;
         playTypewriter(text, true, 0, true);
