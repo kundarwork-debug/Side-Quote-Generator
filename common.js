@@ -671,6 +671,10 @@ window.sendPortalNotification = function () {};
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
+    // A pinned announcement keeps the avatar on screen and its speech bubble open until it is unpinned
+    let pinnedText = '';
+    let pinnedShowing = false;
+
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY || document.documentElement.scrollTop;
       const scrollPosition = scrollY + window.innerHeight;
@@ -681,7 +685,9 @@ window.sendPortalNotification = function () {};
 
       const fab = document.getElementById('support-fab');
       if (fab) {
-        if (isNearBottom) {
+        if (pinnedText) {
+          fab.classList.add('visible');
+        } else if (isNearBottom) {
           fab.classList.remove('visible');
         } else if (isIndexPage) {
           if (scrollY > 250) {
@@ -699,13 +705,14 @@ window.sendPortalNotification = function () {};
     let isTyping = false;
     let typeToken = 0;
 
-    function playTypewriter(textToType, forceKeepOpen = false, holdMs = 5000) {
+    function playTypewriter(textToType, forceKeepOpen = false, holdMs = 5000, isPin = false) {
       const typeText = document.getElementById('typewriter-text');
       const bubble = document.getElementById('supportBubble');
       const cursor = document.getElementById('typeCursor');
       if (!typeText || !bubble) return;
 
       const myToken = ++typeToken;
+      if (!isPin) pinnedShowing = false;
       typeText.textContent = "";
       if (cursor) cursor.style.display = 'inline-block';
       bubble.classList.add('show');
@@ -724,9 +731,13 @@ window.sendPortalNotification = function () {};
             if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
 
-          if (!forceKeepOpen) {
+          if (isPin) {
+            pinnedShowing = true;              // a pinned announcement never closes by itself
+          } else if (!forceKeepOpen || pinnedText) {
             hideTimer = setTimeout(() => {
-              if (myToken === typeToken) bubble.classList.remove('show');
+              if (myToken !== typeToken) return;
+              if (pinnedText) playTypewriter(pinnedText, true, 0, true);   // back to the announcement
+              else bubble.classList.remove('show');
             }, holdMs);
           }
           return;
@@ -742,11 +753,31 @@ window.sendPortalNotification = function () {};
       say: function (text, opts) {
         if (!text) return;
         playTypewriter(String(text), isIndexPage, (opts && Number(opts.hold)) || 5000);
+      },
+      // pin("text"): keep an announcement on screen (avatar always visible, bubble always open) until unpin()
+      pin: function (text) {
+        text = String(text || '').trim();
+        if (!text) return;
+        const fab = document.getElementById('support-fab');
+        if (fab) fab.classList.add('visible');
+        if (pinnedText === text && pinnedShowing) return;
+        pinnedText = text;
+        playTypewriter(text, true, 0, true);
+      },
+      unpin: function () {
+        if (!pinnedText) return;
+        pinnedText = '';
+        pinnedShowing = false;
+        typeToken++;                            // stop any typing in progress
+        isTyping = false;
+        const bubble = document.getElementById('supportBubble');
+        if (bubble) bubble.classList.remove('show');
+        window.dispatchEvent(new Event('scroll'));   // the avatar goes back under the normal show/hide rules
       }
     };
 
     setTimeout(() => {
-      if (!isTyping && typeToken === 0 && (!isIndexPage || window.scrollY > 250)) {
+      if (!isTyping && typeToken === 0 && !pinnedText && (!isIndexPage || window.scrollY > 250)) {
         playTypewriter(tipsArray[tipIndex], isIndexPage);
       }
     }, 1000);
@@ -756,6 +787,7 @@ window.sendPortalNotification = function () {};
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (isTyping) return;
+        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }   // tap = read the announcement again
 
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
@@ -795,7 +827,7 @@ window.sendPortalNotification = function () {};
     if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
   }
   var s = document.createElement('script');
-  s.src = base + 'notify.js?v=5';
+  s.src = base + 'notify.js?v=6';
   s.async = true;
   document.head.appendChild(s);
 })();
