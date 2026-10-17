@@ -20,8 +20,9 @@
   // ---------------- settings ----------------
   var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
 
-  // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
-  var VISIT = { cooldownHours: 6, delayMs: 1500 };
+  // "Someone is online": one alert per device, then quiet for this many hours (0.25 hours = 15 minutes)
+  var VISIT = { cooldownHours: 0.25, delayMs: 1500 };
+  var DEDUPE_SECONDS = 8;      // the same file twice within this time counts once (double clicks)[cite: 3]
 
   // Announcements: shown by the floating avatar. The page asks your Worker whether one is live.
   var ANNOUNCE = {
@@ -38,10 +39,10 @@
   // 20 a minute in a group). A quick burst of downloads becomes ONE summary message.
   var TELEGRAM = {
     url: 'https://apml-drive-api.kundar-work.workers.dev/notify',
-    minGapMs: 1500,        // least time between two messages from one device
-    maxPerMinute: 10,      // messages per minute from one device
-    maxPerDay: 150,        // messages per day from one device
-    digestMax: 15          // downloads shown in one summary message
+    minGapMs: 1500,        // least time between two messages from one device[cite: 3]
+    maxPerMinute: 10,      // messages per minute from one device[cite: 3]
+    maxPerDay: 150,        // messages per day from one device[cite: 3]
+    digestMax: 15          // downloads shown in one summary message[cite: 3]
   };
 
   // Silence the alerts on one device (your own computer): open any page once with ?notify=off
@@ -103,11 +104,11 @@
     if (!pending.length) return;
     var now = Date.now();
     sentTimes = sentTimes.filter(function (t) { return now - t < 60000; });
-    if (sentTimes.length >= TELEGRAM.maxPerMinute) {            // per-minute limit reached: wait it out
+    if (sentTimes.length >= TELEGRAM.maxPerMinute) {            // per-minute limit reached: wait it out[cite: 3]
       timer = setTimeout(pump, 60000 - (now - sentTimes[0]) + 50);
       return;
     }
-    if (!dayAllowed()) { pending.length = 0; return; }           // daily limit reached: stop for today
+    if (!dayAllowed()) { pending.length = 0; return; }           // daily limit reached: stop for today[cite: 3]
     var batch = pending.splice(0, TELEGRAM.digestMax);
     lastSent = now;
     sentTimes.push(now);
@@ -121,11 +122,11 @@
 
   function post(batch) {
     try {
-      // text/plain keeps this a "simple" request, so the browser needs no extra permission check first
+      // text/plain keeps this a "simple" request, so the browser needs no extra permission check first[cite: 3]
       fetch(TELEGRAM.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: payload(batch), keepalive: true })
         .then(function (res) {
           return res.json().catch(function () { return {}; }).then(function (j) {
-            if (res.status === 429 && retries < 3) {              // told to wait: pause, then try this batch again
+            if (res.status === 429 && retries < 3) {              // told to wait: pause, then try this batch again[cite: 3]
               retries++;
               var secs = Math.min(60, Math.max(1, Number(j.retry_after) || 5));
               pausedUntil = Date.now() + secs * 1000;
@@ -199,6 +200,7 @@
       }
     }, VISIT.delayMs);
   }
+
   // ---------------- announcements ----------------
   var annNow = null, annLastPoll = 0, annLastShown = 0;
 
@@ -257,5 +259,5 @@
   if (document.readyState === 'complete') startAll();
   else window.addEventListener('load', startAll);
 
-  window.APMNotify = { send: send, version: 5 };   // type APMNotify.version in the browser console to see which copy a page is running
+  window.APMNotify = { send: send, version: 6 };
 })();
