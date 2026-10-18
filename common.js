@@ -666,6 +666,31 @@ window.sendPortalNotification = function () {};
           box-shadow: 6px 6px 0px var(--text-main, #1c1917);
         }
       }
+
+      /* ---- moods ---- */
+      /* sleeping: dimmed, with a little floating zzz beside it */
+      .support-btn.apml-mood-sleep { opacity: 0.55; filter: grayscale(0.35); transition: opacity 0.6s ease, filter 0.6s ease; }
+      .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+      .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
+      @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
+      /* alert: bounces and glows red */
+      .support-btn.apml-mood-alert { animation: apmlBounce 0.55s ease-in-out infinite, apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
+      @keyframes apmlBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+      @keyframes apmlGlow {
+        0% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 0 rgba(220, 38, 38, 0.65); }
+        100% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 20px rgba(220, 38, 38, 0); }
+      }
+      /* happy: a quick celebratory hop */
+      .support-btn.apml-mood-happy { animation: apmlHop 0.5s ease-in-out 3 !important; }
+      @keyframes apmlHop {
+        0%, 100% { transform: translateY(0) scale(1); }
+        40% { transform: translateY(-12px) scale(1.08) rotate(-6deg); }
+        70% { transform: translateY(-4px) scale(1.04) rotate(5deg); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .support-zzz.show, .support-btn.apml-mood-alert, .support-btn.apml-mood-happy { animation: none !important; }
+        .support-btn.apml-mood-alert { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.55); }
+      }
     `;
 
     document.head.appendChild(mascotStyle);
@@ -747,12 +772,75 @@ window.sendPortalNotification = function () {};
       step();
     }
 
+    // ---------------- moods ----------------
+    //  sleeping: nothing touched for 15 seconds -> the avatar dims and a little zzz floats beside it
+    //  alert:    something needs attention (a file was downloaded, a Telegram announcement arrived) -> bounces and glows red
+    //  happy:    something worked (a PDF was made) -> a quick hop and a cheerful emoji in the speech bubble
+    // None of this touches the avatar's normal show/hide rules.
+    const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
+    const moodBtn = document.getElementById('supportAvatarBtn');
+    const zzz = document.createElement('div');
+    zzz.className = 'support-zzz';
+    zzz.setAttribute('aria-hidden', 'true');
+    zzz.textContent = '💤';
+    supportFab.appendChild(zzz);
+    let asleep = false, lastActivity = Date.now(), alertTimer = null, happyTimer = null;
+
+    function wake() {
+      lastActivity = Date.now();
+      if (!asleep) return;
+      asleep = false;
+      if (moodBtn) moodBtn.classList.remove('apml-mood-sleep');
+      zzz.classList.remove('show');
+    }
+    function fallAsleep() {
+      if (asleep || alertTimer || happyTimer || !moodBtn) return;
+      asleep = true;
+      moodBtn.classList.add('apml-mood-sleep');
+      zzz.classList.add('show');
+    }
+    // any sign of life counts: mouse, touch, keys, scrolling, coming back to the tab
+    ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll', 'click'].forEach((ev) => {
+      window.addEventListener(ev, wake, { passive: true });
+    });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wake(); });
+    setInterval(() => {
+      if (!asleep && Date.now() - lastActivity >= IDLE_MS) fallAsleep();
+    }, Math.max(100, Math.min(1000, IDLE_MS / 4)));
+
+    function alertMood() {
+      if (!moodBtn) return;
+      wake();
+      clearTimeout(alertTimer);
+      moodBtn.classList.remove('apml-mood-happy');
+      moodBtn.classList.add('apml-mood-alert');
+      alertTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-alert'); alertTimer = null; lastActivity = Date.now(); }, ALERT_MS);
+    }
+    const happyLines = ['👍 Nice work!', '🎉 All done!', '✅ Done, great job!'];
+    function happyMood(text) {
+      if (!moodBtn) return;
+      wake();
+      clearTimeout(happyTimer);
+      moodBtn.classList.remove('apml-mood-alert');
+      clearTimeout(alertTimer); alertTimer = null;
+      moodBtn.classList.add('apml-mood-happy');
+      happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
+      const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
+      playTypewriter(line, false, 4500);       // closes by itself, then a pinned announcement (if any) comes back
+    }
+
     window.APMLMascot = {
-      // say("text") or say("text", { hold: 20000 }): hold = how long the bubble stays open (ms)
+      // say("text") or say("text", { hold: 20000, keepOpen: false }): hold = how long the bubble stays open (ms)
       say: function (text, opts) {
         if (!text) return;
-        playTypewriter(String(text), isIndexPage, (opts && Number(opts.hold)) || 5000);
+        const keepOpen = opts && opts.keepOpen !== undefined ? !!opts.keepOpen : isIndexPage;
+        playTypewriter(String(text), keepOpen, (opts && Number(opts.hold)) || 5000);
       },
+      // alert(): bounce and glow red for a few seconds.  happy("text"): hop and show a cheerful message.
+      alert: alertMood,
+      happy: happyMood,
+      wake: wake,
+      isAsleep: function () { return asleep; },
       // pin("text"): keep an announcement open in the speech bubble until unpin() (the avatar still hides and shows as usual)
       pin: function (text) {
         text = String(text || '').trim();
@@ -824,7 +912,7 @@ window.sendPortalNotification = function () {};
     if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
   }
   var s = document.createElement('script');
-  s.src = base + 'notify.js?v=6';
+  s.src = base + 'notify.js?v=7';
   s.async = true;
   document.head.appendChild(s);
 })();
