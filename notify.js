@@ -56,8 +56,20 @@
   var recent = {};
   var pending = [], timer = null, lastSent = 0, sentTimes = [], pausedUntil = 0, retries = 0;
 
+  // The floating avatar reacts to what just happened, whether or not Telegram alerts are muted on this device:
+  // a PDF was made -> happy;  a file was downloaded -> alert (bounces and glows red)
+  function reactAvatar(evt) {
+    try {
+      var m = window.APMLMascot;
+      if (!m) return;
+      if (evt.type === 'pdf' && typeof m.happy === 'function') m.happy('🎉 PDF ready, nice work! 👍');
+      else if ((evt.type === 'drive' || evt.type === 'gallery') && typeof m.alert === 'function') m.alert();
+    } catch (e) { /* never block a download */ }
+  }
+
   function send(evt) {
     try {
+      if (evt && evt.type) reactAvatar(evt);
       if (!evt || !evt.type || ENABLED[evt.type] === false) return;
       if (muted()) return;
       var key = evt.type + '|' + (evt.file || '');
@@ -208,6 +220,13 @@
     annAvatarMark();
     var m = window.APMLMascot;
     if (annNow) {
+      // first time this device sees this announcement: bounce and glow red to catch the eye
+      try {
+        if (m && typeof m.alert === 'function' && localStorage.getItem('apml_ann_alerted') !== annNow.id) {
+          localStorage.setItem('apml_ann_alerted', annNow.id);
+          m.alert();
+        }
+      } catch (e) {}
       if (m && typeof m.pin === 'function') {
         if (annPinned !== annNow.id) { m.pin(annNow.text); annPinned = annNow.id; }
         else m.pin(annNow.text);               // harmless if it is already showing; brings it back if something replaced it
@@ -256,5 +275,5 @@
   if (document.readyState === 'complete') startAll();
   else window.addEventListener('load', startAll);
 
-  window.APMNotify = { send: send, version: 6 };   // type APMNotify.version in the browser console to see which copy a page is running
+  window.APMNotify = { send: send, version: 7 };   // type APMNotify.version in the browser console to see which copy a page is running
 })();
