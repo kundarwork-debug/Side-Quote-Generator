@@ -1639,6 +1639,20 @@
       return false;
     }
 
+    function canDeleteItem(type, key) {
+      if (isCurrentUserAdmin()) return true;
+      if (type === 'file') {
+        const file = liveFiles.find(f => f.key === key);
+        return !(file && isInsideProtectedTree(file.parentId));
+      }
+      if (type === 'folder') {
+        const folder = liveFolders.find(f => f.key === key);
+        if (!folder) return true;
+        return !(isProtectedFolderObj(folder) || isInsideProtectedTree(folder.parentId) || containsProtectedFolder(key));
+      }
+      return true;
+    }
+
     function containsProtectedFolder(folderId) {
       const seen = new Set();
       const stack = [folderId];
@@ -1652,20 +1666,6 @@
         });
       }
       return seen.has('__found__');
-    }
-
-    function canDeleteItem(type, key) {
-      if (isCurrentUserAdmin()) return true;
-      if (type === 'file') {
-        const file = liveFiles.find(f => f.key === key);
-        return !(file && isInsideProtectedTree(file.parentId));
-      }
-      if (type === 'folder') {
-        const folder = liveFolders.find(f => f.key === key);
-        if (!folder) return true;
-        return !(isProtectedFolderObj(folder) || isInsideProtectedTree(folder.parentId) || containsProtectedFolder(key));
-      }
-      return true;
     }
 
     function confirmDeleteAction(type, key) {
@@ -1777,9 +1777,6 @@
       el.hidden = !msg;
     }
 
-    // Name shown in the drive: what you typed, otherwise the file name inside the link.
-    // If you typed a name without an extension, the extension from the link is added so the
-    // file keeps its type (needed for the badge, preview and the downloaded file).
     function deriveLinkName(rawUrl, typedName) {
       let fromUrl = '';
       try {
@@ -1790,7 +1787,6 @@
       let name = (typedName || '').trim();
       if (name && urlExt && !/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + urlExt;
       if (!name) name = fromUrl;
-      // quotes and brackets are removed because names are placed inside page buttons
       name = name.replace(/['"`<>\\]/g, '').trim();
       return name || 'Saved link';
     }
@@ -1834,7 +1830,6 @@
       if (e.key === 'Enter') saveLinkToDrive();
     });
 
-    // "My Drive / Quotation / 2026" for a folder id, used in the download alert email
     function driveFolderPath(parentId) {
       const names = [];
       let id = parentId;
@@ -1850,8 +1845,6 @@
     }
 
     // ---------- Download ----------
-    // 1) straight from the file's host  2) Catbox files through the Worker (when the browser is blocked)
-    // 3) last resort: open the link so the browser can handle it
     async function handleItemDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -1899,6 +1892,7 @@
       let firstError = null;
       try {
         saveBlob(await fetchBlob(fileUrl));
+        logDailyActivity('media'); // Added historical daily activity log tracking
         return;
       } catch (err) {
         firstError = err;
@@ -1907,6 +1901,7 @@
       if (isCatboxLink(fileUrl)) {
         try {
           saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`));
+          logDailyActivity('media'); // Added historical daily activity log tracking
           return;
         } catch (err) { /* fall through to opening the link */ }
       }
@@ -1923,6 +1918,7 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      logDailyActivity('media'); // Added historical daily activity log tracking
     }
 
     async function openFilePreview(fileUrl, fileName) {
@@ -1935,7 +1931,6 @@
       const isHtml = isHtmlFile(fileName, fileUrl);
       const isExcel = isExcelFile(fileName, fileUrl);
 
-      // BANDWIDTH OPTIMIZATION: Request an optimized 900px asset limit for lightboxes instead of raw original files
       const previewUrl = isImage ? getOptimizedUrl(fileUrl, 900) : fileUrl;
 
       if (isImage) {
@@ -2066,7 +2061,6 @@
       return 'color: var(--primary);';
     }
 
-    // Where a file really lives: shown on every card so you can tell Cloudinary and Catbox files apart
     function getFileSource(url) {
       let host = '';
       try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
@@ -2155,7 +2149,6 @@
               const themeClass = getThumbnailThemeClass(file.name, file.fileId);
               const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
 
-              // BANDWIDTH OPTIMIZATION: Transform image preview URL for lightweight 400px thumbnail delivery
               const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 400) : file.fileId;
 
               let previewHtml = '';
