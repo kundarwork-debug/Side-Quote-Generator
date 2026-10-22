@@ -11,7 +11,9 @@
   }
 })();
 
-// --- HISTORICAL DAILY ANALYTICS TRACKER ---
+// =========================================================
+// HISTORICAL DAILY ANALYTICS TRACKER
+// =========================================================
 function logDailyActivity(type) {
   try {
     if (typeof firebase === 'undefined' || !firebase.database) return;
@@ -40,6 +42,32 @@ window.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('apml_last_visit_date', today);
   }
 });
+
+// --- TRACK PEAK CONCURRENT ONLINE USERS PER DAY ---
+function initDailyPeakTracker() {
+  try {
+    if (typeof firebase === 'undefined' || !firebase.database) return;
+    const db = firebase.database();
+    
+    const today = new Date().toISOString().split('T')[0];
+    const peakRef = db.ref(`analytics/daily_logs/${today}/peak_online`);
+
+    // Monitor active presence nodes in real-time
+    db.ref("presence").on("value", (snap) => {
+      const currentActive = snap.numChildren() || 0;
+      if (currentActive > 0) {
+        // Atomically update peak if current online count exceeds today's previous high
+        peakRef.transaction((currentPeak) => {
+          return Math.max(currentPeak || 0, currentActive);
+        });
+      }
+    });
+  } catch (err) {
+    console.warn("Peak online tracking error:", err);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', initDailyPeakTracker);
 
 // =========================================================
 // EMAIL ALERTS REMOVED
