@@ -670,7 +670,7 @@ window.sendPortalNotification = function () {};
       /* ---- moods ---- */
       /* sleeping: dimmed, with a little floating zzz beside it */
       .support-btn.apml-mood-sleep { opacity: 0.55; filter: grayscale(0.35); transition: opacity 0.6s ease, filter 0.6s ease; }
-      .support-zzz { position: absolute; right: 80px; bottom: 48px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+      .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
       .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
       @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
       /* alert: bounces and glows red */
@@ -901,22 +901,18 @@ window.sendPortalNotification = function () {};
 })();
 
 // ---------------------------------------------------------------------
-// EXTRAS: make sure notify.js (Telegram alerts, announcements, avatar reactions) and chat.js (the AI
-// assistant that opens from the avatar) are loaded on every page. A page that already includes one of
-// them itself is skipped for that file.
+// ALERTS: make sure notify.js (Telegram alerts, announcements, avatar reactions) is loaded on every
+// page. A page that already includes it itself is skipped.
 // ---------------------------------------------------------------------
-(function loadExtras() {
+(function loadNotify() {
+  if (window.APMNotify) return;
   var base = '';
   var tags = document.getElementsByTagName('script');
   for (var i = 0; i < tags.length; i++) {
     if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
   }
-  function add(file) {
-    var s = document.createElement('script');
-    s.src = base + file;
-    s.async = true;
-    document.head.appendChild(s);
-  }
-  if (!window.APMNotify) add('notify.js?v=7');
-  if (!window.APMChat) add('chat.js?v=1');
+  var s = document.createElement('script');
+  s.src = base + 'notify.js?v=7';
+  s.async = true;
+  document.head.appendChild(s);
 })();
