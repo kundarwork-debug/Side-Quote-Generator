@@ -1430,6 +1430,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     saveQuotationToDrive(pdfBlob, filename);
 
     incrementPdfDownloadCount();
+    logDailyActivity('pdf'); // Added historical daily activity log tracking
 
     status.textContent = 'Downloaded ✓';
 
