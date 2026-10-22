@@ -258,25 +258,43 @@
       gap: 10px;
     }
 
-    .chart-legend {
+    /* INTERACTIVE TOGGLE SWITCH BUTTONS */
+    .chart-toggles {
       display: flex;
-      gap: 16px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-secondary);
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .legend-item {
+    .toggle-btn {
+      background: var(--surface-subtle);
+      border: 1.5px solid var(--surface-border);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .toggle-btn.active[data-series="0"] { background: #10b981; color: #ffffff; border-color: #10b981; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25); }
+    .toggle-btn.active[data-series="1"] { background: #b91c1c; color: #ffffff; border-color: #b91c1c; box-shadow: 0 3px 10px rgba(185, 28, 28, 0.25); }
+    .toggle-btn.active[data-series="2"] { background: #3b82f6; color: #ffffff; border-color: #3b82f6; box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25); }
+
+    .toggle-btn:hover:not(.active) {
+      color: var(--text-main);
+      border-color: var(--text-muted);
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
+      display: inline-block;
     }
 
     .canvas-container {
@@ -339,17 +357,25 @@
         <div class="stat-trend" style="color: var(--text-muted);">Highest volume recorded</div>
       </div>
 
-      <!-- MAIN MULTI-LINE GRAPH CARD -->
+      <!-- MAIN MULTI-LINE GRAPH CARD WITH INTERACTIVE TOGGLES -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title">
             <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
             <span>Historical Traffic &amp; Downloads Trend</span>
           </div>
-          <div class="chart-legend">
-            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Visitors</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #b91c1c;"></span> PDF Quotations</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media</div>
+
+          <!-- TOGGLE SWITCH BUTTONS -->
+          <div class="chart-toggles" id="chartToggles">
+            <button class="toggle-btn active" data-series="0" onclick="toggleDataset(0)">
+              <span class="legend-dot" style="background: #10b981;"></span> Visitors
+            </button>
+            <button class="toggle-btn active" data-series="1" onclick="toggleDataset(1)">
+              <span class="legend-dot" style="background: #b91c1c;"></span> PDF Quotations
+            </button>
+            <button class="toggle-btn active" data-series="2" onclick="toggleDataset(2)">
+              <span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media
+            </button>
           </div>
         </div>
         
@@ -392,6 +418,19 @@
       let d = new Date();
       d.setDate(d.getDate() - daysAgo);
       return d.toISOString().split('T')[0];
+    }
+
+    function toggleDataset(seriesIndex) {
+      if (!chartInstance) return;
+      
+      const dataset = chartInstance.data.datasets[seriesIndex];
+      dataset.hidden = !dataset.hidden;
+      chartInstance.update();
+
+      const btn = document.querySelector(`.toggle-btn[data-series="${seriesIndex}"]`);
+      if (btn) {
+        btn.classList.toggle('active', !dataset.hidden);
+      }
     }
 
     function processLogsAndRender(snapshot, range) {
@@ -444,7 +483,10 @@
     function renderChart(labels, pdfData, mediaData, visitorData, range) {
       const ctx = document.getElementById('downloadChart').getContext('2d');
       
+      // Preserve current hidden states if switching timeframe tabs
+      let hiddenStates = [false, false, false];
       if (chartInstance) {
+        hiddenStates = chartInstance.data.datasets.map(ds => ds.hidden);
         chartInstance.destroy();
       }
 
@@ -468,7 +510,8 @@
               fill: true,
               tension: 0.35,
               pointRadius: dynamicRadius,
-              pointBackgroundColor: '#10b981'
+              pointBackgroundColor: '#10b981',
+              hidden: hiddenStates[0]
             },
             {
               label: 'PDF Quotations',
@@ -479,7 +522,8 @@
               fill: true,
               tension: 0.35,
               pointRadius: dynamicRadius,
-              pointBackgroundColor: '#b91c1c'
+              pointBackgroundColor: '#b91c1c',
+              hidden: hiddenStates[1]
             },
             {
               label: 'Cloud Media',
@@ -490,7 +534,8 @@
               fill: true,
               tension: 0.35,
               pointRadius: dynamicRadius,
-              pointBackgroundColor: '#3b82f6'
+              pointBackgroundColor: '#3b82f6',
+              hidden: hiddenStates[2]
             }
           ]
         },
@@ -527,6 +572,12 @@
             }
           }
         }
+      });
+
+      // Sync toggle button visual states
+      chartInstance.data.datasets.forEach((ds, idx) => {
+        const btn = document.querySelector(`.toggle-btn[data-series="${idx}"]`);
+        if (btn) btn.classList.toggle('active', !ds.hidden);
       });
     }
 
