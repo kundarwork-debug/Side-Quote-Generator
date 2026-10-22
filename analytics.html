@@ -102,12 +102,21 @@
       opacity: 0.6;
     }
 
+    #header-container {
+      position: sticky !important;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+    }
+
     main {
       flex: 1;
       width: 100%;
       max-width: 1360px;
       margin: 0 auto;
       padding: 40px 24px 80px;
+      margin-top: 110px !important; /* Space cleared for sticky header */
       position: relative;
       z-index: 1;
     }
@@ -292,7 +301,7 @@
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 32px;">monitoring</span>
           Download &amp; Traffic Analytics
         </h1>
-        <p>Day-wise breakdown of PDF quotations, cloud media downloads, and user traffic</p>
+        <p>Day-wise breakdown of PDF quotations, cloud media downloads, and peak concurrent users</p>
       </div>
 
       <!-- TIMEFRAME SELECTOR -->
@@ -307,27 +316,27 @@
     <!-- METRICS SUMMARY CARDS -->
     <div class="analytics-grid">
       <div class="stat-card">
-        <div class="stat-label">Total Unique Visitors</div>
-        <div class="stat-value" id="sumUsers">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Active online traffic</div>
+        <div class="stat-label">Live Active Online Now</div>
+        <div class="stat-value" id="liveOnlineCount">--</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">fiber_manual_record</span> Real-time active sessions</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Total PDFs Generated</div>
         <div class="stat-value" id="sumPdf">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Quotations &amp; invoices</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Period total</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Total Media Downloads</div>
         <div class="stat-value" id="sumMedia">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Drive &amp; gallery archives</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Period total</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Peak Traffic Day</div>
         <div class="stat-value" id="peakDay">--</div>
-        <div class="stat-trend" style="color: var(--text-muted);">Highest user volume</div>
+        <div class="stat-trend" style="color: var(--text-muted);">Highest volume recorded</div>
       </div>
 
       <!-- MAIN MULTI-LINE GRAPH CARD -->
@@ -335,10 +344,10 @@
         <div class="chart-header">
           <div class="chart-title">
             <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
-            <span>Activity &amp; Traffic Trends</span>
+            <span>Historical Activity &amp; Traffic Trends</span>
           </div>
           <div class="chart-legend">
-            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Website Visitors / Users</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Peak Online Users</div>
             <div class="legend-item"><span class="legend-dot" style="background: #b91c1c;"></span> PDF Quotations</div>
             <div class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media &amp; Files</div>
           </div>
@@ -379,44 +388,49 @@
   <script>
     let chartInstance = null;
 
-    // Organic distribution generator with realistic weekday/weekend wave patterns
-    function generateOrganicTimeSeriesData(range, totalPdf, totalMedia, totalUsers) {
+    // Helper to get YYYY-MM-DD string for N days ago
+    function getDateStringDaysAgo(daysAgo) {
+      let d = new Date();
+      d.setDate(d.getDate() - daysAgo);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Fetch real historical data from Firebase based on selected range (7d, 1m, 6m, 1y)
+    function fetchHistoricalData(range, db, callback) {
+      let daysCount = 7;
+      if (range === '1m') daysCount = 30;
+      if (range === '6m') daysCount = 180;
+      if (range === '1y') daysCount = 365;
+
       let labels = [];
       let pdfData = [];
       let mediaData = [];
-      let userData = [];
-      let count = range === '7d' ? 7 : range === '1m' ? 30 : range === '6m' ? 26 : 12;
+      let onlineData = [];
 
-      let now = new Date();
-      for (let i = count - 1; i >= 0; i--) {
-        let d = new Date(now);
-        if (range === '7d' || range === '1m') {
-          d.setDate(d.getDate() - i);
-          labels.push(d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }));
-        } else if (range === '6m') {
-          d.setDate(d.getDate() - (i * 7));
-          labels.push('Week ' + (count - i));
-        } else {
-          d.setMonth(d.getMonth() - i);
-          labels.push(d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' }));
+      db.ref("analytics/daily_logs").once("value").then((snapshot) => {
+        const logs = snapshot.val() || {};
+
+        for (let i = daysCount - 1; i >= 0; i--) {
+          let dateStr = getDateStringDaysAgo(i);
+          let dayRecord = logs[dateStr] || { visitors: 0, pdf: 0, media: 0, peak_online: 0 };
+
+          let dObj = new Date(dateStr);
+          let label = dObj.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+
+          labels.push(label);
+          onlineData.push(dayRecord.peak_online || dayRecord.visitors || 0);
+          pdfData.push(dayRecord.pdf || 0);
+          mediaData.push(dayRecord.media || 0);
         }
 
-        // Introduce organic wave factor (lower activity on weekends / index offsets)
-        let waveFactor = 0.8 + 0.4 * Math.sin(i * 0.8);
-        
-        let basePdf = Math.max(2, Math.floor((totalPdf / count) * waveFactor * (0.7 + Math.random() * 0.6)));
-        let baseMedia = Math.max(1, Math.floor((totalMedia / count) * waveFactor * (0.7 + Math.random() * 0.6)));
-        let baseUser = Math.max(5, Math.floor((totalUsers / count) * waveFactor * (0.8 + Math.random() * 0.4)));
-
-        pdfData.push(basePdf);
-        mediaData.push(baseMedia);
-        userData.push(baseUser);
-      }
-
-      return { labels, pdfData, mediaData, userData };
+        callback({ labels, pdfData, mediaData, onlineData });
+      }).catch((err) => {
+        console.warn("Error fetching logs:", err);
+        callback({ labels: [], pdfData: [], mediaData: [], onlineData: [] });
+      });
     }
 
-    function renderChart(labels, pdfData, mediaData, userData) {
+    function renderChart(labels, pdfData, mediaData, onlineData, range) {
       const ctx = document.getElementById('downloadChart').getContext('2d');
       
       if (chartInstance) {
@@ -427,20 +441,22 @@
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)';
       const textColor = isDark ? '#94a3b8' : '#78716c';
 
+      const dynamicRadius = range === '1y' ? 0 : range === '6m' ? 1 : 3;
+
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
           labels: labels,
           datasets: [
             {
-              label: 'Website Visitors / Users',
-              data: userData,
+              label: 'Peak Online Users',
+              data: onlineData,
               borderColor: '#10b981',
               backgroundColor: 'rgba(16, 185, 129, 0.06)',
-              borderWidth: 3,
+              borderWidth: 2.5,
               fill: true,
               tension: 0.35,
-              pointRadius: 4,
+              pointRadius: dynamicRadius,
               pointBackgroundColor: '#10b981'
             },
             {
@@ -448,10 +464,10 @@
               data: pdfData,
               borderColor: '#b91c1c',
               backgroundColor: 'rgba(185, 28, 28, 0.06)',
-              borderWidth: 3,
+              borderWidth: 2.5,
               fill: true,
               tension: 0.35,
-              pointRadius: 4,
+              pointRadius: dynamicRadius,
               pointBackgroundColor: '#b91c1c'
             },
             {
@@ -459,10 +475,10 @@
               data: mediaData,
               borderColor: '#3b82f6',
               backgroundColor: 'rgba(59, 130, 246, 0.06)',
-              borderWidth: 3,
+              borderWidth: 2.5,
               fill: true,
               tension: 0.35,
-              pointRadius: 4,
+              pointRadius: dynamicRadius,
               pointBackgroundColor: '#3b82f6'
             }
           ]
@@ -487,7 +503,11 @@
           scales: {
             x: {
               grid: { color: gridColor },
-              ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 12 } }
+              ticks: { 
+                color: textColor, 
+                font: { family: 'Plus Jakarta Sans', size: 11 },
+                maxTicksLimit: 12 
+              }
             },
             y: {
               grid: { color: gridColor },
@@ -499,7 +519,6 @@
       });
     }
 
-    // Initialize with Firebase connection and presence tracking metrics[cite: 1]
     try {
       const firebaseConfig = {
         apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -517,59 +536,44 @@
       }
       const db = firebase.database();
 
-      let livePdfTotal = 8888;
-      let liveMediaTotal = 709;
-      let liveUserTotal = 1420;
-
-      // Listen to Firebase presence nodes and analytics totals[cite: 1]
-      db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
-        if (snap.val()) livePdfTotal = Number(snap.val());
-        updateDashboard('7d');
-      });
-
-      db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
-        if (snap.val()) liveMediaTotal = Number(snap.val());
-        updateDashboard('7d');
-      });
-
+      // Real-time active presence listener[cite: 1]
       db.ref("presence").on("value", (snap) => {
-        if (snap.exists()) {
-          liveUserTotal = snap.numChildren() * 45; // Scaled cumulative visitor estimation from active sessions
-          updateDashboard(document.querySelector('.filter-tab.active').getAttribute('data-range'));
-        }
+        const activeCount = snap.exists() ? snap.numChildren() : 0;
+        document.getElementById('liveOnlineCount').innerText = activeCount.toLocaleString('en-IN');
       });
 
-      function updateDashboard(range) {
-        let dataset = generateOrganicTimeSeriesData(range, livePdfTotal, liveMediaTotal, liveUserTotal);
-        
-        let sumPdfVal = dataset.pdfData.reduce((a, b) => a + b, 0);
-        let sumMediaVal = dataset.mediaData.reduce((a, b) => a + b, 0);
-        let sumUserVal = dataset.userData.reduce((a, b) => a + b, 0);
-        
-        let peakIndex = 0;
-        let peakMax = 0;
-        dataset.userData.forEach((val, idx) => {
-          let combined = val + dataset.pdfData[idx] + dataset.mediaData[idx];
-          if (combined > peakMax) {
-            peakMax = combined;
-            peakIndex = idx;
-          }
+      function loadAnalyticsView(range) {
+        fetchHistoricalData(range, db, (dataset) => {
+          let sumPdfVal = dataset.pdfData.reduce((a, b) => a + b, 0);
+          let sumMediaVal = dataset.mediaData.reduce((a, b) => a + b, 0);
+          
+          let peakIndex = 0;
+          let peakMax = 0;
+          dataset.onlineData.forEach((val, idx) => {
+            let combined = val + dataset.pdfData[idx] + dataset.mediaData[idx];
+            if (combined > peakMax) {
+              peakMax = combined;
+              peakIndex = idx;
+            }
+          });
+
+          document.getElementById('sumPdf').innerText = sumPdfVal.toLocaleString('en-IN');
+          document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
+          document.getElementById('peakDay').innerText = dataset.labels[peakIndex] || 'N/A';
+
+          renderChart(dataset.labels, dataset.pdfData, dataset.mediaData, dataset.onlineData, range);
         });
-
-        document.getElementById('sumUsers').innerText = sumUserVal.toLocaleString('en-IN');
-        document.getElementById('sumPdf').innerText = sumPdfVal.toLocaleString('en-IN');
-        document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
-        document.getElementById('peakDay').innerText = dataset.labels[peakIndex] || 'Today';
-
-        renderChart(dataset.labels, dataset.pdfData, dataset.mediaData, dataset.userData);
       }
 
-      // Tab click events
+      // Initial load defaults to 7 days
+      loadAnalyticsView('7d');
+
+      // Filter tab click events
       document.querySelectorAll('.filter-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
           document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
           e.target.classList.add('active');
-          updateDashboard(e.target.getAttribute('data-range'));
+          loadAnalyticsView(e.target.getAttribute('data-range'));
         });
       });
 
