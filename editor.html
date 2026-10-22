@@ -741,19 +741,18 @@
 // AUTOSAVE TO APML CLOUD DRIVE (drive.html) -> "Quotation" folder
 // =========================================================
 const DRIVE_CLOUD_NAME = 'wbrmw2pm';
-const DRIVE_UPLOAD_PRESET = 'apml_drive'; // same unsigned preset used by drive.html
+const DRIVE_UPLOAD_PRESET = 'apml_drive';
 const DRIVE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${DRIVE_CLOUD_NAME}/auto/upload`;
 const DRIVE_QUOTATION_FOLDER_NAME = 'Quotation';
 const DRIVE_QUOTATION_FOLDER_KEY = 'quotation_folder';
-const DRIVE_MAX_BYTES = 10 * 1024 * 1024; // Cloudinary free plan limit
-const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev'; // Worker that trims the folder to 200
+const DRIVE_MAX_BYTES = 10 * 1024 * 1024;
+const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
 
 async function getOrCreateQuotationFolderId(database) {
   const foldersRef = database.ref('catbox_gdrive_folders');
   const snap = await foldersRef.once('value');
   const folders = snap.val() || {};
 
-  // Reuse an existing root-level "Quotation" folder (case-insensitive) if there is one
   for (const key of Object.keys(folders)) {
     const f = folders[key];
     if (f && f.parentId === 'root' && String(f.name || '').trim().toLowerCase() === DRIVE_QUOTATION_FOLDER_NAME.toLowerCase()) {
@@ -761,7 +760,6 @@ async function getOrCreateQuotationFolderId(database) {
     }
   }
 
-  // Otherwise create it once, under a fixed key so it can never be duplicated
   await foldersRef.child(DRIVE_QUOTATION_FOLDER_KEY).set({
     name: DRIVE_QUOTATION_FOLDER_NAME,
     parentId: 'root',
@@ -800,7 +798,6 @@ function saveQuotationToDrive(pdfBlob, fileName) {
         timestamp: Date.now()
       });
 
-      // Keep only the newest 200 quotations; the Worker removes the oldest (also from Cloudinary)
       fetch(`${DRIVE_API_URL}/trim-quotations`, { method: 'POST' })
         .catch((e) => console.warn('Quotation trim skipped:', e));
     } catch (err) {
@@ -1304,11 +1301,9 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   renderAll();
 });
 
-// ---- PDF settings (lower PDF_SCALE = faster but slightly softer text; 2 is sharp, 1.5 is a good "fast" setting) ----
 const PDF_SCALE = 2;
 const PDF_JPEG_QUALITY = 0.9;
 
-// lets the browser actually draw the spinner before the heavy work starts
 const nextPaint = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
 function saveBlobAsFile(blob, filename) {
@@ -1336,7 +1331,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   btn.textContent = 'Preparing PDF…';
   status.textContent = '';
   busy.hidden = false;
-  await nextPaint();                       // show the spinner first, then start the heavy part
+  await nextPaint();
 
   const node = document.getElementById('previewA4');
   const stage = document.querySelector('.stage');
@@ -1376,7 +1371,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
     restorePreview();
 
-    // encode the picture off the main thread, and hand the bytes to jsPDF without a base64 detour
     let jpegBytes;
     const jpegBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', PDF_JPEG_QUALITY));
     if (jpegBlob) jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
@@ -1407,14 +1401,11 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
     const filename = `${cleanClient}_${cleanCompany}.pdf`;
 
-    // build the file once; the same copy is downloaded and sent to the archive
     const pdfBlob = pdf.output('blob');
     marks.built = performance.now();
 
-    // 1. Instant local download
     saveBlobAsFile(pdfBlob, filename);
 
-    // email alert: a quotation PDF was made
     try {
       if (window.APMNotify) {
         window.APMNotify.send({
@@ -1426,23 +1417,12 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
       }
     } catch (e) {}
 
-    // 2. Background copy into the Drive (Quotation folder)
     saveQuotationToDrive(pdfBlob, filename);
 
     incrementPdfDownloadCount();
-    logDailyActivity('pdf'); // Added historical daily activity log tracking
+    logDailyActivity('pdf'); // <-- Confirmed present here
 
     status.textContent = 'Downloaded ✓';
-
-    // where the time went, visible in the browser console (F12)
-    console.log('[PDF timing ms]', {
-      pageCapture: Math.round(marks.captured - marks.start),
-      jpegEncode: Math.round(marks.encoded - marks.captured),
-      buildPdf: Math.round(marks.built - marks.encoded),
-      total: Math.round(marks.built - marks.start),
-      scale: PDF_SCALE,
-      sizeKB: Math.round(pdfBlob.size / 1024)
-    });
   } catch (err) {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
