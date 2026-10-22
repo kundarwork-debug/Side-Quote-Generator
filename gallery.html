@@ -1712,8 +1712,6 @@
       return { error: 'Only photos (' + CATBOX_IMAGE_EXT.join(', ') + ') and videos (' + CATBOX_VIDEO_EXT.join(', ') + ') can be added to the gallery.' };
     }
 
-    // typed name (extension added if missing) or the file name inside the link; quotes are removed
-    // because names are placed inside page buttons
     function deriveCatboxName(info, typedName) {
       let name = (typedName || '').trim();
       if (!name) name = info.file;
@@ -2056,7 +2054,6 @@
         let done = false;
         try { saveBlob(await fetchBlob(fileUrl)); done = true; } catch (err) { /* try the next way */ }
 
-        // Catbox files the browser is not allowed to read directly come through the Worker
         if (!done && isCatboxLink(fileUrl)) {
           try { saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`)); done = true; } catch (err) { /* open it instead */ }
         }
@@ -2071,6 +2068,8 @@
           a.click();
           document.body.removeChild(a);
         }
+
+        logDailyActivity('media'); // Added historical daily activity log tracking
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -2110,7 +2109,6 @@
         const formattedSize = formatBytes(item.size);
         const source = getFileSource(item.url);
 
-        // BANDWIDTH OPTIMIZATION: Transform image preview URL for lightweight 400px thumbnail delivery
         const optimizedThumbUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 400);
 
         return `
@@ -2220,7 +2218,6 @@
       const item = liveMediaItems.find(i => i.key === firebaseKey);
       if (!item) return;
       recordInteraction(firebaseKey, 'viewsCount');
-      // BANDWIDTH OPTIMIZATION: When opening lightbox view, request a higher-res optimized preview (e.g. 900px) instead of raw original file
       const lightboxUrl = isVideo ? item.url : getOptimizedUrl(item.url, 900);
       openLightbox(lightboxUrl, isVideo);
     }
