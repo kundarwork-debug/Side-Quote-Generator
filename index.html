@@ -611,13 +611,15 @@
 
     .telemetry-stats-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
+      text-align: center; /* Centers items nicely across the 3 columns */
     }
 
     .telemetry-stat-item {
       display: flex;
       flex-direction: column;
+      align-items: center; /* Centers stat content horizontally */
       gap: 6px;
       padding-right: 20px;
       border-right: 1px dashed var(--surface-border);
@@ -641,6 +643,7 @@
       letter-spacing: -0.03em;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
     }
 
@@ -669,6 +672,8 @@
         border-right: none;
         border-bottom: 1px dashed var(--surface-border);
         padding-bottom: 16px;
+        align-items: center;
+        text-align: center;
       }
       .telemetry-stat-item:last-child {
         border-bottom: none;
@@ -982,12 +987,6 @@
         </div>
 
         <div class="telemetry-stats-grid">
-          
-          <div class="telemetry-stat-item">
-            <div class="telemetry-stat-label">Active Enterprise Modules</div>
-            <div class="telemetry-stat-value">8 <span style="font-size: 16px; font-weight: 700; color: #059669;">Online</span></div>
-            <div class="telemetry-stat-sub">Rate matrices, Hubs &amp; Editor</div>
-          </div>
 
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Live Active Personnel</div>
