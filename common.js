@@ -11,6 +11,36 @@
   }
 })();
 
+// --- HISTORICAL DAILY ANALYTICS TRACKER ---
+function logDailyActivity(type) {
+  try {
+    if (typeof firebase === 'undefined' || !firebase.database) return;
+    const db = firebase.database();
+    
+    // Get today's date string in YYYY-MM-DD format (local date)
+    const today = new Date().toISOString().split('T')[0];
+    const logRef = db.ref(`analytics/daily_logs/${today}/${type}`);
+    
+    // Atomically increment the counter for today in Firebase
+    logRef.transaction((currentValue) => {
+      return (currentValue || 0) + 1;
+    });
+  } catch (err) {
+    console.warn("Daily log error:", err);
+  }
+}
+
+// Automatically log unique visitor once per calendar day per browser session
+window.addEventListener('DOMContentLoaded', () => {
+  const lastVisitDate = localStorage.getItem('apml_last_visit_date');
+  const today = new Date().toISOString().split('T')[0];
+  
+  if (lastVisitDate !== today) {
+    logDailyActivity('visitors');
+    localStorage.setItem('apml_last_visit_date', today);
+  }
+});
+
 // =========================================================
 // EMAIL ALERTS REMOVED
 // Alerts now go to Telegram through notify.js. This empty function stays only so that any page
