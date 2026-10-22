@@ -116,7 +116,7 @@
       max-width: 1360px;
       margin: 0 auto;
       padding: 40px 24px 80px;
-      margin-top: 110px !important; /* Space cleared for sticky header */
+      margin-top: 110px !important;
       position: relative;
       z-index: 1;
     }
@@ -180,7 +180,7 @@
       color: var(--text-main);
     }
 
-    /* STATS OVERVIEW CARDS */
+    /* STATS OVERVIEW CARDS (4 columns) */
     .analytics-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -301,7 +301,7 @@
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 32px;">monitoring</span>
           Download &amp; Traffic Analytics
         </h1>
-        <p>Day-wise breakdown of PDF quotations, cloud media downloads, and peak concurrent users</p>
+        <p>Day-wise breakdown of visitors, PDF quotations, and media downloads</p>
       </div>
 
       <!-- TIMEFRAME SELECTOR -->
@@ -316,21 +316,21 @@
     <!-- METRICS SUMMARY CARDS -->
     <div class="analytics-grid">
       <div class="stat-card">
-        <div class="stat-label">Live Active Online Now</div>
-        <div class="stat-value" id="liveOnlineCount">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">fiber_manual_record</span> Real-time active sessions</div>
+        <div class="stat-label">Visitors</div>
+        <div class="stat-value" id="sumVisitors">--</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">group</span> Period total</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Total PDFs Generated</div>
         <div class="stat-value" id="sumPdf">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Period total</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Period total</div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Total Media Downloads</div>
         <div class="stat-value" id="sumMedia">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">trending_up</span> Period total</div>
+        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">folder_zip</span> Period total</div>
       </div>
 
       <div class="stat-card">
@@ -344,12 +344,12 @@
         <div class="chart-header">
           <div class="chart-title">
             <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
-            <span>Historical Activity &amp; Traffic Trends</span>
+            <span>Historical Traffic &amp; Downloads Trend</span>
           </div>
           <div class="chart-legend">
-            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Peak Online Users</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span> Visitors</div>
             <div class="legend-item"><span class="legend-dot" style="background: #b91c1c;"></span> PDF Quotations</div>
-            <div class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media &amp; Files</div>
+            <div class="legend-item"><span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media</div>
           </div>
         </div>
         
@@ -388,15 +388,14 @@
   <script>
     let chartInstance = null;
 
-    // Helper to get YYYY-MM-DD string for N days ago
     function getDateStringDaysAgo(daysAgo) {
       let d = new Date();
       d.setDate(d.getDate() - daysAgo);
       return d.toISOString().split('T')[0];
     }
 
-    // Fetch real historical data from Firebase based on selected range (7d, 1m, 6m, 1y)
-    function fetchHistoricalData(range, db, callback) {
+    function processLogsAndRender(snapshot, range) {
+      const logs = snapshot.val() || {};
       let daysCount = 7;
       if (range === '1m') daysCount = 30;
       if (range === '6m') daysCount = 180;
@@ -405,32 +404,44 @@
       let labels = [];
       let pdfData = [];
       let mediaData = [];
-      let onlineData = [];
+      let visitorData = [];
 
-      db.ref("analytics/daily_logs").once("value").then((snapshot) => {
-        const logs = snapshot.val() || {};
+      for (let i = daysCount - 1; i >= 0; i--) {
+        let dateStr = getDateStringDaysAgo(i);
+        let dayRecord = logs[dateStr] || { visitors: 0, pdf: 0, media: 0 };
 
-        for (let i = daysCount - 1; i >= 0; i--) {
-          let dateStr = getDateStringDaysAgo(i);
-          let dayRecord = logs[dateStr] || { visitors: 0, pdf: 0, media: 0, peak_online: 0 };
+        let dObj = new Date(dateStr);
+        let label = dObj.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
 
-          let dObj = new Date(dateStr);
-          let label = dObj.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+        labels.push(label);
+        visitorData.push(dayRecord.visitors || 0);
+        pdfData.push(dayRecord.pdf || 0);
+        mediaData.push(dayRecord.media || 0);
+      }
 
-          labels.push(label);
-          onlineData.push(dayRecord.peak_online || dayRecord.visitors || 0);
-          pdfData.push(dayRecord.pdf || 0);
-          mediaData.push(dayRecord.media || 0);
+      let sumVisitorsVal = visitorData.reduce((a, b) => a + b, 0);
+      let sumPdfVal = pdfData.reduce((a, b) => a + b, 0);
+      let sumMediaVal = mediaData.reduce((a, b) => a + b, 0);
+
+      let peakIndex = 0;
+      let peakMax = 0;
+      visitorData.forEach((val, idx) => {
+        let combined = val + pdfData[idx] + mediaData[idx];
+        if (combined > peakMax) {
+          peakMax = combined;
+          peakIndex = idx;
         }
-
-        callback({ labels, pdfData, mediaData, onlineData });
-      }).catch((err) => {
-        console.warn("Error fetching logs:", err);
-        callback({ labels: [], pdfData: [], mediaData: [], onlineData: [] });
       });
+
+      document.getElementById('sumVisitors').innerText = sumVisitorsVal.toLocaleString('en-IN');
+      document.getElementById('sumPdf').innerText = sumPdfVal.toLocaleString('en-IN');
+      document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
+      document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
+
+      renderChart(labels, pdfData, mediaData, visitorData, range);
     }
 
-    function renderChart(labels, pdfData, mediaData, onlineData, range) {
+    function renderChart(labels, pdfData, mediaData, visitorData, range) {
       const ctx = document.getElementById('downloadChart').getContext('2d');
       
       if (chartInstance) {
@@ -449,8 +460,8 @@
           labels: labels,
           datasets: [
             {
-              label: 'Peak Online Users',
-              data: onlineData,
+              label: 'Visitors',
+              data: visitorData,
               borderColor: '#10b981',
               backgroundColor: 'rgba(16, 185, 129, 0.06)',
               borderWidth: 2.5,
@@ -536,44 +547,22 @@
       }
       const db = firebase.database();
 
-      // Real-time active presence listener[cite: 1]
-      db.ref("presence").on("value", (snap) => {
-        const activeCount = snap.exists() ? snap.numChildren() : 0;
-        document.getElementById('liveOnlineCount').innerText = activeCount.toLocaleString('en-IN');
+      let currentRange = '7d';
+
+      // REAL-TIME LISTENER: Any new download or visit instantly updates the graph!
+      db.ref("analytics/daily_logs").on("value", (snapshot) => {
+        processLogsAndRender(snapshot, currentRange);
       });
-
-      function loadAnalyticsView(range) {
-        fetchHistoricalData(range, db, (dataset) => {
-          let sumPdfVal = dataset.pdfData.reduce((a, b) => a + b, 0);
-          let sumMediaVal = dataset.mediaData.reduce((a, b) => a + b, 0);
-          
-          let peakIndex = 0;
-          let peakMax = 0;
-          dataset.onlineData.forEach((val, idx) => {
-            let combined = val + dataset.pdfData[idx] + dataset.mediaData[idx];
-            if (combined > peakMax) {
-              peakMax = combined;
-              peakIndex = idx;
-            }
-          });
-
-          document.getElementById('sumPdf').innerText = sumPdfVal.toLocaleString('en-IN');
-          document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
-          document.getElementById('peakDay').innerText = dataset.labels[peakIndex] || 'N/A';
-
-          renderChart(dataset.labels, dataset.pdfData, dataset.mediaData, dataset.onlineData, range);
-        });
-      }
-
-      // Initial load defaults to 7 days
-      loadAnalyticsView('7d');
 
       // Filter tab click events
       document.querySelectorAll('.filter-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
           document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
           e.target.classList.add('active');
-          loadAnalyticsView(e.target.getAttribute('data-range'));
+          currentRange = e.target.getAttribute('data-range');
+          db.ref("analytics/daily_logs").once("value").then((snapshot) => {
+            processLogsAndRender(snapshot, currentRange);
+          });
         });
       });
 
