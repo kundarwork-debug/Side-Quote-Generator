@@ -545,6 +545,18 @@
       display: flex;
       flex-direction: column;
       gap: 26px;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .telemetry-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(185, 28, 28, 0.35);
+      box-shadow: var(--shadow-hover);
     }
 
     .telemetry-header {
@@ -967,9 +979,9 @@
       </div>
     </section>
 
-    <!-- OPERATIONAL TELEMETRY & IMPACT WITH TEXT SCRAMBLE -->
+    <!-- OPERATIONAL TELEMETRY & IMPACT WITH TEXT SCRAMBLE (CLICKABLE LINK TO analytics.html) -->
     <section class="telemetry-section">
-      <div class="telemetry-card">
+      <a href="analytics.html" class="telemetry-card">
         
         <div class="telemetry-header">
           <div class="telemetry-title-group">
@@ -977,7 +989,7 @@
               <span class="material-symbols-outlined" style="color: var(--primary);">ecg_heart</span>
               <span data-value="OPERATIONAL TELEMETRY & IMPACT">OPERATIONAL TELEMETRY & IMPACT</span>
             </h3>
-            <p class="telemetry-sub-title">Live enterprise statistics across Western Central Regional Office &amp; Nationwide Hubs</p>
+            <p class="telemetry-sub-title">Live enterprise statistics across Western Central Regional Office &amp; Nationwide Hubs (Click to view analytics)</p>
           </div>
           
           <div class="operational-badge">
@@ -1013,7 +1025,7 @@
 
         </div>
 
-      </div>
+      </a>
     </section>
 
   </main>
