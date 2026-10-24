@@ -20,8 +20,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- APEXCHARTS CDN -->
+  <!-- APEXCHARTS & COUNTUP.JS CDNS -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
 
   <style>
     :root {
@@ -309,11 +310,11 @@
       </div>
     </div>
 
-    <!-- METRICS SUMMARY CARDS WITH SPARKLINE MINI-CHARTS -->
+    <!-- METRICS SUMMARY CARDS WITH COUNTUP & SPARKLINE MINI-CHARTS -->
     <div class="analytics-grid">
       <div class="stat-card">
         <div class="stat-label">Visitors</div>
-        <div class="stat-value" id="sumVisitors">--</div>
+        <div class="stat-value" id="sumVisitors">0</div>
         <div class="sparkline-container" id="sparklineVisitors"></div>
         <div class="stat-footer">
           <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">trending_up</span> Unique visitors trend
@@ -322,7 +323,7 @@
 
       <div class="stat-card">
         <div class="stat-label">PDF Quotations</div>
-        <div class="stat-value" id="sumPdf">--</div>
+        <div class="stat-value" id="sumPdf">0</div>
         <div class="sparkline-container" id="sparklinePdf"></div>
         <div class="stat-footer">
           <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">download</span> Estimates trend
@@ -331,7 +332,7 @@
 
       <div class="stat-card">
         <div class="stat-label">Cloud Media</div>
-        <div class="stat-value" id="sumMedia">--</div>
+        <div class="stat-value" id="sumMedia">0</div>
         <div class="sparkline-container" id="sparklineMedia"></div>
         <div class="stat-footer">
           <span class="material-symbols-outlined" style="font-size: 16px; color: #3b82f6;">cloud_download</span> Gallery &amp; Drive trend
@@ -395,7 +396,7 @@
     })();
   </script>
 
-  <!-- FIREBASE & APEXCHARTS RENDERING LOGIC -->
+  <!-- FIREBASE, APEXCHARTS & COUNTUP LOGIC -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -406,6 +407,10 @@
     let spark3Instance = null;
     let heatmapInstance = null;
 
+    let visitorsCountUp = null;
+    let pdfCountUp = null;
+    let mediaCountUp = null;
+
     function getDateStringDaysAgo(daysAgo) {
       let d = new Date();
       d.setDate(d.getDate() - daysAgo);
@@ -413,6 +418,35 @@
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
+    }
+
+    function updateCountUpValues(visitors, pdf, media) {
+      if (window.countUp && window.countUp.CountUp) {
+        if (!visitorsCountUp) {
+          visitorsCountUp = new window.countUp.CountUp('sumVisitors', visitors, { duration: 1.2, useGrouping: true });
+          visitorsCountUp.start();
+        } else {
+          visitorsCountUp.update(visitors);
+        }
+
+        if (!pdfCountUp) {
+          pdfCountUp = new window.countUp.CountUp('sumPdf', pdf, { duration: 1.2, useGrouping: true });
+          pdfCountUp.start();
+        } else {
+          pdfCountUp.update(pdf);
+        }
+
+        if (!mediaCountUp) {
+          mediaCountUp = new window.countUp.CountUp('sumMedia', media, { duration: 1.2, useGrouping: true });
+          mediaCountUp.start();
+        } else {
+          mediaCountUp.update(media);
+        }
+      } else {
+        document.getElementById('sumVisitors').innerText = visitors.toLocaleString('en-IN');
+        document.getElementById('sumPdf').innerText = pdf.toLocaleString('en-IN');
+        document.getElementById('sumMedia').innerText = media.toLocaleString('en-IN');
+      }
     }
 
     function processLogsAndRender(snapshot, range) {
@@ -454,9 +488,8 @@
         }
       });
 
-      document.getElementById('sumVisitors').innerText = sumVisitorsVal.toLocaleString('en-IN');
-      document.getElementById('sumPdf').innerText = sumPdfVal.toLocaleString('en-IN');
-      document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
+      // Animate summary numbers using CountUp.js
+      updateCountUpValues(sumVisitorsVal, sumPdfVal, sumMediaVal);
       document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
 
       // Render Main Combo Chart, Sparklines, and Heatmap with proper cleanup
@@ -554,7 +587,7 @@
         ],
         chart: {
           height: 380,
-          type: 'line', // Base type for mixed charts
+          type: 'line',
           fontFamily: 'Plus Jakarta Sans, sans-serif',
           toolbar: { 
             show: true,
@@ -572,7 +605,7 @@
           animations: { enabled: true, easing: 'easeinout', speed: 600 }
         },
         stroke: {
-          width: [3, 0, 3], // Area line width, Column width (0 border), Line width
+          width: [3, 0, 3],
           curve: 'smooth'
         },
         plotOptions: {
@@ -581,7 +614,7 @@
             borderRadius: 4
           }
         },
-        colors: ['#10b981', '#b91c1c', '#3b82f6'], // Visitors (Green), Quotations (Red), Cloud Media (Blue)
+        colors: ['#10b981', '#b91c1c', '#3b82f6'],
         fill: {
           type: ['gradient', 'solid', 'solid'],
           opacity: [1, 0.85, 1],
@@ -650,7 +683,7 @@
 
       let currentRange = '7d';
 
-      // REAL-TIME LISTENER: Updates chart live when new actions occur
+      // REAL-TIME LISTENER: Updates chart & animated counters live when actions occur
       db.ref("analytics/daily_logs").on("value", (snapshot) => {
         processLogsAndRender(snapshot, currentRange);
       });
