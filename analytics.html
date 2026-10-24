@@ -309,7 +309,7 @@
       </div>
     </div>
 
-    <!-- METRICS SUMMARY CARDS WITH SPARKLINE MINi-CHARTS -->
+    <!-- METRICS SUMMARY CARDS WITH SPARKLINE MINI-CHARTS -->
     <div class="analytics-grid">
       <div class="stat-card">
         <div class="stat-label">Visitors</div>
@@ -348,12 +348,12 @@
       </div>
     </div>
 
-    <!-- MAIN AREA CHART CARD -->
+    <!-- MAIN MIXED COMBO CHART CARD -->
     <div class="chart-card">
       <div class="chart-header">
         <div class="chart-title">
           <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
-          <span>Historical Traffic &amp; Downloads Trend</span>
+          <span>Telemetry Overview (Visitors: Area | Quotations: Column | Cloud Media: Line)</span>
         </div>
       </div>
       <div class="canvas-container">
@@ -459,7 +459,7 @@
       document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
       document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
 
-      // Render Main Chart, Sparklines, and Heatmap with proper cleanup
+      // Render Main Combo Chart, Sparklines, and Heatmap with proper cleanup
       renderMainChart(labels, visitorData, pdfData, mediaData);
       renderSparklines(visitorData, pdfData, mediaData);
       renderHeatmap(logs);
@@ -548,23 +548,43 @@
 
       const options = {
         series: [
-          { name: 'Visitors', data: visitorData },
-          { name: 'PDF Quotations', data: pdfData },
-          { name: 'Cloud Media', data: mediaData }
+          { name: 'Visitors', type: 'area', data: visitorData },
+          { name: 'PDF Quotations', type: 'column', data: pdfData },
+          { name: 'Cloud Media', type: 'line', data: mediaData }
         ],
         chart: {
-          type: 'area',
           height: 380,
+          type: 'line', // Base type for mixed charts
           fontFamily: 'Plus Jakarta Sans, sans-serif',
-          toolbar: { show: false },
+          toolbar: { 
+            show: true,
+            tools: {
+              download: true,
+              selection: false,
+              zoom: false,
+              zoomin: false,
+              zoomout: false,
+              pan: false,
+              reset: false
+            }
+          },
           background: 'transparent',
           animations: { enabled: true, easing: 'easeinout', speed: 600 }
         },
-        colors: ['#10b981', '#b91c1c', '#3b82f6'],
-        dataLabels: { enabled: false },
-        stroke: { curve: 'smooth', width: 3 },
+        stroke: {
+          width: [3, 0, 3], // Area line width, Column width (0 border), Line width
+          curve: 'smooth'
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: '50%',
+            borderRadius: 4
+          }
+        },
+        colors: ['#10b981', '#b91c1c', '#3b82f6'], // Visitors (Green), Quotations (Red), Cloud Media (Blue)
         fill: {
-          type: 'gradient',
+          type: ['gradient', 'solid', 'solid'],
+          opacity: [1, 0.85, 1],
           gradient: {
             shadeIntensity: 1,
             opacityFrom: 0.4,
@@ -597,6 +617,8 @@
         },
         tooltip: {
           theme: isDark ? 'dark' : 'light',
+          shared: true,
+          intersect: false,
           x: { show: true }
         }
       };
