@@ -152,7 +152,7 @@
     .filter-tabs {
       display: flex;
       background: var(--surface-subtle);
-      border: 1px solid var(--surface-border);
+      border: 1.5px solid var(--surface-border);
       padding: 4px;
       border-radius: var(--radius-pill);
       gap: 4px;
@@ -198,7 +198,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1);
     }
 
@@ -223,11 +223,16 @@
     }
 
     .stat-value {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       color: var(--text-main);
       font-family: var(--font-mono);
       letter-spacing: -0.03em;
+    }
+
+    .sparkline-container {
+      width: 100%;
+      height: 35px;
     }
 
     .stat-footer {
@@ -238,10 +243,10 @@
       align-items: center;
       gap: 6px;
       border-top: 1px dashed var(--surface-border);
-      padding-top: 12px;
+      padding-top: 10px;
     }
 
-    /* MAIN CHART CONTAINER CARD */
+    /* MAIN CHART CONTAINER CARDS */
     .chart-card {
       grid-column: span 12;
       background: var(--surface-card);
@@ -249,6 +254,7 @@
       border-radius: var(--radius-xl);
       padding: 32px;
       box-shadow: var(--shadow-subtle);
+      margin-bottom: 24px;
     }
 
     .chart-header {
@@ -272,7 +278,7 @@
     .canvas-container {
       position: relative;
       width: 100%;
-      min-height: 420px;
+      min-height: 380px;
     }
   </style>
 </head>
@@ -303,54 +309,69 @@
       </div>
     </div>
 
-    <!-- METRICS SUMMARY CARDS -->
+    <!-- METRICS SUMMARY CARDS WITH SPARKLINE MINi-CHARTS -->
     <div class="analytics-grid">
       <div class="stat-card">
         <div class="stat-label">Visitors</div>
         <div class="stat-value" id="sumVisitors">--</div>
+        <div class="sparkline-container" id="sparklineVisitors"></div>
         <div class="stat-footer">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">trending_up</span> Period total unique visitors
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">trending_up</span> Unique visitors trend
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">PDF Quotations</div>
         <div class="stat-value" id="sumPdf">--</div>
+        <div class="sparkline-container" id="sparklinePdf"></div>
         <div class="stat-footer">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">download</span> Total estimates generated
+          <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">download</span> Estimates trend
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Cloud Media</div>
         <div class="stat-value" id="sumMedia">--</div>
+        <div class="sparkline-container" id="sparklineMedia"></div>
         <div class="stat-footer">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #3b82f6;">cloud_download</span> Gallery &amp; Drive files
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #3b82f6;">cloud_download</span> Gallery &amp; Drive trend
         </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Peak Traffic Day</div>
-        <div class="stat-value" id="peakDay" style="font-size: 26px; padding-top: 4px;">--</div>
+        <div class="stat-value" id="peakDay" style="font-size: 24px; padding-top: 4px;">--</div>
+        <div style="font-size: 11px; color: var(--text-faint); margin-top: 4px;">Highest volume recorded</div>
         <div class="stat-footer">
-          <span class="material-symbols-outlined" style="font-size: 16px; color: #f59e0b;">workspace_premium</span> Highest combined volume
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #f59e0b;">workspace_premium</span> Record volume
         </div>
       </div>
+    </div>
 
-      <!-- APEXCHARTS CONTAINER CARD -->
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title">
-            <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
-            <span>Historical Traffic &amp; Downloads Trend</span>
-          </div>
-        </div>
-        
-        <div class="canvas-container">
-          <div id="chartdiv"></div>
+    <!-- MAIN AREA CHART CARD -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
+          <span>Historical Traffic &amp; Downloads Trend</span>
         </div>
       </div>
+      <div class="canvas-container">
+        <div id="chartdiv"></div>
+      </div>
+    </div>
 
+    <!-- HEATMAP CARD (ACTIVITY BY DAY OF WEEK) -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <span class="material-symbols-outlined" style="color: var(--primary);">grid_view</span>
+          <span>Activity Heatmap (By Day of Week)</span>
+        </div>
+      </div>
+      <div class="canvas-container" style="min-height: 280px;">
+        <div id="heatmapdiv"></div>
+      </div>
     </div>
 
   </main>
@@ -380,6 +401,10 @@
 
   <script>
     let chartInstance = null;
+    let spark1Instance = null;
+    let spark2Instance = null;
+    let spark3Instance = null;
+    let heatmapInstance = null;
 
     function getDateStringDaysAgo(daysAgo) {
       let d = new Date();
@@ -434,10 +459,89 @@
       document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
       document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
 
-      renderApexChart(labels, visitorData, pdfData, mediaData);
+      // Render Main Chart, Sparklines, and Heatmap with proper cleanup
+      renderMainChart(labels, visitorData, pdfData, mediaData);
+      renderSparklines(visitorData, pdfData, mediaData);
+      renderHeatmap(logs);
     }
 
-    function renderApexChart(labels, visitorData, pdfData, mediaData) {
+    function renderSparklines(visitorData, pdfData, mediaData) {
+      const sparkConfig = (data, color) => ({
+        series: [{ data: data }],
+        chart: {
+          type: 'line',
+          width: '100%',
+          height: 35,
+          sparkline: { enabled: true }
+        },
+        stroke: { curve: 'smooth', width: 2.5 },
+        colors: [color],
+        tooltip: { enabled: false }
+      });
+
+      if (spark1Instance) spark1Instance.destroy();
+      if (spark2Instance) spark2Instance.destroy();
+      if (spark3Instance) spark3Instance.destroy();
+
+      spark1Instance = new ApexCharts(document.querySelector("#sparklineVisitors"), sparkConfig(visitorData, '#10b981'));
+      spark1Instance.render();
+
+      spark2Instance = new ApexCharts(document.querySelector("#sparklinePdf"), sparkConfig(pdfData, '#b91c1c'));
+      spark2Instance.render();
+
+      spark3Instance = new ApexCharts(document.querySelector("#sparklineMedia"), sparkConfig(mediaData, '#3b82f6'));
+      spark3Instance.render();
+    }
+
+    function renderHeatmap(logs) {
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      let dayTotals = { 'Sun': 0, 'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0 };
+
+      Object.keys(logs).forEach(dateStr => {
+        let d = new Date(dateStr);
+        if (!isNaN(d)) {
+          let dayName = daysOfWeek[d.getDay()];
+          let rec = logs[dateStr];
+          dayTotals[dayName] += (rec.visitors || 0) + (rec.pdf || 0) + (rec.media || 0);
+        }
+      });
+
+      let heatmapData = daysOfWeek.map(day => ({
+        x: day,
+        y: dayTotals[day]
+      }));
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#94a3b8' : '#78716c';
+
+      const heatmapOptions = {
+        series: [{
+          name: 'Total Activity',
+          data: heatmapData
+        }],
+        chart: {
+          type: 'heatmap',
+          height: 260,
+          toolbar: { show: false },
+          background: 'transparent',
+          fontFamily: 'Plus Jakarta Sans, sans-serif'
+        },
+        dataLabels: { enabled: true },
+        colors: ['#b91c1c'],
+        xaxis: {
+          labels: { style: { colors: textColor, fontSize: '12px' } }
+        },
+        yaxis: { show: false },
+        grid: { borderColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)' },
+        tooltip: { theme: isDark ? 'dark' : 'light' }
+      };
+
+      if (heatmapInstance) heatmapInstance.destroy();
+      heatmapInstance = new ApexCharts(document.querySelector("#heatmapdiv"), heatmapOptions);
+      heatmapInstance.render();
+    }
+
+    function renderMainChart(labels, visitorData, pdfData, mediaData) {
       const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
       const textColor = isDark ? '#94a3b8' : '#78716c';
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
@@ -450,7 +554,7 @@
         ],
         chart: {
           type: 'area',
-          height: 400,
+          height: 380,
           fontFamily: 'Plus Jakarta Sans, sans-serif',
           toolbar: { show: false },
           background: 'transparent',
