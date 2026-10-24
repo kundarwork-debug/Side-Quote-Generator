@@ -22,6 +22,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+  <!-- COUNTUP.JS CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+
   <style>
     :root {
       --primary: #b91c1c;
@@ -356,11 +359,11 @@
       border-radius: var(--radius-pill);
     }
 
-    /* BENTO GRID MODULES LAYOUT (REDUCED GAP) */
+    /* BENTO GRID MODULES LAYOUT */
     .modules-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
-      gap: 16px; /* Reduced gap between modules */
+      gap: 16px;
       width: 100%;
     }
 
@@ -368,7 +371,7 @@
       background: var(--surface-card) !important;
       border: 1.5px solid var(--surface-border);
       border-radius: var(--radius-xl);
-      padding: 24px 20px; /* Compact padding */
+      padding: 24px 20px;
       text-decoration: none;
       color: inherit;
       box-shadow: var(--shadow-subtle);
@@ -625,13 +628,13 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
-      text-align: center; /* Centers items nicely across the 3 columns */
+      text-align: center;
     }
 
     .telemetry-stat-item {
       display: flex;
       flex-direction: column;
-      align-items: center; /* Centers stat content horizontally */
+      align-items: center;
       gap: 6px;
       padding-right: 20px;
       border-right: 1px dashed var(--surface-border);
@@ -657,6 +660,7 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      font-family: var(--font-mono);
     }
 
     .telemetry-stat-sub {
@@ -979,7 +983,7 @@
       </div>
     </section>
 
-    <!-- OPERATIONAL TELEMETRY & IMPACT WITH TEXT SCRAMBLE (CLICKABLE LINK TO analytics.html) -->
+    <!-- OPERATIONAL TELEMETRY & IMPACT (CLICKABLE LINK TO analytics.html) -->
     <section class="telemetry-section">
       <a href="analytics.html" class="telemetry-card">
         
@@ -1003,7 +1007,7 @@
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Live Active Personnel</div>
             <div class="telemetry-stat-value">
-              <span id="liveUserCount">888</span> 
+              <span id="liveUserCount">0</span> 
               <span style="font-size: 14px; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 4px;">
                 <span style="width: 7px; height: 7px; background: #059669; border-radius: 50%; display: inline-block;"></span> Online
               </span>
@@ -1013,13 +1017,13 @@
 
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">PDF Quotations Drafted</div>
-            <div class="telemetry-stat-value" id="totalPdfDownloads">8,888+</div>
+            <div class="telemetry-stat-value"><span id="totalPdfDownloads">0</span>+</div>
             <div class="telemetry-stat-sub">Exact Container &amp; Maxcare</div>
           </div>
 
           <div class="telemetry-stat-item">
             <div class="telemetry-stat-label">Cloud Files &amp; Media Downloads</div>
-            <div class="telemetry-stat-value" id="totalMediaDownloads">8,888+</div>
+            <div class="telemetry-stat-value"><span id="totalMediaDownloads">0</span>+</div>
             <div class="telemetry-stat-sub">Drive &amp; gallery archives</div>
           </div>
 
@@ -1049,7 +1053,7 @@
     })();
   </script>
 
-  <!-- HERO CURSOR GLOW (pointer-driven, no animation loop) -->
+  <!-- HERO CURSOR GLOW -->
   <script>
     (function () {
       var glow = document.querySelector('.cursor-glow');
@@ -1139,11 +1143,44 @@
     });
   </script>
 
-  <!-- FIREBASE REALTIME PRESENCE & METRICS COUNTER WITH NUMBER SCRAMBLE -->
+  <!-- FIREBASE REALTIME PRESENCE & COUNTUP.JS ANIMATED COUNTERS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
+    let userCountUp = null;
+    let pdfCountUp = null;
+    let mediaCountUp = null;
+
+    function animateValue(elementId, endVal) {
+      if (window.countUp && window.countUp.CountUp) {
+        if (elementId === 'liveUserCount') {
+          if (!userCountUp) {
+            userCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
+            userCountUp.start();
+          } else {
+            userCountUp.update(endVal);
+          }
+        } else if (elementId === 'totalPdfDownloads') {
+          if (!pdfCountUp) {
+            pdfCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
+            pdfCountUp.start();
+          } else {
+            pdfCountUp.update(endVal);
+          }
+        } else if (elementId === 'totalMediaDownloads') {
+          if (!mediaCountUp) {
+            mediaCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
+            mediaCountUp.start();
+          } else {
+            mediaCountUp.update(endVal);
+          }
+        }
+      } else {
+        document.getElementById(elementId).innerText = Number(endVal).toLocaleString('en-IN');
+      }
+    }
+
     try {
       const firebaseConfig = {
         apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1161,10 +1198,6 @@
       }
       const db = firebase.database();
 
-      const userCountScramble = new TextScrambleEffect(document.getElementById("liveUserCount"));
-      const pdfScramble = new TextScrambleEffect(document.getElementById("totalPdfDownloads"));
-      const mediaScramble = new TextScrambleEffect(document.getElementById("totalMediaDownloads"));
-
       const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
       const myPresenceRef = db.ref("presence/" + userSessionId);
       const allPresenceRef = db.ref("presence");
@@ -1178,24 +1211,20 @@
 
       allPresenceRef.on("value", (snap) => {
         const activeCount = snap.numChildren() || 1;
-        userCountScramble.setText(activeCount.toLocaleString('en-IN'));
+        animateValue("liveUserCount", activeCount);
       });
 
-      const totalDownloadsRef = db.ref("analytics/totalPdfDownloads");
-      totalDownloadsRef.on("value", (snap) => {
+      db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
         const totalCount = snap.val();
         if (totalCount !== null && totalCount !== undefined) {
-          const finalVal = Number(totalCount).toLocaleString('en-IN') + '+';
-          pdfScramble.setText(finalVal);
+          animateValue("totalPdfDownloads", Number(totalCount));
         }
       });
 
-      const totalMediaRef = db.ref("analytics/totalMediaDownloads");
-      totalMediaRef.on("value", (snap) => {
+      db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
         const totalCount = snap.val();
         if (totalCount !== null && totalCount !== undefined) {
-          const finalVal = Number(totalCount).toLocaleString('en-IN') + '+';
-          mediaScramble.setText(finalVal);
+          animateValue("totalMediaDownloads", Number(totalCount));
         }
       });
     } catch (err) {
