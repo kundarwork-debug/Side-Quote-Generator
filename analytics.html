@@ -20,19 +20,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- CHART.JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- APEXCHARTS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
   <style>
     :root {
       --primary: #b91c1c;
       --primary-dark: #881337;
       --primary-gradient: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #f43f5e 100%);
-      --primary-soft: rgba(185, 28, 28, 0.04);
+      --primary-soft: rgba(185, 28, 28, 0.06);
       
       --bg-base: #F8F5F0;
-      --surface-card: rgba(255, 255, 255, 0.95);
-      --surface-border: rgba(220, 212, 204, 0.7);
+      --surface-card: rgba(255, 255, 255, 0.92);
+      --surface-border: rgba(220, 212, 204, 0.8);
       --surface-subtle: #F2ECE4;
       
       --text-main: #1C1917;
@@ -40,11 +40,11 @@
       --text-muted: #78716C;
       --text-faint: #A8A29E;
       
-      --radius-xl: 24px;
+      --radius-xl: 22px;
       --radius-pill: 9999px;
       
-      --shadow-subtle: 0 1px 3px rgba(28, 25, 23, 0.02), 0 8px 24px -6px rgba(28, 25, 23, 0.04);
-      --shadow-hover: 0 20px 40px -12px rgba(185, 28, 28, 0.08), 0 4px 12px rgba(0, 0, 0, 0.02);
+      --shadow-subtle: 0 4px 20px -2px rgba(28, 25, 23, 0.03), 0 1px 3px rgba(28, 25, 23, 0.02);
+      --shadow-hover: 0 20px 40px -12px rgba(185, 28, 28, 0.1), 0 4px 12px rgba(0, 0, 0, 0.02);
       
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -54,10 +54,10 @@
       --primary: #ef4444;
       --primary-dark: #dc2626;
       --primary-gradient: linear-gradient(135deg, #ef4444 0%, #f87171 50%, #fca5a5 100%);
-      --primary-soft: rgba(239, 68, 68, 0.08);
+      --primary-soft: rgba(239, 68, 68, 0.12);
       
       --bg-base: #090d16;
-      --surface-card: rgba(15, 23, 42, 0.92);
+      --surface-card: rgba(15, 23, 42, 0.85);
       --surface-border: #1e293b;
       --surface-subtle: #131b2e;
       
@@ -67,7 +67,7 @@
       --text-faint: #64748b;
       
       --shadow-subtle: 0 10px 30px -4px rgba(0, 0, 0, 0.5);
-      --shadow-hover: 0 20px 40px -10px rgba(239, 68, 68, 0.2);
+      --shadow-hover: 0 20px 40px -10px rgba(239, 68, 68, 0.25);
     }
 
     * {
@@ -95,11 +95,11 @@
       pointer-events: none;
       z-index: 0;
       background-image: 
-        radial-gradient(circle at 50% 10%, rgba(185, 28, 28, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 50% 10%, rgba(185, 28, 28, 0.04) 0%, transparent 60%),
         linear-gradient(to right, var(--surface-border) 1px, transparent 1px),
         linear-gradient(to bottom, var(--surface-border) 1px, transparent 1px);
       background-size: 100% 100%, 64px 64px, 64px 64px;
-      opacity: 0.6;
+      opacity: 0.5;
     }
 
     #header-container {
@@ -173,7 +173,7 @@
     .filter-tab.active {
       background: var(--primary);
       color: #ffffff;
-      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.3);
     }
 
     .filter-tab:hover:not(.active) {
@@ -197,7 +197,14 @@
       box-shadow: var(--shadow-subtle);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 16px;
+      transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
     }
 
     @media (max-width: 1024px) {
@@ -211,23 +218,27 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .stat-value {
-      font-size: 28px;
+      font-size: 32px;
       font-weight: 800;
       color: var(--text-main);
       font-family: var(--font-mono);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
     }
 
-    .stat-trend {
+    .stat-footer {
       font-size: 12px;
       font-weight: 700;
-      color: #059669;
-      display: inline-flex;
+      color: var(--text-muted);
+      display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      border-top: 1px dashed var(--surface-border);
+      padding-top: 12px;
     }
 
     /* MAIN CHART CONTAINER CARD */
@@ -258,49 +269,10 @@
       gap: 10px;
     }
 
-    /* INTERACTIVE TOGGLE SWITCH BUTTONS */
-    .chart-toggles {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .toggle-btn {
-      background: var(--surface-subtle);
-      border: 1.5px solid var(--surface-border);
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-      user-select: none;
-    }
-
-    .toggle-btn.active[data-series="0"] { background: #10b981; color: #ffffff; border-color: #10b981; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25); }
-    .toggle-btn.active[data-series="1"] { background: #b91c1c; color: #ffffff; border-color: #b91c1c; box-shadow: 0 3px 10px rgba(185, 28, 28, 0.25); }
-    .toggle-btn.active[data-series="2"] { background: #3b82f6; color: #ffffff; border-color: #3b82f6; box-shadow: 0 3px 10px rgba(59, 130, 246, 0.25); }
-
-    .toggle-btn:hover:not(.active) {
-      color: var(--text-main);
-      border-color: var(--text-muted);
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
     .canvas-container {
       position: relative;
       width: 100%;
-      height: 420px;
+      min-height: 420px;
     }
   </style>
 </head>
@@ -316,7 +288,7 @@
     <div class="page-header">
       <div class="page-title-group">
         <h1>
-          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 32px;">monitoring</span>
+          <span class="material-symbols-outlined" style="color: var(--primary); font-size: 34px;">monitoring</span>
           Download &amp; Traffic Analytics
         </h1>
         <p>Day-wise breakdown of visitors, PDF quotations, and media downloads</p>
@@ -336,51 +308,46 @@
       <div class="stat-card">
         <div class="stat-label">Visitors</div>
         <div class="stat-value" id="sumVisitors">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">group</span> Period total</div>
+        <div class="stat-footer">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #10b981;">trending_up</span> Period total unique visitors
+        </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">Total PDFs Generated</div>
+        <div class="stat-label">PDF Quotations</div>
         <div class="stat-value" id="sumPdf">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Period total</div>
+        <div class="stat-footer">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">download</span> Total estimates generated
+        </div>
       </div>
 
       <div class="stat-card">
-        <div class="stat-label">Total Media Downloads</div>
+        <div class="stat-label">Cloud Media</div>
         <div class="stat-value" id="sumMedia">--</div>
-        <div class="stat-trend"><span class="material-symbols-outlined" style="font-size: 16px;">folder_zip</span> Period total</div>
+        <div class="stat-footer">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #3b82f6;">cloud_download</span> Gallery &amp; Drive files
+        </div>
       </div>
 
       <div class="stat-card">
         <div class="stat-label">Peak Traffic Day</div>
-        <div class="stat-value" id="peakDay">--</div>
-        <div class="stat-trend" style="color: var(--text-muted);">Highest volume recorded</div>
+        <div class="stat-value" id="peakDay" style="font-size: 26px; padding-top: 4px;">--</div>
+        <div class="stat-footer">
+          <span class="material-symbols-outlined" style="font-size: 16px; color: #f59e0b;">workspace_premium</span> Highest combined volume
+        </div>
       </div>
 
-      <!-- MAIN MULTI-LINE GRAPH CARD WITH INTERACTIVE TOGGLES -->
+      <!-- APEXCHARTS CONTAINER CARD -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title">
             <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
             <span>Historical Traffic &amp; Downloads Trend</span>
           </div>
-
-          <!-- TOGGLE SWITCH BUTTONS -->
-          <div class="chart-toggles" id="chartToggles">
-            <button class="toggle-btn active" data-series="0" onclick="toggleDataset(0)">
-              <span class="legend-dot" style="background: #10b981;"></span> Visitors
-            </button>
-            <button class="toggle-btn active" data-series="1" onclick="toggleDataset(1)">
-              <span class="legend-dot" style="background: #b91c1c;"></span> PDF Quotations
-            </button>
-            <button class="toggle-btn active" data-series="2" onclick="toggleDataset(2)">
-              <span class="legend-dot" style="background: #3b82f6;"></span> Cloud Media
-            </button>
-          </div>
         </div>
         
         <div class="canvas-container">
-          <canvas id="downloadChart"></canvas>
+          <div id="chartdiv"></div>
         </div>
       </div>
 
@@ -407,7 +374,7 @@
     })();
   </script>
 
-  <!-- FIREBASE & CHART RENDERING LOGIC -->
+  <!-- FIREBASE & APEXCHARTS RENDERING LOGIC -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -417,20 +384,10 @@
     function getDateStringDaysAgo(daysAgo) {
       let d = new Date();
       d.setDate(d.getDate() - daysAgo);
-      return d.toISOString().split('T')[0];
-    }
-
-    function toggleDataset(seriesIndex) {
-      if (!chartInstance) return;
-      
-      const dataset = chartInstance.data.datasets[seriesIndex];
-      dataset.hidden = !dataset.hidden;
-      chartInstance.update();
-
-      const btn = document.querySelector(`.toggle-btn[data-series="${seriesIndex}"]`);
-      if (btn) {
-        btn.classList.toggle('active', !dataset.hidden);
-      }
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
 
     function processLogsAndRender(snapshot, range) {
@@ -477,108 +434,75 @@
       document.getElementById('sumMedia').innerText = sumMediaVal.toLocaleString('en-IN');
       document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
 
-      renderChart(labels, pdfData, mediaData, visitorData, range);
+      renderApexChart(labels, visitorData, pdfData, mediaData);
     }
 
-    function renderChart(labels, pdfData, mediaData, visitorData, range) {
-      const ctx = document.getElementById('downloadChart').getContext('2d');
-      
-      // Preserve current hidden states if switching timeframe tabs
-      let hiddenStates = [false, false, false];
+    function renderApexChart(labels, visitorData, pdfData, mediaData) {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const textColor = isDark ? '#94a3b8' : '#78716c';
+      const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
+
+      const options = {
+        series: [
+          { name: 'Visitors', data: visitorData },
+          { name: 'PDF Quotations', data: pdfData },
+          { name: 'Cloud Media', data: mediaData }
+        ],
+        chart: {
+          type: 'area',
+          height: 400,
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          toolbar: { show: false },
+          background: 'transparent',
+          animations: { enabled: true, easing: 'easeinout', speed: 600 }
+        },
+        colors: ['#10b981', '#b91c1c', '#3b82f6'],
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 3 },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.4,
+            opacityTo: 0.03,
+            stops: [0, 90, 100]
+          }
+        },
+        xaxis: {
+          categories: labels,
+          labels: {
+            style: { colors: textColor, fontSize: '11px', fontFamily: 'Plus Jakarta Sans' }
+          },
+          axisBorder: { show: false },
+          axisTicks: { show: false }
+        },
+        yaxis: {
+          labels: {
+            style: { colors: textColor, fontSize: '12px', fontFamily: 'Plus Jakarta Sans' }
+          }
+        },
+        grid: {
+          borderColor: gridColor,
+          strokeDashArray: 4
+        },
+        legend: {
+          position: 'bottom',
+          horizontalAlign: 'center',
+          labels: { colors: isDark ? '#f8fafc' : '#1c1917' },
+          itemMargin: { horizontal: 16, vertical: 8 }
+        },
+        tooltip: {
+          theme: isDark ? 'dark' : 'light',
+          x: { show: true }
+        }
+      };
+
+      const chartEl = document.querySelector("#chartdiv");
       if (chartInstance) {
-        hiddenStates = chartInstance.data.datasets.map(ds => ds.hidden);
         chartInstance.destroy();
       }
-
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const gridColor = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.04)';
-      const textColor = isDark ? '#94a3b8' : '#78716c';
-
-      const dynamicRadius = range === '1y' ? 0 : range === '6m' ? 1 : 3;
-
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Visitors',
-              data: visitorData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.06)',
-              borderWidth: 2.5,
-              fill: true,
-              tension: 0.35,
-              pointRadius: dynamicRadius,
-              pointBackgroundColor: '#10b981',
-              hidden: hiddenStates[0]
-            },
-            {
-              label: 'PDF Quotations',
-              data: pdfData,
-              borderColor: '#b91c1c',
-              backgroundColor: 'rgba(185, 28, 28, 0.06)',
-              borderWidth: 2.5,
-              fill: true,
-              tension: 0.35,
-              pointRadius: dynamicRadius,
-              pointBackgroundColor: '#b91c1c',
-              hidden: hiddenStates[1]
-            },
-            {
-              label: 'Cloud Media',
-              data: mediaData,
-              borderColor: '#3b82f6',
-              backgroundColor: 'rgba(59, 130, 246, 0.06)',
-              borderWidth: 2.5,
-              fill: true,
-              tension: 0.35,
-              pointRadius: dynamicRadius,
-              pointBackgroundColor: '#3b82f6',
-              hidden: hiddenStates[2]
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              mode: 'index',
-              intersect: false,
-              backgroundColor: isDark ? '#0f172a' : '#ffffff',
-              titleColor: isDark ? '#f8fafc' : '#1c1917',
-              bodyColor: isDark ? '#cbd5e1' : '#44403c',
-              borderColor: isDark ? '#1e293b' : '#ede4de',
-              borderWidth: 1,
-              padding: 12,
-              boxPadding: 6
-            }
-          },
-          scales: {
-            x: {
-              grid: { color: gridColor },
-              ticks: { 
-                color: textColor, 
-                font: { family: 'Plus Jakarta Sans', size: 11 },
-                maxTicksLimit: 12 
-              }
-            },
-            y: {
-              grid: { color: gridColor },
-              ticks: { color: textColor, font: { family: 'Plus Jakarta Sans', size: 12 } },
-              beginAtZero: true
-            }
-          }
-        }
-      });
-
-      // Sync toggle button visual states
-      chartInstance.data.datasets.forEach((ds, idx) => {
-        const btn = document.querySelector(`.toggle-btn[data-series="${idx}"]`);
-        if (btn) btn.classList.toggle('active', !ds.hidden);
-      });
+      chartInstance = new ApexCharts(chartEl, options);
+      chartInstance.render();
     }
 
     try {
@@ -600,7 +524,7 @@
 
       let currentRange = '7d';
 
-      // REAL-TIME LISTENER: Any new download or visit instantly updates the graph!
+      // REAL-TIME LISTENER: Updates chart live when new actions occur
       db.ref("analytics/daily_logs").on("value", (snapshot) => {
         processLogsAndRender(snapshot, currentRange);
       });
