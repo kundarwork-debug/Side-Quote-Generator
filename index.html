@@ -1143,7 +1143,7 @@
     });
   </script>
 
-  <!-- FIREBASE REALTIME PRESENCE & COUNTUP.JS ANIMATED COUNTERS -->
+  <!-- FIREBASE REALTIME PRESENCE & SCROLL-TRIGGERED COUNTUP.JS ANIMATIONS -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
@@ -1152,33 +1152,43 @@
     let pdfCountUp = null;
     let mediaCountUp = null;
 
-    function animateValue(elementId, endVal) {
-      if (window.countUp && window.countUp.CountUp) {
-        if (elementId === 'liveUserCount') {
-          if (!userCountUp) {
-            userCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
-            userCountUp.start();
-          } else {
-            userCountUp.update(endVal);
-          }
-        } else if (elementId === 'totalPdfDownloads') {
-          if (!pdfCountUp) {
-            pdfCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
-            pdfCountUp.start();
-          } else {
-            pdfCountUp.update(endVal);
-          }
-        } else if (elementId === 'totalMediaDownloads') {
-          if (!mediaCountUp) {
-            mediaCountUp = new window.countUp.CountUp(elementId, endVal, { duration: 1.2, useGrouping: true });
-            mediaCountUp.start();
-          } else {
-            mediaCountUp.update(endVal);
-          }
-        }
+    let targetData = {
+      liveUserCount: 0,
+      totalPdfDownloads: 0,
+      totalMediaDownloads: 0
+    };
+
+    let hasBeenViewed = false;
+
+    function runCountUpAnimations() {
+      if (!window.countUp || !window.countUp.CountUp) return;
+
+      // 1. Live Active Personnel
+      if (!userCountUp) {
+        userCountUp = new window.countUp.CountUp('liveUserCount', targetData.liveUserCount, { duration: 1.5, useGrouping: true });
       } else {
-        document.getElementById(elementId).innerText = Number(endVal).toLocaleString('en-IN');
+        userCountUp.update(targetData.liveUserCount);
       }
+      userCountUp.reset();
+      userCountUp.start();
+
+      // 2. PDF Quotations Drafted
+      if (!pdfCountUp) {
+        pdfCountUp = new window.countUp.CountUp('totalPdfDownloads', targetData.totalPdfDownloads, { duration: 1.5, useGrouping: true });
+      } else {
+        pdfCountUp.update(targetData.totalPdfDownloads);
+      }
+      pdfCountUp.reset();
+      pdfCountUp.start();
+
+      // 3. Cloud Files & Media Downloads
+      if (!mediaCountUp) {
+        mediaCountUp = new window.countUp.CountUp('totalMediaDownloads', targetData.totalMediaDownloads, { duration: 1.5, useGrouping: true });
+      } else {
+        mediaCountUp.update(targetData.totalMediaDownloads);
+      }
+      mediaCountUp.reset();
+      mediaCountUp.start();
     }
 
     try {
@@ -1210,23 +1220,52 @@
       });
 
       allPresenceRef.on("value", (snap) => {
-        const activeCount = snap.numChildren() || 1;
-        animateValue("liveUserCount", activeCount);
+        targetData.liveUserCount = snap.numChildren() || 1;
+        if (hasBeenViewed) {
+          if (userCountUp) userCountUp.update(targetData.liveUserCount);
+          else document.getElementById("liveUserCount").innerText = targetData.liveUserCount.toLocaleString('en-IN');
+        }
       });
 
       db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
-        const totalCount = snap.val();
-        if (totalCount !== null && totalCount !== undefined) {
-          animateValue("totalPdfDownloads", Number(totalCount));
+        const val = snap.val();
+        if (val !== null && val !== undefined) {
+          targetData.totalPdfDownloads = Number(val);
+          if (hasBeenViewed) {
+            if (pdfCountUp) pdfCountUp.update(targetData.totalPdfDownloads);
+            else document.getElementById("totalPdfDownloads").innerText = targetData.totalPdfDownloads.toLocaleString('en-IN');
+          }
         }
       });
 
       db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
-        const totalCount = snap.val();
-        if (totalCount !== null && totalCount !== undefined) {
-          animateValue("totalMediaDownloads", Number(totalCount));
+        const val = snap.val();
+        if (val !== null && val !== undefined) {
+          targetData.totalMediaDownloads = Number(val);
+          if (hasBeenViewed) {
+            if (mediaCountUp) mediaCountUp.update(targetData.totalMediaDownloads);
+            else document.getElementById("totalMediaDownloads").innerText = targetData.totalMediaDownloads.toLocaleString('en-IN');
+          }
         }
       });
+
+      // Intersection Observer to trigger animation from 0 when scrolled into view
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            hasBeenViewed = true;
+            runCountUpAnimations();
+          }
+        });
+      }, { threshold: 0.25 });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const telemetryCard = document.querySelector('.telemetry-card');
+        if (telemetryCard) {
+          observer.observe(telemetryCard);
+        }
+      });
+
     } catch (err) {
       console.warn("Live presence counters offline.", err);
     }
