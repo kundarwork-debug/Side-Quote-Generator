@@ -56,7 +56,7 @@
             color: #78716c;
             line-height: 1.5;
             margin-bottom: 24px;
-          ">Since office logins are shared, please enter your real name so your team knows who performed recent actions and downloads.</p>
+          ">Because this workstation has shared access, adding your name helps your team coordinate tasks and downloads smoothly.</p>
           
           <form id="apmlStationForm" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
             <div>
