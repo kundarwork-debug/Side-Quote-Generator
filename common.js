@@ -12,40 +12,42 @@
 })();
 
 // =========================================================
-// APML STATION / DESK NAME SETUP & TRACKER (SweetAlert2 Modal)
+// APML STATION / DESK NAME SETUP & TRACKER (SweetAlert2)
 // =========================================================
 (function() {
   function initStationTracker() {
     let stationName = localStorage.getItem('apml_station_name');
     
     if (!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') {
-      // Check if SweetAlert2 is loaded, else fallback to standard prompt or load it
       if (typeof Swal !== 'undefined') {
         Swal.fire({
           title: "Station Setup Required",
-          text: "Please enter a unique name for this PC or Desk so downloads and activity can be tracked accurately across shared office logins.",
+          text: "Please enter a unique name for this PC or Desk so downloads and activity can be tracked accurately.",
           imageUrl: "https://i.ibb.co/hJ97C30p/Gemini-Generated-Image-hkvlk4hkvlk4hkvl-1.png",
           imageWidth: 320,
           imageHeight: 160,
           imageAlt: "APML Station Setup",
           input: "text",
           inputPlaceholder: "e.g., Front-Desk-1, Billing-PC",
-          inputAttributes: {
+          inputAttributes: { 
             autocapitalize: "off",
             autocorrect: "off"
           },
+          showCancelButton: false,
           confirmButtonText: "Save & Continue",
           confirmButtonColor: "#b91c1c",
           allowOutsideClick: false,
           allowEscapeKey: false,
-          inputValidator: (value) => {
-            if (!value || !value.trim()) {
-              return "Please enter a valid station name!";
+          preConfirm: (login) => {
+            if (!login || !login.trim()) {
+              Swal.showValidationMessage("Please enter a valid station name!");
+              return false;
             }
+            return login.trim().replace(/['"`<>\\]/g, '');
           }
         }).then((result) => {
-          if (result.isConfirmed) {
-            const cleanName = result.value.trim().replace(/['"`<>\\]/g, '');
+          if (result.isConfirmed && result.value) {
+            const cleanName = result.value;
             localStorage.setItem('apml_station_name', cleanName);
             
             Swal.fire({
