@@ -12,6 +12,168 @@
 })();
 
 // =========================================================
+// APML STATION / DESK NAME SETUP & TRACKER
+// =========================================================
+(function() {
+  function initStationTracker() {
+    let stationName = localStorage.getItem('apml_station_name');
+    
+    if (!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') {
+      const modalOverlay = document.createElement('div');
+      modalOverlay.id = 'apmlStationModalOverlay';
+      modalOverlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeInOverlay 0.3s ease;
+      `;
+
+      modalOverlay.innerHTML = `
+        <div style="
+          background: #ffffff;
+          max-width: 420px;
+          width: 100%;
+          border-radius: 24px;
+          padding: 32px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+          border: 1.5px solid #f3e8e2;
+          text-align: center;
+          font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+          animation: scaleUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        ">
+          <div style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(185, 28, 28, 0.08);
+            color: #b91c1c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+          ">
+            <span class="material-symbols-outlined" style="font-size: 30px;">desktop_windows</span>
+          </div>
+          <h3 style="
+            font-size: 22px;
+            font-weight: 800;
+            color: #1c1917;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+          ">Station Setup Required</h3>
+          <p style="
+            font-size: 14px;
+            color: #78716c;
+            line-height: 1.5;
+            margin-bottom: 24px;
+          ">Please enter a unique name for this PC or Desk so downloads and activity can be tracked accurately across shared office logins.</p>
+          
+          <form id="apmlStationForm" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #78716c; margin-bottom: 6px; letter-spacing: 0.05em;">PC / Desk Name *</label>
+              <input type="text" id="apmlStationInput" placeholder="e.g. Front-Desk-1, Billing-PC" required autofocus style="
+                width: 100%;
+                padding: 12px 16px;
+                background: #f8f5f0;
+                border: 1.5px solid #d7ccc8;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                color: #1c1917;
+                outline: none;
+                transition: all 0.2s ease;
+              ">
+              <div id="apmlStationError" style="color: #dc2626; font-size: 12px; font-weight: 600; margin-top: 4px; display: none;">Please enter a valid station name.</div>
+            </div>
+
+            <button type="submit" style="
+              width: 100%;
+              background: #b91c1c;
+              color: #ffffff;
+              border: none;
+              padding: 14px;
+              border-radius: 9999px;
+              font-size: 15px;
+              font-weight: 700;
+              cursor: pointer;
+              box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+              transition: background 0.2s ease, transform 0.2s ease;
+            ">Save &amp; Continue</button>
+          </form>
+        </div>
+      `;
+
+      const styleTag = document.createElement('style');
+      styleTag.innerHTML = `
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUpModal { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        #apmlStationInput:focus { border-color: #b91c1c !important; background: #ffffff !important; box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15); }
+      `;
+      document.head.appendChild(styleTag);
+      document.body.appendChild(modalOverlay);
+
+      const form = document.getElementById('apmlStationForm');
+      const input = document.getElementById('apmlStationInput');
+      const errorDiv = document.getElementById('apmlStationError');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = input.value.trim().replace(/['"`<>\\]/g, '');
+        if (!val) {
+          errorDiv.style.display = 'block';
+          input.focus();
+          return;
+        }
+
+        localStorage.setItem('apml_station_name', val);
+        modalOverlay.style.opacity = '0';
+        setTimeout(() => modalOverlay.remove(), 300);
+      });
+    }
+  }
+
+  window.APMLStation = {
+    getName: function() {
+      return localStorage.getItem('apml_station_name') || 'Unknown-Desk';
+    },
+    logAction: function(actionType, fileName) {
+      if (typeof firebase === 'undefined' || !firebase.database) return;
+      const station = this.getName();
+      const safeKey = station.replace(/[.#$\/\[\]]/g, '_');
+      
+      const ref = firebase.database().ref(`analytics/stationActivity/${safeKey}`);
+      ref.update({
+        stationName: station,
+        lastActive: Date.now(),
+        lastAction: actionType,
+        lastFile: fileName || ''
+      });
+
+      if (actionType === 'download') {
+        ref.child('downloadCount').transaction(val => (val || 0) + 1);
+      }
+    },
+    reset: function() {
+      localStorage.removeItem('apml_station_name');
+      alert("Station name cleared. Refresh the page to set a new name.");
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initStationTracker);
+  } else {
+    initStationTracker();
+  }
+})();
+
+// =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
 function logDailyActivity(type) {
@@ -726,19 +888,16 @@ window.sendPortalNotification = function () {};
       }
 
       /* ---- moods ---- */
-      /* sleeping: dimmed, with a little floating zzz beside it */
       .support-btn.apml-mood-sleep { opacity: 0.55; filter: grayscale(0.35); transition: opacity 0.6s ease, filter 0.6s ease; }
       .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
       .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
       @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
-      /* alert: bounces and glows red */
       .support-btn.apml-mood-alert { animation: apmlBounce 0.55s ease-in-out infinite, apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
       @keyframes apmlBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
       @keyframes apmlGlow {
         0% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 0 rgba(220, 38, 38, 0.65); }
         100% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 20px rgba(220, 38, 38, 0); }
       }
-      /* happy: a quick celebratory hop */
       .support-btn.apml-mood-happy { animation: apmlHop 0.5s ease-in-out 3 !important; }
       @keyframes apmlHop {
         0%, 100% { transform: translateY(0) scale(1); }
@@ -754,8 +913,6 @@ window.sendPortalNotification = function () {};
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // A pinned announcement keeps the speech bubble open until it is unpinned. The avatar itself still follows
-    // its normal show/hide rules (hidden at the top of the home page, hidden near the footer, and so on).
     let pinnedText = '';
     let pinnedShowing = false;
 
@@ -814,11 +971,11 @@ window.sendPortalNotification = function () {};
           }, 1500);
 
           if (isPin) {
-            pinnedShowing = true;              // a pinned announcement never closes by itself
+            pinnedShowing = true;
           } else if (!forceKeepOpen || pinnedText) {
             hideTimer = setTimeout(() => {
               if (myToken !== typeToken) return;
-              if (pinnedText) playTypewriter(pinnedText, true, 0, true);   // back to the announcement
+              if (pinnedText) playTypewriter(pinnedText, true, 0, true);
               else bubble.classList.remove('show');
             }, holdMs);
           }
@@ -830,11 +987,6 @@ window.sendPortalNotification = function () {};
       step();
     }
 
-    // ---------------- moods ----------------
-    //  sleeping: nothing touched for 15 seconds -> the avatar dims and a little zzz floats beside it
-    //  alert:    something needs attention (a file was downloaded, a Telegram announcement arrived) -> bounces and glows red
-    //  happy:    something worked (a PDF was made) -> a quick hop and a cheerful emoji in the speech bubble
-    // None of this touches the avatar's normal show/hide rules.
     const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
     const zzz = document.createElement('div');
@@ -857,7 +1009,7 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-sleep');
       zzz.classList.add('show');
     }
-    // any sign of life counts: mouse, touch, keys, scrolling, coming back to the tab
+
     ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll', 'click'].forEach((ev) => {
       window.addEventListener(ev, wake, { passive: true });
     });
@@ -884,22 +1036,19 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-happy');
       happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
       const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
-      playTypewriter(line, false, 4500);       // closes by itself, then a pinned announcement (if any) comes back
+      playTypewriter(line, false, 4500);
     }
 
     window.APMLMascot = {
-      // say("text") or say("text", { hold: 20000, keepOpen: false }): hold = how long the bubble stays open (ms)
       say: function (text, opts) {
         if (!text) return;
         const keepOpen = opts && opts.keepOpen !== undefined ? !!opts.keepOpen : isIndexPage;
         playTypewriter(String(text), keepOpen, (opts && Number(opts.hold)) || 5000);
       },
-      // alert(): bounce and glow red for a few seconds.  happy("text"): hop and show a cheerful message.
       alert: alertMood,
       happy: happyMood,
       wake: wake,
       isAsleep: function () { return asleep; },
-      // pin("text"): keep an announcement open in the speech bubble until unpin() (the avatar still hides and shows as usual)
       pin: function (text) {
         text = String(text || '').trim();
         if (!text) return;
@@ -911,11 +1060,11 @@ window.sendPortalNotification = function () {};
         if (!pinnedText) return;
         pinnedText = '';
         pinnedShowing = false;
-        typeToken++;                            // stop any typing in progress
+        typeToken++;
         isTyping = false;
         const bubble = document.getElementById('supportBubble');
         if (bubble) bubble.classList.remove('show');
-        window.dispatchEvent(new Event('scroll'));   // the avatar goes back under the normal show/hide rules
+        window.dispatchEvent(new Event('scroll'));
       }
     };
 
@@ -930,7 +1079,7 @@ window.sendPortalNotification = function () {};
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (isTyping) return;
-        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }   // tap = read the announcement again
+        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }
 
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
