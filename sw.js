@@ -7,9 +7,9 @@
    - Live data (Firebase, Supabase, Cloudinary, your Workers): never touched.
 
    To force every visitor to drop old copies after a big change, just bump
-   VERSION below (for example 'v5').
+   VERSION below (for example 'v6').
    ===================================================================== */
-const VERSION = 'v5';
+const VERSION = 'v6';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
@@ -43,6 +43,8 @@ function isStaticCdn(url) {
   return url.hostname === 'fonts.googleapis.com' ||
          url.hostname === 'fonts.gstatic.com' ||
          url.hostname === 'cdn.jsdelivr.net' ||
+         url.hostname === 'releases.transloadit.com' ||
+         url.hostname === 'cdnjs.cloudflare.com' ||
          url.hostname === 'unpkg.com' ||
          (url.hostname === 'www.gstatic.com' && url.pathname.indexOf('/firebasejs/') === 0);
 }
@@ -145,7 +147,7 @@ async function staleWhileRevalidate(event) {
   if (cached) { event.waitUntil(refresh); return cached; }   // instant, and updated for next time
   const res = await refresh;
   if (res) return res;
-  // offline and this exact URL (e.g. common.js?v=22.4) was never saved: use the plain copy
+  // offline and this exact URL was never saved: use the plain copy
   const fallback = await caches.match(req, { ignoreSearch: true });
   return fallback || Response.error();
 }
