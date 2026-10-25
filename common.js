@@ -12,100 +12,6 @@
 })();
 
 // =========================================================
-// APML USER / REAL NAME SETUP & TRACKER (SweetAlert2)
-// =========================================================
-(function() {
-  function initStationTracker() {
-    let stationName = localStorage.getItem('apml_station_name');
-    
-    if (!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') {
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: "Enter Your Name",
-          text: "Since office logins are shared, please enter your real name so your team knows who performed recent actions and downloads.",
-          imageUrl: "https://i.ibb.co/hJ97C30p/Gemini-Generated-Image-hkvlk4hkvlk4hkvl-1.png",
-          imageWidth: 320,
-          imageHeight: 160,
-          imageAlt: "APML Name Setup",
-          input: "text",
-          inputPlaceholder: "Your Full Name",
-          inputAttributes: { 
-            autocapitalize: "words",
-            autocorrect: "off"
-          },
-          showCancelButton: false,
-          confirmButtonText: "Save & Continue",
-          confirmButtonColor: "#b91c1c",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          preConfirm: (name) => {
-            if (!name || !name.trim()) {
-              Swal.showValidationMessage("Please enter your real name!");
-              return false;
-            }
-            return name.trim().replace(/['"`<>\\]/g, '');
-          }
-        }).then((result) => {
-          if (result.isConfirmed && result.value) {
-            const cleanName = result.value;
-            localStorage.setItem('apml_station_name', cleanName);
-            
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'success',
-              title: `Welcome, ${cleanName}!`,
-              showConfirmButton: false,
-              timer: 2500
-            });
-          }
-        });
-      } else {
-        // Fallback if Swal isn't loaded yet
-        let fallbackName = prompt("【 APML Portal Setup 】\nPlease enter your real name:");
-        while (!fallbackName || !fallbackName.trim()) {
-          fallbackName = prompt("Name cannot be empty. Please enter your real name:");
-        }
-        localStorage.setItem('apml_station_name', fallbackName.trim().replace(/['"`<>\\]/g, ''));
-      }
-    }
-  }
-
-  window.APMLStation = {
-    getName: function() {
-      return localStorage.getItem('apml_station_name') || 'Unknown-User';
-    },
-    logAction: function(actionType, fileName) {
-      if (typeof firebase === 'undefined' || !firebase.database) return;
-      const station = this.getName();
-      const safeKey = station.replace(/[.#$\/\[\]]/g, '_');
-      
-      const ref = firebase.database().ref(`analytics/stationActivity/${safeKey}`);
-      ref.update({
-        stationName: station,
-        lastActive: Date.now(),
-        lastAction: actionType,
-        lastFile: fileName || ''
-      });
-
-      if (actionType === 'download') {
-        ref.child('downloadCount').transaction(val => (val || 0) + 1);
-      }
-    },
-    reset: function() {
-      localStorage.removeItem('apml_station_name');
-      alert("Name cleared. Refresh the page to enter a new name.");
-    }
-  };
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initStationTracker);
-  } else {
-    initStationTracker();
-  }
-})();
-
-// =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
 function logDailyActivity(type) {
@@ -820,16 +726,19 @@ window.sendPortalNotification = function () {};
       }
 
       /* ---- moods ---- */
+      /* sleeping: dimmed, with a little floating zzz beside it */
       .support-btn.apml-mood-sleep { opacity: 0.55; filter: grayscale(0.35); transition: opacity 0.6s ease, filter 0.6s ease; }
       .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
       .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
       @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
+      /* alert: bounces and glows red */
       .support-btn.apml-mood-alert { animation: apmlBounce 0.55s ease-in-out infinite, apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
       @keyframes apmlBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
       @keyframes apmlGlow {
         0% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 0 rgba(220, 38, 38, 0.65); }
         100% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 20px rgba(220, 38, 38, 0); }
       }
+      /* happy: a quick celebratory hop */
       .support-btn.apml-mood-happy { animation: apmlHop 0.5s ease-in-out 3 !important; }
       @keyframes apmlHop {
         0%, 100% { transform: translateY(0) scale(1); }
@@ -845,6 +754,8 @@ window.sendPortalNotification = function () {};
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
+    // A pinned announcement keeps the speech bubble open until it is unpinned. The avatar itself still follows
+    // its normal show/hide rules (hidden at the top of the home page, hidden near the footer, and so on).
     let pinnedText = '';
     let pinnedShowing = false;
 
@@ -903,11 +814,11 @@ window.sendPortalNotification = function () {};
           }, 1500);
 
           if (isPin) {
-            pinnedShowing = true;
+            pinnedShowing = true;              // a pinned announcement never closes by itself
           } else if (!forceKeepOpen || pinnedText) {
             hideTimer = setTimeout(() => {
               if (myToken !== typeToken) return;
-              if (pinnedText) playTypewriter(pinnedText, true, 0, true);
+              if (pinnedText) playTypewriter(pinnedText, true, 0, true);   // back to the announcement
               else bubble.classList.remove('show');
             }, holdMs);
           }
@@ -919,6 +830,11 @@ window.sendPortalNotification = function () {};
       step();
     }
 
+    // ---------------- moods ----------------
+    //  sleeping: nothing touched for 15 seconds -> the avatar dims and a little zzz floats beside it
+    //  alert:    something needs attention (a file was downloaded, a Telegram announcement arrived) -> bounces and glows red
+    //  happy:    something worked (a PDF was made) -> a quick hop and a cheerful emoji in the speech bubble
+    // None of this touches the avatar's normal show/hide rules.
     const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
     const zzz = document.createElement('div');
@@ -941,7 +857,7 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-sleep');
       zzz.classList.add('show');
     }
-
+    // any sign of life counts: mouse, touch, keys, scrolling, coming back to the tab
     ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll', 'click'].forEach((ev) => {
       window.addEventListener(ev, wake, { passive: true });
     });
@@ -968,19 +884,22 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-happy');
       happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
       const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
-      playTypewriter(line, false, 4500);
+      playTypewriter(line, false, 4500);       // closes by itself, then a pinned announcement (if any) comes back
     }
 
     window.APMLMascot = {
+      // say("text") or say("text", { hold: 20000, keepOpen: false }): hold = how long the bubble stays open (ms)
       say: function (text, opts) {
         if (!text) return;
         const keepOpen = opts && opts.keepOpen !== undefined ? !!opts.keepOpen : isIndexPage;
         playTypewriter(String(text), keepOpen, (opts && Number(opts.hold)) || 5000);
       },
+      // alert(): bounce and glow red for a few seconds.  happy("text"): hop and show a cheerful message.
       alert: alertMood,
       happy: happyMood,
       wake: wake,
       isAsleep: function () { return asleep; },
+      // pin("text"): keep an announcement open in the speech bubble until unpin() (the avatar still hides and shows as usual)
       pin: function (text) {
         text = String(text || '').trim();
         if (!text) return;
@@ -992,11 +911,11 @@ window.sendPortalNotification = function () {};
         if (!pinnedText) return;
         pinnedText = '';
         pinnedShowing = false;
-        typeToken++;
+        typeToken++;                            // stop any typing in progress
         isTyping = false;
         const bubble = document.getElementById('supportBubble');
         if (bubble) bubble.classList.remove('show');
-        window.dispatchEvent(new Event('scroll'));
+        window.dispatchEvent(new Event('scroll'));   // the avatar goes back under the normal show/hide rules
       }
     };
 
@@ -1011,7 +930,7 @@ window.sendPortalNotification = function () {};
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (isTyping) return;
-        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }
+        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }   // tap = read the announcement again
 
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
