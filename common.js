@@ -12,62 +12,130 @@
 })();
 
 // =========================================================
-// APML STATION / DESK NAME SETUP & TRACKER (SweetAlert2)
+// APML STATION / DESK NAME SETUP & TRACKER
 // =========================================================
 (function() {
   function initStationTracker() {
     let stationName = localStorage.getItem('apml_station_name');
     
     if (!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') {
-      if (typeof Swal !== 'undefined') {
-        Swal.fire({
-          title: "Station Setup Required",
-          text: "Please enter a unique name for this PC or Desk so downloads and activity can be tracked accurately.",
-          imageUrl: "https://i.ibb.co/hJ97C30p/Gemini-Generated-Image-hkvlk4hkvlk4hkvl-1.png",
-          imageWidth: 320,
-          imageHeight: 160,
-          imageAlt: "APML Station Setup",
-          input: "text",
-          inputPlaceholder: "e.g., Front-Desk-1, Billing-PC",
-          inputAttributes: { 
-            autocapitalize: "off",
-            autocorrect: "off"
-          },
-          showCancelButton: false,
-          confirmButtonText: "Save & Continue",
-          confirmButtonColor: "#b91c1c",
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          preConfirm: (login) => {
-            if (!login || !login.trim()) {
-              Swal.showValidationMessage("Please enter a valid station name!");
-              return false;
-            }
-            return login.trim().replace(/['"`<>\\]/g, '');
-          }
-        }).then((result) => {
-          if (result.isConfirmed && result.value) {
-            const cleanName = result.value;
-            localStorage.setItem('apml_station_name', cleanName);
-            
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'success',
-              title: `Station configured as: ${cleanName}`,
-              showConfirmButton: false,
-              timer: 2500
-            });
-          }
-        });
-      } else {
-        // Fallback if Swal isn't loaded yet
-        let fallbackName = prompt("【 APML Portal Setup 】\nPlease enter the unique name for this PC / Desk\n(e.g., Front-Desk-1, Billing-Counter):");
-        while (!fallbackName || !fallbackName.trim()) {
-          fallbackName = prompt("Station name cannot be empty. Please enter the name for this PC / Desk:");
+      const modalOverlay = document.createElement('div');
+      modalOverlay.id = 'apmlStationModalOverlay';
+      modalOverlay.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 999999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        animation: fadeInOverlay 0.3s ease;
+      `;
+
+      modalOverlay.innerHTML = `
+        <div style="
+          background: #ffffff;
+          max-width: 420px;
+          width: 100%;
+          border-radius: 24px;
+          padding: 32px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+          border: 1.5px solid #f3e8e2;
+          text-align: center;
+          font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+          animation: scaleUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        ">
+          <div style="
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(185, 28, 28, 0.08);
+            color: #b91c1c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+          ">
+            <span class="material-symbols-outlined" style="font-size: 30px;">desktop_windows</span>
+          </div>
+          <h3 style="
+            font-size: 22px;
+            font-weight: 800;
+            color: #1c1917;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+          ">Station Setup Required</h3>
+          <p style="
+            font-size: 14px;
+            color: #78716c;
+            line-height: 1.5;
+            margin-bottom: 24px;
+          ">Please enter a unique name for this PC or Desk so downloads and activity can be tracked accurately across shared office logins.</p>
+          
+          <form id="apmlStationForm" style="display: flex; flex-direction: column; gap: 16px; text-align: left;">
+            <div>
+              <label style="display: block; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #78716c; margin-bottom: 6px; letter-spacing: 0.05em;">PC / Desk Name *</label>
+              <input type="text" id="apmlStationInput" placeholder="e.g. Front-Desk-1, Billing-PC" required autofocus style="
+                width: 100%;
+                padding: 12px 16px;
+                background: #f8f5f0;
+                border: 1.5px solid #d7ccc8;
+                border-radius: 12px;
+                font-size: 15px;
+                font-weight: 600;
+                color: #1c1917;
+                outline: none;
+                transition: all 0.2s ease;
+              ">
+              <div id="apmlStationError" style="color: #dc2626; font-size: 12px; font-weight: 600; margin-top: 4px; display: none;">Please enter a valid station name.</div>
+            </div>
+
+            <button type="submit" style="
+              width: 100%;
+              background: #b91c1c;
+              color: #ffffff;
+              border: none;
+              padding: 14px;
+              border-radius: 9999px;
+              font-size: 15px;
+              font-weight: 700;
+              cursor: pointer;
+              box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+              transition: background 0.2s ease, transform 0.2s ease;
+            ">Save &amp; Continue</button>
+          </form>
+        </div>
+      `;
+
+      const styleTag = document.createElement('style');
+      styleTag.innerHTML = `
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleUpModal { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        #apmlStationInput:focus { border-color: #b91c1c !important; background: #ffffff !important; box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15); }
+      `;
+      document.head.appendChild(styleTag);
+      document.body.appendChild(modalOverlay);
+
+      const form = document.getElementById('apmlStationForm');
+      const input = document.getElementById('apmlStationInput');
+      const errorDiv = document.getElementById('apmlStationError');
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = input.value.trim().replace(/['"`<>\\]/g, '');
+        if (!val) {
+          errorDiv.style.display = 'block';
+          input.focus();
+          return;
         }
-        localStorage.setItem('apml_station_name', fallbackName.trim().replace(/['"`<>\\]/g, ''));
-      }
+
+        localStorage.setItem('apml_station_name', val);
+        modalOverlay.style.opacity = '0';
+        setTimeout(() => modalOverlay.remove(), 300);
+      });
     }
   }
 
