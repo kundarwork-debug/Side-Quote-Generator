@@ -974,3 +974,21 @@ window.sendPortalNotification = function () {};
   s.async = true;
   document.head.appendChild(s);
 })();
+
+// ---------------------------------------------------------------------
+// STATION TRACKER: make sure station-tracker.js is loaded on every page.
+// ---------------------------------------------------------------------
+(function loadStationTracker() {
+  var base = '';
+  var tags = document.getElementsByTagName('script');
+  for (var i = 0; i < tags.length; i++) {
+    if (/common\.js(\?|$)/.test(tags[i].src)) { 
+      base = tags[i].src.replace(/common\.js.*$/, ''); 
+      break; 
+    }
+  }
+  var s = document.createElement('script');
+  s.src = base + 'station-tracker.js';
+  s.async = true;
+  document.head.appendChild(s);
+})();
