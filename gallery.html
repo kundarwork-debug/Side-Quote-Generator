@@ -20,9 +20,6 @@
   <!-- SIMPLELIGHTBOX CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
 
-  <!-- UPPY CSS -->
-  <link href="https://releases.transloadit.com/uppy/v3.23.0/uppy.min.css" rel="stylesheet">
-
   <!-- SUPABASE JS CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -626,12 +623,18 @@
       padding: 3px 6px 3px 14px;
       transition: all 0.2s ease;
       gap: 4px;
+      cursor: pointer;
     }
 
-    .filter-item-wrapper.active {
+    .filter-item-wrapper.active, .filter-item-wrapper.drag-over {
       background: var(--primary);
       border-color: var(--primary);
       box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2);
+      color: #ffffff;
+    }
+
+    .filter-item-wrapper.drag-over {
+      transform: scale(1.05);
     }
 
     .filter-btn-text {
@@ -647,7 +650,8 @@
       padding: 5px 2px 5px 0;
     }
 
-    .filter-item-wrapper.active .filter-btn-text {
+    .filter-item-wrapper.active .filter-btn-text,
+    .filter-item-wrapper.drag-over .filter-btn-text {
       color: #ffffff;
     }
 
@@ -672,7 +676,9 @@
     }
 
     .filter-item-wrapper.active .btn-folder-edit,
-    .filter-item-wrapper.active .btn-folder-del {
+    .filter-item-wrapper.active .btn-folder-del,
+    .filter-item-wrapper.drag-over .btn-folder-edit,
+    .filter-item-wrapper.drag-over .btn-folder-del {
       color: rgba(255,255,255,0.85);
     }
 
@@ -855,7 +861,12 @@
       display: flex;
       flex-direction: column;
       width: 100%;
+      cursor: grab;
       transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s ease;
+    }
+
+    .media-card:active {
+      cursor: grabbing;
     }
 
     .media-card:hover {
@@ -1098,7 +1109,7 @@
       <div class="gallery-header">
         <h1 class="gallery-title">Standards &amp; Media <span>Gallery</span></h1>
         <div class="gallery-sub-row">
-          <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation.</p>
+          <p class="gallery-sub">Cloud-synced visual packaging assets and operational video documentation. Drag cards to move folders.</p>
         </div>
         <div class="gallery-stats-pills" id="galleryStatsPills">
           <span class="stat-pill">Total: <strong id="statTotalCount">0</strong></span>
@@ -1142,6 +1153,8 @@
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
           
+          <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
+          
           <button type="button" class="btn-action-primary" id="uploadPhotoBtn" onclick="triggerPhotoUpload()">
             <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
             <span>Upload Media</span>
@@ -1182,8 +1195,8 @@
   <!-- SIMPLELIGHTBOX JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
 
-  <!-- UPPY JS -->
-  <script src="https://releases.transloadit.com/uppy/v3.23.0/uppy.min.js"></script>
+  <!-- LOZAD.JS FOR LAZY LOADING -->
+  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
 
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -1249,67 +1262,6 @@
     let currentUser = null;
     let currentPage = 1;
     let lightbox = null;
-
-    // Initialize Uppy Dashboard Modal for advanced file uploads
-    const uppy = new Uppy.Uppy({
-      id: 'apmlGalleryUppy',
-      autoProceed: false,
-      restrictions: {
-        maxFileSize: MAX_VIDEO_SIZE_BYTES,
-        allowedFileTypes: ['image/*', 'video/*']
-      }
-    })
-    .use(Uppy.Dashboard, {
-      inline: false,
-      target: 'body',
-      proudlyDisplayPoweredByUppy: false,
-      closeModalOnClickOutside: true,
-      showProgressDetails: true
-    })
-    .use(Uppy.XHRUpload, {
-      endpoint: UPLOAD_ENDPOINT,
-      fieldName: 'file',
-      formData: true
-    });
-
-    uppy.on('file-added', (file) => {
-      uppy.setFileMeta(file.id, {
-        upload_preset: CLOUDINARY_UPLOAD_PRESET,
-        folder: CLOUDINARY_FOLDER
-      });
-    });
-
-    uppy.on('upload-success', async (file, response) => {
-      const data = response.body;
-      if (data && data.secure_url) {
-        const uploadSelect = document.getElementById('uploadFolderSelect');
-        const folder = currentActiveFolder || uploadSelect.value;
-        const isVideo = file.type && file.type.startsWith('video/');
-
-        try {
-          await mediaRef.push({
-            url: data.secure_url,
-            folder: folder,
-            name: file.name,
-            size: file.size || 0,
-            isVideo: isVideo,
-            viewsCount: 0,
-            downloadsCount: 0,
-            timestamp: Date.now()
-          });
-
-          const statusText = document.getElementById('uploadStatusText');
-          if (statusText) {
-            statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${file.name}!</span>`;
-            setTimeout(() => {
-              statusText.textContent = "Select destination category and choose photos or videos";
-            }, 4000);
-          }
-        } catch (err) {
-          console.error("Firebase push error:", err);
-        }
-      }
-    });
 
     function getOptimizedUrl(originalUrl, width = 800) {
       if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
@@ -1427,7 +1379,7 @@
       let visibleFolders = foldersList;
 
       let tabsHtml = `
-        <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}">
+        <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}" ondragover="allowDrop(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropOnFolder(event, '')" title="Drop files here to move to All Media">
           <button type="button" class="filter-btn-text" onclick="switchFolder('')">
             <span class="material-symbols-outlined" style="font-size: 17px;">grid_view</span> All Media
           </button>
@@ -1449,7 +1401,7 @@
         ` : '';
 
         return `
-          <div class="filter-item-wrapper ${currentActiveFolder === folder.id ? 'active' : ''}">
+          <div class="filter-item-wrapper ${currentActiveFolder === folder.id ? 'active' : ''}" ondragover="allowDrop(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropOnFolder(event, '${folder.id}')" title="Drop files here to move to ${folder.label}">
             <button type="button" class="filter-btn-text" onclick="switchFolder('${folder.id}')">
               <span class="material-symbols-outlined" style="font-size: 17px;">${folder.icon || 'folder'}</span> ${folder.label}
             </button>
@@ -1571,7 +1523,7 @@
       }
 
       uploadSelect.classList.remove('select-highlight-error');
-      uppy.getPlugin('Dashboard').openModal();
+      document.getElementById('mediaFileInput').click();
     }
 
     function getFileSource(url) {
@@ -1691,6 +1643,80 @@
       return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
+    async function handlePhotoUpload(files) {
+      if (!files || !files.length) return;
+
+      const uploadSelect = document.getElementById('uploadFolderSelect');
+      const folder = uploadSelect.value;
+      const statusText = document.getElementById('uploadStatusText');
+      const uploadBtn = document.getElementById('uploadPhotoBtn');
+
+      if (!folder) return;
+
+      uploadBtn.disabled = true;
+      let successCount = 0;
+
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        
+        const fileType = file.type || '';
+        const isImage = fileType.startsWith('image/');
+        const isVideo = fileType.startsWith('video/');
+
+        if (!isImage && !isVideo) {
+          alert(`Only photo and video files are allowed. Skipped: ${file.name}`);
+          continue;
+        }
+
+        statusText.innerHTML = `<span style="color: var(--primary);">Uploading media ${i + 1} of ${files.length}: <strong>${file.name}</strong>...</span>`;
+
+        try {
+          const limit = isVideo ? MAX_VIDEO_SIZE_BYTES : MAX_FILE_SIZE_BYTES;
+          if (file.size > limit) {
+            alert(`${file.name} exceeds the size limit (${(limit / (1024*1024)).toFixed(0)} MB). Skipping.`);
+            continue;
+          }
+
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+          formData.append('folder', CLOUDINARY_FOLDER);
+
+          const res = await fetch(UPLOAD_ENDPOINT, { method: 'POST', body: formData });
+          const data = await res.json().catch(() => ({}));
+
+          if (!res.ok || !data.secure_url) {
+            const msg = (data.error && data.error.message) || `HTTP ${res.status}`;
+            throw new Error(msg);
+          }
+
+          await mediaRef.push({
+            url: data.secure_url,
+            folder: folder,
+            name: file.name,
+            size: file.size || 0,
+            isVideo: isVideo,
+            viewsCount: 0,
+            downloadsCount: 0,
+            timestamp: Date.now()
+          });
+
+          successCount++;
+        } catch (err) {
+          console.error(`Error uploading "${file.name}":`, err);
+          alert(`Failed to upload ${file.name}: ${err.message}`);
+        }
+      }
+
+      document.getElementById('mediaFileInput').value = '';
+      uploadBtn.disabled = false;
+      statusText.innerHTML = `<span style="color: #10b981;">Successfully uploaded ${successCount} media files!</span>`;
+      
+      setTimeout(() => {
+        statusText.textContent = "Select destination category and choose photos or videos";
+      }, 4000);
+    }
+
     const cachedMedia = localStorage.getItem(CACHE_KEY_MEDIA);
     if (cachedMedia) {
       try {
@@ -1798,6 +1824,51 @@
         await mediaRef.child(firebaseKey).remove();
       } catch (err) {
         alert("Failed to move item to trash archive: " + err.message);
+      }
+    }
+
+    // ---------- Drag and Drop File Handlers (Google Drive Style) ----------
+    function handleDragStart(e, fileKey) {
+      e.dataTransfer.setData('text/plain', fileKey);
+    }
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function handleDragEnter(e) {
+      e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    async function handleDropOnFolder(e, targetFolderId) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const fileKey = e.dataTransfer.getData('text/plain');
+      if (!fileKey) return;
+
+      const item = liveMediaItems.find(i => i.key === fileKey);
+      if (!item || item.folder === targetFolderId) return;
+
+      try {
+        await mediaRef.child(fileKey).update({ folder: targetFolderId });
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Media moved successfully',
+          showConfirmButton: false,
+          timer: 2000
+        });
+      } catch (err) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to move media: ' + err.message
+        });
       }
     }
 
@@ -1920,7 +1991,7 @@
         const fullResUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 1200);
 
         return `
-          <div class="media-card" id="card-${item.key}">
+          <div class="media-card" id="card-${item.key}" draggable="true" ondragstart="handleDragStart(event, '${item.key}')" title="Drag this card and drop it onto any folder chip above to move it">
             ${item.isVideo ? `
               <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openVideoLightbox('${item.key}', '${item.url}')">
                 <div class="card-loading-overlay" id="card-loader-${item.key}">
@@ -1933,7 +2004,7 @@
                 <div class="card-loading-overlay" id="card-loader-${item.key}">
                   <div class="card-spinner"></div>
                 </div>
-                <img id="media-el-${item.key}" src="${optimizedThumbUrl}" alt="${item.name || 'APML Image'}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">
+                <img id="media-el-${item.key}" class="lozad w-full h-full object-cover" data-src="${optimizedThumbUrl}" alt="${item.name || 'APML Image'}" decoding="async" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">
               </a>
             `}
             <div class="media-info">
@@ -1966,6 +2037,13 @@
         });
       } else {
         lightbox.refresh();
+      }
+
+      if (typeof lozad !== 'undefined') {
+        const observer = lozad('.lozad', {
+          loaded: function(el) {}
+        });
+        observer.observe();
       }
 
       if (totalPages > 1) {
