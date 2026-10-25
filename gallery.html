@@ -14,6 +14,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+  <!-- SWEETALERT2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- SIMPLELIGHTBOX CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
+
   <!-- SUPABASE JS CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -321,128 +327,6 @@
       background: rgba(16, 185, 129, 0.12);
       color: #059669;
       border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    .delete-confirm-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .delete-confirm-modal {
-      background: #ffffff;
-      max-width: 440px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active .delete-confirm-modal {
-      transform: scale(1);
-    }
-
-    .delete-warning-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .delete-confirm-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .delete-confirm-modal p {
-      font-size: 13.5px;
-      color: #6b7280;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .delete-input-field {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-      margin-bottom: 20px;
-      transition: border-color 0.2s ease;
-    }
-
-    .delete-input-field:focus {
-      border-color: #dc2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-    }
-
-    .delete-modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-modal-cancel, .btn-modal-confirm {
-      flex: 1;
-      padding: 11px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-modal-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-modal-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-modal-confirm {
-      background: #dc2626;
-      color: #ffffff;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .btn-modal-confirm.enabled {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .btn-modal-confirm.enabled:hover {
-      background: #b91c1c;
     }
 
     .auth-warning-overlay {
@@ -825,7 +709,6 @@
 
     .media-grid {
       display: grid;
-      /* FIXED 4x4 GRID SETUP (Up to 4 columns per row) */
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 24px;
       justify-content: stretch;
@@ -985,7 +868,7 @@
       background: #0f172a;
       position: relative;
       overflow: hidden;
-      cursor: pointer;
+      display: block;
     }
 
     .media-preview-wrap img, .media-preview-wrap video {
@@ -995,7 +878,6 @@
       display: block;
     }
 
-    /* CARD LOADING SHIMMER ANIMATION OVERLAY */
     .card-loading-overlay {
       position: absolute;
       inset: 0;
@@ -1066,35 +948,16 @@
       background: rgba(15, 23, 42, 0.08);
       color: #0f172a;
     }
-    .media-badge.src {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      text-transform: none;
-      max-width: 96px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .media-badge.src .material-symbols-outlined { font-size: 11px; }
-    .media-badge.src-cloudinary { background: #eff6ff; color: #1d4ed8; }
-    .media-badge.src-catbox { background: #fff7ed; color: #c2410c; }
-    .media-badge.src-other { background: #f1f5f9; color: #475569; }
 
-    /* ---- Add a Catbox photo / video link ---- */
-    .link-card { border-color: var(--border-subtle) !important; text-align: left !important; }
-    .link-card h3, .link-card > p { text-align: center; }
-    .link-icon { width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .link-label { display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 6px; }
-    .link-field { width: 100%; padding: 12px 16px; border: 1.5px solid #d1d5db; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 14px; transition: border-color 0.2s ease; font-family: inherit; }
-    .link-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.12); }
-    .link-open { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin: 0 auto 16px; }
-    .link-open:hover { text-decoration: underline; }
-    .link-dest { text-align: center; font-size: 12.5px; font-weight: 700; color: var(--text-muted); margin: -6px 0 14px; }
-    .link-error { color: #dc2626; font-size: 12.5px; font-weight: 700; margin: -6px 0 12px; }
-    .btn-link-save { flex: 1; padding: 11px 16px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; background: var(--primary); color: #fff; transition: all 0.2s ease; }
-    .btn-link-save:hover { background: var(--primary-dark); }
-    .btn-link-save:disabled { opacity: 0.6; cursor: wait; }
+    /* Small dot for media source */
+    .media-source-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    }
 
     .media-size-label {
       font-size: 10px;
@@ -1199,47 +1062,7 @@
     <div class="loading-sub-text">Loading standards &amp; media assets...</div>
   </div>
 
-  <!-- ADD A CATBOX PHOTO / VIDEO LINK -->
-  <div class="delete-confirm-overlay" id="catboxModal">
-    <div class="delete-confirm-modal link-card">
-      <div class="link-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">add_link</span>
-      </div>
-      <h3>Add from Catbox</h3>
-      <p>Upload your photo or video at catbox.moe, then paste its file link here. Only photos and videos are accepted.</p>
-      <a class="link-open" href="https://catbox.moe" target="_blank" rel="noopener noreferrer">
-        <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span> Open catbox.moe to upload
-      </a>
-      <div class="link-dest" id="catboxDest"></div>
-      <label class="link-label" for="catboxUrlInput">Catbox file link</label>
-      <input type="url" id="catboxUrlInput" class="link-field" placeholder="https://files.catbox.moe/abc123.jpg" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <label class="link-label" for="catboxNameInput">Name (optional)</label>
-      <input type="text" id="catboxNameInput" class="link-field" placeholder="Leave empty to use the name from the link" maxlength="120" autocomplete="off">
-      <div class="link-error" id="catboxError" hidden></div>
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeCatboxModal()">Cancel</button>
-        <button type="button" class="btn-link-save" id="btnSaveCatbox" onclick="saveCatboxLink()">Add to Gallery</button>
-      </div>
-    </div>
-  </div>
-
   <div id="header-container"></div>
-
-  <!-- DELETE CONFIRMATION MODAL -->
-  <div class="delete-confirm-overlay" id="deleteConfirmModal">
-    <div class="delete-confirm-modal">
-      <div class="delete-warning-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
-      </div>
-      <h3>Are you sure?</h3>
-      <p>Once deleted, this action is not reversible. Type <strong>yes</strong> below to confirm.</p>
-      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type yes to confirm" oninput="checkDeleteKeyword(this)">
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
-      </div>
-    </div>
-  </div>
 
   <!-- POPUP WARNING MODAL -->
   <div class="auth-warning-overlay" id="authWarningModal">
@@ -1256,7 +1079,7 @@
     </div>
   </div>
 
-  <!-- MEDIA LIGHTBOX MODAL VIEWER -->
+  <!-- MEDIA LIGHTBOX MODAL VIEWER FOR VIDEOS -->
   <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
     <div class="lightbox-content-box" id="lightboxContainer">
       <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
@@ -1316,7 +1139,6 @@
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
           
-          <!-- STRICT ACCEPT FOR IMAGES AND VIDEOS ONLY -->
           <input type="file" id="mediaFileInput" accept="image/*,video/*" multiple style="display: none;" onchange="handlePhotoUpload(this.files)">
           
           <button type="button" class="btn-action-primary" id="uploadPhotoBtn" onclick="triggerPhotoUpload()">
@@ -1356,6 +1178,9 @@
   <script src="notify.js?v=1"></script>
   <script src="common.js?v=22.1"></script>
 
+  <!-- SIMPLELIGHTBOX JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
+
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -1373,13 +1198,12 @@
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-    // Catbox links, and the Worker that can fetch Catbox files when the browser is not allowed to
     const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
     const CATBOX_IMAGE_EXT = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif', 'bmp'];
     const CATBOX_VIDEO_EXT = ['mp4', 'webm', 'mov', 'm4v', 'ogv'];
 
-    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB for photos
-    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB for videos
+    const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+    const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024;
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1419,13 +1243,11 @@
     let foldersList = [];
     let liveMediaItems = [];
     let currentUser = null;
-    let pendingDeleteKey = null;
     let currentPage = 1;
+    let lightbox = null;
 
-    // BANDWIDTH OPTIMIZATION: Helper function for Cloudinary dynamic transformations
-    function getOptimizedUrl(originalUrl, width = 400) {
+    function getOptimizedUrl(originalUrl, width = 800) {
       if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
-      // Inserts f_auto (modern formats like WebP/AVIF), q_auto (optimal compression), and responsive width resizing
       return originalUrl.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
     }
 
@@ -1670,12 +1492,16 @@
 
     function triggerPhotoUpload() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      const statusText = document.getElementById('uploadStatusText');
+      const folder = currentActiveFolder || uploadSelect.value;
 
-      if (!uploadSelect.value) {
+      if (!folder) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
+        Swal.fire({
+          icon: "error",
+          title: "Folder Required",
+          text: "Please select a destination folder first!"
+        });
         return;
       }
 
@@ -1683,20 +1509,19 @@
       document.getElementById('mediaFileInput').click();
     }
 
-    // ---------- Add a Catbox photo / video ----------
     function getFileSource(url) {
+      if (!url) return { label: 'Link', dotColor: '#64748b' };
       let host = '';
       try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
-      if (host === 'cloudinary.com' || host.endsWith('.cloudinary.com')) return { label: 'Cloudinary', icon: 'cloud', cls: 'src-cloudinary' };
-      if (host === 'catbox.moe' || host.endsWith('.catbox.moe')) return { label: 'Catbox', icon: 'link', cls: 'src-catbox' };
-      return { label: host.replace(/^www\./, '') || 'Link', icon: 'link', cls: 'src-other' };
+      if (host.includes('cloudinary.com')) return { label: 'Cloudinary', dotColor: '#3b82f6' }; // Blue dot
+      if (host.includes('catbox.moe')) return { label: 'Catbox', dotColor: '#000000' }; // Black dot
+      return { label: 'Other', dotColor: '#64748b' };
     }
 
     function isCatboxLink(url) {
       try { return /(^|\.)catbox\.moe$/i.test(new URL(url).hostname); } catch (e) { return false; }
     }
 
-    // Accepts only permanent Catbox links (files.catbox.moe) that point at a photo or a video
     function checkCatboxMediaLink(raw) {
       let u;
       try { u = new URL(raw); } catch (e) { return { error: 'Please paste a full link that starts with https://' }; }
@@ -1719,78 +1544,78 @@
       return name.replace(/['"`<>\\]/g, '').trim() || info.file;
     }
 
-    function setCatboxError(msg) {
-      const el = document.getElementById('catboxError');
-      el.textContent = msg;
-      el.hidden = !msg;
-    }
-
     function openCatboxModal() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      const statusText = document.getElementById('uploadStatusText');
-      if (!uploadSelect.value) {
+      const folder = currentActiveFolder || uploadSelect.value;
+      if (!folder) {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
-        statusText.innerHTML = `<span style="color: var(--primary); font-weight: 700;">⚠️ Please select a valid folder first!</span>`;
+        Swal.fire({
+          icon: "error",
+          title: "Folder Required",
+          text: "Please select a destination folder first!"
+        });
         return;
       }
       uploadSelect.classList.remove('select-highlight-error');
-      const folder = foldersList.find(f => f.id === uploadSelect.value);
-      document.getElementById('catboxDest').textContent = 'Adding to: ' + (folder ? folder.label : uploadSelect.value);
-      document.getElementById('catboxUrlInput').value = '';
-      document.getElementById('catboxNameInput').value = '';
-      setCatboxError('');
-      document.getElementById('btnSaveCatbox').disabled = false;
-      document.getElementById('catboxModal').classList.add('active');
-      setTimeout(() => document.getElementById('catboxUrlInput').focus(), 60);
+
+      Swal.fire({
+        title: "Add file from Catbox",
+        input: "url",
+        inputLabel: "Catbox file link",
+        inputPlaceholder: "https://files.catbox.moe/abc123.jpg",
+        inputAttributes: {
+          autocapitalize: "off",
+          autocorrect: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "Add to Gallery",
+        showLoaderOnConfirm: true,
+        preConfirm: async (url) => {
+          try {
+            if (!url) {
+              Swal.showValidationMessage("Please enter a valid link");
+              return false;
+            }
+
+            const info = checkCatboxMediaLink(url.trim());
+            if (info.error) {
+              Swal.showValidationMessage(info.error);
+              return false;
+            }
+
+            if (liveMediaItems.some(item => item.url === info.url && item.folder === folder)) {
+              Swal.showValidationMessage("This link is already in this folder.");
+              return false;
+            }
+
+            await mediaRef.push({
+              url: info.url,
+              folder: folder,
+              name: deriveCatboxName(info, ''),
+              size: 0,
+              isVideo: info.isVideo,
+              viewsCount: 0,
+              downloadsCount: 0,
+              timestamp: Date.now()
+            });
+
+            return info;
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Added!",
+            text: "Your file has been added to the gallery successfully.",
+            icon: "success"
+          });
+        }
+      });
     }
-
-    function closeCatboxModal() {
-      document.getElementById('catboxModal').classList.remove('active');
-    }
-
-    async function saveCatboxLink() {
-      const folder = document.getElementById('uploadFolderSelect').value;
-      if (!folder) { setCatboxError('Please close this box and select a folder first.'); return; }
-
-      const info = checkCatboxMediaLink(document.getElementById('catboxUrlInput').value.trim());
-      if (info.error) { setCatboxError(info.error); return; }
-      if (liveMediaItems.some(item => item.url === info.url && item.folder === folder)) {
-        setCatboxError('This link is already in this folder.');
-        return;
-      }
-
-      const btn = document.getElementById('btnSaveCatbox');
-      const statusText = document.getElementById('uploadStatusText');
-      btn.disabled = true;
-      setCatboxError('');
-      try {
-        await mediaRef.push({
-          url: info.url,
-          folder: folder,
-          name: deriveCatboxName(info, document.getElementById('catboxNameInput').value),
-          size: 0,
-          isVideo: info.isVideo,
-          viewsCount: 0,
-          downloadsCount: 0,
-          timestamp: Date.now()
-        });
-        closeCatboxModal();
-        statusText.innerHTML = `<span style="color: #10b981;">${info.isVideo ? 'Video' : 'Photo'} added from Catbox!</span>`;
-        setTimeout(() => {
-          statusText.textContent = "Select destination category and choose photos or videos";
-        }, 3000);
-      } catch (err) {
-        setCatboxError('Could not save the link: ' + err.message);
-        btn.disabled = false;
-      }
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (!document.getElementById('catboxModal').classList.contains('active')) return;
-      if (e.key === 'Escape') closeCatboxModal();
-      if (e.key === 'Enter') saveCatboxLink();
-    });
 
     function formatBytes(bytes, decimals = 1) {
       if (!bytes || bytes === 0) return '0 KB';
@@ -1942,33 +1767,25 @@
       if (isCurrentUserAdmin()) {
         moveToDeletedFolder(firebaseKey);
       } else {
-        pendingDeleteKey = firebaseKey;
-        document.getElementById('deleteInputKeyword').value = '';
-        document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
-        document.getElementById('deleteConfirmModal').classList.add('active');
-        document.getElementById('deleteInputKeyword').focus();
+        Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            moveToDeletedFolder(firebaseKey);
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your file has been deleted.",
+              icon: "success"
+            });
+          }
+        });
       }
-    }
-
-    function closeDeleteModal() {
-      pendingDeleteKey = null;
-      document.getElementById('deleteConfirmModal').classList.remove('active');
-    }
-
-    function checkDeleteKeyword(input) {
-      const btn = document.getElementById('btnConfirmDeleteAction');
-      if (input.value.trim().toLowerCase() === 'yes') {
-        btn.classList.add('enabled');
-      } else {
-        btn.classList.remove('enabled');
-      }
-    }
-
-    async function executePendingDelete() {
-      if (!pendingDeleteKey) return;
-      const keyToMove = pendingDeleteKey;
-      closeDeleteModal();
-      await moveToDeletedFolder(keyToMove);
     }
 
     async function moveToDeletedFolder(firebaseKey) {
@@ -2014,7 +1831,6 @@
         return;
       }
 
-      // email alert: a photo or video was downloaded from the Gallery
       try {
         if (window.APMNotify) {
           const itemRec = liveMediaItems.find(x => x.key === firebaseKey);
@@ -2052,10 +1868,10 @@
 
       try {
         let done = false;
-        try { saveBlob(await fetchBlob(fileUrl)); done = true; } catch (err) { /* try the next way */ }
+        try { saveBlob(await fetchBlob(fileUrl)); done = true; } catch (err) {}
 
         if (!done && isCatboxLink(fileUrl)) {
-          try { saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`)); done = true; } catch (err) { /* open it instead */ }
+          try { saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`)); done = true; } catch (err) {}
         }
 
         if (!done) {
@@ -2069,7 +1885,7 @@
           document.body.removeChild(a);
         }
 
-        logDailyActivity('media'); // Added historical daily activity log tracking
+        logDailyActivity('media');
       } finally {
         if (btn) {
           btn.disabled = false;
@@ -2110,24 +1926,30 @@
         const source = getFileSource(item.url);
 
         const optimizedThumbUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 400);
+        const fullResUrl = item.isVideo ? item.url : getOptimizedUrl(item.url, 1200);
 
         return `
           <div class="media-card" id="card-${item.key}">
-            <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openItemLightbox('${item.key}', ${item.isVideo})">
-              <div class="card-loading-overlay" id="card-loader-${item.key}">
-                <div class="card-spinner"></div>
+            ${item.isVideo ? `
+              <div class="media-preview-wrap" id="preview-wrap-${item.key}" onclick="openVideoLightbox('${item.key}', '${item.url}')">
+                <div class="card-loading-overlay" id="card-loader-${item.key}">
+                  <div class="card-spinner"></div>
+                </div>
+                <video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline onloadeddata="hideCardLoader('${item.key}')"></video>
               </div>
-
-              ${item.isVideo 
-                ? `<video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline onloadeddata="hideCardLoader('${item.key}')"></video>` 
-                : `<img id="media-el-${item.key}" src="${optimizedThumbUrl}" alt="${item.name}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">`
-              }
-            </div>
+            ` : `
+              <a href="${fullResUrl}" class="media-preview-wrap simple-lightbox-item" id="preview-wrap-${item.key}" title="${item.name || 'APML Media Asset'}" onclick="recordInteraction('${item.key}', 'viewsCount')">
+                <div class="card-loading-overlay" id="card-loader-${item.key}">
+                  <div class="card-spinner"></div>
+                </div>
+                <img id="media-el-${item.key}" src="${optimizedThumbUrl}" alt="${item.name || 'APML Image'}" loading="lazy" decoding="async" class="w-full h-full object-cover" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">
+              </a>
+            `}
             <div class="media-info">
               <div class="media-badges-group">
                 <div class="media-badges-row">
                   <span class="media-badge ${item.isVideo ? 'video-tag' : ''}">${item.isVideo ? 'SD Video' : 'Image'}</span>
-                  <span class="media-badge src ${source.cls}" title="Stored on ${source.label}"><span class="material-symbols-outlined">${source.icon}</span>${source.label}</span>
+                  <span class="media-source-dot" style="background-color: ${source.dotColor};" title="Stored on ${source.label}"></span>
                 </div>
                 <span class="media-size-label">${formattedSize}</span>
               </div>
@@ -2143,6 +1965,17 @@
           </div>
         `;
       }).join('');
+
+      if (!lightbox) {
+        lightbox = new SimpleLightbox('.simple-lightbox-item', {
+          captionsData: 'title',
+          captionDelay: 200,
+          animationSpeed: 250,
+          fadeSpeed: 250
+        });
+      } else {
+        lightbox.refresh();
+      }
 
       if (totalPages > 1) {
         paginationBar.style.display = 'flex';
@@ -2214,24 +2047,11 @@
       }
     }
 
-    async function openItemLightbox(firebaseKey, isVideo) {
-      const item = liveMediaItems.find(i => i.key === firebaseKey);
-      if (!item) return;
+    function openVideoLightbox(firebaseKey, videoUrl) {
       recordInteraction(firebaseKey, 'viewsCount');
-      const lightboxUrl = isVideo ? item.url : getOptimizedUrl(item.url, 900);
-      openLightbox(lightboxUrl, isVideo);
-    }
-
-    function openLightbox(url, isVideo) {
       const overlay = document.getElementById('mediaLightboxModal');
       const slot = document.getElementById('lightboxMediaSlot');
-
-      if (isVideo) {
-        slot.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
-      } else {
-        slot.innerHTML = `<img src="${url}" alt="Expanded Media View" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">`;
-      }
-
+      slot.innerHTML = `<video src="${videoUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
       overlay.classList.add('active');
     }
 
