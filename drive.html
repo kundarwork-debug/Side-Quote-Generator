@@ -14,6 +14,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+  <!-- SWEETALERT2 CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- SIMPLELIGHTBOX CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
+
   <!-- SUPABASE JS CLIENT -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -325,130 +331,7 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    /* GALLERY STYLE DELETE WITH 'YES' CONFIRMATION */
-    .delete-confirm-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 999999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .delete-confirm-modal {
-      background: #ffffff;
-      max-width: 440px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
-    }
-
-    .delete-confirm-overlay.active .delete-confirm-modal {
-      transform: scale(1);
-    }
-
-    .delete-warning-icon {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .delete-confirm-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .delete-confirm-modal p {
-      font-size: 13.5px;
-      color: #6b7280;
-      line-height: 1.5;
-      margin-bottom: 16px;
-    }
-
-    .delete-input-field {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      text-align: center;
-      outline: none;
-      margin-bottom: 20px;
-      transition: border-color 0.2s ease;
-    }
-
-    .delete-input-field:focus {
-      border-color: #dc2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-    }
-
-    .delete-modal-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .btn-modal-cancel, .btn-modal-confirm {
-      flex: 1;
-      padding: 11px 16px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-
-    .btn-modal-cancel {
-      background: #f3f4f6;
-      color: #374151;
-    }
-
-    .btn-modal-cancel:hover {
-      background: #e5e7eb;
-    }
-
-    .btn-modal-confirm {
-      background: #dc2626;
-      color: #ffffff;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    .btn-modal-confirm.enabled {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .btn-modal-confirm.enabled:hover {
-      background: #b91c1c;
-    }
-
-    /* POPUP WARNING MODAL */
+    /* POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS */
     .auth-warning-overlay {
       position: fixed;
       inset: 0;
@@ -612,20 +495,6 @@
       color: #ffffff;
     }
 
-    /* ---- Save a link (Catbox) ---- */
-    .link-card { border-color: var(--border-subtle) !important; text-align: left !important; }
-    .link-card h3, .link-card > p { text-align: center; }
-    .link-icon { width: 60px; height: 60px; border-radius: 50%; background: #fee2e2; color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
-    .link-label { display: block; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin: 0 0 6px; }
-    .link-field { width: 100%; padding: 12px 16px; border: 1.5px solid #d1d5db; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; margin-bottom: 14px; transition: border-color 0.2s ease; font-family: inherit; }
-    .link-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.12); }
-    .link-open { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--primary); text-decoration: none; margin: 0 auto 16px; }
-    .link-open:hover { text-decoration: underline; }
-    .link-error { color: #dc2626; font-size: 12.5px; font-weight: 700; margin: -6px 0 12px; min-height: 0; }
-    .btn-link-save { flex: 1; padding: 11px 16px; border-radius: var(--radius-pill); font-size: 13.5px; font-weight: 700; cursor: pointer; border: none; background: var(--primary); color: #fff; transition: all 0.2s ease; }
-    .btn-link-save:hover { background: var(--primary-dark); }
-    .btn-link-save:disabled { opacity: 0.6; cursor: wait; }
-
     .drive-section-title {
       font-size: 13px;
       font-weight: 800;
@@ -657,11 +526,11 @@
       transition: all 0.2s ease;
     }
 
-    .folder-card:hover {
+    .folder-card:hover, .folder-card.drag-over {
       border-color: var(--primary);
       transform: translateY(-2px);
       box-shadow: var(--shadow-float);
-      background: #ffffff;
+      background: #fff5f5;
     }
 
     .folder-card-left {
@@ -733,7 +602,12 @@
       flex-direction: column;
       justify-content: space-between;
       position: relative;
+      cursor: grab;
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .drive-file-grid-card:active {
+      cursor: grabbing;
     }
 
     .drive-file-grid-card:hover {
@@ -753,13 +627,14 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      display: block;
     }
 
-    .grid-preview-box img, .grid-preview-box video, .grid-preview-box iframe {
+    .grid-preview-box img, .grid-preview-box video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      pointer-events: none;
+      display: block;
     }
 
     .preview-placeholder-doc { background: #f8fafc; }
@@ -768,9 +643,12 @@
     .preview-placeholder-zip { background: #fffbeb; }
 
     .grid-preview-placeholder {
+      width: 100%;
+      height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       gap: 6px;
       color: #475569;
     }
@@ -865,29 +743,30 @@
       font-weight: 800;
       text-transform: uppercase;
     }
+
     .file-pill-group {
       display: inline-flex;
       align-items: center;
       gap: 5px;
       min-width: 0;
     }
-    .file-source-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 9.5px;
-      font-weight: 800;
-      max-width: 96px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+    /* Small dot for media source */
+    .media-source-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
     }
-    .file-source-pill .material-symbols-outlined { font-size: 11px; }
-    .src-cloudinary { background: #eff6ff; color: #1d4ed8; }
-    .src-catbox { background: #fff7ed; color: #c2410c; }
-    .src-other { background: #f1f5f9; color: #475569; }
+
+    .file-size-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.01em;
+    }
 
     .grid-card-footer {
       padding: 0 16px 16px 16px;
@@ -1073,68 +952,6 @@
       color: #ffffff;
     }
 
-    .media-lightbox-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.9);
-      backdrop-filter: blur(8px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .media-lightbox-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .lightbox-content-box {
-      max-width: 900px;
-      width: 100%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .lightbox-content-box img, .lightbox-content-box video, .lightbox-content-box iframe {
-      max-width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      border-radius: 12px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-      background: #ffffff;
-      width: 100%;
-      height: 80vh;
-    }
-
-    .btn-lightbox-close {
-      position: absolute;
-      top: -45px;
-      right: 0;
-      background: rgba(255, 255, 255, 0.15);
-      color: #ffffff;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .btn-lightbox-close:hover {
-      background: var(--primary);
-    }
-
     .state-msg {
       text-align: center;
       padding: 50px 20px;
@@ -1188,45 +1005,6 @@
 
   <div id="header-container"></div>
 
-  <!-- SAVE A LINK MODAL (Catbox or any direct file link) -->
-  <div class="delete-confirm-overlay" id="linkModal">
-    <div class="delete-confirm-modal link-card">
-      <div class="link-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">add_link</span>
-      </div>
-      <h3>Save a file link</h3>
-      <p>Upload any file type at catbox.moe (up to 200 MB), then paste its link here. It is saved in the current folder and can be downloaded from the drive.</p>
-      <a class="link-open" href="https://catbox.moe" target="_blank" rel="noopener noreferrer">
-        <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span> Open catbox.moe to upload
-      </a>
-      <label class="link-label" for="linkUrlInput">File link</label>
-      <input type="url" id="linkUrlInput" class="link-field" placeholder="https://files.catbox.moe/abc123.pdf" autocomplete="off" autocapitalize="off" spellcheck="false">
-      <label class="link-label" for="linkNameInput">File name (optional)</label>
-      <input type="text" id="linkNameInput" class="link-field" placeholder="Leave empty to use the name from the link" maxlength="120" autocomplete="off">
-      <div class="link-error" id="linkError" hidden></div>
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeLinkModal()">Cancel</button>
-        <button type="button" class="btn-link-save" id="btnSaveLink" onclick="saveLinkToDrive()">Save Link</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- DELETE CONFIRMATION MODAL (GALLERY STYLE TYPE 'YES') -->
-  <div class="delete-confirm-overlay" id="deleteConfirmModal">
-    <div class="delete-confirm-modal">
-      <div class="delete-warning-icon">
-        <span class="material-symbols-outlined" style="font-size: 32px;">warning</span>
-      </div>
-      <h3>Are you sure?</h3>
-      <p>Once deleted, this action is not reversible. Type <strong>yes</strong> below to confirm.</p>
-      <input type="text" id="deleteInputKeyword" class="delete-input-field" placeholder="Type yes to confirm" oninput="checkDeleteKeyword(this)">
-      <div class="delete-modal-actions">
-        <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Cancel</button>
-        <button type="button" class="btn-modal-confirm" id="btnConfirmDeleteAction" onclick="executePendingDelete()">Delete File</button>
-      </div>
-    </div>
-  </div>
-
   <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
   <div class="auth-warning-overlay" id="authWarningModal">
     <div class="auth-warning-modal">
@@ -1242,7 +1020,7 @@
     </div>
   </div>
 
-  <!-- LIGHTBOX PREVIEW MODAL -->
+  <!-- LIGHTBOX PREVIEW MODAL FOR VIDEOS -->
   <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
     <div class="lightbox-content-box" id="lightboxContainer">
       <button type="button" class="btn-lightbox-close" onclick="closeLightbox(event)">
@@ -1258,7 +1036,7 @@
       <div class="drive-header">
         <h1 class="drive-title">APML <span>Cloud Drive</span></h1>
         <div class="drive-sub-row">
-          <p class="drive-sub">Organize files in folders and store files seamlessly via Cloudinary upload.</p>
+          <p class="drive-sub">Organize files in folders and store files seamlessly via Cloudinary upload. Drag cards to move.</p>
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
@@ -1303,7 +1081,7 @@
           <span>Upload File</span>
         </button>
 
-        <button type="button" class="btn-drive-action" onclick="openLinkModal()" title="Save a Catbox (or any file) link into this folder">
+        <button type="button" class="btn-drive-action" onclick="openCatboxModal()" title="Save a Catbox file link into this folder">
           <span class="material-symbols-outlined" style="font-size: 18px;">add_link</span>
           <span>Catbox Link</span>
         </button>
@@ -1312,7 +1090,7 @@
 
     <!-- FOLDERS SECTION -->
     <div id="foldersSectionWrapper">
-      <div class="drive-section-title">Folders</div>
+      <div class="drive-section-title">Folders (Drag &amp; drop files here to move)</div>
       <div class="folders-grid" id="foldersGrid"></div>
     </div>
 
@@ -1334,6 +1112,12 @@
   <script src="notify.js?v=1"></script>
   <script src="common.js?v=22.3"></script>
 
+  <!-- SIMPLELIGHTBOX JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
+
+  <!-- LOZAD.JS FOR LAZY LOADING -->
+  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -1351,7 +1135,6 @@
     const CLOUDINARY_FOLDER = 'apml-drive';
     const UPLOAD_ENDPOINT = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-    // Saved links (Catbox etc.) and the Worker that can fetch Catbox files when the browser is not allowed to
     const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
     
     const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
@@ -1383,15 +1166,13 @@
     let liveFiles = [];
     let currentUser = null;
     let currentPage = 1;
-    let pendingDeleteKey = null;
-    let pendingDeleteType = null;
+    let lightbox = null;
     const ITEMS_PER_PAGE = 16;
 
     const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
     const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
 
-    // BANDWIDTH OPTIMIZATION: Helper function for Cloudinary dynamic transformations
-    function getOptimizedUrl(originalUrl, width = 400) {
+    function getOptimizedUrl(originalUrl, width = 800) {
       if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
       return originalUrl.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
     }
@@ -1557,7 +1338,7 @@
           const isVideo = (file.type || '').startsWith('video/');
           const limit = isVideo ? MAX_VIDEO_SIZE_BYTES : MAX_FILE_SIZE_BYTES;
           if (file.size > limit) {
-            alert(`${file.name} is too big (${(file.size / 1048576).toFixed(1)} MB). Limit is ${limit / 1048576} MB on the free plan. Skipping.`);
+            alert(`${file.name} is too big (${(file.size / 1048576).toFixed(1)} MB). Skipping.`);
             continue;
           }
 
@@ -1585,7 +1366,7 @@
           successCount++;
         } catch (err) {
           console.error(`Error uploading "${file.name}":`, err);
-          alert(`Failed to upload ${file.name}:${err.message}`);
+          alert(`Failed to upload ${file.name}: ${err.message}`);
         }
       }
 
@@ -1670,43 +1451,31 @@
 
     function confirmDeleteAction(type, key) {
       if (!canDeleteItem(type, key)) {
-        alert('Only the admin can delete the Quotation or Prasad folders and the files inside them. Please use Admin Login.');
+        alert('Only the admin can delete protected folders and files.');
         return;
       }
-      pendingDeleteType = type;
-      pendingDeleteKey = key;
-      document.getElementById('deleteInputKeyword').value = '';
-      document.getElementById('btnConfirmDeleteAction').classList.remove('enabled');
-      document.getElementById('deleteConfirmModal').classList.add('active');
-      document.getElementById('deleteInputKeyword').focus();
+      
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          executeDelete(type, key);
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success"
+          });
+        }
+      });
     }
 
-    function closeDeleteModal() {
-      pendingDeleteKey = null;
-      pendingDeleteType = null;
-      document.getElementById('deleteConfirmModal').classList.remove('active');
-    }
-
-    function checkDeleteKeyword(input) {
-      const btn = document.getElementById('btnConfirmDeleteAction');
-      if (input.value.trim().toLowerCase() === 'yes') {
-        btn.classList.add('enabled');
-      } else {
-        btn.classList.remove('enabled');
-      }
-    }
-
-    async function executePendingDelete() {
-      if (!pendingDeleteKey || !pendingDeleteType) return;
-      const type = pendingDeleteType;
-      const key = pendingDeleteKey;
-      closeDeleteModal();
-
-      if (!canDeleteItem(type, key)) {
-        alert('Only the admin can delete this item.');
-        return;
-      }
-
+    async function executeDelete(type, key) {
       try {
         if (type === 'file') {
           const fileObj = liveFiles.find(f => f.key === key);
@@ -1757,94 +1526,139 @@
       }
     }
 
-    // ---------- Save a link ----------
-    function openLinkModal() {
-      document.getElementById('linkUrlInput').value = '';
-      document.getElementById('linkNameInput').value = '';
-      setLinkError('');
-      document.getElementById('btnSaveLink').disabled = false;
-      document.getElementById('linkModal').classList.add('active');
-      setTimeout(() => document.getElementById('linkUrlInput').focus(), 60);
+    // ---------- Drag and Drop File Handlers (Google Drive Style) ----------
+    function handleDragStart(e, fileKey) {
+      e.dataTransfer.setData('text/plain', fileKey);
     }
 
-    function closeLinkModal() {
-      document.getElementById('linkModal').classList.remove('active');
+    function allowDrop(e) {
+      e.preventDefault();
     }
 
-    function setLinkError(msg) {
-      const el = document.getElementById('linkError');
-      el.textContent = msg;
-      el.hidden = !msg;
+    function handleDragEnter(e) {
+      e.currentTarget.classList.add('drag-over');
     }
 
-    function deriveLinkName(rawUrl, typedName) {
-      let fromUrl = '';
+    function handleDragLeave(e) {
+      e.currentTarget.classList.remove('drag-over');
+    }
+
+    async function handleDropOnFolder(e, targetFolderKey) {
+      e.preventDefault();
+      e.currentTarget.classList.remove('drag-over');
+      const fileKey = e.dataTransfer.getData('text/plain');
+      if (!fileKey) return;
+
+      if (targetFolderKey === currentParentId) return;
+
       try {
-        const u = new URL(rawUrl);
-        fromUrl = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || '');
-      } catch (e) {}
-      const urlExt = (fromUrl.match(/\.([A-Za-z0-9]{1,8})$/) || [])[1] || '';
-      let name = (typedName || '').trim();
-      if (name && urlExt && !/\.[A-Za-z0-9]{1,8}$/.test(name)) name += '.' + urlExt;
-      if (!name) name = fromUrl;
-      name = name.replace(/['"`<>\\]/g, '').trim();
-      return name || 'Saved link';
-    }
-
-    function isCatboxLink(url) {
-      try { return /(^|\.)catbox\.moe$/i.test(new URL(url).hostname); } catch (e) { return false; }
-    }
-
-    async function saveLinkToDrive() {
-      const raw = document.getElementById('linkUrlInput').value.trim();
-      let parsed;
-      try { parsed = new URL(raw); } catch (e) { parsed = null; }
-      if (!parsed || (parsed.protocol !== 'https:' && parsed.protocol !== 'http:')) {
-        setLinkError('Please paste a full link that starts with https://');
-        return;
-      }
-      const name = deriveLinkName(parsed.href, document.getElementById('linkNameInput').value);
-      const btn = document.getElementById('btnSaveLink');
-      btn.disabled = true;
-      setLinkError('');
-      try {
-        await driveFilesRef.push({
-          fileId: parsed.href,
-          parentId: currentParentId,
-          name: name,
-          size: 0,
-          timestamp: Date.now(),
-          source: 'link'
+        await driveFilesRef.child(fileKey).update({ parentId: targetFolderKey });
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'File moved successfully',
+          showConfirmButton: false,
+          timer: 2000
         });
-        closeLinkModal();
+        renderUI();
       } catch (err) {
-        setLinkError('Could not save the link: ' + err.message);
-        btn.disabled = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Failed to move file: ' + err.message
+        });
       }
     }
 
-    document.addEventListener('keydown', (e) => {
-      const open = document.getElementById('linkModal').classList.contains('active');
-      if (!open) return;
-      if (e.key === 'Escape') closeLinkModal();
-      if (e.key === 'Enter') saveLinkToDrive();
-    });
+    // ---------- SweetAlert2 Catbox Link Prompt ----------
+    function openCatboxModal() {
+      Swal.fire({
+        title: "Add file from Catbox",
+        input: "url",
+        inputLabel: "Catbox file link",
+        inputPlaceholder: "https://files.catbox.moe/abc123.jpg",
+        inputAttributes: {
+          autocapitalize: "off",
+          autocorrect: "off"
+        },
+        showCancelButton: true,
+        confirmButtonText: "Add to Drive",
+        showLoaderOnConfirm: true,
+        preConfirm: async (url) => {
+          try {
+            if (!url) {
+              Swal.showValidationMessage("Please enter a valid link");
+              return false;
+            }
 
-    function driveFolderPath(parentId) {
-      const names = [];
-      let id = parentId;
-      const seen = new Set();
-      while (id && id !== 'root' && !seen.has(id)) {
-        seen.add(id);
-        const f = liveFolders.find(x => x.key === id);
-        if (!f) break;
-        names.unshift(f.name);
-        id = f.parentId;
-      }
-      return ['My Drive'].concat(names).join(' / ');
+            let u;
+            try { u = new URL(url.trim()); } catch (e) {
+              Swal.showValidationMessage("Please paste a full link starting with https://");
+              return false;
+            }
+
+            let fileName = decodeURIComponent(u.pathname.split('/').filter(Boolean).pop() || 'file');
+            
+            await driveFilesRef.push({
+              fileId: u.href,
+              parentId: currentParentId,
+              name: fileName,
+              size: 0,
+              timestamp: Date.now(),
+              source: 'link'
+            });
+
+            return true;
+          } catch (error) {
+            Swal.showValidationMessage(`Request failed: ${error}`);
+          }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: "Added!",
+            text: "Your file has been added to the drive successfully.",
+            icon: "success"
+          });
+        }
+      });
     }
 
-    // ---------- Download ----------
+    function getFileSource(url) {
+      if (!url) return { label: 'Link', dotColor: '#64748b' };
+      let host = '';
+      try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
+      if (host.includes('cloudinary.com')) return { label: 'Cloudinary', dotColor: '#3b82f6' };
+      if (host.includes('catbox.moe')) return { label: 'Catbox', dotColor: '#000000' };
+      return { label: 'Other', dotColor: '#64748b' };
+    }
+
+    function formatBytes(bytes, decimals = 1) {
+      if (!bytes || bytes === 0) return 'Asset Link';
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    function formatTimestamp(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      if (isNaN(d.getTime())) return '';
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleDateString('en-IN', { month: 'short' });
+      const year = d.getFullYear();
+      let hours = d.getHours();
+      const minutes = String(d.getMinutes()).padStart(2, '0');
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      return `${day}${month} ${year}, ${hours}:${minutes} ${ampm}`;
+    }
+
     async function handleItemDownload(firebaseKey, fileUrl, fileName) {
       totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
@@ -1854,24 +1668,6 @@
         alert("File URL is missing.");
         return;
       }
-
-      // email alert: a file was downloaded from the Drive
-      try {
-        if (window.APMNotify) {
-          const fileRec = liveFiles.find(x => x.key === firebaseKey);
-          window.APMNotify.send({
-            type: 'drive',
-            title: 'Drive file downloaded',
-            file: fileName,
-            link: fileUrl,
-            details: {
-              Folder: driveFolderPath(fileRec ? fileRec.parentId : 'root'),
-              Stored_on: getFileSource(fileUrl).label,
-              Size: fileRec && fileRec.size ? formatBytes(fileRec.size) : ''
-            }
-          });
-        }
-      } catch (e) {}
 
       const saveBlob = (blob) => {
         const blobUrl = window.URL.createObjectURL(blob);
@@ -1889,26 +1685,10 @@
         return response.blob();
       };
 
-      let firstError = null;
       try {
         saveBlob(await fetchBlob(fileUrl));
-        logDailyActivity('media'); // Added historical daily activity log tracking
         return;
-      } catch (err) {
-        firstError = err;
-      }
-
-      if (isCatboxLink(fileUrl)) {
-        try {
-          saveBlob(await fetchBlob(`${DRIVE_API_URL}/dl?url=${encodeURIComponent(fileUrl)}`));
-          logDailyActivity('media'); // Added historical daily activity log tracking
-          return;
-        } catch (err) { /* fall through to opening the link */ }
-      }
-
-      if (/cloudinary\.com/.test(fileUrl) && /401|403|404/.test(String(firstError && firstError.message))) {
-        alert('Cloudinary blocked this download (' + firstError.message + '). For PDF or ZIP files, enable "PDF and ZIP files delivery" in Cloudinary under Settings > Security.');
-      }
+      } catch (err) {}
 
       const a = document.createElement('a');
       a.href = fileUrl;
@@ -1918,59 +1698,219 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      logDailyActivity('media'); // Added historical daily activity log tracking
     }
 
-    async function openFilePreview(fileUrl, fileName) {
-      const overlay = document.getElementById('mediaLightboxModal');
-      const slot = document.getElementById('lightboxMediaSlot');
+    async function renderUI() {
+      renderBreadcrumb();
 
-      const isImage = isImageFile(fileName, fileUrl);
-      const isVideo = isVideoFile(fileName, fileUrl);
-      const isPdf = /\.pdf$/i.test(fileName) || /\.pdf$/i.test(fileUrl);
-      const isHtml = isHtmlFile(fileName, fileUrl);
-      const isExcel = isExcelFile(fileName, fileUrl);
+      const foldersGrid = document.getElementById('foldersGrid');
+      const foldersSectionWrapper = document.getElementById('foldersSectionWrapper');
+      const filesContainerWrapper = document.getElementById('filesContainerWrapper');
 
-      const previewUrl = isImage ? getOptimizedUrl(fileUrl, 900) : fileUrl;
+      const currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
+      const rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId);
 
-      if (isImage) {
-        slot.innerHTML = `<img src="${previewUrl}" alt="${fileName}" style="width:100%; height:80vh; object-fit:contain; border-radius:12px;">`;
-      } else if (isVideo) {
-        slot.innerHTML = `<video src="${previewUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
-      } else if (isPdf || isHtml || isExcel) {
-        const frameSrc = isExcel
-          ? `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(previewUrl)}`
-          : previewUrl;
-        slot.innerHTML = `
-          <iframe src="${frameSrc}" style="width:100%; height:75vh; border:none; border-radius:12px; background:#ffffff;"></iframe>
-          <div style="text-align:center; margin-top:10px; font-size:13px; color:#ffffff;">
-            Not loading? <a href="${fileUrl}" target="_blank" rel="noopener" style="color:#fff; text-decoration:underline;">Open in new tab</a>
-          </div>`;
+      rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      document.getElementById('statTotalCount').textContent = currentFolders.length + rawFiles.length;
+
+      if (currentFolders.length > 0) {
+        foldersSectionWrapper.style.display = 'block';
+        foldersGrid.innerHTML = currentFolders.map(folder => {
+          return `
+            <div class="folder-card" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')" ondragover="allowDrop(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropOnFolder(event, '${folder.key}')" title="Double click to open. Drop files here to move them.">
+              <div class="folder-card-left">
+                <span class="material-symbols-outlined">folder</span>
+                <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
+              </div>
+              ${canDeleteItem('folder', folder.key) ? `<button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
+                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
+              </button>` : `<span class="material-symbols-outlined" style="font-size: 16px; opacity:0.5;" title="Protected - admin only">lock</span>`}
+            </div>
+          `;
+        }).join('');
       } else {
-        slot.innerHTML = `
-          <div style="text-align:center; padding:40px; color:#ffffff;">
-            <p style="margin-bottom:16px; font-size:16px;">Preview not available for this file type (<strong>${getFileExtension(fileName)}</strong>).</p>
-            <a href="${fileUrl}" download="${fileName}" class="btn-download-file" target="_blank">Download File</a>
+        foldersSectionWrapper.style.display = 'none';
+        foldersGrid.innerHTML = '';
+      }
+
+      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+      if (rawFiles.length > 0) {
+        let filesHtml = `
+          <div class="drive-files-grid">
+            ${currentFiles.map(file => {
+              const isImage = isImageFile(file.name, file.fileId);
+              const isVideo = isVideoFile(file.name, file.fileId);
+              
+              const iconName = getFileIcon(file.name, file.fileId);
+              const extName = getFileExtension(file.name);
+              const formattedSize = formatBytes(file.size);
+              const source = getFileSource(file.fileId);
+              const formattedDate = formatTimestamp(file.timestamp);
+              const themeClass = getThumbnailThemeClass(file.name, file.fileId);
+              const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
+
+              const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 400) : file.fileId;
+              const fullResUrl = isImage ? getOptimizedUrl(file.fileId, 1200) : file.fileId;
+
+              let previewHtml = '';
+              if (isImage) {
+                previewHtml = `<img class="lozad" data-src="${optimizedThumbUrl}" alt="${file.name}" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
+              } else if (isVideo) {
+                previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
+              } else {
+                previewHtml = `
+                  <div class="grid-preview-placeholder ${themeClass}">
+                    <span class="material-symbols-outlined" style="${iconColorStyle}">${iconName}</span>
+                    <span class="ext-badge">${extName}</span>
+                  </div>
+                `;
+              }
+
+              return `
+                <div class="drive-file-grid-card" id="file-card-${file.key}" draggable="true" ondragstart="handleDragStart(event, '${file.key}')" title="Drag this card and drop it onto any folder to move it">
+                  ${isImage ? `
+                    <a href="${fullResUrl}" class="grid-preview-box simple-lightbox-item" title="${file.name || 'APML Drive Asset'}">
+                      <div class="card-loading-overlay" id="card-loader-${file.key}">
+                        <div class="card-spinner"></div>
+                      </div>
+                      ${previewHtml}
+                    </a>
+                  ` : isVideo ? `
+                    <div class="grid-preview-box" onclick="openVideoLightbox('${file.key}', '${file.fileId}')" title="Click to preview video">
+                      <div class="card-loading-overlay" id="card-loader-${file.key}">
+                        <div class="card-spinner"></div>
+                      </div>
+                      ${previewHtml}
+                    </div>
+                  ` : `
+                    <div class="grid-preview-box" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Click to download">
+                      <div class="card-loading-overlay" id="card-loader-${file.key}">
+                        <div class="card-spinner"></div>
+                      </div>
+                      ${previewHtml}
+                    </div>
+                  `}
+                  <div class="grid-card-body">
+                    <div class="file-name" title="${file.name}">${file.name}</div>
+                    ${formattedDate ? `<div class="file-timestamp">${formattedDate}</div>` : ''}
+                    <div class="file-details-row">
+                      <span class="file-pill-group">
+                        <span class="file-type-pill">${extName}</span>
+                        <span class="media-source-dot" style="background-color: ${source.dotColor};" title="Stored on ${source.label}"></span>
+                      </span>
+                      <span class="file-size-label">${formattedSize}</span>
+                    </div>
+                  </div>
+                  <div class="grid-card-footer">
+                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Download">
+                      <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
+                    </button>
+                    <div class="card-actions-admin">
+                      <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+                      </button>
+                      ${canDeleteItem('file', file.key) ? `<button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
+                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                      </button>` : ''}
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         `;
-      }
 
-      overlay.classList.add('active');
-    }
+        if (!lightbox) {
+          lightbox = new SimpleLightbox('.simple-lightbox-item', {
+            captionsData: 'title',
+            captionDelay: 200,
+            animationSpeed: 250,
+            fadeSpeed: 250
+          });
+        } else {
+          lightbox.refresh();
+        }
 
-    function closeLightbox(evt) {
-      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
-        const overlay = document.getElementById('mediaLightboxModal');
-        const slot = document.getElementById('lightboxMediaSlot');
-        overlay.classList.remove('active');
-        slot.innerHTML = '';
-      }
-    }
+        if (typeof lozad !== 'undefined') {
+          const observer = lozad('.lozad', { loaded: function(el) {} });
+          observer.observe();
+        }
 
-    function hideCardLoader(key) {
-      const loader = document.getElementById(`card-loader-${key}`);
-      if (loader) {
-        loader.classList.add('fade-out');
+        if (totalPages > 1) {
+          filesHtml += `
+            <div class="pagination-bar">
+              <div class="pagination-pages-row">
+                <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+                </button>
+          `;
+
+          let startPage = Math.max(1, currentPage - 1);
+          let endPage = Math.min(totalPages, currentPage + 1);
+
+          if (currentPage === 1) {
+            endPage = Math.min(totalPages, 3);
+          } else if (currentPage === totalPages) {
+            startPage = Math.max(1, totalPages - 2);
+          }
+
+          if (startPage > 1) {
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
+            if (startPage > 2) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+          }
+
+          for (let p = startPage; p <= endPage; p++) {
+            filesHtml += `<button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+          }
+
+          if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+              filesHtml += `<span class="page-ellipsis">...</span>`;
+            }
+            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
+          }
+
+          filesHtml += `
+                <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+                </button>
+              </div>
+          `;
+
+          if (totalPages > 3) {
+            filesHtml += `
+              <div class="pagination-jump-row">
+                <span>Go to page:</span>
+                <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
+                <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
+              </div>
+            `;
+          }
+
+          filesHtml += `</div>`;
+        }
+
+        filesContainerWrapper.innerHTML = filesHtml;
+
+        currentFiles.forEach(file => {
+          const isImage = isImageFile(file.name, file.fileId);
+          const isVideo = isVideoFile(file.name, file.fileId);
+          if (!isImage && !isVideo) {
+            hideCardLoader(file.key);
+          }
+        });
+
+      } else if (currentFolders.length === 0) {
+        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
+      } else {
+        filesContainerWrapper.innerHTML = ``;
       }
     }
 
@@ -2061,224 +2001,32 @@
       return 'color: var(--primary);';
     }
 
-    function getFileSource(url) {
-      let host = '';
-      try { host = new URL(url).hostname.toLowerCase(); } catch (e) {}
-      if (host === 'cloudinary.com' || host.endsWith('.cloudinary.com')) return { label: 'Cloudinary', icon: 'cloud', cls: 'src-cloudinary' };
-      if (host === 'catbox.moe' || host.endsWith('.catbox.moe')) return { label: 'Catbox', icon: 'link', cls: 'src-catbox' };
-      return { label: host.replace(/^www\./, '') || 'Link', icon: 'link', cls: 'src-other' };
-    }
-
-    function formatBytes(bytes, decimals = 1) {
-      if (!bytes || bytes === 0) return 'Asset Link';
-      const k = 1024;
-      const dm = decimals < 0 ? 0 : decimals;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
-
-    function formatTimestamp(ts) {
-      if (!ts) return '';
-      const d = new Date(ts);
-      if (isNaN(d.getTime())) return '';
-      const day = String(d.getDate()).padStart(2, '0');
-      const month = d.toLocaleDateString('en-IN', { month: 'short' });
-      const year = d.getFullYear();
-      let hours = d.getHours();
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      return `${day}${month} ${year},${hours}:${minutes}${ampm}`;
-    }
-
-    function renderUI() {
-      renderBreadcrumb();
-
-      const foldersGrid = document.getElementById('foldersGrid');
-      const foldersSectionWrapper = document.getElementById('foldersSectionWrapper');
-      const filesContainerWrapper = document.getElementById('filesContainerWrapper');
-      const isAdmin = isCurrentUserAdmin();
-
-      const currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
-      const rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId);
-
-      rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-      document.getElementById('statTotalCount').textContent = currentFolders.length + rawFiles.length;
-
-      if (currentFolders.length > 0) {
-        foldersSectionWrapper.style.display = 'block';
-        foldersGrid.innerHTML = currentFolders.map(folder => {
-          return `
-            <div class="folder-card" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')">
-              <div class="folder-card-left">
-                <span class="material-symbols-outlined">folder</span>
-                <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
-              </div>
-              ${canDeleteItem('folder', folder.key) ? `<button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
-                <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-              </button>` : `<span class="material-symbols-outlined" style="font-size: 16px; opacity:0.5;" title="Protected - admin only">lock</span>`}
-            </div>
-          `;
-        }).join('');
-      } else {
-        foldersSectionWrapper.style.display = 'none';
-        foldersGrid.innerHTML = '';
-      }
-
-      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
-      if (currentPage > totalPages) currentPage = totalPages;
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
-      if (rawFiles.length > 0) {
-        let filesHtml = `
-          <div class="drive-files-grid">
-            ${currentFiles.map(file => {
-              const isImage = isImageFile(file.name, file.fileId);
-              const isVideo = isVideoFile(file.name, file.fileId);
-              const isHtml = isHtmlFile(file.name, file.fileId);
-              
-              const iconName = getFileIcon(file.name, file.fileId);
-              const extName = getFileExtension(file.name);
-              const formattedSize = formatBytes(file.size);
-              const source = getFileSource(file.fileId);
-              const formattedDate = formatTimestamp(file.timestamp);
-              const themeClass = getThumbnailThemeClass(file.name, file.fileId);
-              const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
-
-              const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 400) : file.fileId;
-
-              let previewHtml = '';
-              if (isImage) {
-                previewHtml = `<img src="${optimizedThumbUrl}" alt="${file.name}" loading="lazy" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
-              } else if (isVideo) {
-                previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
-              } else {
-                previewHtml = `
-                  <div class="grid-preview-placeholder ${themeClass}">
-                    <span class="material-symbols-outlined" style="${iconColorStyle}">${iconName}</span>
-                    <span class="ext-badge">${extName}</span>
-                  </div>
-                `;
-              }
-
-              return `
-                <div class="drive-file-grid-card" id="file-card-${file.key}">
-                  <div class="grid-preview-box" onclick="openFilePreview('${file.fileId}', '${file.name}')" title="Click to preview">
-                    <div class="card-loading-overlay" id="card-loader-${file.key}">
-                      <div class="card-spinner"></div>
-                    </div>
-                    ${previewHtml}
-                  </div>
-                  <div class="grid-card-body">
-                    <div class="file-name" title="${file.name}">${file.name}</div>
-                    ${formattedDate ? `<div class="file-timestamp">${formattedDate}</div>` : ''}
-                    <div class="file-details-row">
-                      <span class="file-pill-group">
-                        <span class="file-type-pill">${extName}</span>
-                        <span class="file-source-pill ${source.cls}" title="Stored on ${source.label}"><span class="material-symbols-outlined">${source.icon}</span>${source.label}</span>
-                      </span>
-                      <span>${formattedSize}</span>
-                    </div>
-                  </div>
-                  <div class="grid-card-footer">
-                    <button type="button" class="btn-download-file" onclick="handleItemDownload('${file.key}', '${file.fileId}', '${file.name}')" title="Download">
-                      <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
-                    </button>
-                    <div class="card-actions-admin">
-                      <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
-                      </button>
-                      ${canDeleteItem('file', file.key) ? `<button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>` : ''}
-                    </div>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `;
-
-        if (totalPages > 1) {
-          filesHtml += `
-            <div class="pagination-bar">
-              <div class="pagination-pages-row">
-                <button type="button" class="btn-page" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})" title="Previous Page">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
-                </button>
-          `;
-
-          let startPage = Math.max(1, currentPage - 1);
-          let endPage = Math.min(totalPages, currentPage + 1);
-
-          if (currentPage === 1) {
-            endPage = Math.min(totalPages, 3);
-          } else if (currentPage === totalPages) {
-            startPage = Math.max(1, totalPages - 2);
-          }
-
-          if (startPage > 1) {
-            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(1)">1</button>`;
-            if (startPage > 2) {
-              filesHtml += `<span class="page-ellipsis">...</span>`;
-            }
-          }
-
-          for (let p = startPage; p <= endPage; p++) {
-            filesHtml += `<button type="button" class="btn-page ${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
-          }
-
-          if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-              filesHtml += `<span class="page-ellipsis">...</span>`;
-            }
-            filesHtml += `<button type="button" class="btn-page" onclick="goToPage(${totalPages})">${totalPages}</button>`;
-          }
-
-          filesHtml += `
-                <button type="button" class="btn-page" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})" title="Next Page">
-                  <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
-                </button>
-              </div>
-          `;
-
-          if (totalPages > 3) {
-            filesHtml += `
-              <div class="pagination-jump-row">
-                <span>Go to page:</span>
-                <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
-                <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
-              </div>
-            `;
-          }
-
-          filesHtml += `</div>`;
-        }
-
-        filesContainerWrapper.innerHTML = filesHtml;
-
-        currentFiles.forEach(file => {
-          const isImage = isImageFile(file.name, file.fileId);
-          const isVideo = isVideoFile(file.name, file.fileId);
-          if (!isImage && !isVideo) {
-            hideCardLoader(file.key);
-          }
-        });
-
-        setTimeout(() => {
-          currentFiles.forEach(file => hideCardLoader(file.key));
-        }, 6000);
-
-      } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
-      } else {
-        filesContainerWrapper.innerHTML = ``;
+    function hideCardLoader(key) {
+      const loader = document.getElementById(`card-loader-${key}`);
+      if (loader) {
+        loader.classList.add('fade-out');
       }
     }
+
+    function openVideoLightbox(firebaseKey, videoUrl) {
+      const overlay = document.getElementById('mediaLightboxModal');
+      const slot = document.getElementById('lightboxMediaSlot');
+      slot.innerHTML = `<video src="${videoUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
+      overlay.classList.add('active');
+    }
+
+    function closeLightbox(evt) {
+      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
+        const overlay = document.getElementById('mediaLightboxModal');
+        const slot = document.getElementById('lightboxMediaSlot');
+        overlay.classList.remove('active');
+        slot.innerHTML = '';
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      renderUI();
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
       supabaseClient.auth.getSession().then(({ data: { session } }) => {
