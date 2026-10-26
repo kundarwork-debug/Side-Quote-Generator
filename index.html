@@ -22,9 +22,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- AOS (ANIMATE ON SCROLL) CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-
   <!-- COUNTUP.JS CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
 
@@ -515,22 +512,89 @@
       color: var(--text-muted);
     }
 
-    .cta-arrow {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: var(--primary-soft);
+    /* Theme-Adapted Uiverse Button Styling (by nathAd17) */
+    .card-footer-cta button {
       display: flex;
-      align-items: center;
       justify-content: center;
-      transition: all 0.25s ease;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.1);
+      font-size: 13.5px;
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      font-weight: 600;
+      isolation: isolate;
+      border-color: var(--surface-border);
       color: var(--primary);
+      position: relative;
+      z-index: 10;
+      padding: 6px 14px;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 28, 28, 0.2);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: color 0.3s ease;
     }
 
-    .module-card:hover .cta-arrow {
-      transform: translateX(4px);
+    .card-footer-cta button::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      top: 0;
+      bottom: 0;
+      left: -100%;
+      border-radius: 9999px;
       background: var(--primary);
-      color: #FFFFFF;
+      z-index: -10;
+      aspect-ratio: 1;
+    }
+
+    .module-card:hover .card-footer-cta button::before,
+    .card-footer-cta button:hover::before {
+      left: 0;
+      width: 100%;
+      transform: scale(1.5);
+      transition-duration: 0.7s;
+    }
+
+    .module-card:hover .card-footer-cta button,
+    .card-footer-cta button:hover {
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .card-footer-cta button svg {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: flex-end;
+      color: var(--primary);
+      transition: all 0.3s linear;
+      border-radius: 50%;
+      border: 1px solid rgba(185, 28, 28, 0.3);
+      padding: 4px;
+      transform: rotate(45deg);
+    }
+
+    .card-footer-cta button svg path {
+      fill: var(--primary);
+      transition: fill 0.3s ease;
+    }
+
+    .module-card:hover .card-footer-cta button svg,
+    .card-footer-cta button:hover svg {
+      transform: rotate(90deg);
+      background: #ffffff;
+      color: var(--primary);
+      border: none;
+      padding: 4px;
+    }
+
+    .module-card:hover .card-footer-cta button svg path,
+    .card-footer-cta button:hover svg path {
+      fill: var(--primary);
     }
 
     .telemetry-section {
@@ -745,7 +809,7 @@
     <!-- OPERATIONS MODULES BENTO GRID -->
     <section class="workspace-section">
       
-      <div class="section-bar" data-aos="fade-down" data-aos-duration="500">
+      <div class="section-bar">
         <div class="section-heading">
           <span class="material-symbols-outlined" style="color: var(--primary); font-size: 22px;">grid_view</span>
           <span>Operations Modules</span>
@@ -756,7 +820,7 @@
       <div class="modules-grid" id="modulesGrid">
         
         <!-- 1. QUOTATION (BENTO WIDE) -->
-        <a href="editor.html" class="module-card bento-wide" data-aos="fade-up" data-aos-delay="50" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
+        <a href="editor.html" class="module-card bento-wide" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -778,17 +842,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 2. CLOUD DRIVE (BENTO WIDE) -->
-        <a href="drive.html" class="module-card bento-wide" data-aos="fade-up" data-aos-delay="100" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
+        <a href="drive.html" class="module-card bento-wide" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -810,17 +874,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 3. GALLERY -->
-        <a href="gallery.html" class="module-card" data-aos="fade-up" data-aos-delay="50" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -837,17 +901,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 4. HUB DETAILS -->
-        <a href="hub-details.html" class="module-card" data-aos="fade-up" data-aos-delay="100" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
+        <a href="hub-details.html" class="module-card" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -864,17 +928,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 5. FIELD OFFICER -->
-        <a href="field-officer.html" class="module-card" data-aos="fade-up" data-aos-delay="150" data-category="directories" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
+        <a href="field-officer.html" class="module-card" data-category="directories" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -891,17 +955,17 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary);">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 6. APML LITE RATE CALCULATOR -->
-        <a href="APML-Lite.html" class="module-card" data-aos="fade-up" data-aos-delay="50" data-category="rates" data-tags="apml lite calculator volume cft rate pricing cube floor">
+        <a href="APML-Lite.html" class="module-card" data-category="rates" data-tags="apml lite calculator volume cft rate pricing cube floor">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -918,17 +982,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 7. CAR RATE CALCULATOR -->
-        <a href="car-rate.html" class="module-card" data-aos="fade-up" data-aos-delay="100" data-category="rates car" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
+        <a href="car-rate.html" class="module-card" data-category="rates car" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -945,17 +1009,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700;">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
         <!-- 8. LOCAL RATE -->
-        <a href="local-rate.html" class="module-card" data-aos="fade-up" data-aos-delay="150" data-category="rates" data-tags="local shifting intra-city rate sop budget minimum moving city">
+        <a href="local-rate.html" class="module-card" data-category="rates" data-tags="local shifting intra-city rate sop budget minimum moving city">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -972,12 +1036,12 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary);">
-              <span>Launch</span>
-              <div class="cta-arrow">
-                <span class="material-symbols-outlined" style="font-size: 16px;">arrow_outward</span>
-              </div>
-            </div>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
 
@@ -985,7 +1049,7 @@
     </section>
 
     <!-- OPERATIONAL TELEMETRY & IMPACT (CLICKABLE LINK TO analytics.html) -->
-    <section class="telemetry-section" data-aos="fade-up" data-aos-duration="500">
+    <section class="telemetry-section">
       <a href="analytics.html" class="telemetry-card">
         
         <div class="telemetry-header">
@@ -1052,18 +1116,6 @@
         }
       });
     })();
-  </script>
-
-  <!-- AOS (ANIMATE ON SCROLL) OPTIMIZED INIT SCRIPT -->
-  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-  <script>
-    AOS.init({
-      duration: 500,
-      easing: 'ease-out',
-      once: true,
-      offset: 20,
-      disable: 'mobile'
-    });
   </script>
 
   <!-- HERO CURSOR GLOW -->
