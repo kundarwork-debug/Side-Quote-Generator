@@ -303,9 +303,11 @@ window.sendPortalNotification = function () {};
                 <span>About Developer</span>
               </a>
 
-              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON -->
+              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON (Uiverse.io by vinodjangid07) -->
               <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
-                <span class="material-symbols-outlined">arrow_upward</span>
+                <svg class="svgIcon" viewBox="0 0 384 512">
+                  <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
+                </svg>
               </button>
             </div>
           </div>
@@ -441,43 +443,6 @@ window.sendPortalNotification = function () {};
             height: 20px;
             border-radius: 50%;
             object-fit: cover;
-          }
-
-          /* EMBEDDED FOOTER BACK TO TOP BUTTON */
-          .footer-back-to-top-btn {
-            width: 42px;
-            height: 42px;
-            background: var(--primary, #b91c1c);
-            color: #ffffff;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
-            transition: all 0.2s ease;
-            position: relative;
-            z-index: 10;
-          }
-
-          .footer-back-to-top-btn:hover {
-            background: #991b1b;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(185, 28, 28, 0.4);
-          }
-
-          @media (max-width: 850px) {
-            .site-footer-extended {
-              padding: 40px 20px 24px;
-            }
-            .footer-grid-container {
-              grid-template-columns: 1fr;
-              gap: 32px;
-            }
-            .footer-links-columns {
-              grid-template-columns: repeat(2, 1fr);
-            }
           }
         </style>
       `;
@@ -726,19 +691,16 @@ window.sendPortalNotification = function () {};
       }
 
       /* ---- moods ---- */
-      /* sleeping: dimmed, with a little floating zzz beside it */
       .support-btn.apml-mood-sleep { opacity: 0.55; filter: grayscale(0.35); transition: opacity 0.6s ease, filter 0.6s ease; }
       .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
       .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
       @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
-      /* alert: bounces and glows red */
       .support-btn.apml-mood-alert { animation: apmlBounce 0.55s ease-in-out infinite, apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
       @keyframes apmlBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
       @keyframes apmlGlow {
         0% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 0 rgba(220, 38, 38, 0.65); }
         100% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 20px rgba(220, 38, 38, 0); }
       }
-      /* happy: a quick celebratory hop */
       .support-btn.apml-mood-happy { animation: apmlHop 0.5s ease-in-out 3 !important; }
       @keyframes apmlHop {
         0%, 100% { transform: translateY(0) scale(1); }
@@ -754,8 +716,6 @@ window.sendPortalNotification = function () {};
     document.head.appendChild(mascotStyle);
     document.body.appendChild(supportFab);
 
-    // A pinned announcement keeps the speech bubble open until it is unpinned. The avatar itself still follows
-    // its normal show/hide rules (hidden at the top of the home page, hidden near the footer, and so on).
     let pinnedText = '';
     let pinnedShowing = false;
 
@@ -814,11 +774,11 @@ window.sendPortalNotification = function () {};
           }, 1500);
 
           if (isPin) {
-            pinnedShowing = true;              // a pinned announcement never closes by itself
+            pinnedShowing = true;
           } else if (!forceKeepOpen || pinnedText) {
             hideTimer = setTimeout(() => {
               if (myToken !== typeToken) return;
-              if (pinnedText) playTypewriter(pinnedText, true, 0, true);   // back to the announcement
+              if (pinnedText) playTypewriter(pinnedText, true, 0, true);
               else bubble.classList.remove('show');
             }, holdMs);
           }
@@ -830,11 +790,6 @@ window.sendPortalNotification = function () {};
       step();
     }
 
-    // ---------------- moods ----------------
-    //  sleeping: nothing touched for 15 seconds -> the avatar dims and a little zzz floats beside it
-    //  alert:    something needs attention (a file was downloaded, a Telegram announcement arrived) -> bounces and glows red
-    //  happy:    something worked (a PDF was made) -> a quick hop and a cheerful emoji in the speech bubble
-    // None of this touches the avatar's normal show/hide rules.
     const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
     const zzz = document.createElement('div');
@@ -857,7 +812,6 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-sleep');
       zzz.classList.add('show');
     }
-    // any sign of life counts: mouse, touch, keys, scrolling, coming back to the tab
     ['mousemove', 'mousedown', 'keydown', 'touchstart', 'wheel', 'scroll', 'click'].forEach((ev) => {
       window.addEventListener(ev, wake, { passive: true });
     });
@@ -884,22 +838,19 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.add('apml-mood-happy');
       happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
       const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
-      playTypewriter(line, false, 4500);       // closes by itself, then a pinned announcement (if any) comes back
+      playTypewriter(line, false, 4500);
     }
 
     window.APMLMascot = {
-      // say("text") or say("text", { hold: 20000, keepOpen: false }): hold = how long the bubble stays open (ms)
       say: function (text, opts) {
         if (!text) return;
         const keepOpen = opts && opts.keepOpen !== undefined ? !!opts.keepOpen : isIndexPage;
         playTypewriter(String(text), keepOpen, (opts && Number(opts.hold)) || 5000);
       },
-      // alert(): bounce and glow red for a few seconds.  happy("text"): hop and show a cheerful message.
       alert: alertMood,
       happy: happyMood,
       wake: wake,
       isAsleep: function () { return asleep; },
-      // pin("text"): keep an announcement open in the speech bubble until unpin() (the avatar still hides and shows as usual)
       pin: function (text) {
         text = String(text || '').trim();
         if (!text) return;
@@ -911,11 +862,11 @@ window.sendPortalNotification = function () {};
         if (!pinnedText) return;
         pinnedText = '';
         pinnedShowing = false;
-        typeToken++;                            // stop any typing in progress
+        typeToken++;
         isTyping = false;
         const bubble = document.getElementById('supportBubble');
         if (bubble) bubble.classList.remove('show');
-        window.dispatchEvent(new Event('scroll'));   // the avatar goes back under the normal show/hide rules
+        window.dispatchEvent(new Event('scroll'));
       }
     };
 
@@ -930,7 +881,7 @@ window.sendPortalNotification = function () {};
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (isTyping) return;
-        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }   // tap = read the announcement again
+        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }
 
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
@@ -959,8 +910,7 @@ window.sendPortalNotification = function () {};
 })();
 
 // ---------------------------------------------------------------------
-// ALERTS: make sure notify.js (Telegram alerts, announcements, avatar reactions) is loaded on every
-// page. A page that already includes it itself is skipped.
+// ALERTS: load notify.js
 // ---------------------------------------------------------------------
 (function loadNotify() {
   if (window.APMNotify) return;
@@ -976,7 +926,7 @@ window.sendPortalNotification = function () {};
 })();
 
 // ---------------------------------------------------------------------
-// STATION TRACKER: make sure station-tracker.js is loaded on every page.
+// STATION TRACKER: load station-tracker.js
 // ---------------------------------------------------------------------
 (function loadStationTracker() {
   var base = '';
