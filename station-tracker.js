@@ -4,9 +4,11 @@
 (function() {
   function initStationTracker() {
     let stationName = localStorage.getItem('apml_station_name');
+    let snoozeUntil = localStorage.getItem('apml_prompt_snooze');
+    let isSnoozed = snoozeUntil && Date.now() < parseInt(snoozeUntil, 10);
     
-    // If name is not set, show prompt on every refresh
-    if (!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') {
+    // Show prompt if name is missing AND the 15-minute snooze has expired
+    if ((!stationName || stationName.trim() === '' || stationName === 'null' || stationName === 'undefined') && !isSnoozed) {
       const modalOverlay = document.createElement('div');
       modalOverlay.id = 'apmlStationModalOverlay';
       modalOverlay.style.cssText = `
@@ -132,18 +134,23 @@
         }
 
         localStorage.setItem('apml_station_name', val);
+        localStorage.removeItem('apml_prompt_snooze'); // Clear snooze once saved
         modalOverlay.style.opacity = '0';
         setTimeout(() => modalOverlay.remove(), 300);
       });
 
-      // Close tab button with 5-second countdown timer
+      // Close tab button: set 15 min snooze, show countdown, and redirect to about.html
       closeTabBtn.addEventListener('click', () => {
+        // Set 15 minutes snooze expiry timestamp
+        const snoozeExpiry = Date.now() + (15 * 60 * 1000);
+        localStorage.setItem('apml_prompt_snooze', snoozeExpiry);
+
         let timerSeconds = 5;
         contentBox.innerHTML = `
           <div style="padding: 10px 0;">
             <div style="width: 50px; height: 50px; border: 4px solid #f3e8e2; border-top-color: #b91c1c; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-            <h3 style="font-size: 20px; font-weight: 800; color: #1c1917; margin-bottom: 8px;">Closing Tab...</h3>
-            <p style="font-size: 14px; color: #78716c; line-height: 1.5;">This tab will close in <b id="countdownNumber" style="color: #b91c1c;">${timerSeconds}</b> seconds.</p>
+            <h3 style="font-size: 20px; font-weight: 800; color: #1c1917; margin-bottom: 8px;">Redirecting...</h3>
+            <p style="font-size: 14px; color: #78716c; line-height: 1.5;">Taking you to the About page in <b id="countdownNumber" style="color: #b91c1c;">${timerSeconds}</b> seconds.</p>
           </div>
           <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
         `;
@@ -156,10 +163,7 @@
           }
           if (timerSeconds <= 0) {
             clearInterval(interval);
-            window.close();
-            setTimeout(() => {
-              window.location.href = "about:blank";
-            }, 500);
+            window.location.href = "about.html";
           }
         }, 1000);
       });
@@ -189,6 +193,7 @@
     },
     reset: function() {
       localStorage.removeItem('apml_station_name');
+      localStorage.removeItem('apml_prompt_snooze');
       alert("Name cleared. Refresh the page to enter a new name.");
     }
   };
