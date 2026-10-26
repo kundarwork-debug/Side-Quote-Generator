@@ -349,12 +349,12 @@
       </div>
     </div>
 
-    <!-- MAIN MIXED COMBO CHART CARD -->
+    <!-- MAIN CHART CARD WITH NATIVE LEGEND & EXCLUSIVE TOGGLE -->
     <div class="chart-card">
       <div class="chart-header">
         <div class="chart-title">
           <span class="material-symbols-outlined" style="color: var(--primary);">show_chart</span>
-          <span>Telemetry Overview (Visitors: Area | Quotations: Column | Cloud Media: Line)</span>
+          <span>Telemetry Overview (Total &amp; Breakdown)</span>
         </div>
       </div>
       <div class="canvas-container">
@@ -492,7 +492,7 @@
       updateCountUpValues(sumVisitorsVal, sumPdfVal, sumMediaVal);
       document.getElementById('peakDay').innerText = labels[peakIndex] || 'N/A';
 
-      // Render Main Combo Chart, Sparklines, and Heatmap with proper cleanup
+      // Render Main Chart, Sparklines, and Heatmap with proper cleanup
       renderMainChart(labels, visitorData, pdfData, mediaData);
       renderSparklines(visitorData, pdfData, mediaData);
       renderHeatmap(logs);
@@ -579,8 +579,11 @@
       const textColor = isDark ? '#94a3b8' : '#78716c';
       const gridColor = isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
 
+      let totalData = visitorData.map((v, idx) => v + (pdfData[idx] || 0) + (mediaData[idx] || 0));
+
       const options = {
         series: [
+          { name: 'Total', type: 'line', data: totalData },
           { name: 'Visitors', type: 'area', data: visitorData },
           { name: 'PDF Quotations', type: 'column', data: pdfData },
           { name: 'Cloud Media', type: 'line', data: mediaData }
@@ -602,10 +605,31 @@
             }
           },
           background: 'transparent',
-          animations: { enabled: true, easing: 'easeinout', speed: 600 }
+          animations: { enabled: true, easing: 'easeinout', speed: 600 },
+          events: {
+            mounted: function(chartContext, options) {
+              // Show Total by default, hide others
+              chartContext.showSeries('Total');
+              chartContext.hideSeries('Visitors');
+              chartContext.hideSeries('PDF Quotations');
+              chartContext.hideSeries('Cloud Media');
+            },
+            legendClick: function(chartContext, seriesIndex, config) {
+              // Mutually exclusive toggle: clicking one shows ONLY that series, hiding the rest
+              const seriesNames = ['Total', 'Visitors', 'PDF Quotations', 'Cloud Media'];
+              seriesNames.forEach((name, idx) => {
+                if (idx === seriesIndex) {
+                  chartContext.showSeries(name);
+                } else {
+                  chartContext.hideSeries(name);
+                }
+              });
+              return false; // Prevent default multi-toggle
+            }
+          }
         },
         stroke: {
-          width: [3, 0, 3],
+          width: [3, 3, 0, 3],
           curve: 'smooth'
         },
         plotOptions: {
@@ -614,10 +638,10 @@
             borderRadius: 4
           }
         },
-        colors: ['#10b981', '#b91c1c', '#3b82f6'],
+        colors: ['#b91c1c', '#10b981', '#ef4444', '#3b82f6'],
         fill: {
-          type: ['gradient', 'solid', 'solid'],
-          opacity: [1, 0.85, 1],
+          type: ['solid', 'gradient', 'solid', 'solid'],
+          opacity: [1, 0.4, 0.85, 1],
           gradient: {
             shadeIntensity: 1,
             opacityFrom: 0.4,
@@ -643,10 +667,14 @@
           strokeDashArray: 4
         },
         legend: {
+          show: true,
           position: 'bottom',
           horizontalAlign: 'center',
           labels: { colors: isDark ? '#f8fafc' : '#1c1917' },
-          itemMargin: { horizontal: 16, vertical: 8 }
+          itemMargin: { horizontal: 16, vertical: 8 },
+          onItemClick: {
+            toggleDataSeries: false
+          }
         },
         tooltip: {
           theme: isDark ? 'dark' : 'light',
@@ -688,10 +716,10 @@
         processLogsAndRender(snapshot, currentRange);
       });
 
-      // Filter tab click events
-      document.querySelectorAll('.filter-tab').forEach(tab => {
+      // Filter timeframe tab click events
+      document.querySelectorAll('#timeframeTabs .filter-tab').forEach(tab => {
         tab.addEventListener('click', (e) => {
-          document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('#timeframeTabs .filter-tab').forEach(t => t.classList.remove('active'));
           e.target.classList.add('active');
           currentRange = e.target.getAttribute('data-range');
           db.ref("analytics/daily_logs").once("value").then((snapshot) => {
