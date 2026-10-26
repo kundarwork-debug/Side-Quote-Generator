@@ -25,12 +25,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-<!-- SWEETALERT2 CDN -->
+<!-- SWEETALERT2 CDN & CSS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- FLATPICKR CSS & JS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 <!-- SPINKIT CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/spinkit/2.0.1/spinkit.min.css" />
@@ -1273,18 +1270,10 @@ Object.keys(sharedFields).forEach(id => {
   });
 });
 
-// Initialize Flatpickr for the date input field matching format "25th Oct 2026"
-flatpickr("#f_date", {
-  defaultDate: new Date(),
-  formatDate: (date) => {
-    return formatCustomDate(date);
-  },
-  onChange: function(selectedDates, dateStr, instance) {
-    if (selectedDates.length > 0) {
-      shared.date = document.getElementById('f_date').value;
-      renderPreview();
-    }
-  }
+// Regular input listener for the date field
+document.getElementById('f_date').addEventListener('input', (e) => {
+  shared.date = e.target.value;
+  renderPreview();
 });
 
 document.getElementById('costRows').addEventListener('input', (e) => {
@@ -1376,6 +1365,18 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     return;
   }
 
+  // Validate total amount is greater than zero
+  const d = state[active];
+  const { grand } = computeTotals(d);
+  if (grand <= 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Please fill amount first"
+    });
+    return;
+  }
+
   const btn = document.getElementById('downloadBtn');
   const status = document.getElementById('statusMsg');
   const busy = document.getElementById('pdfBusy');
@@ -1449,7 +1450,6 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
     pdf.addImage(jpegBytes || canvas.toDataURL('image/jpeg', PDF_JPEG_QUALITY), 'JPEG', xOffset, yOffset, imgW, imgH);
 
-    const d = state[active];
     const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
     const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
     const filename = `${cleanClient}_${cleanCompany}.pdf`;
@@ -1473,9 +1473,20 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     saveQuotationToDrive(pdfBlob, filename);
 
     incrementPdfDownloadCount();
-    logDailyActivity('pdf');
+    
+    if (typeof logDailyActivity === 'function') {
+      logDailyActivity('pdf');
+    }
 
     status.textContent = 'Downloaded ✓';
+
+    // SweetAlert2 success popup when PDF is generated successfully
+    Swal.fire({
+      title: "PDF Generated Successfully!",
+      icon: "success",
+      draggable: true
+    });
+
   } catch (err) {
     console.error(err);
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
