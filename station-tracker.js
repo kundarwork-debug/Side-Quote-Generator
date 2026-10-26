@@ -135,13 +135,18 @@
 
         localStorage.setItem('apml_station_name', val);
         localStorage.removeItem('apml_prompt_snooze'); // Clear snooze once saved
+
+        // Immediately sync user registration data to Firebase
+        if (typeof window.APMLStation !== 'undefined' && window.APMLStation.logAction) {
+          window.APMLStation.logAction('Registered', 'Initial Setup');
+        }
+
         modalOverlay.style.opacity = '0';
         setTimeout(() => modalOverlay.remove(), 300);
       });
 
       // Close tab button: set 15 min snooze, show countdown, and redirect to about.html
       closeTabBtn.addEventListener('click', () => {
-        // Set 15 minutes snooze expiry timestamp
         const snoozeExpiry = Date.now() + (15 * 60 * 1000);
         localStorage.setItem('apml_prompt_snooze', snoozeExpiry);
 
