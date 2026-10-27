@@ -256,7 +256,6 @@
             transform: translateY(-1px);
         }
 
-        /* PURE WHITE TILES */
         .card {
             background: #FFFFFF !important;
             border: 1px solid var(--border-subtle);
@@ -454,26 +453,11 @@
             transition: all 0.2s ease;
         }
 
-        .btn-pencil-edit { 
-            color: #0284c7; 
-        }
-        .btn-pencil-edit:hover { 
-            background: #e0f2fe; 
-            border-color: #0284c7; 
-            transform: scale(1.08); 
-        }
+        .btn-pencil-edit { color: #0284c7; }
+        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
 
-        .btn-pencil-delete { 
-            color: #dc2626; 
-            background: #fee2e2;
-            border-color: #fecaca;
-        }
-        .btn-pencil-delete:hover { 
-            background: #dc2626; 
-            color: #ffffff;
-            border-color: #dc2626; 
-            transform: scale(1.08); 
-        }
+        .btn-pencil-delete { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
+        .btn-pencil-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; transform: scale(1.08); }
 
         .region-badge {
             background-color: var(--primary);
@@ -790,6 +774,7 @@
     <div id="footer-container"></div>
 
     <script src="common.js?v=21.12"></script>
+    <script src="directory.js?v=1"></script>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -874,7 +859,7 @@
             { branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM13913", name: "SANJAY KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
+            { branch: "PUN", apmCode: "APM13913", name: "SANJAY KUMAR PATHAK", role: "BFO", main: "98210 02656", designation: "Marketing Executive", status: "Active" },
             { branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
             { branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
             { branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
@@ -889,6 +874,7 @@
         ];
 
         let loadedOfficers = [];
+        let officerDirectoryHelper = null;
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -915,10 +901,14 @@
             return match.length >= 10 ? match.substring(match.length - 10) : match;
         }
 
-        // FIXED: Removed strict duplicate filtering so newly added contacts always reflect instantly
         function deduplicateList(list) {
             return list.filter(item => item !== null && item !== undefined);
         }
+
+        // Initialize APMLDirectory helper instance once DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            officerDirectoryHelper = new APMLDirectory('lookupResultsContainer', 'officerLookupInput');
+        });
 
         officersRef.on('value', (snapshot) => {
             const data = snapshot.val();
@@ -950,9 +940,9 @@
             populateLookupControls(loadedOfficers);
             renderTable(loadedOfficers);
             
-            const currentSearch = document.getElementById('officerLookupInput').value;
-            if (currentSearch && currentSearch.trim() !== '') {
-                executeLookup(currentSearch);
+            // Feed data into directory.js helper instance for quick search rendering
+            if (officerDirectoryHelper) {
+                officerDirectoryHelper.setData(loadedOfficers);
             }
 
             hideLoadingOverlay();
@@ -969,97 +959,10 @@
         }
 
         const lookupInput = document.getElementById('officerLookupInput');
-        const lookupContainer = document.getElementById('lookupResultsContainer');
-
-        lookupInput.addEventListener('input', function() {
-            executeLookup(this.value);
-        });
-
         function selectBranchChip(branch) {
             lookupInput.value = branch;
-            executeLookup(branch);
-        }
-
-        function executeLookup(searchTerm) {
-            if (!searchTerm || searchTerm.trim() === '') {
-                lookupContainer.innerHTML = '';
-                lookupContainer.style.display = 'none';
-                return;
-            }
-
-            const term = searchTerm.trim().toLowerCase();
-            const matches = loadedOfficers.filter(o => {
-                const name = (o.name || '').toLowerCase();
-                const branch = (o.branch || '').toLowerCase();
-                const apmCode = (o.apmCode || '').toLowerCase();
-                const designation = (o.designation || '').toLowerCase();
-                const mobile = (o.mobile || '').replace(/\s+/g, '').toLowerCase();
-
-                return name.includes(term) || branch.includes(term) || apmCode.includes(term) || designation.includes(term) || mobile.includes(term);
-            });
-
-            if (matches.length > 0) {
-                lookupContainer.innerHTML = '';
-
-                matches.forEach(officer => {
-                    const card = document.createElement('div');
-                    card.className = 'lookup-result-item';
-
-                    const cleanPhone = extractPhone(officer.mobile);
-                    const statusClass = (officer.status || 'active').toLowerCase();
-                    const recordKey = officer._firebaseKey || officer.id;
-
-                    card.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
-                            <div>
-                                <div style="font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 2px;">
-                                    ${escapeHtml(officer.name)}
-                                </div>
-                                <div style="font-size: 12px; font-weight: 600; color: var(--text-muted);">
-                                    ${escapeHtml(officer.designation)} (${escapeHtml(officer.role || 'BFO')})
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span class="region-badge">${escapeHtml(officer.branch)}</span>
-                                <span class="state-badge ${statusClass}">${escapeHtml(officer.status || 'Active')}</span>
-                                <button type="button" class="btn-pencil-edit" onclick="startEditOfficer('${recordKey}')" title="Edit ${escapeHtml(officer.name)}">
-                                    <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
-                                </button>
-                                <button type="button" class="btn-pencil-delete" onclick="promptDeleteOfficer('${recordKey}', '${escapeHtml(officer.name)}')" title="Delete ${escapeHtml(officer.name)}">
-                                    <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="contact-role-grid">
-                            <div class="contact-role-card">
-                                <div>
-                                    <span class="role-title-tag">APM Code: ${escapeHtml(officer.apmCode || 'N/A')}</span>
-                                    <span class="role-person-name">📞 ${escapeHtml(officer.mobile)}</span>
-                                </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <a href="tel:${escapeHtml(cleanPhone)}" class="btn-call-mini" title="Call ${escapeHtml(officer.name)}">
-                                        <span class="material-symbols-outlined" style="font-size: 18px;">call</span>
-                                    </a>
-                                    <a href="https://wa.me/91${escapeHtml(cleanPhone)}?text=Hi%20${encodeURIComponent(officer.name)},%20regarding%20APML%20consignment..." target="_blank" rel="noopener noreferrer" class="btn-wa-mini" title="WhatsApp ${escapeHtml(officer.name)}">
-                                        <span class="material-symbols-outlined" style="font-size: 18px;">chat</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                    lookupContainer.appendChild(card);
-                });
-
-                lookupContainer.style.display = 'flex';
-            } else {
-                lookupContainer.innerHTML = `
-                    <div style="padding: 16px; text-align: center; color: var(--text-muted); font-weight: 600; font-size: 13px;">
-                        No field officers found matching "${escapeHtml(searchTerm)}".
-                    </div>
-                `;
-                lookupContainer.style.display = 'block';
+            if (officerDirectoryHelper) {
+                officerDirectoryHelper.filterData(branch);
             }
         }
 
