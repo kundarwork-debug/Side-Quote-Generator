@@ -8,6 +8,9 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
     <link rel="stylesheet" href="common.css?v=21.35">
 
+    <!-- SheetJS Library for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -200,6 +203,15 @@
             box-shadow: var(--shadow-float);
         }
 
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
         .card-header {
             font-family: var(--font-display);
             font-size: 16px;
@@ -208,8 +220,28 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 0;
             letter-spacing: -0.01em;
+        }
+
+        .btn-excel-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: #059669;
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-excel-export:hover {
+            background: #047857;
+            transform: translateY(-1px);
         }
 
         .lookup-box {
@@ -359,9 +391,16 @@
 
         <!-- UNIFIED MASTER SEARCH CARD -->
         <section class="card" style="border: 2px solid var(--border-hover);">
-            <div class="card-header">
-                <span class="material-symbols-outlined">travel_explore</span>
-                Search Across All Hubs, Branches &amp; Field Officers
+            <div class="card-header-flex">
+                <div class="card-header">
+                    <span class="material-symbols-outlined">travel_explore</span>
+                    Search Across All Hubs, Branches &amp; Field Officers
+                </div>
+
+                <button type="button" class="btn-excel-export" onclick="exportDirectoryToExcel()">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
+                    <span>Download Excel Sheet</span>
+                </button>
             </div>
             
             <div class="lookup-box">
@@ -475,6 +514,69 @@
                 hideLoadingOverlay();
             });
         }
+
+        // --- EXCEL EXPORT FUNCTION ---
+        window.exportDirectoryToExcel = function() {
+            Promise.all([
+                db.ref('hubs').once('value'),
+                db.ref('field_officers').once('value')
+            ]).then(([hubsSnap, officersSnap]) => {
+                const hubsData = hubsSnap.val() || {};
+                const officersData = officersSnap.val() || {};
+
+                let exportRows = [];
+
+                // Format Hubs
+                Object.keys(hubsData).forEach(key => {
+                    const h = hubsData[key];
+                    if (h) {
+                        exportRows.push({
+                            "Category": "Hub / Branch Office",
+                            "Name / City": h.city || '',
+                            "Region / Branch Code": h.region || 'HUB',
+                            "Designation / Role": 'Branch Office',
+                            "HUB Manager": h.hod || '',
+                            "Branch Manager": h.teamLeader || '',
+                            "Packing Incharge": h.packingIncharge || '',
+                            "Mobile / Phone": '',
+                            "Address": h.address || h.officeAddress || ''
+                        });
+                    }
+                });
+
+                // Format Field Officers
+                Object.keys(officersData).forEach(key => {
+                    const o = officersData[key];
+                    if (o) {
+                        exportRows.push({
+                            "Category": "Field Officer (WCRO)",
+                            "Name / City": o.name || '',
+                            "Region / Branch Code": o.branch || '',
+                            "Designation / Role": o.designation || '',
+                            "HUB Manager": `APM Code: ${o.apmCode || 'N/A'}`,
+                            "Branch Manager": o.role || 'BFO',
+                            "Packing Incharge": o.status || 'Active',
+                            "Mobile / Phone": o.mobile || '',
+                            "Address": ''
+                        });
+                    }
+                });
+
+                if (exportRows.length === 0) {
+                    alert("No data available to export.");
+                    return;
+                }
+
+                const worksheet = XLSX.utils.json_to_sheet(exportRows);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "APML Master Directory");
+
+                const dateStr = new Date().toISOString().split('T')[0];
+                XLSX.writeFile(workbook, `APML_Master_Directory_${dateStr}.xlsx`);
+            }).catch(err => {
+                alert("Failed to export Excel sheet: " + err.message);
+            });
+        };
 
         // --- GLOBAL EDIT & DELETE HANDLERS ---
         window.editRecord = function(category, id) {
