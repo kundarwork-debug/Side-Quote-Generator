@@ -57,6 +57,9 @@ class APMLDirectory {
       const email = item.email || '';
       const address = item.address || item.location || '';
       const typeTag = item.type || '';
+      
+      const recordId = item.id || '';
+      const category = item.category || '';
 
       const cleanPhone = String(phone).replace(/[^0-9]/g, '');
       const tenDigitPhone = cleanPhone.length >= 10 ? cleanPhone.substring(cleanPhone.length - 10) : cleanPhone;
@@ -70,9 +73,21 @@ class APMLDirectory {
                 ${escapeHtml(name)}
               </h3>
             </div>
-            <span style="font-size: 11px; font-weight: 800; color: #ffffff; background: var(--primary, #c21d1d); padding: 3px 10px; border-radius: 6px; text-transform: uppercase;">
-              ${escapeHtml(String(branch))}
-            </span>
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 11px; font-weight: 800; color: #ffffff; background: var(--primary, #c21d1d); padding: 3px 10px; border-radius: 6px; text-transform: uppercase;">
+                ${escapeHtml(String(branch))}
+              </span>
+              
+              ${recordId && category ? `
+                <button type="button" class="btn-pencil-edit" onclick="editRecord('${category}', '${recordId}')" title="Edit">
+                  <span class="material-symbols-outlined" style="font-size: 17px;">edit</span>
+                </button>
+                <button type="button" class="btn-pencil-delete" onclick="deleteRecord('${category}', '${recordId}', '${escapeHtml(name).replace(/'/g, "\\'")}')" title="Delete">
+                  <span class="material-symbols-outlined" style="font-size: 17px;">delete</span>
+                </button>
+              ` : ''}
+            </div>
           </div>
 
           <div style="font-size: 13px; color: var(--text-secondary, #44403c); font-weight: 600;">
