@@ -308,6 +308,24 @@
             flex-shrink: 0;
         }
         .btn-wa-mini:hover { background: #059669; color: #ffffff; transform: scale(1.08); }
+
+        .btn-pencil-edit, .btn-pencil-delete {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            border: 1.5px solid var(--border-subtle);
+            transition: all 0.2s ease;
+        }
+        .btn-pencil-edit { color: #0284c7; }
+        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
+
+        .btn-pencil-delete { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
+        .btn-pencil-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; transform: scale(1.08); }
     </style>
 </head>
 <body>
@@ -402,10 +420,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize APMLDirectory helper targeting our unified elements
             masterDirectoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
+            loadMasterData();
+        });
 
-            // Fetch both hubs and field officers simultaneously
+        function loadMasterData() {
             Promise.all([
                 db.ref('hubs').once('value'),
                 db.ref('field_officers').once('value')
@@ -420,6 +439,8 @@
                     const h = hubsData[key];
                     if (h) {
                         masterList.push({
+                            id: key,
+                            category: 'hubs',
                             type: 'Hub / Branch Office',
                             name: h.city || 'Branch Hub',
                             branch: h.region || 'HUB',
@@ -435,6 +456,8 @@
                     const o = officersData[key];
                     if (o) {
                         masterList.push({
+                            id: key,
+                            category: 'field_officers',
                             type: 'Field Officer (WCRO)',
                             name: o.name || 'Officer',
                             branch: o.branch || 'FIELD',
@@ -445,14 +468,33 @@
                     }
                 });
 
-                // Load combined master list into directory.js
                 masterDirectoryHelper.setData(masterList);
                 hideLoadingOverlay();
             }).catch(err => {
                 console.error("Master directory load error:", err);
                 hideLoadingOverlay();
             });
-        });
+        }
+
+        // --- GLOBAL EDIT & DELETE HANDLERS ---
+        window.editRecord = function(category, id) {
+            if (category === 'hubs') {
+                window.location.href = `hub-details.html?edit=${id}`;
+            } else {
+                window.location.href = `field-officer.html?edit=${id}`;
+            }
+        };
+
+        window.deleteRecord = function(category, id, name) {
+            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+            db.ref(`${category}/${id}`).remove().then(() => {
+                alert("Record deleted successfully.");
+                loadMasterData(); // Refresh list
+            }).catch(err => {
+                alert("Error deleting record: " + err.message);
+            });
+        };
 
         function filterByChip(term) {
             const input = document.getElementById('masterSearchInput');
