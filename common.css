@@ -484,6 +484,69 @@
   transition-duration: 0.3s;
 }
 
+/* FOOTER FUN BUTTON STYLING (Matched to About Me Pill Size) */
+.footer-fun-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px;
+  height: 36px;
+  color: var(--text-main, #292524);
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1.5px solid var(--text-main, #292524);
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  font-size: 11.5px;
+  background-color: hsl(49deg 98% 60%);
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  text-decoration: none;
+  z-index: 10;
+}
+
+.footer-fun-btn:active {
+  transform: scale(0.95);
+}
+
+.footer-fun-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: all 0.4s ease;
+  z-index: 2;
+}
+
+.footer-fun-btn .play {
+  transition: all 0.4s ease;
+  transition-delay: 200ms;
+}
+
+.footer-fun-btn:hover svg {
+  transform: scale(2.2) translate(35%);
+}
+
+.footer-fun-btn .now {
+  position: absolute;
+  left: 0;
+  transform: translateX(-100%);
+  transition: all 0.4s ease;
+  z-index: 2;
+  color: #111;
+}
+
+.footer-fun-btn:hover .now {
+  transform: translateX(8px);
+  transition-delay: 200ms;
+}
+
+.footer-fun-btn:hover .play {
+  transform: translateX(180%);
+  transition-delay: 200ms;
+}
+
 @media (max-width: 768px) {
   .header-inner,
   .footer-inner {
