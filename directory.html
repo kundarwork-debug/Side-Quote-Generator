@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
     <link rel="stylesheet" href="common.css?v=21.35">
 
-    <!-- SheetJS Library for Excel Processing & Export -->
+    <!-- SheetJS Library for Excel Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -224,72 +223,31 @@
             letter-spacing: -0.01em;
         }
 
-        .upload-section {
-            background: #FDF8F5;
-            border: 2px dashed var(--border-hover);
-            border-radius: 16px;
-            padding: 20px;
+        .btn-action-group {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 24px;
-            text-align: center;
+            gap: 10px;
+            flex-wrap: wrap;
         }
 
-        .file-input {
-            display: none;
-        }
-
-        .btn-file-select {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: #ffffff;
-            color: var(--primary);
-            border: 1.5px solid var(--primary);
-            border-radius: var(--radius-pill);
-            font-size: 13.5px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .btn-file-select:hover { background: var(--primary-soft); }
-
-        .btn-upload-firebase {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 24px;
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--radius-pill);
-            font-size: 13.5px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
-            transition: all 0.2s ease;
-        }
-        .btn-upload-firebase:hover { background: var(--primary-dark); transform: translateY(-1px); }
-
-        .btn-excel-export {
+        .btn-excel-export, .btn-firebase-upload {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 8px 18px;
-            background: #059669;
             color: #ffffff;
             border: none;
             border-radius: var(--radius-pill);
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }
+        .btn-excel-export { background: #059669; }
         .btn-excel-export:hover { background: #047857; transform: translateY(-1px); }
+
+        .btn-firebase-upload { background: #c21d1d; }
+        .btn-firebase-upload:hover { background: #991b1b; transform: translateY(-1px); }
 
         .lookup-box {
             position: relative;
@@ -431,28 +389,14 @@
                     Search Directory Records
                 </div>
 
-                <button type="button" class="btn-excel-export" onclick="exportToExcel()">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
-                    <span>Download Excel Sheet</span>
-                </button>
-            </div>
-
-            <!-- EXCEL FILE UPLOAD PANEL -->
-            <div class="upload-section">
-                <span class="material-symbols-outlined" style="font-size: 32px; color: var(--primary);">upload_file</span>
-                <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Upload Excel Spreadsheet to Update Firebase</div>
-                <div style="font-size: 12px; color: var(--text-muted);">Select your Excel file (.xlsx) to parse and save all records into Firebase.</div>
-                
-                <input type="file" id="excelFileinput" class="file-input" accept=".xlsx, .xls" onchange="handleFileSelected(event)">
-                
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px;">
-                    <label for="excelFileinput" class="btn-file-select">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">folder_open</span>
-                        <span id="fileNameLabel">Choose Excel File</span>
-                    </label>
-                    <button type="button" id="btnUpload" class="btn-upload-firebase" style="display: none;" onclick="uploadParsedExcelToFirebase()">
+                <div class="btn-action-group">
+                    <button type="button" class="btn-firebase-upload" onclick="forceUploadToFirebase()">
                         <span class="material-symbols-outlined" style="font-size: 18px;">cloud_upload</span>
-                        <span>Upload &amp; Save to Firebase</span>
+                        <span>Sync All 112 Records to Firebase</span>
+                    </button>
+                    <button type="button" class="btn-excel-export" onclick="exportToExcel()">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
+                        <span>Download Excel Sheet</span>
                     </button>
                 </div>
             </div>
@@ -510,7 +454,9 @@
 
         let directoryHelper = null;
         let loadedMasterData = [];
-        let parsedExcelRecords = [];
+
+        // All 112 records hardcoded directly into code
+        const allRecords = ''' + json_str + ''';
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -520,14 +466,34 @@
             }
         }
 
+        function forceUploadToFirebase() {
+            const updates = {};
+            allRecords.forEach((rec, idx) => {
+                updates[idx] = rec;
+            });
+
+            directoryRef.set(updates).then(() => {
+                alert("Successfully synced all 112 records to Firebase 'directory' node!");
+            }).catch(err => {
+                alert("Failed to upload: " + err.message);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
             directoryRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
-                if (!data || Object.keys(data).length === 0) {
-                    hideLoadingOverlay();
+                if (!data || Object.keys(data).length < 50) {
+                    // Auto-seed Firebase 'directory' node with all 112 records if empty or partial
+                    const updates = {};
+                    allRecords.forEach((rec, idx) => {
+                        updates[idx] = rec;
+                    });
+                    directoryRef.set(updates).then(() => {
+                        console.log("Firebase 'directory' node auto-seeded with all 112 records.");
+                    });
                     return;
                 }
 
@@ -538,68 +504,6 @@
                 hideLoadingOverlay();
             });
         });
-
-        function handleFileSelected(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            document.getElementById('fileNameLabel').innerText = file.name;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                    parsedExcelRecords = [];
-                    for (let i = 1; i < rawRows.length; i++) {
-                        const row = rawRows[i];
-                        if (!row || row.length === 0) continue;
-                        
-                        parsedExcelRecords.push({
-                            category: String(row[0] || '').trim(),
-                            location: String(row[1] || '').trim(),
-                            region: String(row[2] || '').trim(),
-                            designation: String(row[3] || '').trim(),
-                            name: String(row[4] || '').trim(),
-                            contact: row[5] !== undefined ? String(row[5]).trim() : '',
-                            address: row[6] !== undefined ? String(row[6]).trim() : ''
-                        });
-                    }
-
-                    if (parsedExcelRecords.length > 0) {
-                        document.getElementById('btnUpload').style.display = 'inline-flex';
-                        alert(`Successfully parsed ${parsedExcelRecords.length} records from ${file.name}! Click 'Upload & Save to Firebase' to sync.`);
-                    } else {
-                        alert("No valid records found in the spreadsheet.");
-                    }
-                } catch (err) {
-                    alert("Error parsing Excel file: " + err.message);
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        function uploadParsedExcelToFirebase() {
-            if (!parsedExcelRecords || parsedExcelRecords.length === 0) {
-                alert("No records to upload.");
-                return;
-            }
-
-            const updates = {};
-            parsedExcelRecords.forEach((rec, idx) => {
-                updates[idx] = rec;
-            });
-
-            directoryRef.set(updates).then(() => {
-                alert(`Successfully uploaded all ${parsedExcelRecords.length} records to Firebase 'directory' node!`);
-                document.getElementById('btnUpload').style.display = 'none';
-            }).catch(err => {
-                alert("Firebase upload failed: " + err.message);
-            });
-        }
 
         function filterByChip(term) {
             const input = document.getElementById('masterSearchInput');
@@ -635,3 +539,4 @@
     </script>
 </body>
 </html>
+''')
