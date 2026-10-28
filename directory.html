@@ -353,7 +353,7 @@
             <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
         </div>
         <div class="loader-text" style="font-weight: 700; font-size: 14px;">
-            Loading Firebase Master Directory...
+            Loading Firebase 'directory' Node...
         </div>
     </div>
 
@@ -364,13 +364,13 @@
         <div class="directory-header-wrap">
             <div class="header-badge">
                 <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
-                <span>APML Unified Enterprise Master Directory</span>
+                <span>APML Unified Enterprise Directory</span>
             </div>
-            <h1 class="page-title">Master Search <span>Hubs &amp; Field Officers</span></h1>
+            <h1 class="page-title">Master Search <span>Directory</span></h1>
             
             <span class="status-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
-                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
+                Firebase Synchronized (<span id="recordCount">0</span> Records)
             </span>
         </div>
 
@@ -378,7 +378,7 @@
             <div class="card-header-flex">
                 <div class="card-header">
                     <span class="material-symbols-outlined">travel_explore</span>
-                    Search Across All Hubs, Branches &amp; Field Officers
+                    Search Directory Records
                 </div>
 
                 <button type="button" class="btn-excel-export" onclick="exportToExcel()">
@@ -436,13 +436,13 @@
 
     <script>
         const db = firebase.database();
-        const masterRef = db.ref('master_directory');
+        const directoryRef = db.ref('directory'); // Pointing to the new 'directory' node
 
         let directoryHelper = null;
         let loadedMasterData = [];
 
-        // Full dataset from Book2.xlsx to auto-seed Firebase if empty
-        const initialExcelRecords = ${json_book2};
+        // Full dataset from Book2.xlsx to auto-seed Firebase 'directory' node if empty
+        const initialExcelRecords = ${directory_json_str};
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -455,7 +455,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            masterRef.on('value', (snapshot) => {
+            directoryRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
@@ -463,8 +463,8 @@
                     initialExcelRecords.forEach((rec, idx) => {
                         updates[idx] = rec;
                     });
-                    masterRef.set(updates).then(() => {
-                        console.log("Firebase seeded successfully with Book2 records.");
+                    directoryRef.set(updates).then(() => {
+                        console.log("Firebase 'directory' node seeded successfully.");
                     });
                     return;
                 }
@@ -472,6 +472,7 @@
                 loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                 document.getElementById('recordCount').innerText = loadedMasterData.length;
 
+                // Render using directory.js helper
                 directoryHelper.setData(loadedMasterData);
                 hideLoadingOverlay();
             });
@@ -493,20 +494,20 @@
 
             const exportRows = loadedMasterData.map(item => ({
                 "Category": item.category,
-                "Location / Branch": item.location,
+                "Location": item.location,
                 "Region": item.region,
-                "Designation / Role": item.designation,
-                "Contact Name": item.name,
-                "Contact Number": item.contact,
+                "Designation": item.designation,
+                "Name": item.name,
+                "Contact": item.contact,
                 "Address": item.address
             }));
 
             const worksheet = XLSX.utils.json_to_sheet(exportRows);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "APML Master Directory");
+            XLSX.utils.book_append_sheet(workbook, worksheet, "APML Directory");
 
             const dateStr = new Date().toISOString().split('T')[0];
-            XLSX.writeFile(workbook, `APML_Master_Directory_${dateStr}.xlsx`);
+            XLSX.writeFile(workbook, `APML_Directory_${dateStr}.xlsx`);
         }
     </script>
 </body>
