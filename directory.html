@@ -8,6 +8,9 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
     <link rel="stylesheet" href="common.css?v=21.35">
 
+    <!-- SheetJS Library for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -200,6 +203,15 @@
             box-shadow: var(--shadow-float);
         }
 
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
         .card-header {
             font-family: var(--font-display);
             font-size: 16px;
@@ -208,9 +220,26 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 0;
             letter-spacing: -0.01em;
         }
+
+        .btn-excel-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: #059669;
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            transition: all 0.2s ease;
+        }
+        .btn-excel-export:hover { background: #047857; transform: translateY(-1px); }
 
         .lookup-box {
             position: relative;
@@ -262,19 +291,25 @@
             cursor: pointer;
             transition: all 0.15s ease;
         }
-
-        .chip:hover {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            transform: translateY(-1px);
-        }
+        .chip:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
 
         .lookup-results-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
             margin-top: 20px;
+        }
+
+        .directory-card {
+            background: #ffffff;
+            border: 1.5px solid var(--border-subtle);
+            border-left: 4px solid var(--primary);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(120, 113, 108, 0.04);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .btn-call-mini {
@@ -308,24 +343,6 @@
             flex-shrink: 0;
         }
         .btn-wa-mini:hover { background: #059669; color: #ffffff; transform: scale(1.08); }
-
-        .btn-pencil-edit, .btn-pencil-delete {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            border: 1.5px solid var(--border-subtle);
-            transition: all 0.2s ease;
-        }
-        .btn-pencil-edit { color: #0284c7; }
-        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
-
-        .btn-pencil-delete { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
-        .btn-pencil-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; transform: scale(1.08); }
     </style>
 </head>
 <body>
@@ -336,7 +353,7 @@
             <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
         </div>
         <div class="loader-text" style="font-weight: 700; font-size: 14px;">
-            Loading Master Enterprise Directory...
+            Loading Firebase Master Directory...
         </div>
     </div>
 
@@ -353,15 +370,21 @@
             
             <span class="status-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
-                Real-Time Firebase Synchronized
+                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
             </span>
         </div>
 
-        <!-- UNIFIED MASTER SEARCH CARD -->
         <section class="card" style="border: 2px solid var(--border-hover);">
-            <div class="card-header">
-                <span class="material-symbols-outlined">travel_explore</span>
-                Search Across All Hubs, Branches &amp; Field Officers
+            <div class="card-header-flex">
+                <div class="card-header">
+                    <span class="material-symbols-outlined">travel_explore</span>
+                    Search Across All Hubs, Branches &amp; Field Officers
+                </div>
+
+                <button type="button" class="btn-excel-export" onclick="exportToExcel()">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
+                    <span>Download Excel Sheet</span>
+                </button>
             </div>
             
             <div class="lookup-box">
@@ -369,7 +392,7 @@
                 <input type="text" id="masterSearchInput" class="lookup-input" placeholder="Type city, branch code, officer name, or phone number...">
             </div>
 
-            <div class="quick-chips" id="quickChipsContainer">
+            <div class="quick-chips">
                 <span class="chip" onclick="filterByChip('MUM')">MUM</span>
                 <span class="chip" onclick="filterByChip('PUN')">PUN</span>
                 <span class="chip" onclick="filterByChip('GRGN')">GRGN</span>
@@ -385,31 +408,41 @@
 
     <div id="footer-container"></div>
 
-    <!-- Scripts -->
-    <script src="common.js?v=21.35"></script>
-    <script src="directory.js?v=1"></script>
-
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+    <!-- Initialize Firebase -->
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
-            authDomain: "apml-hub-directory.firebaseapp.com",
-            databaseURL: "https://apml-hub-directory-default-rtdb.firebaseio.com",
-            projectId: "apml-hub-directory",
-            storageBucket: "apml-hub-directory.firebasestorage.app",
-            messagingSenderId: "1042315421228",
-            appId: "1:1042315421228:web:677ccc4eca1803cd8b1389",
-            measurementId: "G-BVJY1VV84M"
+            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+            authDomain: "apml-portal.firebaseapp.com",
+            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+            projectId: "apml-portal",
+            storageBucket: "apml-portal.firebasestorage.app",
+            messagingSenderId: "479017159240",
+            appId: "1:479017159240:web:0853422718e6195b74a67d",
+            measurementId: "G-4H1HT31DYB"
         };
 
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        const db = firebase.database();
+    </script>
 
-        let masterDirectoryHelper = null;
+    <!-- Core Scripts -->
+    <script src="common.js?v=21.35"></script>
+    <script src="directory.js?v=1"></script>
+
+    <script>
+        const db = firebase.database();
+        const masterRef = db.ref('master_directory');
+
+        let directoryHelper = null;
+        let loadedMasterData = [];
+
+        // Full dataset from Book2.xlsx to auto-seed Firebase if empty
+        const initialExcelRecords = ${json_book2};
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -420,88 +453,60 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            masterDirectoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
-            loadMasterData();
+            directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
+
+            masterRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data || Object.keys(data).length === 0) {
+                    const updates = {};
+                    initialExcelRecords.forEach((rec, idx) => {
+                        updates[idx] = rec;
+                    });
+                    masterRef.set(updates).then(() => {
+                        console.log("Firebase seeded successfully with Book2 records.");
+                    });
+                    return;
+                }
+
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.length;
+
+                directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
+            });
         });
-
-        function loadMasterData() {
-            Promise.all([
-                db.ref('hubs').once('value'),
-                db.ref('field_officers').once('value')
-            ]).then(([hubsSnap, officersSnap]) => {
-                const hubsData = hubsSnap.val() || {};
-                const officersData = officersSnap.val() || {};
-
-                let masterList = [];
-
-                // 1. Process Hubs
-                Object.keys(hubsData).forEach(key => {
-                    const h = hubsData[key];
-                    if (h) {
-                        masterList.push({
-                            id: key,
-                            category: 'hubs',
-                            type: 'Hub / Branch Office',
-                            name: h.city || 'Branch Hub',
-                            branch: h.region || 'HUB',
-                            designation: `HUB Mgr: ${h.hod || '—'} | Branch Mgr: ${h.teamLeader || '—'}`,
-                            phone: '',
-                            address: h.address || h.officeAddress || ''
-                        });
-                    }
-                });
-
-                // 2. Process Field Officers
-                Object.keys(officersData).forEach(key => {
-                    const o = officersData[key];
-                    if (o) {
-                        masterList.push({
-                            id: key,
-                            category: 'field_officers',
-                            type: 'Field Officer (WCRO)',
-                            name: o.name || 'Officer',
-                            branch: o.branch || 'FIELD',
-                            designation: `${o.designation || 'Staff'} • APM Code: ${o.apmCode || 'N/A'}`,
-                            phone: o.mobile || '',
-                            address: `Status: ${o.status || 'Active'}`
-                        });
-                    }
-                });
-
-                masterDirectoryHelper.setData(masterList);
-                hideLoadingOverlay();
-            }).catch(err => {
-                console.error("Master directory load error:", err);
-                hideLoadingOverlay();
-            });
-        }
-
-        // --- GLOBAL EDIT & DELETE HANDLERS ---
-        window.editRecord = function(category, id) {
-            if (category === 'hubs') {
-                window.location.href = `hub-details.html?edit=${id}`;
-            } else {
-                window.location.href = `field-officer.html?edit=${id}`;
-            }
-        };
-
-        window.deleteRecord = function(category, id, name) {
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
-
-            db.ref(`${category}/${id}`).remove().then(() => {
-                alert("Record deleted successfully.");
-                loadMasterData(); // Refresh list
-            }).catch(err => {
-                alert("Error deleting record: " + err.message);
-            });
-        };
 
         function filterByChip(term) {
             const input = document.getElementById('masterSearchInput');
-            if (input && masterDirectoryHelper) {
+            if (input && directoryHelper) {
                 input.value = term;
-                masterDirectoryHelper.filterData(term);
+                directoryHelper.filterData(term);
             }
+        }
+
+        function exportToExcel() {
+            if (!loadedMasterData || loadedMasterData.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            const exportRows = loadedMasterData.map(item => ({
+                "Category": item.category,
+                "Location / Branch": item.location,
+                "Region": item.region,
+                "Designation / Role": item.designation,
+                "Contact Name": item.name,
+                "Contact Number": item.contact,
+                "Address": item.address
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "APML Master Directory");
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(workbook, `APML_Master_Directory_${dateStr}.xlsx`);
         }
     </script>
 </body>
