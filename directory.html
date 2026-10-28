@@ -224,22 +224,31 @@
             letter-spacing: -0.01em;
         }
 
-        .btn-excel-export {
+        .btn-action-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-excel-export, .btn-firebase-upload {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 8px 18px;
-            background: #059669;
             color: #ffffff;
             border: none;
             border-radius: var(--radius-pill);
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.2s ease;
         }
+        .btn-excel-export { background: #059669; }
         .btn-excel-export:hover { background: #047857; transform: translateY(-1px); }
+
+        .btn-firebase-upload { background: var(--primary); }
+        .btn-firebase-upload:hover { background: var(--primary-dark); transform: translateY(-1px); }
 
         .lookup-box {
             position: relative;
@@ -381,10 +390,16 @@
                     Search Directory Records
                 </div>
 
-                <button type="button" class="btn-excel-export" onclick="exportToExcel()">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
-                    <span>Download Excel Sheet</span>
-                </button>
+                <div class="btn-action-group">
+                    <button type="button" class="btn-firebase-upload" onclick="uploadDataToFirebase()">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">cloud_upload</span>
+                        <span>Upload Data to Firebase</span>
+                    </button>
+                    <button type="button" class="btn-excel-export" onclick="exportToExcel()">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
+                        <span>Download Excel Sheet</span>
+                    </button>
+                </div>
             </div>
             
             <div class="lookup-box">
@@ -441,8 +456,31 @@
         let directoryHelper = null;
         let loadedMasterData = [];
 
-        // Complete embedded dataset from Book2.xlsx to auto-seed Firebase 'directory' node instantly
-        const initialExcelRecords = ${directory_json_str};
+        const initialExcelRecords = [
+            {"category": "Hub / Branch Office", "location": "AGARTALA", "region": "ERO", "designation": "HUB Manager", "name": "MONIRUL SARDAR", "contact": "7086086671", "address": "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura west, 799008"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "HUB Manager", "name": "MUKESH / SANTOSH", "contact": "7665082117 / 9342927001 / 7428998993", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "Branch Manager", "name": "Prem", "contact": "9342220103 / 6363165236", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "Packing Incharge", "name": "CHATTERPAL (CAR DELIVERY INCHARGE)", "contact": "9379619292", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "AGRA", "region": "NRO", "designation": "HUB Manager", "name": "RAKESH KUMAR", "contact": "", "address": "Agarwal Packers and Movers Ltd. Mugliya road shastripuram, Opp Dwarka krishna royal, sikandra Near Life Line Public school-282007"},
+            {"category": "Hub / Branch Office", "location": "BHATINDA", "region": "NRO", "designation": "HUB Manager", "name": "PRAVIN JATTAN", "contact": "", "address": "APML, Gali No 6, Dhobiyana Road, Model Town, Phase 2, Bhathinda, Punjab 151001"},
+            {"category": "Hub / Branch Office", "location": "HYDERABAD", "region": "SRO", "designation": "HUB Manager", "name": "Manager", "contact": "", "address": "Agarwal Packers and Movers Ltd. Beside Reliance petrol pump, Manoharabad Survey No.: 701/U/EE/AA/E, NH44, Manoharabad Village/Mandal, District - Medak - 502336 Hyderabad TS"},
+            {"category": "Hub / Branch Office", "location": "AHMEDABAD", "region": "WCRO", "designation": "HUB Manager", "name": "RAMA ANUJ TIWARI", "contact": "9220604993", "address": "APML WAREHOUSE, Natraj, 36 mtr Road To 402 A, Visalpur, Ahmedabad Gujarat 382210"},
+            {"category": "Hub / Branch Office", "location": "AHMEDABAD", "region": "WCRO", "designation": "Branch Manager", "name": "Oshan singh", "contact": "7000843828", "address": "APML WAREHOUSE, Natraj, 36 mtr Road To 402 A, Visalpur, Ahmedabad Gujarat 382210"},
+            {"category": "Hub / Branch Office", "location": "ANKLESWER", "region": "WCRO", "designation": "HUB Manager", "name": "ASHOK SHARMA", "contact": "", "address": "Shop number 4 Pratishtha industrial park Mira nagar, rajpipla road, Ankleshwar, Gujarat 39310"},
+            {"category": "Hub / Branch Office", "location": "BARODA", "region": "WCRO", "designation": "HUB Manager", "name": "GYANENDRA", "contact": "9342124321", "address": "Godown no 1,Dena chokdi, Virod road, vadodara \n390022"},
+            {"category": "Hub / Branch Office", "location": "BHOPAL", "region": "WCRO", "designation": "HUB Manager", "name": "ROHIT DUBEY", "contact": "9302529061", "address": "Agarwal Packers & Movers Ltd., Vedant Enterprises, Khasra no. 45/1/1/2 Rapadiya ward no 85 Bhopal 462026"},
+            {"category": "Hub / Branch Office", "location": "BHOPAL", "region": "WCRO", "designation": "Branch Manager", "name": "ROHIT DUBEY", "contact": "9302529061", "address": "Agarwal Packers & Movers Ltd., Vedant Enterprises, Khasra no. 45/1/1/2 Rapadiya ward no 85 Bhopal 462026"},
+            {"category": "Hub / Branch Office", "location": "JODHPUR", "region": "WCRO", "designation": "HUB Manager", "name": "CHETAN", "contact": "", "address": "1/A/236, Sector-1, Kudi, Bhagtasni Housing Board, Opp. Dussehra Maidan, Near Sharda Electric Mall Jodhpur Rajasthan-342005"},
+            {"category": "Hub / Branch Office", "location": "NAGPUR", "region": "WCRO", "designation": "HUB Manager", "name": "SOHAN MANDAL", "contact": "", "address": "Agarwal Packers and movers Ltd. Butibori National Highway no.7, Wardha bypass dist. Nagpur- 441108"},
+            {"category": "Hub / Branch Office", "location": "SAMBHAJINAGAR", "region": "WCRO", "designation": "HUB Manager", "name": "PRABHAKAR KUMAR", "contact": "", "address": "A - 8 Atharva Classic behind Nishant Park Hotel, Shiv Krupa Colony, PWD Colony, Beed bypass road, Aurangabad - 431005"},
+            {"category": "Hub / Branch Office", "location": "SURAT", "region": "WCRO", "designation": "HUB Manager", "name": "krishna", "contact": "9377527237", "address": "Z2 phase 3, Rajhansh Nagar Chalthan, palsana, Surat, Gujarat 394315"},
+            {"category": "Hub / Branch Office", "location": "NAVI MUMBAI", "region": "WCRO", "designation": "HUB Manager", "name": "RAMESH PASWAN", "contact": "", "address": "A-86, S CENTRAL ROAD, MIDC KOPARKHAIRNE || NEAR SATKAR HOTEL | NAVI MUMBAI - 400710"},
+            {"category": "Hub / Branch Office", "location": "CHOWK", "region": "WCRO", "designation": "HUB Manager", "name": "Hub In-Charge", "contact": "", "address": "Agarwal Packers and Mover Ltd APML Chowk Manivali Village, Khalapur, Chowk. Near HPCL Pump on Old Mum-Pune Highway, 410206"},
+            {"category": "Hub / Branch Office", "location": "PUNE", "region": "WCRO", "designation": "HUB Manager", "name": "Balwan Sharma", "contact": "9325811152", "address": "AGARWAL PACKERS AND MOVERS LTD\nGALA NO 293 & 294, NEAR BHANDARA DONGER,\nTALEGAON CHAKAN ROAD\nPUNE- 410507"},
+            {"category": "Hub / Branch Office", "location": "INDORE", "region": "WCRO", "designation": "HUB Manager", "name": "Jitendra rathod", "contact": "9826046005", "address": "Office\nAgarwal Packers And movers Ltd.\nH.No. 596 Shree Pati Empire Sector C Scheme No. 134  Near Bank of india Building \nLandmark Star square  Indore MP 452010"},
+            {"category": "Hub / Branch Office", "location": "KOLKATA", "region": "ERO", "designation": "HUB Manager", "name": "Rahul Shukla", "contact": "9073908264", "address": "MULLICK BAGAN, P/OFFICE - GABBERIA PIN CODE-711322 WEST BENGAL POLICE STATION –PANCHLA HOWRAH\nLAND MARK - BANSTALA BUS STAND ( EFC GODOWN )"},
+            {"category": "Hub / Branch Office", "location": "MADURAI", "region": "SRO", "designation": "HUB Manager", "name": "Rama Ashish", "contact": "7358277999", "address": "No. 1/263B, Palandiambalam Nagar, Rajakambeeram, Y. Othakadai, Madurai - 625107"}
+        ];
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -452,6 +490,19 @@
             }
         }
 
+        function uploadDataToFirebase() {
+            const updates = {};
+            initialExcelRecords.forEach((rec, idx) => {
+                updates[idx] = rec;
+            });
+
+            directoryRef.set(updates).then(() => {
+                alert("Successfully uploaded records to Firebase 'directory' node!");
+            }).catch(err => {
+                alert("Failed to upload: " + err.message);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
@@ -459,13 +510,7 @@
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
-                    const updates = {};
-                    initialExcelRecords.forEach((rec, idx) => {
-                        updates[idx] = rec;
-                    });
-                    directoryRef.set(updates).then(() => {
-                        console.log("Firebase 'directory' node auto-seeded with " + initialExcelRecords.length + " records.");
-                    });
+                    hideLoadingOverlay();
                     return;
                 }
 
