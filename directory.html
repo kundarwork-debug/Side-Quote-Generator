@@ -8,7 +8,7 @@
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
     <link rel="stylesheet" href="common.css?v=21.35">
 
-    <!-- SheetJS Library for Excel Export -->
+    <!-- SheetJS Library for Excel Processing & Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -224,31 +224,72 @@
             letter-spacing: -0.01em;
         }
 
-        .btn-action-group {
+        .upload-section {
+            background: #FDF8F5;
+            border: 2px dashed var(--border-hover);
+            border-radius: 16px;
+            padding: 20px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
-        .btn-excel-export, .btn-firebase-upload {
+        .file-input {
+            display: none;
+        }
+
+        .btn-file-select {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #ffffff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius-pill);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-file-select:hover { background: var(--primary-soft); }
+
+        .btn-upload-firebase {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(194, 29, 29, 0.25);
+            transition: all 0.2s ease;
+        }
+        .btn-upload-firebase:hover { background: var(--primary-dark); transform: translateY(-1px); }
+
+        .btn-excel-export {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             padding: 8px 18px;
+            background: #059669;
             color: #ffffff;
             border: none;
             border-radius: var(--radius-pill);
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
             transition: all 0.2s ease;
         }
-        .btn-excel-export { background: #059669; }
         .btn-excel-export:hover { background: #047857; transform: translateY(-1px); }
-
-        .btn-firebase-upload { background: var(--primary); }
-        .btn-firebase-upload:hover { background: var(--primary-dark); transform: translateY(-1px); }
 
         .lookup-box {
             position: relative;
@@ -390,14 +431,28 @@
                     Search Directory Records
                 </div>
 
-                <div class="btn-action-group">
-                    <button type="button" class="btn-firebase-upload" onclick="uploadDataToFirebase()">
+                <button type="button" class="btn-excel-export" onclick="exportToExcel()">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
+                    <span>Download Excel Sheet</span>
+                </button>
+            </div>
+
+            <!-- EXCEL FILE UPLOAD PANEL -->
+            <div class="upload-section">
+                <span class="material-symbols-outlined" style="font-size: 32px; color: var(--primary);">upload_file</span>
+                <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Upload Excel Spreadsheet to Update Firebase</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Select your Excel file (.xlsx) to parse and save all records into Firebase.</div>
+                
+                <input type="file" id="excelFileinput" class="file-input" accept=".xlsx, .xls" onchange="handleFileSelected(event)">
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 6px;">
+                    <label for="excelFileinput" class="btn-file-select">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">folder_open</span>
+                        <span id="fileNameLabel">Choose Excel File</span>
+                    </label>
+                    <button type="button" id="btnUpload" class="btn-upload-firebase" style="display: none;" onclick="uploadParsedExcelToFirebase()">
                         <span class="material-symbols-outlined" style="font-size: 18px;">cloud_upload</span>
-                        <span>Upload Data to Firebase</span>
-                    </button>
-                    <button type="button" class="btn-excel-export" onclick="exportToExcel()">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
-                        <span>Download Excel Sheet</span>
+                        <span>Upload &amp; Save to Firebase</span>
                     </button>
                 </div>
             </div>
@@ -455,33 +510,7 @@
 
         let directoryHelper = null;
         let loadedMasterData = [];
-
-        // Complete embedded dataset of records from Book2.xlsx
-        const initialExcelRecords = [
-            {"category": "Hub / Branch Office", "location": "AGARTALA", "region": "ERO", "designation": "HUB Manager", "name": "MONIRUL SARDAR", "contact": "7086086671", "address": "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura west, 799008"},
-            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "HUB Manager", "name": "MUKESH / SANTOSH", "contact": "7665082117 / 9342927001 / 7428998993", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
-            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "Branch Manager", "name": "Prem", "contact": "9342220103 / 6363165236", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
-            {"category": "Hub / Branch Office", "location": "BANGALORE", "region": "KRO", "designation": "Packing Incharge", "name": "CHATTERPAL (CAR DELIVERY INCHARGE)", "contact": "9379619292", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
-            {"category": "Hub / Branch Office", "location": "AGRA", "region": "NRO", "designation": "HUB Manager", "name": "RAKESH KUMAR", "contact": "", "address": "Agarwal Packers and Movers Ltd. Mugliya road shastripuram, Opp Dwarka krishna royal, sikandra Near Life Line Public school-282007"},
-            {"category": "Hub / Branch Office", "location": "BHATINDA", "region": "NRO", "designation": "HUB Manager", "name": "PRAVIN JATTAN", "contact": "", "address": "APML, Gali No 6, Dhobiyana Road, Model Town, Phase 2, Bhathinda, Punjab 151001"},
-            {"category": "Hub / Branch Office", "location": "HYDERABAD", "region": "SRO", "designation": "HUB Manager", "name": "Manager", "contact": "", "address": "Agarwal Packers and Movers Ltd. Beside Reliance petrol pump, Manoharabad Survey No.: 701/U/EE/AA/E, NH44, Manoharabad Village/Mandal, District - Medak - 502336 Hyderabad TS"},
-            {"category": "Hub / Branch Office", "location": "AHMEDABAD", "region": "WCRO", "designation": "HUB Manager", "name": "RAMA ANUJ TIWARI", "contact": "9220604993", "address": "APML WAREHOUSE, Natraj, 36 mtr Road To 402 A, Visalpur, Ahmedabad Gujarat 382210"},
-            {"category": "Hub / Branch Office", "location": "AHMEDABAD", "region": "WCRO", "designation": "Branch Manager", "name": "Oshan singh", "contact": "7000843828", "address": "APML WAREHOUSE, Natraj, 36 mtr Road To 402 A, Visalpur, Ahmedabad Gujarat 382210"},
-            {"category": "Hub / Branch Office", "location": "ANKLESWER", "region": "WCRO", "designation": "HUB Manager", "name": "ASHOK SHARMA", "contact": "", "address": "Shop number 4 Pratishtha industrial park Mira nagar, rajpipla road, Ankleshwar, Gujarat 39310"},
-            {"category": "Hub / Branch Office", "location": "BARODA", "region": "WCRO", "designation": "HUB Manager", "name": "GYANENDRA", "contact": "9342124321", "address": "Godown no 1,Dena chokdi, Virod road, vadodara \n390022"},
-            {"category": "Hub / Branch Office", "location": "BHOPAL", "region": "WCRO", "designation": "HUB Manager", "name": "ROHIT DUBEY", "contact": "9302529061", "address": "Agarwal Packers & Movers Ltd., Vedant Enterprises, Khasra no. 45/1/1/2 Rapadiya ward no 85 Bhopal 462026"},
-            {"category": "Hub / Branch Office", "location": "BHOPAL", "region": "WCRO", "designation": "Branch Manager", "name": "ROHIT DUBEY", "contact": "9302529061", "address": "Agarwal Packers & Movers Ltd., Vedant Enterprises, Khasra no. 45/1/1/2 Rapadiya ward no 85 Bhopal 462026"},
-            {"category": "Hub / Branch Office", "location": "JODHPUR", "region": "WCRO", "designation": "HUB Manager", "name": "CHETAN", "contact": "", "address": "1/A/236, Sector-1, Kudi, Bhagtasni Housing Board, Opp. Dussehra Maidan, Near Sharda Electric Mall Jodhpur Rajasthan-342005"},
-            {"category": "Hub / Branch Office", "location": "NAGPUR", "region": "WCRO", "designation": "HUB Manager", "name": "SOHAN MANDAL", "contact": "", "address": "Agarwal Packers and movers Ltd. Butibori National Highway no.7, Wardha bypass dist. Nagpur- 441108"},
-            {"category": "Hub / Branch Office", "location": "SAMBHAJINAGAR", "region": "WCRO", "designation": "HUB Manager", "name": "PRABHAKAR KUMAR", "contact": "", "address": "A - 8 Atharva Classic behind Nishant Park Hotel, Shiv Krupa Colony, PWD Colony, Beed bypass road, Aurangabad - 431005"},
-            {"category": "Hub / Branch Office", "location": "SURAT", "region": "WCRO", "designation": "HUB Manager", "name": "krishna", "contact": "9377527237", "address": "Z2 phase 3, Rajhansh Nagar Chalthan, palsana, Surat, Gujarat 394315"},
-            {"category": "Hub / Branch Office", "location": "NAVI MUMBAI", "region": "WCRO", "designation": "HUB Manager", "name": "RAMESH PASWAN", "contact": "", "address": "A-86, S CENTRAL ROAD, MIDC KOPARKHAIRNE || NEAR SATKAR HOTEL | NAVI MUMBAI - 400710"},
-            {"category": "Hub / Branch Office", "location": "CHOWK", "region": "WCRO", "designation": "HUB Manager", "name": "Hub In-Charge", "contact": "", "address": "Agarwal Packers and Mover Ltd APML Chowk Manivali Village, Khalapur, Chowk. Near HPCL Pump on Old Mum-Pune Highway, 410206"},
-            {"category": "Hub / Branch Office", "location": "PUNE", "region": "WCRO", "designation": "HUB Manager", "name": "Balwan Sharma", "contact": "9325811152", "address": "AGARWAL PACKERS AND MOVERS LTD\nGALA NO 293 & 294, NEAR BHANDARA DONGER,\nTALEGAON CHAKAN ROAD\nPUNE- 410507"},
-            {"category": "Hub / Branch Office", "location": "INDORE", "region": "WCRO", "designation": "HUB Manager", "name": "Jitendra rathod", "contact": "9826046005", "address": "Office\nAgarwal Packers And movers Ltd.\nH.No. 596 Shree Pati Empire Sector C Scheme No. 134  Near Bank of india Building \nLandmark Star square  Indore MP 452010"},
-            {"category": "Hub / Branch Office", "location": "KOLKATA", "region": "ERO", "designation": "HUB Manager", "name": "Rahul Shukla", "contact": "9073908264", "address": "MULLICK BAGAN, P/OFFICE - GABBERIA PIN CODE-711322 WEST BENGAL POLICE STATION –PANCHLA HOWRAH\nLAND MARK - BANSTALA BUS STAND ( EFC GODOWN )"},
-            {"category": "Hub / Branch Office", "location": "MADURAI", "region": "SRO", "designation": "HUB Manager", "name": "Rama Ashish", "contact": "7358277999", "address": "No. 1/263B, Palandiambalam Nagar, Rajakambeeram, Y. Othakadai, Madurai - 625107"}
-        ];
+        let parsedExcelRecords = [];
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -491,22 +520,10 @@
             }
         }
 
-        function uploadDataToFirebase() {
-            const updates = {};
-            initialExcelRecords.forEach((rec, idx) => {
-                updates[idx] = rec;
-            });
-
-            directoryRef.set(updates).then(() => {
-                alert("Successfully uploaded all records to Firebase 'directory' node!");
-            }).catch(err => {
-                alert("Failed to upload: " + err.message);
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
+            // Listen to Firebase Realtime Database in real time
             directoryRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
@@ -522,6 +539,71 @@
                 hideLoadingOverlay();
             });
         });
+
+        // Handle File Selection and Parsing via SheetJS
+        function handleFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('fileNameLabel').innerText = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    parsedExcelRecords = [];
+                    // Skip header row (index 0)
+                    for (let i = 1; i < rawRows.length; i++) {
+                        const row = rawRows[i];
+                        if (!row || row.length === 0) continue;
+                        
+                        parsedExcelRecords.push({
+                            category: String(row[0] || '').trim(),
+                            location: String(row[1] || '').trim(),
+                            region: String(row[2] || '').trim(),
+                            designation: String(row[3] || '').trim(),
+                            name: String(row[4] || '').trim(),
+                            contact: row[5] !== undefined ? String(row[5]).trim() : '',
+                            address: row[6] !== undefined ? String(row[6]).trim() : ''
+                        });
+                    }
+
+                    if (parsedExcelRecords.length > 0) {
+                        document.getElementById('btnUpload').style.display = 'inline-flex';
+                        alert(`Successfully parsed ${parsedExcelRecords.length} records from ${file.name}! Click 'Upload & Save to Firebase' to sync.`);
+                    } else {
+                        alert("No valid records found in the spreadsheet.");
+                    }
+                } catch (err) {
+                    alert("Error parsing Excel file: " + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Upload Parsed Records to Firebase 'directory' node
+        function uploadParsedExcelToFirebase() {
+            if (!parsedExcelRecords || parsedExcelRecords.length === 0) {
+                alert("No records to upload.");
+                return;
+            }
+
+            const updates = {};
+            parsedExcelRecords.forEach((rec, idx) => {
+                updates[idx] = rec;
+            });
+
+            directoryRef.set(updates).then(() => {
+                alert(`Successfully uploaded all ${parsedExcelRecords.length} records to Firebase 'directory' node!`);
+                document.getElementById('btnUpload').style.display = 'none';
+            }).catch(err => {
+                alert("Firebase upload failed: " + err.message);
+            });
+        }
 
         function filterByChip(term) {
             const input = document.getElementById('masterSearchInput');
