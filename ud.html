@@ -239,10 +239,7 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
             transition: all 0.2s ease;
         }
-        .btn-excel-export:hover {
-            background: #047857;
-            transform: translateY(-1px);
-        }
+        .btn-excel-export:hover { background: #047857; transform: translateY(-1px); }
 
         .lookup-box {
             position: relative;
@@ -294,13 +291,7 @@
             cursor: pointer;
             transition: all 0.15s ease;
         }
-
-        .chip:hover {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            transform: translateY(-1px);
-        }
+        .chip:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
 
         .lookup-results-list {
             display: flex;
@@ -340,24 +331,6 @@
             flex-shrink: 0;
         }
         .btn-wa-mini:hover { background: #059669; color: #ffffff; transform: scale(1.08); }
-
-        .btn-pencil-edit, .btn-pencil-delete {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            background: #ffffff;
-            cursor: pointer;
-            border: 1.5px solid var(--border-subtle);
-            transition: all 0.2s ease;
-        }
-        .btn-pencil-edit { color: #0284c7; }
-        .btn-pencil-edit:hover { background: #e0f2fe; border-color: #0284c7; transform: scale(1.08); }
-
-        .btn-pencil-delete { color: #dc2626; background: #fee2e2; border-color: #fecaca; }
-        .btn-pencil-delete:hover { background: #dc2626; color: #ffffff; border-color: #dc2626; transform: scale(1.08); }
     </style>
 </head>
 <body>
@@ -368,7 +341,7 @@
             <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
         </div>
         <div class="loader-text" style="font-weight: 700; font-size: 14px;">
-            Loading Master Enterprise Directory...
+            Loading Firebase Master Directory...
         </div>
     </div>
 
@@ -385,11 +358,10 @@
             
             <span class="status-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
-                Real-Time Firebase Synchronized
+                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
             </span>
         </div>
 
-        <!-- UNIFIED MASTER SEARCH CARD -->
         <section class="card" style="border: 2px solid var(--border-hover);">
             <div class="card-header-flex">
                 <div class="card-header">
@@ -397,7 +369,7 @@
                     Search Across All Hubs, Branches &amp; Field Officers
                 </div>
 
-                <button type="button" class="btn-excel-export" onclick="exportDirectoryToExcel()">
+                <button type="button" class="btn-excel-export" onclick="exportToExcel()">
                     <span class="material-symbols-outlined" style="font-size: 18px;">file_download</span>
                     <span>Download Excel Sheet</span>
                 </button>
@@ -408,7 +380,7 @@
                 <input type="text" id="masterSearchInput" class="lookup-input" placeholder="Type city, branch code, officer name, or phone number...">
             </div>
 
-            <div class="quick-chips" id="quickChipsContainer">
+            <div class="quick-chips">
                 <span class="chip" onclick="filterByChip('MUM')">MUM</span>
                 <span class="chip" onclick="filterByChip('PUN')">PUN</span>
                 <span class="chip" onclick="filterByChip('GRGN')">GRGN</span>
@@ -424,7 +396,7 @@
 
     <div id="footer-container"></div>
 
-    <!-- Scripts -->
+    <!-- Core Scripts -->
     <script src="common.js?v=21.35"></script>
     <script src="directory.js?v=1"></script>
 
@@ -447,8 +419,13 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        const masterRef = db.ref('master_directory');
 
-        let masterDirectoryHelper = null;
+        let directoryHelper = null;
+        let loadedMasterData = [];
+
+        // Initial Excel records to seed Firebase if empty
+        const initialExcelRecords = ${json_data};
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -459,151 +436,65 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            masterDirectoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
-            loadMasterData();
-        });
+            // Initialize directory.js helper
+            directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-        function loadMasterData() {
-            Promise.all([
-                db.ref('hubs').once('value'),
-                db.ref('field_officers').once('value')
-            ]).then(([hubsSnap, officersSnap]) => {
-                const hubsData = hubsSnap.val() || {};
-                const officersData = officersSnap.val() || {};
-
-                let masterList = [];
-
-                // 1. Process Hubs
-                Object.keys(hubsData).forEach(key => {
-                    const h = hubsData[key];
-                    if (h) {
-                        masterList.push({
-                            id: key,
-                            category: 'hubs',
-                            type: 'Hub / Branch Office',
-                            name: h.city || 'Branch Hub',
-                            branch: h.region || 'HUB',
-                            designation: `HUB Mgr: ${h.hod || '—'} | Branch Mgr: ${h.teamLeader || '—'}`,
-                            phone: '',
-                            address: h.address || h.officeAddress || ''
-                        });
-                    }
-                });
-
-                // 2. Process Field Officers
-                Object.keys(officersData).forEach(key => {
-                    const o = officersData[key];
-                    if (o) {
-                        masterList.push({
-                            id: key,
-                            category: 'field_officers',
-                            type: 'Field Officer (WCRO)',
-                            name: o.name || 'Officer',
-                            branch: o.branch || 'FIELD',
-                            designation: `${o.designation || 'Staff'} • APM Code: ${o.apmCode || 'N/A'}`,
-                            phone: o.mobile || '',
-                            address: `Status: ${o.status || 'Active'}`
-                        });
-                    }
-                });
-
-                masterDirectoryHelper.setData(masterList);
-                hideLoadingOverlay();
-            }).catch(err => {
-                console.error("Master directory load error:", err);
-                hideLoadingOverlay();
-            });
-        }
-
-        // --- EXCEL EXPORT FUNCTION ---
-        window.exportDirectoryToExcel = function() {
-            Promise.all([
-                db.ref('hubs').once('value'),
-                db.ref('field_officers').once('value')
-            ]).then(([hubsSnap, officersSnap]) => {
-                const hubsData = hubsSnap.val() || {};
-                const officersData = officersSnap.val() || {};
-
-                let exportRows = [];
-
-                // Format Hubs
-                Object.keys(hubsData).forEach(key => {
-                    const h = hubsData[key];
-                    if (h) {
-                        exportRows.push({
-                            "Category": "Hub / Branch Office",
-                            "Name / City": h.city || '',
-                            "Region / Branch Code": h.region || 'HUB',
-                            "Designation / Role": 'Branch Office',
-                            "HUB Manager": h.hod || '',
-                            "Branch Manager": h.teamLeader || '',
-                            "Packing Incharge": h.packingIncharge || '',
-                            "Mobile / Phone": '',
-                            "Address": h.address || h.officeAddress || ''
-                        });
-                    }
-                });
-
-                // Format Field Officers
-                Object.keys(officersData).forEach(key => {
-                    const o = officersData[key];
-                    if (o) {
-                        exportRows.push({
-                            "Category": "Field Officer (WCRO)",
-                            "Name / City": o.name || '',
-                            "Region / Branch Code": o.branch || '',
-                            "Designation / Role": o.designation || '',
-                            "HUB Manager": `APM Code: ${o.apmCode || 'N/A'}`,
-                            "Branch Manager": o.role || 'BFO',
-                            "Packing Incharge": o.status || 'Active',
-                            "Mobile / Phone": o.mobile || '',
-                            "Address": ''
-                        });
-                    }
-                });
-
-                if (exportRows.length === 0) {
-                    alert("No data available to export.");
+            // Listen to Firebase Realtime Database
+            masterRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data || Object.keys(data).length === 0) {
+                    // Seed Firebase with the 220 Excel records if empty
+                    const updates = {};
+                    initialExcelRecords.forEach((rec, idx) => {
+                        updates[idx] = rec;
+                    });
+                    masterRef.set(updates).then(() => {
+                        console.log("Database seeded successfully with Excel records.");
+                    });
                     return;
                 }
 
-                const worksheet = XLSX.utils.json_to_sheet(exportRows);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "APML Master Directory");
+                // Convert Firebase object to array
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.length;
 
-                const dateStr = new Date().toISOString().split('T')[0];
-                XLSX.writeFile(workbook, `APML_Master_Directory_${dateStr}.xlsx`);
-            }).catch(err => {
-                alert("Failed to export Excel sheet: " + err.message);
+                // Pass data into directory.js helper
+                directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
             });
-        };
-
-        // --- GLOBAL EDIT & DELETE HANDLERS ---
-        window.editRecord = function(category, id) {
-            if (category === 'hubs') {
-                window.location.href = `hub-details.html?edit=${id}`;
-            } else {
-                window.location.href = `field-officer.html?edit=${id}`;
-            }
-        };
-
-        window.deleteRecord = function(category, id, name) {
-            if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
-
-            db.ref(`${category}/${id}`).remove().then(() => {
-                alert("Record deleted successfully.");
-                loadMasterData(); // Refresh list
-            }).catch(err => {
-                alert("Error deleting record: " + err.message);
-            });
-        };
+        });
 
         function filterByChip(term) {
             const input = document.getElementById('masterSearchInput');
-            if (input && masterDirectoryHelper) {
+            if (input && directoryHelper) {
                 input.value = term;
-                masterDirectoryHelper.filterData(term);
+                directoryHelper.filterData(term);
             }
+        }
+
+        function exportToExcel() {
+            if (!loadedMasterData || loadedMasterData.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            const exportRows = loadedMasterData.map(item => ({
+                "Category": item.category,
+                "Location / Branch Code": item.location,
+                "Designation / Role": item.designation,
+                "Contact Person Name": item.name,
+                "Contact Number": item.contact,
+                "Notes / APM": item.notes || item.apm,
+                "Address": item.address
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "APML Master Directory");
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(workbook, `APML_Master_Directory_${dateStr}.xlsx`);
         }
     </script>
 </body>
