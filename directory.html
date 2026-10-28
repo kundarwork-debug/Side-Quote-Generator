@@ -523,7 +523,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            // Listen to Firebase Realtime Database in real time
             directoryRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
@@ -540,7 +539,6 @@
             });
         });
 
-        // Handle File Selection and Parsing via SheetJS
         function handleFileSelected(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -556,7 +554,6 @@
                     const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
                     parsedExcelRecords = [];
-                    // Skip header row (index 0)
                     for (let i = 1; i < rawRows.length; i++) {
                         const row = rawRows[i];
                         if (!row || row.length === 0) continue;
@@ -585,7 +582,6 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // Upload Parsed Records to Firebase 'directory' node
         function uploadParsedExcelToFirebase() {
             if (!parsedExcelRecords || parsedExcelRecords.length === 0) {
                 alert("No records to upload.");
