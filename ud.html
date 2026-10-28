@@ -440,13 +440,70 @@
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            // Listen directly to Firebase Realtime Database
+            // Listen to Firebase and auto-seed if empty
             masterRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
-                    document.getElementById('recordCount').innerText = "0";
-                    hideLoadingOverlay();
+                    // Fetch Book1.xlsx and seed Firebase automatically
+                    fetch('Book1.xlsx')
+                        .then(res => res.arrayBuffer())
+                        .then(buffer => {
+                            const workbook = XLSX.read(buffer, { type: 'array' });
+                            const firstSheetName = workbook.SheetNames[0];
+                            const worksheet = workbook.Sheets[firstSheetName];
+                            const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                            
+                            // Skip header row (row index 0)
+                            const rows = rawRows.slice(1);
+                            const records = [];
+
+                            rows.forEach((row, idx) => {
+                                const category = String(row[0] || '').trim();
+                                const location = String(row[1] || '').trim();
+                                const designation = String(row[2] || '').trim();
+                                const name = String(row[3] || '').trim();
+                                const contact = row[4] !== undefined ? String(row[4]).trim() : '';
+                                const notes = row[5] !== undefined ? String(row[5]).trim() : '';
+                                const address = row[6] !== undefined ? String(row[6]).trim() : '';
+
+                                if (!category && !name) return; // skip empty rows
+
+                                let apm = "N/A";
+                                let status = "Active";
+                                if (category.includes('Field Officer') && notes.includes('APM Code:')) {
+                                    const parts = notes.split('|');
+                                    parts.forEach(p => {
+                                        if (p.includes('APM Code:')) apm = p.replace('APM Code:', '').trim();
+                                        if (p.includes('Status:')) status = p.replace('Status:', '').trim();
+                                    });
+                                }
+
+                                records.push({
+                                    category: category,
+                                    location: location,
+                                    designation: designation,
+                                    name: name,
+                                    contact: contact,
+                                    notes: notes,
+                                    apm: apm,
+                                    status: status,
+                                    address: address
+                                });
+                            });
+
+                            const updates = {};
+                            records.forEach((rec, i) => {
+                                updates[i] = rec;
+                            });
+
+                            masterRef.set(updates).then(() => {
+                                console.log("Firebase auto-seeded with " + records.length + " records from Book1.xlsx");
+                            });
+                        }).catch(err => {
+                            console.error("Error auto-seeding from Book1.xlsx:", err);
+                            hideLoadingOverlay();
+                        });
                     return;
                 }
 
