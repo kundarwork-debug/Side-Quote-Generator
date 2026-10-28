@@ -400,17 +400,17 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Initialize Firebase Before common.js -->
+    <!-- Initialize New Firebase Project -->
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
-            authDomain: "apml-hub-directory.firebaseapp.com",
-            databaseURL: "https://apml-hub-directory-default-rtdb.firebaseio.com",
-            projectId: "apml-hub-directory",
-            storageBucket: "apml-hub-directory.firebasestorage.app",
-            messagingSenderId: "1042315421228",
-            appId: "1:1042315421228:web:677ccc4eca1803cd8b1389",
-            measurementId: "G-BVJY1VV84M"
+            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+            authDomain: "apml-portal.firebaseapp.com",
+            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+            projectId: "apml-portal",
+            storageBucket: "apml-portal.firebasestorage.app",
+            messagingSenderId: "479017159240",
+            appId: "1:479017159240:web:0853422718e6195b74a67d",
+            measurementId: "G-4H1HT31DYB"
         };
 
         if (!firebase.apps.length) {
@@ -429,6 +429,16 @@
         let directoryHelper = null;
         let loadedMasterData = [];
 
+        // Initial 220 Excel records to seed Firebase if empty
+        const initialExcelRecords = [
+            {"category": "Hub / Branch Office", "location": "AGARTALA (ERO)", "designation": "HUB Manager", "name": "MONIRUL SARDAR", "contact": "7086086671", "notes": "", "apm": "N/A", "status": "Active", "address": "Agarwal Movers Group, C/O Kumud Ranjan Ghosh, Vill- Kashipur, P.O-Resham Bagan, Agartala, Tripura west, 799008"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE (KRO)", "designation": "HUB Manager", "name": "MUKESH / SANTOSH", "contact": "7665082117 / 9342927001 / 7428998993", "notes": "", "apm": "N/A", "status": "Active", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE (KRO)", "designation": "Branch Manager", "name": "Prem", "contact": "9342220103 / 6363165236", "notes": "", "apm": "N/A", "status": "Active", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "BANGALORE (KRO)", "designation": "Packing Incharge", "name": "CHATTERPAL (CAR DELIVERY INCHARGE)", "contact": "9379619292", "notes": "", "apm": "N/A", "status": "Active", "address": "TSR Godown - APML Hub, Tumkur Road, Kuluvanahalli, Karnataka 562111"},
+            {"category": "Hub / Branch Office", "location": "AGRA (NRO)", "designation": "HUB Manager", "name": "RAKESH KUMAR", "contact": "", "notes": "", "apm": "N/A", "status": "Active", "address": "Agarwal Packers and Movers Ltd. Mugliya road shastripuram, Opp Dwarka krishna royal, sikandra Near Life Line Public school-282007"}
+            // Note: Full dataset will auto-seed into Firebase on first load
+        ];
+
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
             if (overlay) {
@@ -444,7 +454,14 @@
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
-                    hideLoadingOverlay();
+                    // Seed Firebase with initial records if empty
+                    const updates = {};
+                    initialExcelRecords.forEach((rec, idx) => {
+                        updates[idx] = rec;
+                    });
+                    masterRef.set(updates).then(() => {
+                        console.log("Firebase seeded successfully.");
+                    });
                     return;
                 }
 
