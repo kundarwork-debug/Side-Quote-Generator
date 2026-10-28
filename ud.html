@@ -396,13 +396,11 @@
 
     <div id="footer-container"></div>
 
-    <!-- Core Scripts -->
-    <script src="common.js?v=21.35"></script>
-    <script src="directory.js?v=1"></script>
-
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+    <!-- Initialize Firebase Before common.js -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
@@ -418,14 +416,18 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
+    </script>
+
+    <!-- Core Scripts -->
+    <script src="common.js?v=21.35"></script>
+    <script src="directory.js?v=1"></script>
+
+    <script>
         const db = firebase.database();
         const masterRef = db.ref('master_directory');
 
         let directoryHelper = null;
         let loadedMasterData = [];
-
-        // Initial Excel records to seed Firebase if empty
-        const initialExcelRecords = ${json_data};
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -436,30 +438,19 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize directory.js helper
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            // Listen to Firebase Realtime Database
             masterRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
-                    // Seed Firebase with the 220 Excel records if empty
-                    const updates = {};
-                    initialExcelRecords.forEach((rec, idx) => {
-                        updates[idx] = rec;
-                    });
-                    masterRef.set(updates).then(() => {
-                        console.log("Database seeded successfully with Excel records.");
-                    });
+                    hideLoadingOverlay();
                     return;
                 }
 
-                // Convert Firebase object to array
                 loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                 document.getElementById('recordCount').innerText = loadedMasterData.length;
 
-                // Pass data into directory.js helper
                 directoryHelper.setData(loadedMasterData);
                 hideLoadingOverlay();
             });
