@@ -436,12 +436,12 @@
 
     <script>
         const db = firebase.database();
-        const directoryRef = db.ref('directory'); // Pointing to the new 'directory' node
+        const directoryRef = db.ref('directory');
 
         let directoryHelper = null;
         let loadedMasterData = [];
 
-        // Full dataset from Book2.xlsx to auto-seed Firebase 'directory' node if empty
+        // Complete embedded dataset from Book2.xlsx to auto-seed Firebase 'directory' node instantly
         const initialExcelRecords = ${directory_json_str};
 
         function hideLoadingOverlay() {
@@ -464,7 +464,7 @@
                         updates[idx] = rec;
                     });
                     directoryRef.set(updates).then(() => {
-                        console.log("Firebase 'directory' node seeded successfully.");
+                        console.log("Firebase 'directory' node auto-seeded with " + initialExcelRecords.length + " records.");
                     });
                     return;
                 }
@@ -472,7 +472,6 @@
                 loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                 document.getElementById('recordCount').innerText = loadedMasterData.length;
 
-                // Render using directory.js helper
                 directoryHelper.setData(loadedMasterData);
                 hideLoadingOverlay();
             });
