@@ -280,7 +280,7 @@
             <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
         </div>
         <div class="loader-text" style="font-weight: 700; font-size: 14px;">
-            Loading Master Directory &amp; Field Officers...
+            Loading Master Directory...
         </div>
     </div>
 
@@ -357,10 +357,9 @@
     <script>
         const db = firebase.database();
         const directoryRef = db.ref('directory');
-        const fieldOfficersRef = db.ref('field-officers'); // Second node reference
 
         let directoryHelper = null;
-        let combinedRecords = [];
+        let loadedMasterData = [];
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -373,48 +372,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            let directoryData = {};
-            let fieldOfficersData = {};
-
-            function updateMasterList() {
-                combinedRecords = [];
-
-                // Process 'directory' node items
-                if (directoryData) {
-                    Object.keys(directoryData).forEach(key => {
-                        combinedRecords.push({
-                            sourceNode: 'directory',
-                            firebaseKey: key,
-                            ...directoryData[key]
-                        });
-                    });
-                }
-
-                // Process 'field-officers' node items
-                if (fieldOfficersData) {
-                    Object.keys(fieldOfficersData).forEach(key => {
-                        combinedRecords.push({
-                            sourceNode: 'field-officers',
-                            firebaseKey: key,
-                            ...fieldOfficersData[key]
-                        });
-                    });
-                }
-
-                document.getElementById('recordCount').innerText = combinedRecords.length;
-                directoryHelper.setData(combinedRecords);
-                hideLoadingOverlay();
-            }
-
-            // Listen to both nodes simultaneously in real-time
             directoryRef.on('value', (snapshot) => {
-                directoryData = snapshot.val() || {};
-                updateMasterList();
-            });
+                const data = snapshot.val();
+                
+                if (!data || Object.keys(data).length === 0) {
+                    document.getElementById('recordCount').innerText = "0";
+                    hideLoadingOverlay();
+                    return;
+                }
 
-            fieldOfficersRef.on('value', (snapshot) => {
-                fieldOfficersData = snapshot.val() || {};
-                updateMasterList();
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.length;
+
+                directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
             });
         });
 
@@ -426,13 +397,7 @@
             }
         }
 
-        // Updated saveRecord to update the correct Firebase node depending on where it came from
         window.saveRecord = function(id) {
-            const record = combinedRecords.find(r => String(r.firebaseKey) === String(id) || String(r.id) === String(id));
-            if (!record) return;
-
-            const targetRef = db.ref(record.sourceNode || 'directory');
-
             const updatedData = {
                 category: document.getElementById(`cat_${id}`).value.trim(),
                 location: document.getElementById(`loc_${id}`).value.trim(),
@@ -443,23 +408,17 @@
                 address: document.getElementById(`adr_${id}`).value.trim()
             };
 
-            targetRef.child(record.firebaseKey).set(updatedData).then(() => {
+            directoryRef.child(id).set(updatedData).then(() => {
                 alert("Record updated successfully in Firebase!");
             }).catch(err => {
                 alert("Error updating record: " + err.message);
             });
         };
 
-        // Updated deleteRecord to delete from the correct Firebase node
         window.deleteRecord = function(id) {
-            const record = combinedRecords.find(r => String(r.firebaseKey) === String(id) || String(r.id) === String(id));
-            if (!record) return;
-
             if (!confirm(`Are you sure you want to delete record #${id}?`)) return;
 
-            const targetRef = db.ref(record.sourceNode || 'directory');
-
-            targetRef.child(record.firebaseKey).remove().then(() => {
+            directoryRef.child(id).remove().then(() => {
                 alert("Record deleted successfully from Firebase!");
             }).catch(err => {
                 alert("Error deleting record: " + err.message);
