@@ -1,5 +1,5 @@
 // =========================================================
-// APML DIRECTORY HELPER (directory.js) - Themed Light Style with Address, Google Maps Link, Copy Button & Edit Toggle
+// APML DIRECTORY HELPER (directory.js) - Soft Delete & Admin View Support
 // =========================================================
 
 class APMLDirectory {
@@ -7,6 +7,7 @@ class APMLDirectory {
     this.container = document.getElementById(containerId);
     this.searchInput = document.getElementById(searchInputId);
     this.allData = [];
+    this.showDeleted = false; // Admin toggle state
 
     if (this.searchInput) {
       this.searchInput.addEventListener('input', (e) => this.filterData(e.target.value));
@@ -15,22 +16,37 @@ class APMLDirectory {
 
   setData(dataArray) {
     this.allData = Array.isArray(dataArray) ? dataArray : [];
-    this.render(this.allData);
+    this.render(this.getFilteredByStatus(this.allData));
+  }
+
+  getFilteredByStatus(data) {
+    if (this.showDeleted) {
+      return data; // Admin sees all (normal + deleted)
+    }
+    // Normal users only see active (non-deleted) records
+    return data.filter(item => {
+      return item.isDeleted !== true && item.isDeleted !== 'true' && item.isDeleted !== 1;
+    });
+  }
+
+  toggleAdminView(show) {
+    this.showDeleted = show;
+    const currentQuery = this.searchInput ? this.searchInput.value : '';
+    this.filterData(currentQuery);
   }
 
   filterData(query) {
     const q = String(query || '').toLowerCase().trim();
-    if (!q) {
-      this.render(this.allData);
-      return;
-    }
+    let pool = this.getFilteredByStatus(this.allData);
 
-    const filtered = this.allData.filter(item => {
-      return Object.values(item).some(val => 
-        String(val).toLowerCase().includes(q)
-      );
-    });
-    this.render(filtered);
+    if (q) {
+      pool = pool.filter(item => {
+        return Object.values(item).some(val => 
+          String(val).toLowerCase().includes(q)
+        );
+      });
+    }
+    this.render(pool);
   }
 
   render(items) {
@@ -65,9 +81,16 @@ class APMLDirectory {
       const name = item.name || 'Unnamed';
       const contact = item.contact || 'No Number';
       const address = item.address || 'No address specified';
+      const isDeleted = item.isDeleted === true || item.isDeleted === 'true' || item.isDeleted === 1;
+
+      // If deleted and in admin view, render row in red tint / color
+      const rowBg = isDeleted ? '#fef2f2' : '#ffffff';
+      const textColor = isDeleted ? '#991b1b' : '#292524';
+      const subTextColor = isDeleted ? '#b91c1c' : '#78716c';
+      const badgeText = isDeleted ? ' [DELETED]' : '';
 
       const isHub = String(category).includes('Hub');
-      const avatarBg = isHub ? '#0284c7' : '#c21d1d';
+      const avatarBg = isDeleted ? '#991b1b' : (isHub ? '#0284c7' : '#c21d1d');
       const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AP';
 
       const encodedAddress = encodeURIComponent(address);
@@ -75,28 +98,28 @@ class APMLDirectory {
       const escapedAddressJson = JSON.stringify(address).replace(/"/g, '&quot;');
 
       return `
-        <div id="row_view_${recordId}" style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1px solid #ede4de; align-items: center; transition: background 0.15s ease;" onmouseover="this.style.background='#fdf8f5'" onmouseout="this.style.background='#ffffff'">
+        <div id="row_view_${recordId}" style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1px solid #ede4de; align-items: center; background: ${rowBg}; transition: background 0.15s ease;" onmouseover="this.style.background='${isDeleted ? '#fee2e2' : '#fdf8f5'}'" onmouseout="this.style.background='${rowBg}'">
           <div style="display: flex; align-items: center; gap: 14px;">
             <div style="width: 38px; height: 38px; border-radius: 50%; background: ${avatarBg}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
               ${escapeHtml(initials)}
             </div>
             <div style="display: flex; flex-direction: column;">
-              <span style="font-size: 14px; font-weight: 700; color: #292524;">${escapeHtml(name)}</span>
-              <span style="font-size: 11.5px; color: #78716c; font-weight: 600;">${escapeHtml(designation || category)}</span>
+              <span style="font-size: 14px; font-weight: 700; color: ${textColor};">${escapeHtml(name)}${badgeText}</span>
+              <span style="font-size: 11.5px; color: ${subTextColor}; font-weight: 600;">${escapeHtml(designation || category)}</span>
             </div>
           </div>
 
           <div style="display: flex; flex-direction: column;">
-            <span style="font-size: 13.5px; font-weight: 600; color: #44403c;">${escapeHtml(location)}</span>
-            <span style="font-size: 11.5px; color: #78716c;">${escapeHtml(region)}</span>
+            <span style="font-size: 13.5px; font-weight: 600; color: ${textColor};">${escapeHtml(location)}</span>
+            <span style="font-size: 11.5px; color: ${subTextColor};">${escapeHtml(region)}</span>
           </div>
 
-          <div style="font-size: 13.5px; font-weight: 600; color: #44403c;">
+          <div style="font-size: 13.5px; font-weight: 600; color: ${textColor};">
             ${escapeHtml(contact)}
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 4px; padding-right: 8px;">
-            <div style="font-size: 12px; color: #78716c; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="${escapeHtml(address)}">
+            <div style="font-size: 12px; color: ${subTextColor}; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="${escapeHtml(address)}">
               ${escapeHtml(address)}
             </div>
             <div style="display: flex; gap: 8px; align-items: center;">
@@ -113,8 +136,8 @@ class APMLDirectory {
             <button onclick="toggleEditCard('${recordId}')" title="Edit Record" style="background: rgba(194, 29, 29, 0.08); border: 1.5px solid rgba(194, 29, 29, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #c21d1d; transition: all 0.2s ease;" onmouseover="this.style.background='#c21d1d'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(194, 29, 29, 0.08)'; this.style.color='#c21d1d'">
               <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
             </button>
-            <button onclick="deleteRecord('${recordId}')" title="Delete Record" style="background: rgba(220, 38, 38, 0.08); border: 1.5px solid rgba(220, 38, 38, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#dc2626'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.color='#dc2626'">
-              <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+            <button onclick="deleteRecord('${recordId}')" title="${isDeleted ? 'Already deleted' : 'Delete Record'}" style="background: rgba(220, 38, 38, 0.08); border: 1.5px solid rgba(220, 38, 38, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#dc2626'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.color='#dc2626'">
+              <span class="material-symbols-outlined" style="font-size: 18px;">${isDeleted ? 'visibility_off' : 'delete'}</span>
             </button>
           </div>
         </div>
@@ -124,7 +147,7 @@ class APMLDirectory {
           <div style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #c21d1d; display: flex; align-items: center; gap: 8px;">
               <span class="material-symbols-outlined">badge</span>
-              Edit Record Details (#${escapeHtml(String(recordId))})
+              Edit Record Details (#${escapeHtml(String(recordId))}) ${isDeleted ? '<span style="color:red; font-size:12px;">(Status: Deleted)</span>' : ''}
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -166,6 +189,7 @@ class APMLDirectory {
             </div>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px;">
+              ${isDeleted ? `<button onclick="restoreRecord('${recordId}')" style="padding: 10px 20px; background: #059669; color: #ffffff; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; margin-right: auto;">Restore Contact</button>` : ''}
               <button onclick="toggleEditCard('${recordId}')" style="padding: 10px 20px; background: #ede4de; color: #44403c; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer;">
                 Cancel
               </button>
@@ -183,7 +207,6 @@ class APMLDirectory {
   }
 }
 
-// Global helper to toggle the expanded edit box
 window.toggleEditCard = function(id) {
   const editBox = document.getElementById(`row_edit_${id}`);
   if (editBox) {
@@ -195,7 +218,6 @@ window.toggleEditCard = function(id) {
   }
 };
 
-// Global helper to copy address to clipboard with feedback
 window.copyAddressToClipboard = function(addressText, btnElement) {
   navigator.clipboard.writeText(addressText).then(() => {
     const originalHTML = btnElement.innerHTML;
