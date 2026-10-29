@@ -245,34 +245,6 @@
       color: var(--primary);
     }
 
-    .storage-pill-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .storage-pill-link:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
-    }
-
-    .storage-pill-link .material-symbols-outlined {
-      font-size: 14px;
-    }
-
     .media-lightbox-overlay {
       position: fixed;
       inset: 0;
@@ -958,9 +930,6 @@
           <span class="stat-pill">Total: <strong id="statTotalCount">0</strong></span>
           <span class="stat-pill">Photos: <strong id="statPhotoCount">0</strong></span>
           <span class="stat-pill">Videos: <strong id="statVideoCount">0</strong></span>
-          <a href="dump.html" class="storage-pill-link" title="Open Trash Archive">
-            <span class="material-symbols-outlined">delete</span> Trash Archive
-          </a>
         </div>
       </div>
 
@@ -1667,23 +1636,6 @@
       }
     }
 
-    async function restoreItem(firebaseKey) {
-      try {
-        await mediaRef.child(firebaseKey).update({ folder: 'packing-images' });
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Item restored successfully',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        renderGallery();
-      } catch (err) {
-        alert("Failed to restore item: " + err.message);
-      }
-    }
-
     async function permanentDelete(firebaseKey) {
       Swal.fire({
         title: "Delete Permanently?",
@@ -1908,21 +1860,12 @@
                 <span class="media-size-label">${formattedSize}</span>
               </div>
               <div class="card-actions-row">
-                ${isDeletedFolder ? `
-                  <button type="button" class="btn-download" onclick="event.stopPropagation(); restoreItem('${item.key}')" title="Restore Item" style="background: #059669;">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">restore</span> Restore
-                  </button>
-                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); permanentDelete('${item.key}')" title="Delete Permanently">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete_forever</span>
-                  </button>
-                ` : `
-                  <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleInteractiveDownload('${item.key}', '${item.url}', '${item.name}', ${item.isVideo})" title="Download File">
-                    <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
-                  </button>
-                  <button type="button" class="btn-delete" onclick="event.stopPropagation(); handleDeleteAction('${item.key}')" title="Delete">
-                    <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
-                  </button>
-                `}
+                <button type="button" id="btn-dl-${item.key}" class="btn-download" onclick="event.stopPropagation(); handleInteractiveDownload('${item.key}', '${item.url}', '${item.name}', ${item.isVideo})" title="Download File">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">download</span> Download
+                </button>
+                <button type="button" class="btn-delete" onclick="event.stopPropagation(); ${isDeletedFolder ? `permanentDelete('${item.key}')` : `handleDeleteAction('${item.key}')`}" title="${isDeletedFolder ? 'Delete Permanently' : 'Delete'}">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">${isDeletedFolder ? 'delete_forever' : 'delete'}</span>
+                </button>
               </div>
             </div>
           </div>
