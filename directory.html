@@ -490,7 +490,10 @@
                 updatedData.isDeleted = true;
             }
 
-            directoryRef.child(id).set(updatedData).then(() => {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).set(updatedData).then(() => {
                 Swal.fire({
                   position: "top-end",
                   icon: "success",
@@ -508,8 +511,11 @@
             });
         };
 
-        // Soft Delete: Sets isDeleted property directly to true in Firebase
+        // Soft Delete: sets isDeleted: true using exact database key lookup
         window.deleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
             Swal.fire({
               title: "Are you sure?",
               text: "You won't be able to revert this!",
@@ -520,7 +526,7 @@
               confirmButtonText: "Yes, delete it!"
             }).then((result) => {
               if (result.isConfirmed) {
-                directoryRef.child(id).child('isDeleted').set(true).then(() => {
+                directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
                   Swal.fire({
                     title: "Deleted!",
                     text: "Your file has been deleted.",
@@ -539,7 +545,10 @@
 
         // Restore contact
         window.restoreRecord = function(id) {
-            directoryRef.child(id).child('isDeleted').set(false).then(() => {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).update({ isDeleted: false }).then(() => {
                 Swal.fire({
                   title: "Restored!",
                   text: "Contact is now active again.",
