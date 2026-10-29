@@ -425,7 +425,6 @@
                     .then((result) => {
                         const userEmail = result.user.email;
 
-                        // Check if logged-in email is allowed
                         if (!ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
                             firebase.auth().signOut();
                             Swal.fire({
@@ -509,7 +508,7 @@
             });
         };
 
-        // Soft Delete: sets isDeleted: true instead of removing from Firebase
+        // Soft Delete: Sets isDeleted property directly to true in Firebase
         window.deleteRecord = function(id) {
             Swal.fire({
               title: "Are you sure?",
@@ -521,7 +520,7 @@
               confirmButtonText: "Yes, delete it!"
             }).then((result) => {
               if (result.isConfirmed) {
-                directoryRef.child(id).update({ isDeleted: true }).then(() => {
+                directoryRef.child(id).child('isDeleted').set(true).then(() => {
                   Swal.fire({
                     title: "Deleted!",
                     text: "Your file has been deleted.",
@@ -540,7 +539,7 @@
 
         // Restore contact
         window.restoreRecord = function(id) {
-            directoryRef.child(id).update({ isDeleted: false }).then(() => {
+            directoryRef.child(id).child('isDeleted').set(false).then(() => {
                 Swal.fire({
                   title: "Restored!",
                   text: "Contact is now active again.",
