@@ -1,5 +1,5 @@
 // =========================================================
-// APML DIRECTORY HELPER (directory.js) - Soft Delete & Admin View Support
+// APML DIRECTORY HELPER (directory.js) - Soft Delete, Sorting & Admin View Support
 // =========================================================
 
 class APMLDirectory {
@@ -16,17 +16,22 @@ class APMLDirectory {
 
   setData(dataArray) {
     this.allData = Array.isArray(dataArray) ? dataArray : [];
-    this.render(this.getFilteredByStatus(this.allData));
+    this.render(this.getFilteredAndSortedData(this.allData));
   }
 
-  getFilteredByStatus(data) {
-    if (this.showDeleted) {
-      return data; // Admin sees all (normal + deleted)
+  getFilteredAndSortedData(data) {
+    let pool = data;
+    if (!this.showDeleted) {
+      pool = data.filter(item => item.isDeleted !== true && item.isDeleted !== 'true' && item.isDeleted !== 1);
+    } else {
+      // Sort deleted contacts to the bottom
+      pool = [...data].sort((a, b) => {
+        const aDel = a.isDeleted === true || a.isDeleted === 'true' || a.isDeleted === 1 ? 1 : 0;
+        const bDel = b.isDeleted === true || b.isDeleted === 'true' || b.isDeleted === 1 ? 1 : 0;
+        return aDel - bDel; // 0 (active) comes before 1 (deleted)
+      });
     }
-    // Normal users only see active (non-deleted) records
-    return data.filter(item => {
-      return item.isDeleted !== true && item.isDeleted !== 'true' && item.isDeleted !== 1;
-    });
+    return pool;
   }
 
   toggleAdminView(show) {
@@ -37,7 +42,7 @@ class APMLDirectory {
 
   filterData(query) {
     const q = String(query || '').toLowerCase().trim();
-    let pool = this.getFilteredByStatus(this.allData);
+    let pool = this.getFilteredAndSortedData(this.allData);
 
     if (q) {
       pool = pool.filter(item => {
@@ -83,7 +88,6 @@ class APMLDirectory {
       const address = item.address || 'No address specified';
       const isDeleted = item.isDeleted === true || item.isDeleted === 'true' || item.isDeleted === 1;
 
-      // If deleted and in admin view, render row in red tint / color
       const rowBg = isDeleted ? '#fef2f2' : '#ffffff';
       const textColor = isDeleted ? '#991b1b' : '#292524';
       const subTextColor = isDeleted ? '#b91c1c' : '#78716c';
@@ -133,21 +137,31 @@ class APMLDirectory {
           </div>
 
           <div style="display: flex; justify-content: flex-end; gap: 8px;">
-            <button onclick="toggleEditCard('${recordId}')" title="Edit Record" style="background: rgba(194, 29, 29, 0.08); border: 1.5px solid rgba(194, 29, 29, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #c21d1d; transition: all 0.2s ease;" onmouseover="this.style.background='#c21d1d'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(194, 29, 29, 0.08)'; this.style.color='#c21d1d'">
-              <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
-            </button>
-            <button onclick="deleteRecord('${recordId}')" title="${isDeleted ? 'Already deleted' : 'Delete Record'}" style="background: rgba(220, 38, 38, 0.08); border: 1.5px solid rgba(220, 38, 38, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#dc2626'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.color='#dc2626'">
-              <span class="material-symbols-outlined" style="font-size: 18px;">${isDeleted ? 'visibility_off' : 'delete'}</span>
-            </button>
+            ${isDeleted ? `
+              <button onclick="restoreRecord('${recordId}')" title="Restore Contact" style="background: rgba(5, 150, 105, 0.1); border: 1.5px solid rgba(5, 150, 105, 0.3); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #059669; transition: all 0.2s ease;" onmouseover="this.style.background='#059669'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(5, 150, 105, 0.1)'; this.style.color='#059669'">
+                <span class="material-symbols-outlined" style="font-size: 18px;">settings_backup_restore</span>
+              </button>
+              <button onclick="permanentDeleteRecord('${recordId}')" title="Delete Permanently" style="background: rgba(220, 38, 38, 0.1); border: 1.5px solid rgba(220, 38, 38, 0.3); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#dc2626'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(220, 38, 38, 0.1)'; this.style.color='#dc2626'">
+                <span class="material-symbols-outlined" style="font-size: 18px;">delete_forever</span>
+              </button>
+            ` : `
+              <button onclick="toggleEditCard('${recordId}')" title="Edit Record" style="background: rgba(194, 29, 29, 0.08); border: 1.5px solid rgba(194, 29, 29, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #c21d1d; transition: all 0.2s ease;" onmouseover="this.style.background='#c21d1d'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(194, 29, 29, 0.08)'; this.style.color='#c21d1d'">
+                <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
+              </button>
+              <button onclick="deleteRecord('${recordId}')" title="Delete Record" style="background: rgba(220, 38, 38, 0.08); border: 1.5px solid rgba(220, 38, 38, 0.2); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#dc2626'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(220, 38, 38, 0.08)'; this.style.color='#dc2626'">
+                <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+              </button>
+            `}
           </div>
         </div>
 
         <!-- EXPANDED EDIT BOX (Hidden by default, shows on Edit click) -->
+        ${!isDeleted ? `
         <div id="row_edit_${recordId}" style="display: none; padding: 24px; background: #fdf8f5; border-bottom: 1.5px solid #ede4de;">
           <div style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #c21d1d; display: flex; align-items: center; gap: 8px;">
               <span class="material-symbols-outlined">badge</span>
-              Edit Record Details (#${escapeHtml(String(recordId))}) ${isDeleted ? '<span style="color:red; font-size:12px;">(Status: Deleted)</span>' : ''}
+              Edit Record Details (#${escapeHtml(String(recordId))})
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -189,7 +203,6 @@ class APMLDirectory {
             </div>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px;">
-              ${isDeleted ? `<button onclick="restoreRecord('${recordId}')" style="padding: 10px 20px; background: #059669; color: #ffffff; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer; margin-right: auto;">Restore Contact</button>` : ''}
               <button onclick="toggleEditCard('${recordId}')" style="padding: 10px 20px; background: #ede4de; color: #44403c; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer;">
                 Cancel
               </button>
@@ -199,6 +212,7 @@ class APMLDirectory {
             </div>
           </div>
         </div>
+        ` : ''}
       `;
     }).join('');
 
