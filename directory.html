@@ -310,17 +310,24 @@
                     <span class="material-symbols-outlined">travel_explore</span>
                     Search All Hubs &amp; Branches
                 </div>
-                <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px 7px 10px; background: #c21d1d; color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
-                    <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #ffffff; border-radius: 50%;">
-                        <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
-                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
-                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
-                        </svg>
-                    </span>
-                    Admin Login
-                </button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Create Contact Button (Hidden by default, shows when Admin is logged in) -->
+                    <button type="button" id="createContactBtn" onclick="openCreateContactModal()" style="display: none; align-items: center; gap: 6px; padding: 8px 16px; background: #059669; color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2); transition: all 0.2s ease;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Contact
+                    </button>
+                    <!-- Admin Login Button -->
+                    <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" style="display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px 7px 10px; background: #c21d1d; color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #ffffff; border-radius: 50%;">
+                            <svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
+                                <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
+                                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                            </svg>
+                        </span>
+                        Admin Login
+                    </button>
+                </div>
             </div>
             
             <div class="lookup-box">
@@ -448,6 +455,9 @@
                         btn.style.background = '#991b1b';
                         btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">admin_panel_settings</span> Exit Admin View';
                         
+                        // Show "+ Create Contact" button when admin logs in
+                        document.getElementById('createContactBtn').style.display = 'inline-flex';
+
                         Swal.fire({
                             toast: true,
                             position: 'top-end',
@@ -484,12 +494,64 @@
                         </span>
                         Admin Login`;
 
+                    // Hide "+ Create Contact" button when admin exits
+                    document.getElementById('createContactBtn').style.display = 'none';
+
                     if (directoryHelper) {
                         directoryHelper.toggleAdminView(false);
                     }
                 });
             }
         }
+
+        // Open SweetAlert modal to create new contact
+        window.openCreateContactModal = async function() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Create New Contact',
+                html:
+                    '<input id="swal-category" class="swal2-input" placeholder="Category (e.g., Hub / Branch)">' +
+                    '<input id="swal-location" class="swal2-input" placeholder="Location / Branch Name">' +
+                    '<input id="swal-region" class="swal2-input" placeholder="Region">' +
+                    '<input id="swal-designation" class="swal2-input" placeholder="Designation / Role">' +
+                    '<input id="swal-name" class="swal2-input" placeholder="Contact Person Name">' +
+                    '<input id="swal-contact" class="swal2-input" placeholder="Contact Number">' +
+                    '<input id="swal-address" class="swal2-input" placeholder="Full Address">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonColor: '#c21d1d',
+                preConfirm: () => {
+                    return {
+                        category: document.getElementById('swal-category').value.trim(),
+                        location: document.getElementById('swal-location').value.trim(),
+                        region: document.getElementById('swal-region').value.trim(),
+                        designation: document.getElementById('swal-designation').value.trim(),
+                        name: document.getElementById('swal-name').value.trim(),
+                        contact: document.getElementById('swal-contact').value.trim(),
+                        address: document.getElementById('swal-address').value.trim(),
+                        isDeleted: false
+                    }
+                }
+            });
+
+            if (formValues) {
+                if (!formValues.name || !formValues.location) {
+                    Swal.fire('Error', 'Name and Location are required fields!', 'error');
+                    return;
+                }
+
+                directoryRef.push(formValues).then(() => {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'New contact created successfully!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }).catch(err => {
+                    Swal.fire('Error', err.message, 'error');
+                });
+            }
+        };
 
         window.saveRecord = function(id) {
             const updatedData = {
@@ -573,13 +635,46 @@
                   timer: 1500,
                   showConfirmButton: false
                 });
-                toggleEditCard(id);
             }).catch(err => {
                 Swal.fire({
                   icon: "error",
                   title: "Oops...",
                   text: "Error restoring record: " + err.message
                 });
+            });
+        };
+
+        // Permanent Delete
+        window.permanentDeleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            Swal.fire({
+              title: "Delete Permanently?",
+              text: "This will permanently remove the contact from the database. You won't be able to recover this!",
+              icon: "error",
+              showCancelButton: true,
+              confirmButtonColor: "#dc2626",
+              cancelButtonColor: "#78716c",
+              confirmButtonText: "Yes, delete permanently!"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                directoryRef.child(targetKey).remove().then(() => {
+                  Swal.fire({
+                    title: "Permanently Deleted!",
+                    text: "The contact has been permanently removed.",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false
+                  });
+                }).catch(err => {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting permanently: " + err.message
+                  });
+                });
+              }
             });
         };
     </script>
