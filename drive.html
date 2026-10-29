@@ -20,12 +20,10 @@
   <!-- SIMPLELIGHTBOX CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
 
-  <!-- SUPABASE JS CLIENT -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -247,174 +245,6 @@
 
     .stat-pill strong {
       color: var(--primary);
-    }
-
-    .storage-pill-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border: 1px solid var(--border-subtle);
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--primary);
-      text-decoration: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .storage-pill-link:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      transform: translateY(-1px);
-      box-shadow: 0 3px 10px rgba(194, 29, 29, 0.2);
-    }
-
-    .storage-pill-link .material-symbols-outlined {
-      font-size: 14px;
-    }
-
-    .admin-action-wrap {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .btn-admin-auth {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface-card);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1.5px solid var(--border-subtle);
-      padding: 9px 18px;
-      border-radius: var(--radius-pill);
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      transition: all 0.2s ease;
-    }
-
-    .btn-admin-auth:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      transform: translateY(-1px);
-    }
-
-    .btn-admin-auth.logged-in {
-      background: #1e293b;
-      color: #ffffff;
-      border-color: #1e293b;
-      box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
-    }
-
-    .admin-status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: var(--radius-pill);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.02em;
-    }
-
-    .badge-authorized {
-      background: rgba(16, 185, 129, 0.12);
-      color: #059669;
-      border: 1px solid rgba(16, 185, 129, 0.3);
-    }
-
-    /* POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS */
-    .auth-warning-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(4px);
-      z-index: 99999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .auth-warning-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .auth-warning-modal {
-      background: #ffffff;
-      max-width: 440px;
-      width: 100%;
-      border-radius: 20px;
-      padding: 28px;
-      text-align: center;
-      box-shadow: 0 20px 40px -8px rgba(0,0,0,0.25);
-      border: 1.5px solid #fee2e2;
-      transform: scale(0.95);
-      transition: transform 0.25s ease;
-    }
-
-    .auth-warning-overlay.active .auth-warning-modal {
-      transform: scale(1);
-    }
-
-    .warning-icon-wrap {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: #fee2e2;
-      color: #dc2626;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
-    .auth-warning-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-    }
-
-    .auth-warning-modal p {
-      font-size: 14px;
-      color: #6b7280;
-      line-height: 1.5;
-      margin-bottom: 22px;
-    }
-
-    .auth-warning-modal strong {
-      color: #dc2626;
-      word-break: break-all;
-    }
-
-    .btn-warning-dismiss {
-      background: #dc2626;
-      color: #ffffff;
-      border: none;
-      padding: 10px 24px;
-      border-radius: var(--radius-pill);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.2s ease;
-    }
-
-    .btn-warning-dismiss:hover {
-      background: #b91c1c;
     }
 
     .drive-action-bar {
@@ -751,7 +581,6 @@
       min-width: 0;
     }
 
-    /* Small dot for media source */
     .media-source-dot {
       width: 8px;
       height: 8px;
@@ -1005,21 +834,6 @@
 
   <div id="header-container"></div>
 
-  <!-- POPUP WARNING MODAL FOR UNAUTHORIZED LOGINS -->
-  <div class="auth-warning-overlay" id="authWarningModal">
-    <div class="auth-warning-modal">
-      <div class="warning-icon-wrap">
-        <span class="material-symbols-outlined" style="font-size: 32px;">gpp_bad</span>
-      </div>
-      <h3>Access Denied</h3>
-      <p>
-        The account <strong id="unauthorizedEmailDisplay"></strong> does not have administrator privileges.<br>
-        Only authorized admin accounts can access admin controls.
-      </p>
-      <button type="button" class="btn-warning-dismiss" onclick="dismissWarningModal()">Acknowledge &amp; Sign Out</button>
-    </div>
-  </div>
-
   <!-- LIGHTBOX PREVIEW MODAL FOR VIDEOS -->
   <div class="media-lightbox-overlay" id="mediaLightboxModal" onclick="closeLightbox(event)">
     <div class="lightbox-content-box" id="lightboxContainer">
@@ -1040,21 +854,18 @@
         </div>
         <div class="drive-stats-pills" id="driveStatsPills">
           <span class="stat-pill">Total Items: <strong id="statTotalCount">0</strong></span>
-          <a href="dump.html" class="storage-pill-link" title="Open Trash Archive">
-            <span class="material-symbols-outlined">delete</span> Trash Archive
-          </a>
         </div>
       </div>
 
       <div class="admin-action-wrap" id="adminAuthContainer">
-        <button type="button" class="btn-admin-auth" id="adminAuthBtn" onclick="handleGoogleAdminAuth()">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        <!-- Google Logo Admin Button -->
+        <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" title="Admin Login" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.2s ease;">
+          <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
           </svg>
-          <span id="adminBtnLabel">Admin Login</span>
         </button>
       </div>
     </div>
@@ -1118,18 +929,7 @@
   <!-- LOZAD.JS FOR LAZY LOADING -->
   <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
 
-  <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <script>
-    const SUPABASE_URL = "https://jethunntsnnjlwnwsjrh.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0";
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true }
-    });
-
     const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
     const CLOUDINARY_UPLOAD_PRESET = 'apml_drive';
     const CLOUDINARY_FOLDER = 'apml-drive';
@@ -1144,7 +944,11 @@
       apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
       authDomain: "apml-portal.firebaseapp.com",
       databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-      projectId: "apml-portal"
+      projectId: "apml-portal",
+      storageBucket: "apml-portal.firebasestorage.app",
+      messagingSenderId: "479017159240",
+      appId: "1:479017159240:web:0853422718e6195b74a67d",
+      measurementId: "G-4H1HT31DYB"
     };
 
     if (!firebase.apps.length) {
@@ -1153,18 +957,17 @@
     const db = firebase.database();
     const driveFilesRef = db.ref("catbox_gdrive_files");
     const driveFoldersRef = db.ref("catbox_gdrive_folders");
-    const dumpBinRef = db.ref("catbox_dump_gallery_folders");
     const totalMediaDownloadsRef = db.ref('analytics/totalMediaDownloads');
 
-    const AUTHORIZED_ADMIN_EMAILS = [
-      "kundar.work@gmail.com",
-      "kundar701@gmail.com"
+    const ALLOWED_ADMIN_EMAILS = [
+      "kundar701@gmail.com",
+      "kundar.work@gmail.com"
     ];
 
+    let isAdminMode = false;
     let currentParentId = 'root';
     let liveFolders = [];
     let liveFiles = [];
-    let currentUser = null;
     let currentPage = 1;
     let lightbox = null;
     const ITEMS_PER_PAGE = 16;
@@ -1187,66 +990,71 @@
     setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
-      if (!currentUser || !currentUser.email) return false;
-      const email = currentUser.email.trim().toLowerCase();
-      return AUTHORIZED_ADMIN_EMAILS.some(admin => admin.toLowerCase() === email);
+      return isAdminMode;
     }
 
-    function showUnauthorizedWarning(email) {
-      document.getElementById('unauthorizedEmailDisplay').textContent = email;
-      document.getElementById('authWarningModal').classList.add('active');
-    }
+    // Admin View Toggle with Google Login & Email Restriction (Matching directory.html & gallery.html)
+    function toggleAdminMode() {
+      if (!isAdminMode) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider)
+          .then((result) => {
+            const userEmail = (result.user.email || "").toLowerCase().trim();
 
-    async function dismissWarningModal() {
-      document.getElementById('authWarningModal').classList.remove('active');
-      await supabaseClient.auth.signOut();
-      currentUser = null;
-      handleUserSession(null);
-    }
+            if (!ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+              firebase.auth().signOut();
+              Swal.fire({
+                icon: 'error',
+                title: 'Access Denied',
+                text: `Account (${userEmail}) is not authorized as an Admin.`
+              });
+              return;
+            }
 
-    async function handleGoogleAdminAuth() {
-      if (currentUser) {
-        await supabaseClient.auth.signOut();
-        currentUser = null;
-        handleUserSession(null);
+            isAdminMode = true;
+            const btn = document.getElementById('adminToggleBtn');
+            btn.style.background = '#991b1b';
+            btn.title = "Exit Admin View";
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px; color: #ffffff;">logout</span>';
+
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: `Welcome Admin (${userEmail})`,
+              showConfirmButton: false,
+              timer: 3000
+            });
+
+            renderUI();
+          })
+          .catch((error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Sign-In Failed',
+              text: error.message
+            });
+          });
       } else {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: window.location.origin + window.location.pathname
+        firebase.auth().signOut().then(() => {
+          isAdminMode = false;
+          const btn = document.getElementById('adminToggleBtn');
+          btn.style.background = '#ffffff';
+          btn.title = "Admin Login";
+          btn.innerHTML = `
+            <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+            </svg>`;
+
+          if (currentParentId === 'deleted') {
+            currentParentId = 'root';
           }
+          renderUI();
         });
-        if (error) alert(`Google login error: ${error.message}`);
       }
-    }
-
-    function handleUserSession(user) {
-      currentUser = user;
-      const authBtn = document.getElementById('adminAuthBtn');
-      const authLabel = document.getElementById('adminBtnLabel');
-      const authContainer = document.getElementById('adminAuthContainer');
-
-      const existingBadge = document.getElementById('adminStatusBadge');
-      if (existingBadge) existingBadge.remove();
-
-      if (user) {
-        if (isCurrentUserAdmin()) {
-          authBtn.classList.add('logged-in');
-          authLabel.textContent = "Sign Out";
-
-          const badge = document.createElement('span');
-          badge.id = 'adminStatusBadge';
-          badge.className = 'admin-status-badge badge-authorized';
-          badge.innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">shield_person</span> Admin Verified`;
-          authContainer.insertBefore(badge, authBtn);
-        } else {
-          showUnauthorizedWarning(user.email);
-        }
-      } else {
-        authBtn.classList.remove('logged-in');
-        authLabel.textContent = "Admin Login";
-      }
-      renderUI();
     }
 
     const cachedFolders = localStorage.getItem(CACHE_KEY_FOLDERS);
@@ -1457,73 +1265,68 @@
       
       Swal.fire({
         title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        text: "This file will be moved to trash archive!",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
+        confirmButtonColor: "#c21d1d",
+        cancelButtonColor: "#736b66",
         confirmButtonText: "Yes, delete it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          executeDelete(type, key);
+          executeSoftDelete(type, key);
           Swal.fire({
             title: "Deleted!",
-            text: "Your file has been deleted.",
-            icon: "success"
+            text: "Your file has been moved to trash.",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false
           });
         }
       });
     }
 
-    async function executeDelete(type, key) {
+    async function executeSoftDelete(type, key) {
       try {
         if (type === 'file') {
-          const fileObj = liveFiles.find(f => f.key === key);
-          if (fileObj) {
-            await dumpBinRef.push({
-              fileId: fileObj.fileId,
-              url: fileObj.fileId,
-              name: fileObj.name,
-              size: fileObj.size || 0,
-              folder: fileObj.parentId || 'root',
-              timestamp: fileObj.timestamp || Date.now(),
-              originalKey: key
-            });
-            await driveFilesRef.child(key).remove();
-          }
+          await driveFilesRef.child(key).update({ parentId: 'deleted', prevParentId: currentParentId });
         } else if (type === 'folder') {
-          const folderObj = liveFolders.find(f => f.key === key);
-          if (folderObj) {
-            const dumpFolderRef = await dumpBinRef.push({
-              name: folderObj.name,
-              folder: folderObj.parentId || 'root',
-              isFolder: true,
-              timestamp: folderObj.timestamp || Date.now(),
-              originalKey: key
-            });
-            const dumpFolderKey = dumpFolderRef.key;
-
-            const childFiles = liveFiles.filter(f => f.parentId === key);
-            for (const cFile of childFiles) {
-              await dumpBinRef.push({
-                fileId: cFile.fileId,
-                url: cFile.fileId,
-                name: cFile.name,
-                size: cFile.size || 0,
-                folder: dumpFolderKey,
-                timestamp: cFile.timestamp || Date.now(),
-                originalKey: cFile.key
-              });
-              await driveFilesRef.child(cFile.key).remove();
-            }
-
-            await driveFoldersRef.child(key).remove();
-          }
+          await driveFoldersRef.child(key).update({ parentId: 'deleted', prevParentId: currentParentId });
         }
         renderUI();
       } catch (err) {
-        alert("Failed to delete item: " + err.message);
+        alert("Failed to move item to trash: " + err.message);
       }
+    }
+
+    async function permanentDelete(type, key) {
+      Swal.fire({
+        title: "Delete Permanently?",
+        text: "This cannot be undone!",
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#736b66",
+        confirmButtonText: "Yes, delete permanently!"
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            if (type === 'file') {
+              await driveFilesRef.child(key).remove();
+            } else if (type === 'folder') {
+              await driveFoldersRef.child(key).remove();
+            }
+            Swal.fire({
+              title: "Permanently Deleted!",
+              icon: "success",
+              timer: 1200,
+              showConfirmButton: false
+            });
+            renderUI();
+          } catch (err) {
+            alert("Error: " + err.message);
+          }
+        }
+      });
     }
 
     // ---------- Drag and Drop File Handlers (Google Drive Style) ----------
@@ -1707,25 +1510,64 @@
       const foldersSectionWrapper = document.getElementById('foldersSectionWrapper');
       const filesContainerWrapper = document.getElementById('filesContainerWrapper');
 
-      const currentFolders = liveFolders.filter(f => f.parentId === currentParentId);
-      const rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId);
+      let currentFolders = [];
+      let rawFiles = [];
+
+      if (currentParentId === 'deleted') {
+        if (!isCurrentUserAdmin()) {
+          filesContainerWrapper.innerHTML = `<div class="state-msg">Access Denied.</div>`;
+          foldersSectionWrapper.style.display = 'none';
+          return;
+        }
+        currentFolders = liveFolders.filter(f => f.parentId === 'deleted');
+        rawFiles = liveFiles.filter(f => f.parentId === 'deleted');
+      } else {
+        currentFolders = liveFolders.filter(f => f.parentId === currentParentId && f.parentId !== 'deleted');
+        rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId && f.parentId !== 'deleted');
+      }
 
       rawFiles.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
-      document.getElementById('statTotalCount').textContent = currentFolders.length + rawFiles.length;
+      const activeTotalCount = liveFolders.filter(f => f.parentId !== 'deleted').length + liveFiles.filter(f => f.parentId !== 'deleted').length;
+      document.getElementById('statTotalCount').textContent = activeTotalCount;
+
+      if (currentParentId === 'root' && isCurrentUserAdmin()) {
+        currentFolders.push({
+          key: 'deleted',
+          name: 'Trash Archive',
+          parentId: 'root',
+          isVirtualTrash: true
+        });
+      }
 
       if (currentFolders.length > 0) {
         foldersSectionWrapper.style.display = 'block';
         foldersGrid.innerHTML = currentFolders.map(folder => {
+          if (folder.isVirtualTrash) {
+            return `
+              <div class="folder-card" ondblclick="navigateToFolder('deleted')" onclick="navigateToFolder('deleted')" title="Double click to open Trash Archive">
+                <div class="folder-card-left">
+                  <span class="material-symbols-outlined" style="color: #dc2626;">delete_sweep</span>
+                  <span class="folder-card-name" title="Trash Archive">Trash Archive</span>
+                </div>
+              </div>
+            `;
+          }
+
+          const isDeletedFolder = currentParentId === 'deleted';
           return `
             <div class="folder-card" ondblclick="navigateToFolder('${folder.key}')" onclick="navigateToFolder('${folder.key}')" ondragover="allowDrop(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropOnFolder(event, '${folder.key}')" title="Double click to open. Drop files here to move them.">
               <div class="folder-card-left">
                 <span class="material-symbols-outlined">folder</span>
                 <span class="folder-card-name" title="${folder.name}">${folder.name}</span>
               </div>
-              ${canDeleteItem('folder', folder.key) ? `<button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
+              ${isDeletedFolder ? `
+                <button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); permanentDelete('folder', '${folder.key}')" title="Delete Permanently">
+                  <span class="material-symbols-outlined" style="font-size: 18px; color: #dc2626;">delete_forever</span>
+                </button>
+              ` : (canDeleteItem('folder', folder.key) ? `<button type="button" class="folder-delete-btn" onclick="event.stopPropagation(); confirmDeleteAction('folder', '${folder.key}')" title="Delete Folder">
                 <span class="material-symbols-outlined" style="font-size: 18px;">close</span>
-              </button>` : `<span class="material-symbols-outlined" style="font-size: 16px; opacity:0.5;" title="Protected - admin only">lock</span>`}
+              </button>` : `<span class="material-symbols-outlined" style="font-size: 16px; opacity:0.5;" title="Protected - admin only">lock</span>`)}
             </div>
           `;
         }).join('');
@@ -1740,6 +1582,8 @@
       const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
       if (rawFiles.length > 0) {
+        const isDeletedFolder = currentParentId === 'deleted';
+
         let filesHtml = `
           <div class="drive-files-grid">
             ${currentFiles.map(file => {
@@ -1811,12 +1655,18 @@
                       <span class="material-symbols-outlined" style="font-size: 15px;">download</span> Download
                     </button>
                     <div class="card-actions-admin">
-                      <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
-                      </button>
-                      ${canDeleteItem('file', file.key) ? `<button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
-                        <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
-                      </button>` : ''}
+                      ${isDeletedFolder ? `
+                        <button type="button" class="btn-delete-file" onclick="permanentDelete('file', '${file.key}')" title="Delete Permanently" style="background: #fee2e2; color: #dc2626;">
+                          <span class="material-symbols-outlined" style="font-size: 14px;">delete_forever</span>
+                        </button>
+                      ` : `
+                        <button type="button" class="btn-edit-file" onclick="editFileName('${file.key}', '${file.name.replace(/'/g, "\\'")}')" title="Edit File Name">
+                          <span class="material-symbols-outlined" style="font-size: 14px;">edit</span>
+                        </button>
+                        ${canDeleteItem('file', file.key) ? `<button type="button" class="btn-delete-file" onclick="confirmDeleteAction('file', '${file.key}')" title="Delete">
+                          <span class="material-symbols-outlined" style="font-size: 14px;">delete</span>
+                        </button>` : ''}
+                      `}
                     </div>
                   </div>
                 </div>
@@ -1925,6 +1775,17 @@
         return;
       }
 
+      if (currentParentId === 'deleted') {
+        nav.innerHTML = `
+          <span class="breadcrumb-item" onclick="navigateToFolder('root')">
+            <span class="material-symbols-outlined" style="font-size: 18px;">folder</span> My Drive
+          </span>
+          <span style="color: var(--text-muted);">/</span>
+          <span class="breadcrumb-item" style="color: #dc2626;">Trash Archive</span>
+        `;
+        return;
+      }
+
       let path = [];
       let currId = currentParentId;
       while (currId && currId !== 'root') {
@@ -2029,17 +1890,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-      supabaseClient.auth.getSession().then(({ data: { session } }) => {
-        handleUserSession(session ? session.user : null);
-      }).catch(() => {
-        handleUserSession(null);
-      });
-
-      supabaseClient.auth.onAuthStateChange((_event, session) => {
-        handleUserSession(session ? session.user : null);
-      });
-
-      setTimeout(hidePageLoader, 3000);
+      loadFolderState();
     });
   </script>
 </body>
