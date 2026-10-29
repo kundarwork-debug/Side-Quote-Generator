@@ -347,6 +347,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <!-- Initialize Firebase -->
     <script>
@@ -377,6 +378,8 @@
         let directoryHelper = null;
         let loadedMasterData = [];
         let isAdminMode = false;
+
+        const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "KUNDAR.work@gmail.com"];
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -414,27 +417,61 @@
             }
         }
 
-        // Admin View Toggle
+        // Admin View Toggle with Google Login & Email Restriction
         function toggleAdminMode() {
-            isAdminMode = !isAdminMode;
-            const btn = document.getElementById('adminToggleBtn');
-            if (isAdminMode) {
-                btn.style.background = '#991b1b';
-                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">admin_panel_settings</span> Exit Admin View';
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'info',
-                    title: 'Admin Mode Enabled: Showing all & deleted contacts in red',
-                    showConfirmButton: false,
-                    timer: 3000
-                });
+            if (!isAdminMode) {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                firebase.auth().signInWithPopup(provider)
+                    .then((result) => {
+                        const userEmail = result.user.email;
+
+                        // Check if logged-in email is allowed
+                        if (!ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+                            firebase.auth().signOut();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Access Denied',
+                                text: `Account (${userEmail}) is not authorized as an Admin.`
+                            });
+                            return;
+                        }
+
+                        isAdminMode = true;
+                        const btn = document.getElementById('adminToggleBtn');
+                        btn.style.background = '#991b1b';
+                        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">admin_panel_settings</span> Exit Admin View';
+                        
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: `Welcome Admin (${userEmail})`,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+
+                        if (directoryHelper) {
+                            directoryHelper.toggleAdminView(true);
+                        }
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Sign-In Failed',
+                            text: error.message
+                        });
+                    });
             } else {
-                btn.style.background = '#c21d1d';
-                btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">shield_person</span> Admin Login';
-            }
-            if (directoryHelper) {
-                directoryHelper.toggleAdminView(isAdminMode);
+                firebase.auth().signOut().then(() => {
+                    isAdminMode = false;
+                    const btn = document.getElementById('adminToggleBtn');
+                    btn.style.background = '#c21d1d';
+                    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px;">shield_person</span> Admin Login';
+
+                    if (directoryHelper) {
+                        directoryHelper.toggleAdminView(false);
+                    }
+                });
             }
         }
 
