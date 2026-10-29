@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Field Officer Directory WCRO - APML Portal</title>
+    <title>APML Hub & Branch Directory</title>
     
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
     <link rel="stylesheet" href="common.css?v=21.35">
@@ -283,7 +283,7 @@
             <img src="logo.svg?v=21.35" alt="Loading..." class="loader-logo" onerror="this.style.display='none'">
         </div>
         <div class="loader-text" style="font-weight: 700; font-size: 14px;">
-            Loading Field Officer Directory WCRO...
+            Loading APML Hub & Branch Directory...
         </div>
     </div>
 
@@ -293,10 +293,10 @@
         
         <div class="directory-header-wrap">
             <div class="header-badge">
-                <span class="material-symbols-outlined" style="font-size: 15px;">badge</span>
-                <span>Western Central Regional Office Contacts</span>
+                <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
+                <span>APML Unified Enterprise Directory</span>
             </div>
-            <h1 class="page-title">Field Officer Directory <span>WCRO</span></h1>
+            <h1 class="page-title">APML Hub &amp; Branch <span>Directory</span></h1>
             
             <span class="status-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
@@ -308,12 +308,12 @@
             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <span class="material-symbols-outlined">travel_explore</span>
-                    Search Field Officers &amp; Branches
+                    Search All Hubs &amp; Branches
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <!-- Create Officer Button -->
-                    <button type="button" id="createOfficerBtn" onclick="openCreateOfficerModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary); color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Officer
+                    <!-- Create Contact Button (Visible on normal and admin pages) -->
+                    <button type="button" id="createContactBtn" onclick="openCreateContactModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary); color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Contact
                     </button>
                     <!-- Google Logo Admin Button -->
                     <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" title="Admin Login" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.2s ease;">
@@ -329,23 +329,27 @@
             
             <div class="lookup-box">
                 <span class="material-symbols-outlined lookup-icon">search</span>
-                <input type="text" id="officerSearchInput" class="lookup-input" placeholder="Type name, branch code (MUM, PUN, AHMD), APM code, or phone number...">
+                <input type="text" id="masterSearchInput" class="lookup-input" placeholder="Type city, branch code, officer name, or phone number...">
             </div>
 
             <div class="quick-chips">
-                <span class="chip" onclick="filterByChip('MUM')">MUM Branch</span>
-                <span class="chip" onclick="filterByChip('PUN')">PUN Branch</span>
-                <span class="chip" onclick="filterByChip('GRGN')">GRGN Branch</span>
-                <span class="chip" onclick="filterByChip('AHMD')">AHMD Branch</span>
-                <span class="chip" onclick="filterByChip('NMUM')">NMUM Branch</span>
-                <span class="chip" onclick="filterByChip('BHND')">BHND Branch</span>
-                <span class="chip" onclick="filterByChip('BHPL')">BHPL Branch</span>
-                <span class="chip" onclick="filterByChip('IND')">IND Branch</span>
-                <span class="chip" onclick="filterByChip('GOA')">GOA Branch</span>
-                <span class="chip" onclick="filterByChip('SRT')">SRT Branch</span>
+                <span class="chip" onclick="filterByChip('Mumbai')">Mumbai</span>
+                <span class="chip" onclick="filterByChip('Pune')">Pune</span>
+                <span class="chip" onclick="filterByChip('Gurgaon')">Gurgaon</span>
+                <span class="chip" onclick="filterByChip('Ahmedabad')">Ahmedabad</span>
+                <span class="chip" onclick="filterByChip('Delhi')">Delhi</span>
+                <span class="chip" onclick="filterByChip('Bangalore')">Bangalore</span>
+                <span class="chip" onclick="filterByChip('Kolkata')">Kolkata</span>
+                <span class="chip" onclick="filterByChip('Hyderabad')">Hyderabad</span>
+                <span class="chip" onclick="filterByChip('Chennai')">Chennai</span>
+                <span class="chip" onclick="filterByChip('Indore')">Indore</span>
+                <span class="chip" onclick="filterByChip('Jaipur')">Jaipur</span>
+                <span class="chip" onclick="filterByChip('Nagpur')">Nagpur</span>
+                <span class="chip" onclick="filterByChip('Surat')">Surat</span>
+                <span class="chip" onclick="filterByChip('Lucknow')">Lucknow</span>
             </div>
 
-            <div id="officerResultsContainer" class="lookup-results-list"></div>
+            <div id="masterResultsContainer" class="lookup-results-list"></div>
         </section>
 
     </main>
@@ -360,14 +364,14 @@
     <!-- Initialize Firebase -->
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyDS5k4y3cudR_1FR_NbJQX_-m7XXyftCXI",
-            authDomain: "apml-hub-directory.firebaseapp.com",
-            databaseURL: "https://apml-hub-directory-default-rtdb.firebaseio.com",
-            projectId: "apml-hub-directory",
-            storageBucket: "apml-hub-directory.firebasestorage.app",
-            messagingSenderId: "1042315421228",
-            appId: "1:1042315421228:web:677ccc4eca1803cd8b1389",
-            measurementId: "G-BVJY1VV84M"
+            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+            authDomain: "apml-portal.firebaseapp.com",
+            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+            projectId: "apml-portal",
+            storageBucket: "apml-portal.firebasestorage.app",
+            messagingSenderId: "479017159240",
+            appId: "1:479017159240:web:90fc2b64776f530874a67d",
+            measurementId: "G-29SHR1VW1G"
         };
 
         if (!firebase.apps.length) {
@@ -377,92 +381,17 @@
 
     <!-- Core Scripts -->
     <script src="common.js?v=21.35"></script>
-    <script src="field-officer.js?v=1"></script>
+    <script src="directory.js?v=1"></script>
 
     <script>
         const db = firebase.database();
-        const officersRef = db.ref('field_officers');
+        const directoryRef = db.ref('directory');
 
-        let officerHelper = null;
-        let loadedOfficerData = [];
+        let directoryHelper = null;
+        let loadedMasterData = [];
         let isAdminMode = false;
 
         const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "kundar.work@gmail.com"];
-
-        const initialExcelOfficers = [
-            { branch: "AHMD", apmCode: "APM9990", name: "JAIPAL SINGH", role: "BFO", mobile: "9289620037", designation: "Marketing Executive", status: "Active" },
-            { branch: "AHMD", apmCode: "APM11767", name: "DHARMENDRA KUMAR", role: "BFO", mobile: "9377787518", designation: "Marketing Executive", status: "Active" },
-            { branch: "AHMD", apmCode: "APM14941", name: "Pankajkumar Bechan Zha", role: "BFO", mobile: "93119 46278", designation: "Marketing Executive", status: "Active" },
-            { branch: "AHMD", apmCode: "APM15425", name: "Gautam Ray", role: "BFO", mobile: "93270 93171", designation: "Marketing Executive", status: "Active" },
-            { branch: "ANK", apmCode: "N/A", name: "MANOJ SHARMA", role: "BFO", mobile: "93116 68190", designation: "Branch Incharge", status: "Assco" },
-            { branch: "AUGD", apmCode: "APM8911", name: "JAYPAL KUMAR MANDAL", role: "BFO", mobile: "7777098396", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHND", apmCode: "APM9152", name: "SUNIL SHUKRU SAHU", role: "BFO", mobile: "7428471925", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHND", apmCode: "APM11205", name: "AVIKANT ATMARAM PARAB", role: "BFO", mobile: "9289697409", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHND", apmCode: "APM8242", name: "DEEPAK BACHCHA UPADHYAY", role: "BFO", mobile: "9326731923", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHND", apmCode: "APM9605", name: "BHAKT BAHADUR KALU SINGH VISHWAKARMA", role: "BFO", mobile: "7428132521", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHPL", apmCode: "APM6936", name: "TARACHAND NORIYA", role: "BFO", mobile: "7303097123", designation: "Marketing Executive", status: "Active" },
-            { branch: "BHPL", apmCode: "APM13078", name: "RAHUL GUPTA", role: "BFO", mobile: "7428 132 368", designation: "Marketing Executive", status: "Active" },
-            { branch: "BRD", apmCode: "APM6129", name: "YASHPAL SINGH", role: "BFO", mobile: "93776 60887", designation: "Marketing Executive", status: "Active" },
-            { branch: "BRD", apmCode: "APM15272", name: "GUDDU KUMAR", role: "BFO", mobile: "92666 20922", designation: "Marketing Executive", status: "Active" },
-            { branch: "CWK", apmCode: "APM10172", name: "ABHIJIT Kumar", role: "BFO", mobile: "7428 132 454", designation: "Marketing Executive", status: "Active" },
-            { branch: "GDHM", apmCode: "N/A", name: "RAKESH SHARMA", role: "BFO", mobile: "93777 35277", designation: "Marketing Executive", status: "Assco" },
-            { branch: "GOA", apmCode: "APM10834", name: "VIKASH SHEKHAWAT", role: "BFO", mobile: "99580 37009", designation: "Marketing Executive", status: "Active" },
-            { branch: "GOA", apmCode: "APM14910", name: "Sunil Odian", role: "BFO", mobile: "93251 01131", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM8181", name: "RAHUL KUMAR JHA", role: "BFO", mobile: "93112 34329", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM8638", name: "AMAN KUMAR KESHAV JHA", role: "BFO", mobile: "89297 63309", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APMPRO0305", name: "DEEPAK PANDEY", role: "BFO", mobile: "7428 131 165", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM14660", name: "ANKESH KUMAR DUBEY", role: "BFO", mobile: "96677 25134", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM11806", name: "VIKASH S PANDEY", role: "BFO", mobile: "92891 34879", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM8233", name: "AJAY KUMAR CHAUDHARY", role: "BFO", mobile: "93112 34328", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM11619", name: "Ajay Kumar Rajbhar", role: "BFO", mobile: "92173 76173", designation: "Marketing Executive", status: "Active" },
-            { branch: "GRGN", apmCode: "APM12914", name: "Arvind Jaiswal", role: "BFO", mobile: "9217376175", designation: "Marketing Executive", status: "Active" },
-            { branch: "IND", apmCode: "APM13110", name: "SANJAY PAL", role: "BFO", mobile: "92897 67436", designation: "Marketing Executive", status: "Active" },
-            { branch: "IND", apmCode: "APM11659", name: "ABHISHEK ROY", role: "BFO", mobile: "97550 47404", designation: "Marketing Executive", status: "Active" },
-            { branch: "JAM", apmCode: "APM9901", name: "ANIL KUMAR", role: "BFO", mobile: "93193 33694", designation: "Branch Incharge", status: "Active" },
-            { branch: "JAM", apmCode: "APM14583", name: "Prakash Kumar", role: "BFO", mobile: "93270 24402", designation: "Marketing Executive", status: "Active" },
-            { branch: "JBPR", apmCode: "APM10978", name: "Saurabh Lodhi", role: "BFO", mobile: "93017 80115", designation: "Marketing Executive", status: "Active" },
-            { branch: "JDP", apmCode: "APM15630", name: "Ratan Singh Nirwan", role: "BFO", mobile: "93522 25553", designation: "Marketing Executive", status: "Active" },
-            { branch: "JLGC", apmCode: "APM11870", name: "SURENDRA KUMAR JOKANLAN SAROJ", role: "BFO", mobile: "96677 25034", designation: "Marketing Executive", status: "Leave" },
-            { branch: "KLH", apmCode: "N/A", name: "BADRINATH SHINDE", role: "BFO", mobile: "93116 68184", designation: "Branch Incharge", status: "Assco" },
-            { branch: "KRB", apmCode: "APM8306", name: "Rajan Kumar", role: "BFO", mobile: "7428132038", designation: "Branch Incharge", status: "Active" },
-            { branch: "MUM", apmCode: "APM9355", name: "SHAIKH MOHD MUZAMMIL MOHD FAROOQUE", role: "BFO", mobile: "92891 34878", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM9923", name: "ROBERT ANTHONY DSOUZA", role: "BFO", mobile: "93112 21864", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM12620", name: "SUBHASH KUMAR MANDAL", role: "BFO", mobile: "96670 74909", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM11240", name: "PANKAJ KUMAR", role: "BFO", mobile: "7428 132 719", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM9391", name: "RIHAN AHMED FAIYAZ AHMED SHAIKH", role: "BFO", mobile: "92891 44934", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM12714", name: "BRIJMOHAN YOGENDRA MANDAL", role: "BFO", mobile: "92897 67426", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM15228", name: "Pramod Kumar Mandal", role: "BFO", mobile: "92173 37223", designation: "Marketing Executive", status: "Active" },
-            { branch: "MUM", apmCode: "APM15428", name: "Narayan Ray", role: "BFO", mobile: "92173 37246", designation: "Marketing Executive", status: "Active" },
-            { branch: "NGP", apmCode: "APM12954", name: "KAMAL KUMAR", role: "BFO", mobile: "93251 62372", designation: "Marketing Executive", status: "Leave" },
-            { branch: "NGP", apmCode: "APM11043", name: "DHIRAJ DILIP NARNAWARE", role: "BFO", mobile: "93256 68615", designation: "Branch Incharge", status: "Active" },
-            { branch: "NMUM", apmCode: "APM11495", name: "PARMESH PASWAN", role: "BFO", mobile: "92890 52849", designation: "Marketing Executive", status: "Active" },
-            { branch: "NMUM", apmCode: "APM8323", name: "GOPAL PANDIT", role: "BFO", mobile: "92892 78248", designation: "Marketing Executive", status: "Active" },
-            { branch: "NMUM", apmCode: "APM10740", name: "ROHAN BHAGWAN DHANKE", role: "BFO", mobile: "92896 62710", designation: "Marketing Executive", status: "Active" },
-            { branch: "NMUM", apmCode: "APM11340", name: "SURAJ SHIVAJI DHULUGADE", role: "BFO", mobile: "98212 15268", designation: "Marketing Executive", status: "Active" },
-            { branch: "NSK", apmCode: "N/A", name: "Ajit Sharma", role: "BFO", mobile: "93116 68206", designation: "Branch Incharge", status: "Assco" },
-            { branch: "PUN", apmCode: "APM14758", name: "RAJESH KUMAR UPADHYAY", role: "BFO", mobile: "93727 34321", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM13550", name: "RAVI SHARMA", role: "BFO", mobile: "93722 44129", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM11636", name: "LALIT KUMAR", role: "BFO", mobile: "7428 469 233", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM9986", name: "DURGESH KUMAR PASWAN", role: "BFO", mobile: "92891 44946", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM9868", name: "JAVED AKHTAR", role: "BFO", mobile: "92892 78237", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM1215", name: "KUSHESHWAR KUMAR", role: "BFO", mobile: "93253 54321", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM11411", name: "SOURAV PRADHAN", role: "BFO", mobile: "99587 62165", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM12460", name: "SURESH KUMAR MANDAL", role: "BFO", mobile: "92666 20798", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM12689", name: "RITIK SHARMA", role: "BFO", mobile: "98211 00876", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM0228", name: "ASHOK KUMAR SHARMA", role: "BFO", mobile: "93258 11154", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM13913", name: "SANJAY KUMAR PATHAK", role: "BFO", mobile: "98210 02656", designation: "Marketing Executive", status: "Active" },
-            { branch: "PUN", apmCode: "APM13709", name: "GAVIN ELVIS DSOUZA", role: "BFO", mobile: "92204 90110", designation: "Marketing Executive", status: "Left" },
-            { branch: "RAI", apmCode: "APM15407", name: "GAURI SHANKAR SHUKLA", role: "BFO", mobile: "9329361626", designation: "Marketing Executive", status: "Active" },
-            { branch: "RAI", apmCode: "APM14058", name: "Anmol Kumar Jha", role: "BFO", mobile: "85217 39708", designation: "Marketing Executive", status: "Active" },
-            { branch: "RKT", apmCode: "APM12959", name: "SHYALU KUMAR SAINI", role: "BFO", mobile: "93768 81185", designation: "Marketing Executive", status: "Active" },
-            { branch: "RKT", apmCode: "APM8398", name: "SURENDER SINGH", role: "BFO", mobile: "9537797122/9327584321", designation: "Branch Incharge", status: "Active" },
-            { branch: "SRT", apmCode: "APM14147", name: "ASHOK SHARMA", role: "BFO", mobile: "98210 02628", designation: "Marketing Executive", status: "Leave" },
-            { branch: "SRT", apmCode: "APM12040", name: "LAXMICHAND", role: "BFO", mobile: "93276 59101", designation: "Marketing Executive", status: "Active" },
-            { branch: "STNA", apmCode: "APM9998", name: "Brij Kishor Mishra", role: "BFO", mobile: "9311775197", designation: "Branch Incharge", status: "Active" },
-            { branch: "UDPC", apmCode: "APM11973", name: "Pawan Sharma", role: "BFO", mobile: "9205997342", designation: "Branch Incharge", status: "Active" },
-            { branch: "UDPC", apmCode: "APM15578", name: "Anish Kumar", role: "BFO", mobile: "7428 819 361", designation: "Marketing Executive", status: "Active" },
-            { branch: "VPI", apmCode: "APM10886", name: "RAJPOOT SHUBHAM", role: "BFO", mobile: "7428131405", designation: "Marketing Executive", status: "Active" }
-        ];
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -473,34 +402,30 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            officerHelper = new APMLFieldOfficerDirectory('officerResultsContainer', 'officerSearchInput');
+            directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
-            officersRef.on('value', (snapshot) => {
+            directoryRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 
                 if (!data || Object.keys(data).length === 0) {
-                    const updates = {};
-                    initialExcelOfficers.forEach((officer, index) => {
-                        const newKey = officersRef.push().key;
-                        updates[newKey] = { ...officer, timestamp: Date.now() + index, isDeleted: false };
-                    });
-                    officersRef.update(updates).catch(err => console.error("Seeding error:", err));
+                    document.getElementById('recordCount').innerText = "0";
+                    hideLoadingOverlay();
                     return;
                 }
 
-                loadedOfficerData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                document.getElementById('recordCount').innerText = loadedOfficerData.filter(i => !i.isDeleted).length;
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.filter(i => !i.isDeleted).length;
 
-                officerHelper.setData(loadedOfficerData);
+                directoryHelper.setData(loadedMasterData);
                 hideLoadingOverlay();
             });
         });
 
         function filterByChip(term) {
-            const input = document.getElementById('officerSearchInput');
-            if (input && officerHelper) {
+            const input = document.getElementById('masterSearchInput');
+            if (input && directoryHelper) {
                 input.value = term;
-                officerHelper.filterData(term);
+                directoryHelper.filterData(term);
             }
         }
 
@@ -537,8 +462,8 @@
                             timer: 3000
                         });
 
-                        if (officerHelper) {
-                            officerHelper.toggleAdminView(true);
+                        if (directoryHelper) {
+                            directoryHelper.toggleAdminView(true);
                         }
                     })
                     .catch((error) => {
@@ -562,52 +487,53 @@
                             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
                         </svg>`;
 
-                    if (officerHelper) {
-                        officerHelper.toggleAdminView(false);
+                    if (directoryHelper) {
+                        directoryHelper.toggleAdminView(false);
                     }
                 });
             }
         }
 
-        // Open SweetAlert modal to create new officer
-        window.openCreateOfficerModal = async function() {
+        // Open SweetAlert modal to create new contact
+        window.openCreateContactModal = async function() {
             const { value: formValues } = await Swal.fire({
-                title: 'Create New Field Officer',
+                title: 'Create New Contact',
                 html:
-                    '<input id="swal-name" class="swal2-input" placeholder="Officer Name *">' +
-                    '<input id="swal-branch" class="swal2-input" placeholder="Branch Code (e.g., MUM, PUN) *">' +
-                    '<input id="swal-apm" class="swal2-input" placeholder="APM Code (e.g., APM9990)">' +
-                    '<input id="swal-mobile" class="swal2-input" placeholder="Mobile Number *">' +
-                    '<select id="swal-desig" class="swal2-input"><option value="Marketing Executive">Marketing Executive</option><option value="Branch Incharge">Branch Incharge</option></select>' +
-                    '<select id="swal-status" class="swal2-input"><option value="Active">Active</option><option value="Assco">Assco</option><option value="Leave">Leave</option><option value="Left">Left</option></select>',
+                    '<input id="swal-category" class="swal2-input" placeholder="Category (e.g., Hub / Branch)">' +
+                    '<input id="swal-location" class="swal2-input" placeholder="Location / Branch Name">' +
+                    '<input id="swal-region" class="swal2-input" placeholder="Region">' +
+                    '<input id="swal-designation" class="swal2-input" placeholder="Designation / Role">' +
+                    '<input id="swal-name" class="swal2-input" placeholder="Contact Person Name">' +
+                    '<input id="swal-contact" class="swal2-input" placeholder="Contact Number">' +
+                    '<input id="swal-address" class="swal2-input" placeholder="Full Address">',
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonColor: '#c21d1d',
                 preConfirm: () => {
                     return {
+                        category: document.getElementById('swal-category').value.trim(),
+                        location: document.getElementById('swal-location').value.trim(),
+                        region: document.getElementById('swal-region').value.trim(),
+                        designation: document.getElementById('swal-designation').value.trim(),
                         name: document.getElementById('swal-name').value.trim(),
-                        branch: document.getElementById('swal-branch').value.trim().toUpperCase(),
-                        apmCode: document.getElementById('swal-apm').value.trim() || 'N/A',
-                        mobile: document.getElementById('swal-mobile').value.trim(),
-                        designation: document.getElementById('swal-desig').value,
-                        role: 'BFO',
-                        status: document.getElementById('swal-status').value,
+                        contact: document.getElementById('swal-contact').value.trim(),
+                        address: document.getElementById('swal-address').value.trim(),
                         isDeleted: false
                     }
                 }
             });
 
             if (formValues) {
-                if (!formValues.name || !formValues.branch || !formValues.mobile) {
-                    Swal.fire('Error', 'Name, Branch, and Mobile are required fields!', 'error');
+                if (!formValues.name || !formValues.location) {
+                    Swal.fire('Error', 'Name and Location are required fields!', 'error');
                     return;
                 }
 
-                officersRef.push(formValues).then(() => {
+                directoryRef.push(formValues).then(() => {
                     Swal.fire({
                         position: 'top-end',
                         icon: 'success',
-                        title: 'New field officer created successfully!',
+                        title: 'New contact created successfully!',
                         showConfirmButton: false,
                         timer: 1500
                     });
@@ -617,59 +543,54 @@
             }
         };
 
-        window.startEditOfficer = async function(id) {
-            const officer = loadedOfficerData.find(i => String(i.id) === String(id));
-            if (!officer) return;
+        window.saveRecord = function(id) {
+            const updatedData = {
+                category: document.getElementById(`cat_${id}`).value.trim(),
+                location: document.getElementById(`loc_${id}`).value.trim(),
+                region: document.getElementById(`reg_${id}`).value.trim(),
+                designation: document.getElementById(`des_${id}`).value.trim(),
+                name: document.getElementById(`nam_${id}`).value.trim(),
+                contact: document.getElementById(`con_${id}`).value.trim(),
+                address: document.getElementById(`adr_${id}`).value.trim()
+            };
 
-            const { value: formValues } = await Swal.fire({
-                title: `Edit Officer: ${officer.name || ''}`,
-                html:
-                    `<input id="swal-name" class="swal2-input" placeholder="Officer Name *" value="${officer.name || ''}">` +
-                    `<input id="swal-branch" class="swal2-input" placeholder="Branch Code *" value="${officer.branch || ''}">` +
-                    `<input id="swal-apm" class="swal2-input" placeholder="APM Code" value="${officer.apmCode || ''}">` +
-                    `<input id="swal-mobile" class="swal2-input" placeholder="Mobile Number *" value="${officer.mobile || ''}">` +
-                    `<select id="swal-desig" class="swal2-input"><option value="Marketing Executive" ${officer.designation==='Marketing Executive'?'selected':''}>Marketing Executive</option><option value="Branch Incharge" ${officer.designation==='Branch Incharge'?'selected':''}>Branch Incharge</option></select>` +
-                    `<select id="swal-status" class="swal2-input"><option value="Active" ${officer.status==='Active'?'selected':''}>Active</option><option value="Assco" ${officer.status==='Assco'?'selected':''}>Assco</option><option value="Leave" ${officer.status==='Leave'?'selected':''}>Leave</option><option value="Left" ${officer.status==='Left'?'selected':''}>Left</option></select>`,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonColor: '#c21d1d',
-                preConfirm: () => {
-                    return {
-                        name: document.getElementById('swal-name').value.trim(),
-                        branch: document.getElementById('swal-branch').value.trim().toUpperCase(),
-                        apmCode: document.getElementById('swal-apm').value.trim() || 'N/A',
-                        mobile: document.getElementById('swal-mobile').value.trim(),
-                        designation: document.getElementById('swal-desig').value,
-                        status: document.getElementById('swal-status').value
-                    }
-                }
+            const existing = loadedMasterData.find(i => String(i.id) === String(id));
+            if (existing && existing.isDeleted) {
+                updatedData.isDeleted = true;
+            }
+
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).set(updatedData).then(() => {
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Your work has been saved",
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+                toggleEditCard(id);
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Error updating record: " + err.message
+                });
             });
-
-            if (formValues) {
-                if (!formValues.name || !formValues.branch || !formValues.mobile) {
-                    Swal.fire('Error', 'Name, Branch, and Mobile are required fields!', 'error');
-                    return;
-                }
-
-                officersRef.child(id).update(formValues).then(() => {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'Officer details updated successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }).catch(err => {
-                    Swal.fire('Error', err.message, 'error');
-                });
-            }
         };
 
-        // Soft Delete
-        window.deleteOfficer = function(id) {
+        // Soft Delete: sets isDeleted: true using exact database key lookup
+        window.deleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+<source_citation_guidelines>
+...
+</source_citation_guidelines>
             Swal.fire({
               title: "Are you sure?",
-              text: "This officer will be hidden from the directory page.",
+              text: "This contact will be hidden from the directory page.",
               icon: "warning",
               showCancelButton: true,
               confirmButtonColor: "#c21d1d",
@@ -677,31 +598,32 @@
               confirmButtonText: "Yes, delete it!"
             }).then((result) => {
               if (result.isConfirmed) {
-                officersRef.child(id).update({ isDeleted: true }).then(() => {
+                directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
                   Swal.fire({
                     title: "Deleted!",
-                    text: "Officer has been hidden from the page.",
-                    icon: "success",
-                    timer: 1500,
-                    showConfirmButton: false
+                    text: "Your file has been deleted.",
+                    icon: "success"
                   });
                 }).catch(err => {
                   Swal.fire({
                     icon: "error",
                     title: "Oops...",
-                    text: "Error hiding record: " + err.message
+                    text: "Error deleting record: " + err.message
                   });
                 });
               }
             });
         };
 
-        // Restore Officer
-        window.restoreOfficer = function(id) {
-            officersRef.child(id).update({ isDeleted: false }).then(() => {
+        // Restore contact
+        window.restoreRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).update({ isDeleted: false }).then(() => {
                 Swal.fire({
                   title: "Restored!",
-                  text: "Officer is now active again.",
+                  text: "Contact is now active again.",
                   icon: "success",
                   timer: 1500,
                   showConfirmButton: false
@@ -716,10 +638,13 @@
         };
 
         // Permanent Delete
-        window.permanentDeleteOfficer = function(id) {
+        window.permanentDeleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
             Swal.fire({
               title: "Delete Permanently?",
-              text: "This will permanently remove the officer from the database. You won't be able to recover this!",
+              text: "This will permanently remove the contact from the database. You won't be able to recover this!",
               icon: "error",
               showCancelButton: true,
               confirmButtonColor: "#dc2626",
@@ -727,10 +652,10 @@
               confirmButtonText: "Yes, delete permanently!"
             }).then((result) => {
               if (result.isConfirmed) {
-                officersRef.child(id).remove().then(() => {
+                directoryRef.child(targetKey).remove().then(() => {
                   Swal.fire({
                     title: "Permanently Deleted!",
-                    text: "The officer has been permanently removed.",
+                    text: "The contact has been permanently removed.",
                     icon: "success",
                     timer: 1500,
                     showConfirmButton: false
