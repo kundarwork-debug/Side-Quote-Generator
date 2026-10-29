@@ -1,5 +1,5 @@
 // =========================================================
-// APML DIRECTORY HELPER (directory.js) - Light Theme with Edit & Delete
+// APML DIRECTORY HELPER (directory.js) - Google Contacts List Style with Toggle Edit Box
 // =========================================================
 
 class APMLDirectory {
@@ -38,86 +38,144 @@ class APMLDirectory {
     
     if (!items || items.length === 0) {
       this.container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted, #78716c); font-weight: 600;">
+        <div style="text-align: center; padding: 40px; color: #78716c; font-weight: 600;">
           No matching records found.
         </div>`;
       return;
     }
 
-    this.container.innerHTML = items.map((item, index) => {
+    // Google Contacts table header style
+    let html = `
+      <div style="background: #ffffff; border: 1px solid #ede4de; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px -2px rgba(120, 113, 108, 0.05);">
+        <div style="display: grid; grid-template-columns: 2fr 2fr 2fr 1fr; padding: 14px 24px; border-bottom: 1px solid #ede4de; font-size: 12px; font-weight: 700; color: #78716c; text-transform: uppercase; letter-spacing: 0.05em;">
+          <div>Name / Category</div>
+          <div>Location / Region</div>
+          <div>Contact Number</div>
+          <div style="text-align: right;">Actions</div>
+        </div>
+        <div style="display: flex; flex-direction: column;">
+    `;
+
+    html += items.map((item, index) => {
       const recordId = item.id !== undefined ? item.id : index;
-      const category = item.category || '';
-      const location = item.location || '';
+      const category = item.category || 'Record';
+      const location = item.location || 'N/A';
       const region = item.region || '';
       const designation = item.designation || '';
-      const name = item.name || '';
-      const contact = item.contact || '';
+      const name = item.name || 'Unnamed';
+      const contact = item.contact || 'No Number';
       const address = item.address || '';
 
       const isHub = String(category).includes('Hub');
-      const badgeColor = isHub ? '#0284c7' : '#c21d1d';
-      const badgeBg = isHub ? '#e0f2fe' : 'rgba(194, 29, 29, 0.08)';
+      const avatarBg = isHub ? '#0284c7' : '#c21d1d';
+      const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AP';
 
       return `
-        <div class="directory-card" style="background: #ffffff; border: 1.5px solid var(--border-subtle, #ede4de); border-left: 4px solid ${badgeColor}; border-radius: 16px; padding: 20px; box-shadow: 0 4px 16px rgba(120, 113, 108, 0.04); display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 10.5px; font-weight: 800; color: ${badgeColor}; background: ${badgeBg}; padding: 2px 10px; border-radius: 9999px; text-transform: uppercase; display: inline-block;">
-              ${escapeHtml(category || 'Record')}
-            </span>
-            <span style="font-size: 11px; font-family: monospace; color: var(--text-muted, #78716c); font-weight: 700;">ID: #${escapeHtml(String(recordId))}</span>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Category</label>
-              <input id="cat_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(category)}">
+        <div id="row_view_${recordId}" style="display: grid; grid-template-columns: 2fr 2fr 2fr 1fr; padding: 14px 24px; border-bottom: 1px solid #f3effc; align-items: center; transition: background 0.15s ease;" onmouseover="this.style.background='#faf5f2'" onmouseout="this.style.background='#ffffff'">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="width: 38px; height: 38px; border-radius: 50%; background: ${avatarBg}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+              ${escapeHtml(initials)}
             </div>
-            <div>
-              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Location / Branch</label>
-              <input id="loc_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(location)}">
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 14px; font-weight: 700; color: #292524;">${escapeHtml(name)}</span>
+              <span style="font-size: 11.5px; color: #78716c; font-weight: 600;">${escapeHtml(designation || category)}</span>
             </div>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Region</label>
-              <input id="reg_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(region)}">
-            </div>
-            <div>
-              <label style="display: block; font-size: 11.5px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Designation / Role</label>
-              <input id="des_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(designation)}">
-            </div>
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 13.5px; font-weight: 600; color: #44403c;">${escapeHtml(location)}</span>
+            <span style="font-size: 11.5px; color: #78716c;">${escapeHtml(region)}</span>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div>
-              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Contact Person Name</label>
-              <input id="nam_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(name)}">
-            </div>
-            <div>
-              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Contact Number</label>
-              <input id="con_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(contact)}">
-            </div>
+          <div style="font-size: 13.5px; font-weight: 600; color: #44403c;">
+            ${escapeHtml(contact)}
           </div>
 
-          <div>
-            <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary, #44403c); margin-bottom: 4px;">Full Address</label>
-            <input id="adr_${recordId}" style="width: 100%; padding: 10px 14px; font-size: 13.5px; font-weight: 600; border: 1.5px solid var(--border-subtle, #ede4de); border-radius: 8px; outline: none; background: #ffffff; color: var(--text-main, #292524);" value="${escapeHtml(address)}">
-          </div>
-
-          <div style="display: flex; gap: 10px; margin-top: 6px; padding-top: 10px; border-top: 1px dashed var(--border-subtle, #ede4de);">
-            <button onclick="saveRecord('${recordId}')" style="flex: 1; padding: 10px; background: #0284c7; color: #ffffff; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
-              Edit / Save
+          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button onclick="toggleEditCard('${recordId}')" title="Edit" style="background: transparent; border: 1.5px solid #ede4de; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0284c7; transition: all 0.2s ease;" onmouseover="this.style.background='#e0f2fe'; this.style.borderColor='#0284c7'" onmouseout="this.style.background='transparent'; this.style.borderColor='#ede4de'">
+              <span class="material-symbols-outlined" style="font-size: 18px;">edit</span>
             </button>
-            <button onclick="deleteRecord('${recordId}')" style="flex: 1; padding: 10px; background: #dc2626; color: #ffffff; border: none; border-radius: 8px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">
-              Delete
+            <button onclick="deleteRecord('${recordId}')" title="Delete" style="background: transparent; border: 1.5px solid #ede4de; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #dc2626; transition: all 0.2s ease;" onmouseover="this.style.background='#fee2e2'; this.style.borderColor='#dc2626'" onmouseout="this.style.background='transparent'; this.style.borderColor='#ede4de'">
+              <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
             </button>
+          </div>
+        </div>
+
+        <!-- EXPANDED EDIT BOX (Hidden by default, shows on Edit click) -->
+        <div id="row_edit_${recordId}" style="display: none; padding: 24px; background: #faf5f2; border-bottom: 1px solid #ede4de;">
+          <div style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px;">
+            <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #c21d1d; display: flex; align-items: center; gap: 8px;">
+              <span class="material-symbols-outlined">badge</span>
+              Edit Record Details (#${escapeHtml(String(recordId))})
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Category</label>
+                <input id="cat_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(category)}">
+              </div>
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Location / Branch</label>
+                <input id="loc_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(location)}">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Region</label>
+                <input id="reg_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(region)}">
+              </div>
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Designation / Role</label>
+                <input id="des_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(designation)}">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Contact Person Name</label>
+                <input id="nam_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(name)}">
+              </div>
+              <div>
+                <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Contact Number</label>
+                <input id="con_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(contact)}">
+              </div>
+            </div>
+
+            <div>
+              <label style="display: block; font-size: 11.5px; font-weight: 700; color: #44403c; margin-bottom: 4px;">Full Address</label>
+              <input id="adr_${recordId}" style="width: 100%; padding: 12px 16px; font-size: 14px; font-weight: 600; border: 1.5px solid #ede4de; border-radius: 8px; outline: none;" value="${escapeHtml(address)}">
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 6px;">
+              <button onclick="toggleEditCard('${recordId}')" style="padding: 10px 20px; background: #f3effc; color: #44403c; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                Cancel
+              </button>
+              <button onclick="saveRecord('${recordId}')" style="padding: 10px 24px; background: #0284c7; color: #ffffff; border: none; border-radius: 9999px; font-size: 13px; font-weight: 700; cursor: pointer;">
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       `;
     }).join('');
+
+    html += `</div></div>`;
+    this.container.innerHTML = html;
   }
 }
+
+// Global helper to toggle the expanded edit box
+window.toggleEditCard = function(id) {
+  const editBox = document.getElementById(`row_edit_${id}`);
+  if (editBox) {
+    if (editBox.style.display === 'none' || !editBox.style.display) {
+      editBox.style.display = 'block';
+    } else {
+      editBox.style.display = 'none';
+    }
+  }
+};
 
 function escapeHtml(str) {
   return String(str || '').replace(/[&<>"']/g, c => ({
