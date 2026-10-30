@@ -76,11 +76,20 @@
             vertical-align: middle;
         }
 
-        /* LIGHT THEME TRUCK LOADING SCREEN STYLES */
+        /* FORCE ALL CONTACT INITIAL AVATARS TO USE THE PAGE THEME COLOR */
+        #masterResultsContainer div[style*="background-color"],
+        #masterResultsContainer [class*="avatar"],
+        #masterResultsContainer [class*="initials"],
+        .lookup-results-list div[style*="background"] {
+            background-color: var(--primary) !important;
+            color: #ffffff !important;
+        }
+
+        /* LIGHT THEME TRUCK ANIMATION LOADING SCREEN STYLES */
         #pageLoadingOverlay {
             position: fixed;
             inset: 0;
-            background: var(--bg-base);
+            background: #FDF8F5;
             z-index: 999999;
             display: flex;
             flex-direction: column;
@@ -799,7 +808,7 @@
               text: "This contact will be hidden from the directory page.",
               icon: "warning",
               showCancelButton: true,
-              confirmButtonColor: '#c21d1d',
+              confirmButtonColor: "#c21d1d",
               cancelButtonColor: "#78716c",
               confirmButtonText: "Yes, delete it!"
             }).then((result) => {
