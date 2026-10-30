@@ -1278,7 +1278,7 @@
       return isAdminMode;
     }
 
-    // Admin View Toggle with Google Login & Email Restriction (Matching directory.html)
+    // Admin View Toggle with Google Login & Email Restriction
     function toggleAdminMode() {
       if (!isAdminMode) {
         const provider = new firebase.auth.GoogleAuthProvider();
@@ -1373,7 +1373,16 @@
 
     function renderFolderControls() {
       const filterBar = document.getElementById('filterBar');
-      let visibleFolders = foldersList;
+      let visibleFolders = [...foldersList];
+
+      // Conditionally show Trash Archive folder ONLY when logged in as admin
+      if (isCurrentUserAdmin()) {
+        visibleFolders.push({
+          id: 'deleted',
+          label: 'Trash Archive',
+          icon: 'delete_sweep'
+        });
+      }
 
       let tabsHtml = `
         <div class="filter-item-wrapper ${currentActiveFolder === '' ? 'active' : ''}" ondragover="allowDrop(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropOnFolder(event, '')" title="Drop files here to move to All Media">
@@ -1384,7 +1393,7 @@
       `;
 
       tabsHtml += visibleFolders.map(folder => {
-        const isProtectedFolder = ['truck', 'crockery', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others'].includes(folder.id);
+        const isProtectedFolder = ['truck', 'crockery', 'packing-images', 'bike-packing', 'car-transportation', 'solid-box', 'tv-box', 'electronic', 'furniture', 'miscellaneous', 'others', 'deleted'].includes(folder.id);
         const adminAuthenticated = isCurrentUserAdmin();
         const adminActions = adminAuthenticated && !isProtectedFolder ? `
           <span class="folder-admin-actions" onclick="event.stopPropagation()">
@@ -1419,7 +1428,7 @@
       if (uploadSelect) {
         const prevVal = uploadSelect.value;
         let selectOptions = `<option value="" disabled selected>-- Select Folder (Compulsory) * --</option>`;
-        selectOptions += visibleFolders.map(f => `
+        selectOptions += foldersList.map(f => `
           <option value="${f.id}" ${prevVal === f.id ? 'selected' : ''}>${f.label}</option>
         `).join('');
         uploadSelect.innerHTML = selectOptions;
@@ -1432,7 +1441,7 @@
       renderFolderControls();
       renderGallery();
       const uploadSelect = document.getElementById('uploadFolderSelect');
-      if (uploadSelect && folderId) {
+      if (uploadSelect && folderId && folderId !== 'deleted') {
         uploadSelect.value = folderId;
         uploadSelect.classList.remove('select-highlight-error');
       }
@@ -1508,13 +1517,13 @@
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const folder = currentActiveFolder || uploadSelect.value;
 
-      if (!folder) {
+      if (!folder || folder === 'deleted') {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         Swal.fire({
           icon: "error",
           title: "Folder Required",
-          text: "Please select a destination folder first!"
+          text: "Please select a valid destination folder first!"
         });
         return;
       }
@@ -1561,13 +1570,13 @@
     function openCatboxModal() {
       const uploadSelect = document.getElementById('uploadFolderSelect');
       const folder = currentActiveFolder || uploadSelect.value;
-      if (!folder) {
+      if (!folder || folder === 'deleted') {
         uploadSelect.classList.add('select-highlight-error');
         uploadSelect.focus();
         Swal.fire({
           icon: "error",
           title: "Folder Required",
-          text: "Please select a destination folder first!"
+          text: "Please select a valid destination folder first!"
         });
         return;
       }
@@ -1648,7 +1657,7 @@
       const statusText = document.getElementById('uploadStatusText');
       const uploadBtn = document.getElementById('uploadPhotoBtn');
 
-      if (!folder) return;
+      if (!folder || folder === 'deleted') return;
 
       uploadBtn.disabled = true;
       let successCount = 0;
@@ -2134,23 +2143,6 @@
       const loader = document.getElementById(`card-loader-${key}`);
       if (loader) {
         loader.classList.add('fade-out');
-      }
-    }
-
-    function openVideoLightbox(firebaseKey, videoUrl) {
-      recordInteraction(firebaseKey, 'viewsCount');
-      const overlay = document.getElementById('mediaLightboxModal');
-      const slot = document.getElementById('lightboxMediaSlot');
-      slot.innerHTML = `<video src="${videoUrl}" controls autoplay playsinline style="max-width:100%; max-height:80vh; border-radius:12px;"></video>`;
-      overlay.classList.add('active');
-    }
-
-    function closeLightbox(evt) {
-      if (evt.target.id === 'mediaLightboxModal' || evt.target.closest('.btn-lightbox-close')) {
-        const overlay = document.getElementById('mediaLightboxModal');
-        const slot = document.getElementById('lightboxMediaSlot');
-        overlay.classList.remove('active');
-        slot.innerHTML = '';
       }
     }
 
