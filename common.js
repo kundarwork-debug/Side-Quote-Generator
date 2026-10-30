@@ -12,6 +12,150 @@
 })();
 
 // =========================================================
+// DIWALI FESTIVE THEME & ANIMATION OVERLAY
+// =========================================================
+(function initDiwaliTheme() {
+  if (document.getElementById('apmlDiwaliStyles')) return;
+
+  const style = document.createElement('style');
+  style.id = 'apmlDiwaliStyles';
+  style.innerHTML = `
+    body.diwali-theme {
+      background: radial-gradient(circle at 50% 10%, rgba(251, 191, 36, 0.18) 0%, transparent 60%),
+                  radial-gradient(circle at 85% 90%, rgba(249, 115, 22, 0.12) 0%, transparent 50%),
+                  linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%) !important;
+    }
+
+    body.diwali-theme .ambient-glow,
+    body.diwali-theme .ambient-bg {
+      background: 
+        radial-gradient(circle at 50% 18%, rgba(251, 191, 36, 0.45) 0%, transparent 65%),
+        radial-gradient(circle at 85% 85%, rgba(249, 115, 22, 0.35) 0%, transparent 55%) !important;
+    }
+
+    .diwali-sparkle {
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      background: #fbbf24;
+      border-radius: 50%;
+      pointer-events: none;
+      box-shadow: 0 0 12px #f59e0b, 0 0 24px #d97706;
+      animation: floatUpward 4.5s linear infinite;
+      z-index: 99998;
+    }
+
+    @keyframes floatUpward {
+      0% { transform: translateY(100vh) scale(0.4); opacity: 0; }
+      15% { opacity: 0.95; }
+      85% { opacity: 0.85; }
+      100% { transform: translateY(-10vh) scale(1.3); opacity: 0; }
+    }
+
+    #diwaliBanner {
+      background: linear-gradient(135deg, #991b1b, #b91c1c);
+      color: #fef08a;
+      text-align: center;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: sticky;
+      top: 64px;
+      z-index: 999;
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+    }
+
+    #diwaliToggleBtn {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+      z-index: 99999;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    #diwaliToggleBtn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6);
+    }
+  `;
+  document.head.appendChild(style);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementById('diwaliBanner')) {
+      const banner = document.createElement('div');
+      banner.id = 'diwaliBanner';
+      banner.innerHTML = `
+        <span class="material-symbols-outlined" style="font-size: 18px; color: #fde047;">flare</span>
+        <span>✨ Wishing you a very Happy &amp; Prosperous Diwali from APML Portal! May your operations shine bright. ✨</span>
+        <span class="material-symbols-outlined" style="font-size: 18px; cursor: pointer; opacity: 0.8;" onclick="document.getElementById('diwaliBanner').style.display='none'">close</span>
+      `;
+      document.body.prepend(banner);
+    }
+
+    if (!document.getElementById('diwaliToggleBtn')) {
+      const toggleBtn = document.createElement('button');
+      toggleBtn.id = 'diwaliToggleBtn';
+      toggleBtn.title = "Toggle Diwali Festive Mode";
+      toggleBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 24px;">outdoor_grill</span>`;
+      document.body.appendChild(toggleBtn);
+
+      let sparkInterval = null;
+      function spawnSparkle() {
+        if (!document.body.classList.contains('diwali-theme')) return;
+        const sparkle = document.createElement('div');
+        sparkle.className = 'diwali-sparkle';
+        sparkle.style.left = Math.random() * window.innerWidth + 'px';
+        sparkle.style.animationDuration = (3 + Math.random() * 3) + 's';
+        sparkle.style.opacity = Math.random();
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 5000);
+      }
+
+      let isDiwaliActive = localStorage.getItem('apml_diwali_mode') !== 'false';
+
+      function setDiwaliMode(active) {
+        isDiwaliActive = active;
+        localStorage.setItem('apml_diwali_mode', active);
+        if (active) {
+          document.body.classList.add('diwali-theme');
+          const b = document.getElementById('diwaliBanner');
+          if (b) b.style.display = 'flex';
+          if (!sparkInterval) sparkInterval = setInterval(spawnSparkle, 350);
+        } else {
+          document.body.classList.remove('diwali-theme');
+          const b = document.getElementById('diwaliBanner');
+          if (b) b.style.display = 'none';
+          if (sparkInterval) {
+            clearInterval(sparkInterval);
+            sparkInterval = null;
+          }
+          document.querySelectorAll('.diwali-sparkle').forEach(el => el.remove());
+        }
+      }
+
+      toggleBtn.addEventListener('click', () => setDiwaliMode(!isDiwaliActive));
+      setDiwaliMode(isDiwaliActive);
+    }
+  });
+})();
+
+// =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
 function logDailyActivity(type) {
