@@ -1,890 +1,1792 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>APML Hub & Branch Directory</title>
-    
-    <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
-    <link rel="stylesheet" href="common.css?v=21.35">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Quotation Editor - APML Support Page</title>
+<meta name="description" content="APML Quotation Editor lets you draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers estimates as ready-to-share PDF documents.">
+<meta name="keywords" content="APML Quotation Editor, APML Estimate Generator, Exact Container Logistics Quotation, Maxcare Packers Movers Estimate, APML PDF Quote">
+<link rel="canonical" href="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
-    <!-- SweetAlert2 Library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Open Graph / social preview -->
+<meta property="og:title" content="Quotation Editor - APML Support Page">
+<meta property="og:description" content="Draft, customize, and export professional Exact Container Logistics and Maxcare Packers & Movers quotations as ready-to-share PDF documents.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<!-- Network/Hub SVG Favicon from root folder -->
+<link rel="icon" type="image/svg+xml" href="logo.svg?v=18.0">
+<link rel="manifest" href="./manifest.json">
 
-    <style>
-        :root {
-            --primary: #c21d1d;
-            --primary-dark: #991b1b;
-            --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
-            --primary-soft: rgba(194, 29, 29, 0.08);
-            
-            --bg-base: #FDF8F5;
-            --surface-card: #FFFFFF;
-            
-            --border-subtle: #ede4de;
-            --border-hover: rgba(194, 29, 29, 0.35);
-            
-            --text-main: #292524;
-            --text-secondary: #44403c;
-            --text-muted: #78716c;
-            
-            --radius-xl: 20px;
-            --radius-pill: 9999px;
-            
-            --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
-            --shadow-float: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
-            
-            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-display: 'Space Grotesk', sans-serif;
-        }
+<link rel="stylesheet" href="common.css?v=18.0">
 
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-            overflow-y: scroll !important;
-            height: 100%;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-sans);
-            touch-action: manipulation;
-        }
+<!-- SWEETALERT2 CDN & CSS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            min-height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            overflow-y: visible !important;
-            position: relative;
-            -webkit-font-smoothing: antialiased;
-            padding-top: 80px;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
-        }
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-        /* FORCE ALL CONTACT INITIAL AVATARS TO USE THE PAGE THEME COLOR */
-        #masterResultsContainer div[style*="background-color"],
-        #masterResultsContainer [class*="avatar"],
-        #masterResultsContainer [class*="initials"],
-        .lookup-results-list div[style*="background"] {
-            background-color: var(--primary) !important;
-            color: #ffffff !important;
-        }
+<style>
+  /* =========================================================
+     MATCHED WARM CREAM / MAIN PAGE COLOR SYSTEM
+     ========================================================= */
+  :root {
+    --primary: #b91c1c;
+    --primary-dark: #881337;
+    --primary-soft: rgba(185, 28, 28, 0.06);
+    --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
+    --surface-card: #ffffff;
+    --surface-border: #ede4de;
+    --surface-subtle: #f7ede6;
+    --text-main: #292524;
+    --text-muted: #78716c;
+    --radius-xl: 20px;
+    --radius-pill: 9999px;
+    --shadow-soft: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+    --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --transition-m3: all 0.25s cubic-bezier(0.2, 0, 0, 1);
 
-        /* LIGHT THEME TRUCK ANIMATION LOADING SCREEN STYLES */
-        #pageLoadingOverlay {
-            position: fixed;
-            inset: 0;
-            background: #FDF8F5;
-            z-index: 999999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            transition: opacity 0.35s ease, visibility 0.35s ease;
-        }
+    /* Legacy bindings */
+    --accent-exact: #b91c1c;
+    --accent-exact-dark: #881337;
+    --accent-max-blue: #1e40af;
+    --accent-max-dark: #1e3a8a;
+    --accent-max-yellow: #f4d93e;
+  }
 
-        #pageLoadingOverlay.hide {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    background: var(--bg-base);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
 
-        .loader-card-box {
-            background-color: #FFFFFF;
-            padding: 2rem 2.5rem;
-            border-radius: 1.25rem;
-            border: 1.5px solid var(--border-subtle);
-            box-shadow: 0 12px 30px rgba(120, 113, 108, 0.08);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-        }
+  .ambient-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none !important;
+    z-index: 0;
+    background: 
+      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
+      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
+  }
 
-        .loader {
-            width: fit-content;
-            height: fit-content;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
 
-        .truckWrapper {
-            width: 200px;
-            height: 100px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            align-items: center;
-            justify-content: flex-end;
-            overflow-x: hidden;
-        }
+  /* ---------- MAIN APP LAYOUT ---------- */
+  .app {
+    display: grid;
+    grid-template-columns: 460px 1fr;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 64px;
+    position: relative;
+    z-index: 1;
+  }
 
-        .truckBody {
-            width: 130px;
-            height: fit-content;
-            margin-bottom: 6px;
-            animation: motion 1s linear infinite;
-        }
+  /* ---------- LEFT: CONTROL PANEL ---------- */
+  .panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-right: 1px solid var(--surface-border);
+    padding: 24px;
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    box-shadow: var(--shadow-soft);
+    z-index: 10;
+  }
 
-        @keyframes motion {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(3px); }
-            100% { transform: translateY(0px); }
-        }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
 
-        .truckTires {
-            width: 130px;
-            height: fit-content;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0px 10px 0px 15px;
-            position: absolute;
-            bottom: 0;
-        }
-        .truckTires svg {
-            width: 24px;
-        }
+  .brand-row h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 21px;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-main);
+  }
 
-        .road {
-            width: 100%;
-            height: 1.5px;
-            background-color: #282828;
-            position: relative;
-            bottom: 0;
-            align-self: flex-end;
-            border-radius: 3px;
-        }
-        .road::before {
-            content: "";
-            position: absolute;
-            width: 20px;
-            height: 100%;
-            background-color: #282828;
-            right: -50%;
-            border-radius: 3px;
-            animation: roadAnimation 1.4s linear infinite;
-            border-left: 10px solid white;
-        }
-        .road::after {
-            content: "";
-            position: absolute;
-            width: 10px;
-            height: 100%;
-            background-color: #282828;
-            right: -65%;
-            border-radius: 3px;
-            animation: roadAnimation 1.4s linear infinite;
-            border-left: 4px solid white;
-        }
+  .brand-row span {
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 700;
+    background: var(--primary-soft);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(185, 28, 28, 0.15);
+  }
 
-        .lampPost {
-            position: absolute;
-            bottom: 0;
-            right: -90%;
-            height: 90px;
-            animation: roadAnimation 1.4s linear infinite;
-        }
+  /* Segmented Buttons / Tabs */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin: 0 0 24px;
+    background: var(--surface-subtle);
+    padding: 6px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--surface-border);
+  }
 
-        @keyframes roadAnimation {
-            0% { transform: translateX(0px); }
-            100% { transform: translateX(-350px); }
-        }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.35;
+    transition: var(--transition-m3);
+  }
 
-        .loading-label {
-            font-family: var(--font-sans);
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
+  .tab-btn.active[data-company="exact"] {
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: var(--shadow-soft);
+  }
 
-        .main-container {
-            width: 100%;
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 24px 24px 60px;
-            display: flex;
-            flex-direction: column;
-            gap: 28px;
-            flex: 1;
-            position: relative;
-            z-index: 1;
-        }
+  .tab-btn.active[data-company="maxcare"] {
+    background: #ffffff;
+    color: var(--accent-max-blue);
+    box-shadow: var(--shadow-soft);
+  }
 
-        .directory-header-wrap {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+  /* Form Field Groups */
+  .field-group {
+    margin-bottom: 24px;
+  }
 
-        .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 14px;
-            background: #FFFFFF;
-            border: 1px solid var(--border-subtle);
-            color: var(--primary);
-            border-radius: var(--radius-pill);
-            font-size: 11.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 10px;
-            box-shadow: var(--shadow-card);
-        }
+  /* =========================================================
+     HIGHLIGHTED CUSTOMER & DETAILS CARD
+     ========================================================= */
+  #sharedFieldGroup {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.85) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.28);
+    border-radius: var(--radius-xl);
+    padding: 18px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 18px rgba(185, 28, 28, 0.06);
+    position: relative;
+  }
 
-        .page-title {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4vw, 38px);
-            font-weight: 800;
-            color: var(--text-main);
-            letter-spacing: -0.03em;
-        }
+  #sharedFieldGroup h2 {
+    color: var(--primary);
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
 
-        .page-title span {
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+  #sharedFieldGroup h2::after {
+    background: rgba(185, 28, 28, 0.2);
+  }
 
-        .status-badge {
-            font-size: 12px;
-            color: #059669;
-            background-color: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 6px 14px;
-            border-radius: var(--radius-pill);
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 14px;
-        }
+  #sharedFieldGroup input {
+    background: #ffffff;
+    border-color: rgba(185, 28, 28, 0.22);
+  }
 
-        .card {
-            background: #FFFFFF !important;
-            border: 1px solid var(--border-subtle);
-            border-radius: var(--radius-xl);
-            padding: 28px;
-            box-shadow: var(--shadow-card);
-            transition: all 0.25s ease;
-        }
+  #sharedFieldGroup input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+  }
 
-        .card:hover {
-            border-color: var(--border-hover);
-            box-shadow: var(--shadow-float);
-        }
+  /* QUICK PRICING CONTAINER */
+  .quick-pricing-card {
+    background: linear-gradient(135deg, rgba(254, 242, 242, 0.9) 0%, #ffffff 100%);
+    border: 1.5px solid rgba(185, 28, 28, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.05);
+    position: relative;
+  }
 
-        .card-header {
-            font-family: var(--font-display);
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-            letter-spacing: -0.01em;
-        }
+  .quick-pricing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
 
-        .lookup-box {
-            position: relative;
-            margin-bottom: 14px;
-        }
+  .field-group h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin: 0 0 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-        .lookup-input {
-            width: 100%;
-            padding: 15px 20px 15px 48px;
-            font-size: 14.5px;
-            font-weight: 600;
-            border: 1.5px solid var(--border-subtle);
-            border-radius: var(--radius-pill);
-            outline: none;
-            background: #FFFFFF;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-        }
+  .field-group h2::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--surface-border);
+  }
 
-        .lookup-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.1);
-        }
+  .field { margin-bottom: 14px; }
+  
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
 
-        .lookup-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 22px;
-        }
+  .field input, .field textarea, .cost-row input, .term-row textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--surface-border);
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-main);
+    background: #ffffff;
+    transition: var(--transition-m3);
+  }
 
-        .quick-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
+  .field input:focus, .field textarea:focus, .cost-row input:focus, .term-row textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
+  }
 
-        .chip {
-            background: #F7EDE6;
-            border: 1px solid var(--border-subtle);
-            color: var(--primary);
-            padding: 6px 14px;
-            border-radius: var(--radius-pill);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-        .chip:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
 
-        .lookup-results-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-top: 20px;
-        }
-    </style>
+  .cost-row, .term-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .cost-row input.label-in { flex: 1.6; min-width: 0; }
+  .cost-row input.amt-in { flex: 1; text-align: right; min-width: 0; }
+  .term-row textarea { flex: 1; min-height: 42px; resize: vertical; }
+
+  /* Icon Buttons */
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 50%;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-m3);
+  }
+
+  .icon-btn:hover {
+    background: #fef2f2;
+    border-color: #fca5a5;
+    transform: scale(1.08);
+  }
+
+  .add-btn {
+    margin-top: 8px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px dashed var(--surface-border);
+    background: #ffffff;
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-m3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .add-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+  }
+
+  /* Totals Container */
+  .totals-box {
+    background: #ffffff;
+    border: 1.5px solid var(--surface-border);
+    border-radius: var(--radius-xl);
+    padding: 16px 18px;
+    font-size: 13px;
+    margin-top: 16px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .totals-box .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    color: var(--text-main);
+  }
+
+  .totals-box .line.total {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--primary);
+    border-top: 1px dashed var(--surface-border);
+    margin-top: 6px;
+    padding-top: 8px;
+  }
+
+  .reset-btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 12px;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: var(--transition-m3);
+  }
+
+  .reset-btn:hover {
+    color: var(--text-main);
+    background: var(--surface-subtle);
+  }
+
+  /* Download Toolbar & New Uiverse Button UI */
+  .download-bar {
+    position: sticky;
+    bottom: -1px;
+    margin-top: 28px;
+    padding: 16px 0;
+    border-top: 1px solid var(--surface-border);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  .download-btn {
+    height: 48px;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .download-btn[data-company="exact"] { background: var(--accent-exact); }
+  .download-btn[data-company="exact"]:hover { background: var(--accent-exact-dark); }
+  .download-btn[data-company="maxcare"] { background: var(--accent-max-blue); }
+  .download-btn[data-company="maxcare"]:hover { background: var(--accent-max-dark); }
+  .download-btn:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+  .button-content {
+    transform: translateY(-48px);
+    transition: all 250ms ease-in-out;
+  }
+
+  .svg-container,
+  .text-container {
+    height: 48px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .text-container .text {
+    font-size: 14px;
+    color: #fff;
+    font-weight: 700;
+    opacity: 1;
+    transition: opacity ease-in-out 250ms;
+  }
+
+  .download-icon {
+    height: 24px;
+    width: 24px;
+    fill: #fff;
+    opacity: 0;
+    transition: opacity ease-in-out 250ms;
+  }
+
+  .download-btn:hover .button-content {
+    transform: translateY(0px);
+  }
+
+  .download-btn:hover .text {
+    opacity: 0;
+  }
+
+  .download-btn:hover .download-icon {
+    opacity: 1;
+  }
+
+  .download-btn:focus .download-icon {
+    -webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+    animation: heartbeat 1.5s ease-in-out infinite both;
+  }
+
+  @-webkit-keyframes heartbeat {
+    from { -webkit-transform: scale(1); transform: scale(1); -webkit-transform-origin: center center; transform-origin: center center; -webkit-animation-timing-function: ease-out; animation-timing-function: ease-out; }
+    10% { -webkit-transform: scale(0.91); transform: scale(0.91); -webkit-animation-timing-function: ease-in; animation-timing-function: ease-in; }
+    17% { -webkit-transform: scale(0.98); transform: scale(0.98); -webkit-animation-timing-function: ease-out; animation-timing-function: ease-out; }
+    33% { -webkit-transform: scale(0.87); transform: scale(0.87); -webkit-animation-timing-function: ease-in; animation-timing-function: ease-in; }
+    45% { -webkit-transform: scale(1); transform: scale(1); -webkit-animation-timing-function: ease-out; animation-timing-function: ease-out; }
+  }
+  @keyframes heartbeat {
+    from { transform: scale(1); transform-origin: center center; animation-timing-function: ease-out; }
+    10% { transform: scale(0.91); animation-timing-function: ease-in; }
+    17% { transform: scale(0.98); animation-timing-function: ease-out; }
+    33% { transform: scale(0.87); animation-timing-function: ease-in; }
+    45% { transform: scale(1); animation-timing-function: ease-out; }
+  }
+
+  .status-msg {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    color: var(--text-muted);
+    min-height: 14px;
+  }
+
+  /* ---------- RIGHT: PREVIEW STAGE ---------- */
+  .stage {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+    max-height: calc(100vh - 64px);
+    background: transparent;
+  }
+
+  .sheet-wrap { width: 100%; max-width: 794px; }
+
+  .sheet-shadow {
+    background: #fff;
+    box-shadow: 0 16px 36px -8px rgba(120, 113, 108, 0.18), 0 2px 8px rgba(0, 0, 0, 0.04);
+    border-radius: 8px;
+    border: 1px solid var(--surface-border);
+    overflow: hidden;
+  }
+
+  /* PDF Preview Page */
+  #previewA4 {
+    width: 794px;
+    min-height: 1123px;
+    margin: 0 auto;
+    background: #ffffff !important;
+    color: #111111 !important;
+    position: relative;
+    padding: 0;
+    transform-origin: top left;
+  }
+
+  /* ===== PDF TEMPLATE STYLES ===== */
+  .doc-exact {
+    font-family: Calibri, Carlito, Arial, sans-serif;
+    color: #111;
+    padding: 0 0 40px;
+  }
+  .doc-exact .letterhead {
+    background: #fffdf8; padding: 16px 46px 10px; text-align: center;
+    border-bottom: 3px solid #1a1a1a;
+  }
+  .doc-exact .letterhead .cname {
+    color: var(--accent-exact); font-weight: 700; font-size: 20pt; letter-spacing: .01em;
+    text-transform: uppercase; margin: 0 0 4px; font-family: Calibri, Carlito, Arial, sans-serif;
+  }
+  .doc-exact .letterhead .cin {
+    font-weight: 700; font-size: 10pt; letter-spacing: .02em;
+  }
+  .doc-exact .body { padding: 14px 46px 0; font-size: 10pt; }
+  .doc-exact .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 10px; }
+  .doc-exact .meta-block { font-size: 10pt; line-height: 1.55; margin-bottom: 8px; }
+  .doc-exact .quotation-label {
+    text-decoration: underline; font-weight: 700; font-size: 14pt; margin: 6px 0 10px;
+    text-align: center;
+  }
+  .doc-exact .salut { font-weight: 700; font-size: 10pt; margin-bottom: 6px; }
+  .doc-exact .intro { font-size: 10pt; line-height: 1.4; margin-bottom: 12px; text-align: justify; }
+  .doc-exact .intro b { font-weight: 700; }
+  table.exact-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 12px; }
+  table.exact-table th, table.exact-table td {
+    border: 1px solid #1a1a1a; padding: 4px 12px;
+  }
+  table.exact-table th { background: #f1ede3; font-weight: 700; text-align: left; }
+  table.exact-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.exact-table tr.total-row td { font-weight: 700; }
+  table.exact-table tr.grand-row td { font-weight: 700; background: #f7f3ea; }
+  .doc-exact .terms-title { font-weight: 700; font-size: 11pt; margin: 4px 0 6px; letter-spacing: .01em; }
+  .doc-exact ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.35; }
+  .doc-exact ol.terms li { margin-bottom: 3px; text-align: justify; }
+  .doc-exact .footer { margin-top: 12px; font-size: 10pt; line-height: 1.5; }
+  .doc-exact .footer b { font-weight: 700; }
+
+  /* MAXCARE PACKERS LETTERHEAD STYLING (COMPANY NAME TOP, ADDRESS DOWN) */
+  .doc-max {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #141414;
+    padding: 0 0 40px;
+  }
+  .doc-max .letterhead {
+    background: linear-gradient(180deg, #fff7cf 0%, #fdf0a8 100%);
+    padding: 18px 36px 14px;
+    border-bottom: 4px solid var(--accent-max-blue);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .doc-max .letterhead .cname {
+    color: var(--accent-max-blue);
+    font-weight: 800;
+    font-size: 21pt;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+    line-height: 1.15;
+  }
+  .doc-max .letterhead .sub {
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: #222222;
+    line-height: 1.45;
+    max-width: 95%;
+    margin: 0 auto;
+  }
+  .doc-max .body { padding: 20px 40px 0; font-size: 10pt; }
+  .doc-max .meta-top { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 12px; font-weight: 700; }
+  .doc-max .meta-block { font-size: 10pt; line-height: 1.7; margin-bottom: 8px; }
+  .doc-max .quotation-label {
+    font-weight: 700; font-size: 15pt; margin: 10px 0 14px; color: var(--accent-max-blue);
+    text-align: center; letter-spacing: .04em;
+  }
+  .doc-max .intro { font-size: 10pt; line-height: 1.5; margin-bottom: 16px; text-align: justify; }
+  .doc-max .intro b { font-weight: 700; }
+  table.max-table { width: 100%; border-collapse: collapse; font-size: 10pt; margin-bottom: 18px; }
+  table.max-table th, table.max-table td {
+    border: 1px solid #16234a; padding: 6px 10px;
+  }
+  table.max-table th { background: var(--accent-max-blue); color: #fff; font-weight: 700; text-align: left; }
+  table.max-table td.amt { text-align: right; font-variant-numeric: tabular-nums; }
+  table.max-table td.sno { text-align: center; width: 34px; }
+  table.max-table tr.total-row td { font-weight: 700; background: #fff7cf; }
+  table.max-table tr.grand-row td { font-weight: 700; background: var(--accent-max-yellow); }
+  .doc-max .terms-title { font-weight: 700; font-size: 13.5pt; margin: 6px 0 8px; color: var(--accent-max-blue); }
+  .doc-max ol.terms { margin: 0; padding-left: 20px; font-size: 10pt; line-height: 1.5; }
+  .doc-max ol.terms li { margin-bottom: 6px; text-align: justify; }
+  .doc-max .footer { margin-top: 18px; font-size: 10pt; line-height: 1.6; }
+  .doc-max .footer .sign { margin-top: 14px; font-weight: 700; }
+
+  /* ---------- RESPONSIVE MEDIA QUERIES (MOBILE) ---------- */
+  @media (max-width: 768px) {
+    .app {
+      grid-template-columns: 1fr !important;
+      width: 100% !important;
+      min-height: auto;
+      padding-top: 64px !important;
+    }
+
+    .panel {
+      width: 100% !important;
+      max-height: none !important;
+      border-right: none !important;
+      border-bottom: 1px solid var(--surface-border);
+      padding: 20px 16px 40px !important;
+      box-sizing: border-box;
+    }
+
+    .totals-box {
+      width: 100% !important;
+      padding: 12px 14px !important;
+      font-size: 12px !important;
+    }
+
+    #docDetailsGroup,
+    #termsGroup,
+    #regOfficeGroup {
+      display: none !important;
+    }
+
+    .stage {
+      display: none !important;
+    }
+  }
+
+  /* ---------- LIGHT THEME TRUCK LOADING OVERLAY ---------- */
+  .pdf-busy {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(253, 248, 245, 0.85);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pdf-busy[hidden] { display: none; }
+
+  .loader-card-box {
+    background-color: #FFFFFF;
+    padding: 2rem 2.5rem;
+    border-radius: 1.25rem;
+    border: 1.5px solid var(--surface-border);
+    box-shadow: 0 12px 30px rgba(120, 113, 108, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .loader {
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .truckWrapper {
+    width: 200px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    justify-content: flex-end;
+    overflow-x: hidden;
+  }
+
+  .truckBody {
+    width: 130px;
+    height: fit-content;
+    margin-bottom: 6px;
+    animation: motion 1s linear infinite;
+  }
+
+  @keyframes motion {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(3px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .truckTires {
+    width: 130px;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 10px 0px 15px;
+    position: absolute;
+    bottom: 0;
+  }
+  .truckTires svg {
+    width: 24px;
+  }
+
+  .road {
+    width: 100%;
+    height: 1.5px;
+    background-color: #282828;
+    position: relative;
+    bottom: 0;
+    align-self: flex-end;
+    border-radius: 3px;
+  }
+  .road::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 100%;
+    background-color: #282828;
+    right: -50%;
+    border-radius: 3px;
+    animation: roadAnimation 1.4s linear infinite;
+    border-left: 10px solid white;
+  }
+  .road::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    background-color: #282828;
+    right: -65%;
+    border-radius: 3px;
+    animation: roadAnimation 1.4s linear infinite;
+    border-left: 4px solid white;
+  }
+
+  .lampPost {
+    position: absolute;
+    bottom: 0;
+    right: -90%;
+    height: 90px;
+    animation: roadAnimation 1.4s linear infinite;
+  }
+
+  @keyframes roadAnimation {
+    0% { transform: translateX(0px); }
+    100% { transform: translateX(-350px); }
+  }
+
+  .loading-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+</style>
 </head>
 <body>
 
-    <!-- LIGHT THEME TRUCK ANIMATION LOADING OVERLAY -->
-    <div id="pageLoadingOverlay">
-        <div class="loader-card-box">
-            <div class="loader">
-                <div class="truckWrapper">
-                    <div class="truckBody">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 198 93"
-                          class="trucksvg"
-                        >
-                          <path
-                            stroke-width="3"
-                            stroke="#282828"
-                            fill="#F83D3D"
-                            d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z"
-                          ></path>
-                          <path
-                            stroke-width="3"
-                            stroke="#282828"
-                            fill="#7D7C7C"
-                            d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z"
-                          ></path>
-                          <path
-                            stroke-width="2"
-                            stroke="#282828"
-                            fill="#282828"
-                            d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z"
-                          ></path>
-                          <rect
-                            stroke-width="2"
-                            stroke="#282828"
-                            fill="#FFFCAB"
-                            rx="1"
-                            height="7"
-                            width="5"
-                            y="63"
-                            x="187"
-                          ></rect>
-                          <rect
-                            stroke-width="2"
-                            stroke="#282828"
-                            fill="#282828"
-                            rx="1"
-                            height="11"
-                            width="4"
-                            y="81"
-                            x="193"
-                          ></rect>
-                          <rect
-                            stroke-width="3"
-                            stroke="#282828"
-                            fill="#DFDFDF"
-                            rx="2.5"
-                            height="90"
-                            width="121"
-                            y="1.5"
-                            x="6.5"
-                          ></rect>
-                          <rect
-                            stroke-width="2"
-                            stroke="#282828"
-                            fill="#DFDFDF"
-                            rx="2"
-                            height="4"
-                            width="6"
-                            y="84"
-                            x="1"
-                          ></rect>
-                        </svg>
-                    </div>
-                    <div class="truckTires">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 30 30"
-                          class="tiresvg"
-                        >
-                          <circle
-                            stroke-width="3"
-                            stroke="#282828"
-                            fill="#282828"
-                            r="13.5"
-                            cy="15"
-                            cx="15"
-                          ></circle>
-                          <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
-                        </svg>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 30 30"
-                          class="tiresvg"
-                        >
-                          <circle
-                            stroke-width="3"
-                            stroke="#282828"
-                            fill="#282828"
-                            r="13.5"
-                            cy="15"
-                            cx="15"
-                          ></circle>
-                          <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
-                        </svg>
-                    </div>
-                    <div class="road"></div>
-                    <svg
-                      xml:space="preserve"
-                      viewBox="0 0 453.459 453.459"
-                      xmlns:xlink="http://www.w3.org/1999/xlink"
-                      xmlns="http://www.w3.org/2000/svg"
-                      id="Capa_1"
-                      version="1.1"
-                      fill="#000000"
-                      class="lampPost"
-                    >
-                      <path
-                        d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
-                        c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514
-                        c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16
-                        c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914
-                        h-0.797c-5.068,0-9.174,4.108-9.174,9.177c0,2.844,1.293,5.383,3.321,7.066c-3.432,27.933-26.851,95.744-8.226,115.459v11.202h45.75
-                        v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795
-                        V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z
-                        M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017
-                        h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"
-                      ></path>
-                    </svg>
-                </div>
-            </div>
-            <div class="loading-label">Loading Directory...</div>
+<div class="ambient-glow"></div>
+
+<!-- LIGHT THEME TRUCK ANIMATION LOADING OVERLAY FOR PDF GENERATION -->
+<div class="pdf-busy" id="pdfBusy" hidden>
+  <div class="loader-card-box">
+    <div class="loader">
+      <div class="truckWrapper">
+        <div class="truckBody">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 198 93"
+            class="trucksvg"
+          >
+            <path
+              stroke-width="3"
+              stroke="#282828"
+              fill="#F83D3D"
+              d="M135 22.5H177.264C178.295 22.5 179.22 23.133 179.594 24.0939L192.33 56.8443C192.442 57.1332 192.5 57.4404 192.5 57.7504V89C192.5 90.3807 191.381 91.5 190 91.5H135C133.619 91.5 132.5 90.3807 132.5 89V25C132.5 23.6193 133.619 22.5 135 22.5Z"
+            ></path>
+            <path
+              stroke-width="3"
+              stroke="#282828"
+              fill="#7D7C7C"
+              d="M146 33.5H181.741C182.779 33.5 183.709 34.1415 184.078 35.112L190.538 52.112C191.16 53.748 189.951 55.5 188.201 55.5H146C144.619 55.5 143.5 54.3807 143.5 53V36C143.5 34.6193 144.619 33.5 146 33.5Z"
+            ></path>
+            <path
+              stroke-width="2"
+              stroke="#282828"
+              fill="#282828"
+              d="M150 65C150 65.39 149.763 65.8656 149.127 66.2893C148.499 66.7083 147.573 67 146.5 67C145.427 67 144.501 66.7083 143.873 66.2893C143.237 65.8656 143 65.39 143 65C143 64.61 143.237 64.1344 143.873 63.7107C144.501 63.2917 145.427 63 146.5 63C147.573 63 148.499 63.2917 149.127 63.7107C149.763 64.1344 150 64.61 150 65Z"
+            ></path>
+            <rect
+              stroke-width="2"
+              stroke="#282828"
+              fill="#FFFCAB"
+              rx="1"
+              height="7"
+              width="5"
+              y="63"
+              x="187"
+            ></rect>
+            <rect
+              stroke-width="2"
+              stroke="#282828"
+              fill="#282828"
+              rx="1"
+              height="11"
+              width="4"
+              y="81"
+              x="193"
+            ></rect>
+            <rect
+              stroke-width="3"
+              stroke="#282828"
+              fill="#DFDFDF"
+              rx="2.5"
+              height="90"
+              width="121"
+              y="1.5"
+              x="6.5"
+            ></rect>
+            <rect
+              stroke-width="2"
+              stroke="#282828"
+              fill="#DFDFDF"
+              rx="2"
+              height="4"
+              width="6"
+              y="84"
+              x="1"
+            ></rect>
+          </svg>
         </div>
+        <div class="truckTires">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 30 30"
+            class="tiresvg"
+          >
+            <circle
+              stroke-width="3"
+              stroke="#282828"
+              fill="#282828"
+              r="13.5"
+              cy="15"
+              cx="15"
+            ></circle>
+            <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 30 30"
+            class="tiresvg"
+          >
+            <circle
+              stroke-width="3"
+              stroke="#282828"
+              fill="#282828"
+              r="13.5"
+              cy="15"
+              cx="15"
+            ></circle>
+            <circle fill="#DFDFDF" r="7" cy="15" cx="15"></circle>
+          </svg>
+        </div>
+        <div class="road"></div>
+        <svg
+          xml:space="preserve"
+          viewBox="0 0 453.459 453.459"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+          xmlns="http://www.w3.org/2000/svg"
+          id="Capa_1"
+          version="1.1"
+          fill="#000000"
+          class="lampPost"
+        >
+          <path
+            d="M252.882,0c-37.781,0-68.686,29.953-70.245,67.358h-6.917v8.954c-26.109,2.163-45.463,10.011-45.463,19.366h9.993
+            c-1.65,5.146-2.507,10.54-2.507,16.017c0,28.956,23.558,52.514,52.514,52.514c28.956,0,52.514-23.558,52.514-52.514
+            c0-5.478-0.856-10.872-2.506-16.017h9.992c0-9.354-19.352-17.204-45.463-19.366v-8.954h-6.149C200.189,38.779,223.924,16,252.882,16
+            c29.952,0,54.32,24.368,54.32,54.32c0,28.774-11.078,37.009-25.105,47.437c-17.444,12.968-37.216,27.667-37.216,78.884v113.914
+            h-0.797c-5.068,0-9.174,4.108-9.174,9.177c0,2.844,1.293,5.383,3.321,7.066c-3.432,27.933-26.851,95.744-8.226,115.459v11.202h45.75
+            v-11.202c18.625-19.715-4.794-87.527-8.227-115.459c2.029-1.683,3.322-4.223,3.322-7.066c0-5.068-4.107-9.177-9.176-9.177h-0.795
+            V196.641c0-43.174,14.942-54.283,30.762-66.043c14.793-10.997,31.559-23.461,31.559-60.277C323.202,31.545,291.656,0,252.882,0z
+            M232.77,111.694c0,23.442-19.071,42.514-42.514,42.514c-23.442,0-42.514-19.072-42.514-42.514c0-5.531,1.078-10.957,3.141-16.017
+            h78.747C231.693,100.736,232.77,106.162,232.77,111.694z"
+          ></path>
+        </svg>
+      </div>
+    </div>
+    <div class="loading-label">Creating your PDF…</div>
+  </div>
+</div>
+
+<div id="header-container"></div>
+
+<div class="app" id="appView">
+  <div class="panel">
+    <div class="brand-row">
+      <h1>Quotation Editor</h1>
+      <span id="dateStamp"></span>
     </div>
 
-    <div id="header-container"></div>
+    <div class="tabs">
+      <button class="tab-btn active" data-company="exact" id="tabExact">Exact Container<br>Logistics</button>
+      <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
+    </div>
 
-    <main class="main-container">
-        
-        <div class="directory-header-wrap">
-            <div class="header-badge">
-                <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
-                <span>APML Unified Enterprise Directory</span>
-            </div>
-            <h1 class="page-title">APML Hub &amp; Branch <span>Directory</span></h1>
-            
-            <span class="status-badge">
-                <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
-                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
-            </span>
+    <!-- HIGHLIGHTED CUSTOMER & DETAILS CARD -->
+    <div class="field-group" id="sharedFieldGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 18px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:600; opacity:0.85;">— shared</span></h2>
+      <div class="field"><label>Date</label><input id="f_date"></div>
+      <div class="field"><label>Customer name *</label><input id="f_custName"></div>
+      <div class="row2">
+        <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
+        <div class="field"><label>Customer GST</label><input id="f_custGst"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Moving from *</label><input id="f_fromCity"></div>
+        <div class="field"><label>Moving to *</label><input id="f_toCity"></div>
+      </div>
+    </div>
+
+    <div class="field-group" id="docDetailsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Document details</h2>
+      <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
+      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
+    </div>
+
+    <div class="field-group" id="costItemsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">payments</span> Cost items</h2>
+      
+      <!-- QUICK AUTO-FILL CARD -->
+      <div class="quick-pricing-card">
+        <div class="quick-pricing-badge">
+          <span class="material-symbols-outlined" style="font-size: 16px;">bolt</span>
+          <span>Instant Pricing Calculator</span>
         </div>
 
-        <section class="card" style="border: 2px solid var(--border-hover);">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span class="material-symbols-outlined">travel_explore</span>
-                    Search All Hubs &amp; Branches
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <!-- Create Contact Button -->
-                    <button type="button" id="createContactBtn" onclick="openCreateContactModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary); color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
-                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Contact
-                    </button>
-                    <!-- Google Logo Admin Button -->
-                    <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" title="Admin Login" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.2s ease;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
-                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
-                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            
-            <div class="lookup-box">
-                <span class="material-symbols-outlined lookup-icon">search</span>
-                <input type="text" id="masterSearchInput" class="lookup-input" placeholder="Type city, branch code, officer name, or phone number...">
-            </div>
+        <div class="field" style="margin-bottom:12px;">
+          <label style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
+          <div style="display:flex; gap:8px;">
+            <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1; border-color: rgba(185, 28, 28, 0.35); background: #ffffff;">
+            <button id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
+          </div>
+        </div>
 
-            <div class="quick-chips">
-                <span class="chip" onclick="filterByChip('Mumbai')">Mumbai</span>
-                <span class="chip" onclick="filterByChip('Pune')">Pune</span>
-                <span class="chip" onclick="filterByChip('Gurgaon')">Gurgaon</span>
-                <span class="chip" onclick="filterByChip('Ahmedabad')">Ahmedabad</span>
-                <span class="chip" onclick="filterByChip('Delhi')">Delhi</span>
-                <span class="chip" onclick="filterByChip('Bangalore')">Bangalore</span>
-                <span class="chip" onclick="filterByChip('Kolkata')">Kolkata</span>
-                <span class="chip" onclick="filterByChip('Hyderabad')">Hyderabad</span>
-                <span class="chip" onclick="filterByChip('Chennai')">Chennai</span>
-                <span class="chip" onclick="filterByChip('Indore')">Indore</span>
-                <span class="chip" onclick="filterByChip('Jaipur')">Jaipur</span>
-                <span class="chip" onclick="filterByChip('Nagpur')">Nagpur</span>
-                <span class="chip" onclick="filterByChip('Surat')">Surat</span>
-                <span class="chip" onclick="filterByChip('Lucknow')">Lucknow</span>
-            </div>
+        <div class="row2" style="margin-bottom:0;">
+          <div class="field" style="margin-bottom:0;">
+            <label style="color:var(--text-main); font-weight:800;">Car Freight (₹)</label>
+            <input id="f_carFreight" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label style="color:var(--text-main); font-weight:800;">GST %</label>
+            <input id="f_gstPercent" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
+          </div>
+        </div>
+      </div>
 
-            <div id="masterResultsContainer" class="lookup-results-list"></div>
-        </section>
+      <div id="costRows"></div>
+      <button class="add-btn" id="addCostRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add cost item</span>
+      </button>
 
-    </main>
+      <div class="totals-box" id="totalsBox"></div>
+    </div>
 
-    <div id="footer-container"></div>
+    <div class="field-group" id="termsGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">gavel</span> Terms &amp; conditions</h2>
+      <div id="termRows"></div>
+      <button class="add-btn" id="addTermRow">
+        <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+        <span>Add term</span>
+      </button>
+    </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <div class="field-group" id="regOfficeGroup">
+      <h2><span class="material-symbols-outlined" style="font-size: 16px;">domain</span> <span id="footerHeading">Registered office</span></h2>
+      <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
+      <div class="row2">
+        <div class="field"><label>Phone</label><input id="f_phone"></div>
+        <div class="field" id="emailFieldWrap"><label>Email</label><input id="f_email"></div>
+      </div>
+    </div>
 
-    <!-- Initialize Firebase -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-            authDomain: "apml-portal.firebaseapp.com",
-            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-            projectId: "apml-portal",
-            storageBucket: "apml-portal.firebasestorage.app",
-            messagingSenderId: "479017159240",
-            appId: "1:479017159240:web:0853422718e6195b74a67d",
-            measurementId: "G-4H1HT31DYB"
-        };
+    <button class="reset-btn" id="resetBtn">Reset template to default</button>
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-    </script>
+    <div class="download-bar">
+      <button class="download-btn" id="downloadBtn" data-company="exact">
+        <div class="button-content">
+          <div class="svg-container">
+            <svg
+              class="download-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479 6.908l-4-4h3v-4h2v4h3l-4 4z"
+              ></path>
+            </svg>
+          </div>
+          <div class="text-container">
+            <div class="text">Download PDF</div>
+          </div>
+        </div>
+      </button>
+      <div class="status-msg" id="statusMsg"></div>
+    </div>
+  </div>
 
-    <!-- Core Scripts -->
-    <script src="common.js?v=21.35"></script>
-    <script src="directory.js?v=1"></script>
+  <div class="stage">
+    <div class="sheet-wrap">
+      <div class="sheet-shadow">
+        <div id="previewA4"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        const db = firebase.database();
-        const directoryRef = db.ref('directory');
+<div id="footer-container"></div>
 
-        let directoryHelper = null;
-        let loadedMasterData = [];
-        let isAdminMode = false;
+<script>
+// =========================================================
+// AUTOSAVE TO APML CLOUD DRIVE (drive.html) -> "Quotation" folder
+// =========================================================
+const DRIVE_CLOUD_NAME = 'wbrmw2pm';
+const DRIVE_UPLOAD_PRESET = 'apml_drive';
+const DRIVE_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${DRIVE_CLOUD_NAME}/auto/upload`;
+const DRIVE_QUOTATION_FOLDER_NAME = 'Quotation';
+const DRIVE_QUOTATION_FOLDER_KEY = 'quotation_folder';
+const DRIVE_MAX_BYTES = 10 * 1024 * 1024;
+const DRIVE_API_URL = 'https://apml-drive-api.kundar-work.workers.dev';
 
-        const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "kundar.work@gmail.com"];
+async function getOrCreateQuotationFolderId(database) {
+  const foldersRef = database.ref('catbox_gdrive_folders');
+  const snap = await foldersRef.once('value');
+  const folders = snap.val() || {};
 
-        function hideLoadingOverlay() {
-            const overlay = document.getElementById('pageLoadingOverlay');
-            if (overlay) {
-                overlay.classList.add('hide');
-                setTimeout(() => { overlay.style.display = 'none'; }, 400);
-            }
-        }
+  for (const key of Object.keys(folders)) {
+    const f = folders[key];
+    if (f && f.parentId === 'root' && String(f.name || '').trim().toLowerCase() === DRIVE_QUOTATION_FOLDER_NAME.toLowerCase()) {
+      return key;
+    }
+  }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
+  await foldersRef.child(DRIVE_QUOTATION_FOLDER_KEY).set({
+    name: DRIVE_QUOTATION_FOLDER_NAME,
+    parentId: 'root',
+    timestamp: Date.now()
+  });
+  return DRIVE_QUOTATION_FOLDER_KEY;
+}
 
-            directoryRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                
-                if (!data || Object.keys(data).length === 0) {
-                    document.getElementById('recordCount').innerText = "0";
-                    hideLoadingOverlay();
-                    return;
-                }
+function saveQuotationToDrive(pdfBlob, fileName) {
+  setTimeout(async () => {
+    try {
+      if (!pdfBlob || pdfBlob.size > DRIVE_MAX_BYTES) {
+        console.warn('Drive autosave skipped: PDF missing or larger than 10 MB.');
+        return;
+      }
 
-                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                document.getElementById('recordCount').innerText = loadedMasterData.filter(i => !i.isDeleted).length;
+      const formData = new FormData();
+      formData.append('file', pdfBlob, fileName);
+      formData.append('upload_preset', DRIVE_UPLOAD_PRESET);
+      formData.append('folder', 'apml-drive');
 
-                directoryHelper.setData(loadedMasterData);
-                hideLoadingOverlay();
-            });
+      const res = await fetch(DRIVE_UPLOAD_URL, { method: 'POST', body: formData });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.secure_url) {
+        throw new Error((data.error && data.error.message) || `HTTP ${res.status}`);
+      }
+
+      const database = firebase.database();
+      const folderId = await getOrCreateQuotationFolderId(database);
+
+      await database.ref('catbox_gdrive_files').push({
+        fileId: data.secure_url,
+        parentId: folderId,
+        name: fileName,
+        size: pdfBlob.size || 0,
+        timestamp: Date.now()
+      });
+
+      fetch(`${DRIVE_API_URL}/trim-quotations`, { method: 'POST' })
+        .catch((e) => console.warn('Quotation trim skipped:', e));
+    } catch (err) {
+      console.error('Drive autosave error:', err);
+    }
+  }, 300);
+}
+
+// =========================================================
+// FIREBASE REALTIME INITIALIZATION
+// =========================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+  authDomain: "apml-portal.firebaseapp.com",
+  databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+  projectId: "apml-portal",
+  storageBucket: "apml-portal.firebasestorage.app",
+  messagingSenderId: "479017159240",
+  appId: "1:479017159240:web:0853422718e6195b74a67d",
+  measurementId: "G-4H1HT31DYB"
+};
+
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const db = firebase.database();
+
+function incrementPdfDownloadCount() {
+  if (typeof db !== "undefined") {
+    db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
+      return (currentCount || 0) + 1;
+    });
+  }
+}
+
+// =========================================================
+// QUOTATION LOGIC & DEFAULTS
+// =========================================================
+function formatCustomDate(d) {
+  const day = d.getDate();
+  let suffix = "th";
+  if (day % 10 === 1 && day !== 11) suffix = "st";
+  else if (day % 10 === 2 && day !== 12) suffix = "nd";
+  else if (day % 10 === 3 && day !== 13) suffix = "rd";
+  
+  const month = d.toLocaleDateString('en-IN', { month: 'short' });
+  const year = d.getFullYear();
+  return `${day}${suffix} ${month} ${year}`;
+}
+
+const SHARED_DEFAULTS = {
+  date: formatCustomDate(new Date()),
+  custName: "",
+  custCompany: "Unregistered",
+  custGst: "GST Exempted",
+  fromCity: "",
+  toCity: ""
+};
+
+const DEFAULTS = {
+  exact: {
+    docNoLabel: "Estimate No.",
+    gstLabel: "GST No. (ours)",
+    docNo: "2025323429",
+    gstNo: "23AAACL1838J1ZO",
+    costItems: [
+      { label: "Freight", amount: 0 },
+      { label: "Car Freight", amount: 0 },
+      { label: "Packing Charges", amount: 0 },
+      { label: "Loading Charges at Origin", amount: 0 },
+      { label: "Unloading Charges at Destination", amount: 0 },
+      { label: "Unpacking Charges", amount: 0 },
+      { label: "Other Charges (Toll etc.)", amount: 0 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please keep your cash / jewelry in your custody.",
+      "Carrying liquor, gas cylinder, acid or any type of liquid/explosive and illegal items is prohibited.",
+      "Minimum 15 litres of fuel should be available in the car to run up to the car carrier point and the same way from the car carrier point to the destination.",
+      "We don't undertake electrical, carpentry & plumbing work. It can be provided depending on availability and charged accordingly.",
+      "If there is any extra packing of any article, or an article outside the article list, it will be charged accordingly.",
+      "Extra services provided other than mentioned will be charged accordingly.",
+      "20% of the amount to be paid in advance along with the work order and the balance amount on completion of work at the loading point.",
+      "Payment in cash/cheque/draft should be in favor of Exact Container Logistics (P) Ltd.",
+      "In case of carrier risk, no individual policy / receipt from the insurance company will be given.",
+      "In case of monsoon / rainy season / foggy weather / riots / vehicle breakdown / any other natural calamity, 7 extra days will be added to the transit time.",
+      "No responsibility on the breakage of flower pots.",
+      "This quotation is valid for 15 days."
+    ],
+    companyName: "Exact Container Logistics",
+    cin: "CIN : U74899DL2000PTC107846",
+    addrLabel: "Registered address",
+    addr: "7737/XV RAM NAGAR QUTUB ROAD, PAHARGANJ NEW DELHI 110063",
+    phone: "9667724226",
+    email: "",
+    showEmail: false
+  },
+  maxcare: {
+    docNoLabel: "Reference No.",
+    gstLabel: "GSTN (ours)",
+    docNo: "MAX202526954",
+    gstNo: "07AAICM9877E1ZX",
+    costItems: [
+      { label: "Transportation Cost", amount: 0 },
+      { label: "Packing + Loading + Unloading + Unpacking", amount: 0 },
+      { label: "Car Transportation (if any)", amount: 0 },
+      { label: "Toll Tax + Risk Cover + Misc. Cost", amount: 0 }
+    ],
+    gstPercent: 0,
+    terms: [
+      "Please note that lorry transportation charges without quotes are the present prevailing rates and will be charged on actuals at the time of transportation. Extra charges will be charged extra as actual.",
+      "The carrier or agent shall be exempted from any loss or damage through accident, pilferage, fire, rain, collision or any other road-driven hazard; we therefore recommend that goods be insured covering risk. While on carrier risk, no individual policy/receipt from the insurance co. will be given.",
+      "We would request you to please pay 25% of all charges in advance along with your order, and the balance charges on completion of the packing. For insurance, the full amount of the premium value is to be paid at the packing location before departure of the consignment.",
+      "Please note that the above quotation has been prepared keeping in view our basic standards of packing with the best packing material, as the type of packing will depend on our discretion.",
+      "We would be grateful if you could please give us one week's advance notice as to when we may commence the above job. Payment will be done in favor of M/S Max Care Packers & Movers Pvt. Ltd."
+    ],
+    companyName: "Maxcare Packers and Movers Pvt Ltd",
+    cin: "CIN: U63090DL2009PTC196378",
+    addrLabel: "Regd. office",
+    addr: "308, Neelkanth Plaza, Pitampura Community Centre, New Delhi-110034",
+    phone: "9311204263",
+    email: "maxcaremoverspvtltd@gmail.com",
+    showEmail: true
+  }
+};
+
+const PERCENT_SPLITS = {
+  exact: {
+    "freight": 60,
+    "car freight": 0,
+    "packing charges": 20,
+    "loading charges at origin": 10,
+    "unloading charges at destination": 5,
+    "unpacking charges": 3,
+    "other charges (toll etc.)": 2
+  },
+  maxcare: {
+    "transportation cost": 60,
+    "packing + loading + unloading + unpacking": 25,
+    "car transportation (if any)": 0,
+    "toll tax + risk cover + misc. cost": 15
+  }
+};
+
+function normalizeLabel(s){ return String(s).trim().toLowerCase(); }
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+let state = { exact: clone(DEFAULTS.exact), maxcare: clone(DEFAULTS.maxcare) };
+let shared = clone(SHARED_DEFAULTS);
+let active = "exact";
+
+function fmt(n){
+  n = Number(n) || 0;
+  return n.toLocaleString('en-IN', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function computeTotals(data){
+  const subtotal = data.costItems.reduce((s,i)=> s + (Number(i.amount)||0), 0);
+  const gstAmount = subtotal * (Number(data.gstPercent)||0) / 100;
+  const grand = subtotal + gstAmount;
+  return { subtotal, gstAmount, grand };
+}
+
+function getCarFreightItemIndex() {
+  const d = state[active];
+  return d.costItems.findIndex(i => normalizeLabel(i.label).includes('car'));
+}
+
+function applyTotalAmount(){
+  const total = parseFloat(document.getElementById('f_totalAmount').value) || 0;
+  const d = state[active];
+  const splits = PERCENT_SPLITS[active] || {};
+
+  const matchedIdx = d.costItems
+    .map((item, idx) => ({ idx, pct: splits[normalizeLabel(item.label)] }))
+    .filter(m => m.pct !== undefined && m.pct > 0);
+
+  if (matchedIdx.length === 0 || total <= 0) return;
+
+  let runningTotal = 0;
+  matchedIdx.forEach((m, i) => {
+    if (i === matchedIdx.length - 1) {
+      d.costItems[m.idx].amount = Math.round(total - runningTotal);
+    } else {
+      const amt = Math.round(total * m.pct / 100);
+      d.costItems[m.idx].amount = amt;
+      runningTotal += amt;
+    }
+  });
+}
+
+function renderForm(){
+  const d = state[active];
+
+  document.getElementById('lblDocNoLabel').textContent = d.docNoLabel;
+  document.getElementById('lblGstLabel').textContent = d.gstLabel;
+  document.getElementById('f_docNo').value = d.docNo;
+  document.getElementById('f_date').value = shared.date;
+  document.getElementById('f_gstNo').value = d.gstNo;
+  document.getElementById('f_custName').value = shared.custName;
+  document.getElementById('f_custCompany').value = shared.custCompany;
+  document.getElementById('f_custGst').value = shared.custGst;
+  document.getElementById('f_fromCity').value = shared.fromCity;
+  document.getElementById('f_toCity').value = shared.toCity;
+  
+  const carIdx = getCarFreightItemIndex();
+  document.getElementById('f_carFreight').value = carIdx !== -1 ? (d.costItems[carIdx].amount || '') : '';
+  
+  document.getElementById('f_gstPercent').value = d.gstPercent;
+
+  document.getElementById('lblAddr').textContent = d.addrLabel;
+  document.getElementById('f_addr').value = d.addr;
+  document.getElementById('f_phone').value = d.phone;
+  document.getElementById('f_email').value = d.email;
+  document.getElementById('emailFieldWrap').style.display = d.showEmail ? '' : 'none';
+  document.getElementById('footerHeading').textContent = 'Registered office';
+
+  const costWrap = document.getElementById('costRows');
+  costWrap.innerHTML = '';
+  d.costItems.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'cost-row';
+    row.innerHTML = `
+      <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
+      <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
+      <button class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+    `;
+    costWrap.appendChild(row);
+  });
+
+  const termWrap = document.getElementById('termRows');
+  termWrap.innerHTML = '';
+  d.terms.forEach((t, idx) => {
+    const row = document.createElement('div');
+    row.className = 'term-row';
+    row.innerHTML = `
+      <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
+      <button class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+    `;
+    termWrap.appendChild(row);
+  });
+
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+
+  document.getElementById('downloadBtn').dataset.company = active;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+function renderPreview(){
+  const d = state[active];
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  const container = document.getElementById('previewA4');
+
+  if (active === 'exact') {
+    container.className = 'doc-exact';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="cin">${escapeHtml(d.cin)}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>Date: ${escapeHtml(shared.date)}</span>
+          <span>${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}</span>
+        </div>
+        <div class="meta-block">
+          GST No: ${escapeHtml(d.gstNo)}<br>
+          MR. / MS.: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="salut">Dear Sir / Mam,</p>
+        <p class="intro">Below are our best prices for moving your <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We hope you will find our price competitive enough &amp; will give us an opportunity to service you.</p>
+
+        <table class="exact-table">
+          <thead><tr><th>Cost Item</th><th style="text-align:right;">Cost (in INR)</th></tr></thead>
+          <tbody>
+            ${d.costItems.map(i => `<tr><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td>Total with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          <b>${escapeHtml(d.addrLabel)}:</b> ${escapeHtml(d.addr)}<br>
+          <b>Phone:</b> ${escapeHtml(d.phone)}
+        </div>
+      </div>
+    `;
+  } else {
+    container.className = 'doc-max';
+    container.innerHTML = `
+      <div class="letterhead">
+        <p class="cname">${escapeHtml(d.companyName)}</p>
+        <p class="sub">${escapeHtml(d.cin)} &nbsp;•&nbsp; Regd. Office: ${escapeHtml(d.addr)}<br>Phone: ${escapeHtml(d.phone)}${d.showEmail ? ' &nbsp;•&nbsp; Email: ' + escapeHtml(d.email) : ''}</p>
+      </div>
+      <div class="body">
+        <div class="meta-top">
+          <span>${escapeHtml(d.gstLabel)}: ${escapeHtml(d.gstNo)}</span>
+          <span>Date: ${escapeHtml(shared.date)}</span>
+        </div>
+        <div class="meta-block">
+          ${escapeHtml(d.docNoLabel)}: ${escapeHtml(d.docNo)}<br>
+          TO: <b>${escapeHtml(shared.custName)}</b><br>
+          Company Name: ${escapeHtml(shared.custCompany)}<br>
+          GST No: ${escapeHtml(shared.custGst)}
+        </div>
+        <p class="quotation-label">QUOTATION</p>
+        <p class="intro">We thank you for your inquiry to move your household goods from <b>${escapeHtml(shared.fromCity)} to ${escapeHtml(shared.toCity)}</b>. We have pleasure in quoting our charges as follows:</p>
+
+        <table class="max-table">
+          <thead><tr><th class="sno">S.No</th><th>Particulars</th><th style="text-align:right;">Amount</th></tr></thead>
+          <tbody>
+            ${d.costItems.map((i,idx) => `<tr><td class="sno">${idx+1}</td><td>${escapeHtml(i.label)}</td><td class="amt">${fmt(i.amount)}</td></tr>`).join('')}
+            <tr class="total-row"><td class="sno">${d.costItems.length+1}</td><td>Total</td><td class="amt">${fmt(subtotal)}</td></tr>
+            <tr><td class="sno">${d.costItems.length+2}</td><td>GST Charges @ ${Number(d.gstPercent)||0}%</td><td class="amt">${fmt(gstAmount)}</td></tr>
+            <tr class="grand-row"><td></td><td>Total Charges with GST</td><td class="amt">${fmt(grand)}</td></tr>
+          </tbody>
+        </table>
+
+        <p class="terms-title">TERMS &amp; CONDITION:</p>
+        <ol class="terms">
+          ${d.terms.map(t => `<li>${escapeHtml(t)}</li>`).join('')}
+        </ol>
+
+        <div class="footer">
+          Thanking you and looking forward to rendering our service to you.<br>
+          With Regards,
+          <div class="sign">M/s ${escapeHtml(d.companyName)}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderAll(){
+  renderForm();
+  renderPreview();
+}
+
+document.getElementById('tabExact').addEventListener('click', () => switchTab('exact'));
+document.getElementById('tabMaxcare').addEventListener('click', () => switchTab('maxcare'));
+
+function switchTab(company){
+  active = company;
+  document.getElementById('tabExact').classList.toggle('active', company==='exact');
+  document.getElementById('tabMaxcare').classList.toggle('active', company==='maxcare');
+  document.getElementById('f_totalAmount').value = '';
+  renderAll();
+}
+
+document.getElementById('applyTotalBtn').addEventListener('click', () => {
+  applyTotalAmount();
+  renderAll();
+});
+
+document.getElementById('f_totalAmount').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    applyTotalAmount();
+    renderAll();
+  }
+});
+
+document.getElementById('f_carFreight').addEventListener('input', (e) => {
+  const val = parseFloat(e.target.value) || 0;
+  const d = state[active];
+  let carIdx = getCarFreightItemIndex();
+  
+  if (carIdx !== -1) {
+    d.costItems[carIdx].amount = val;
+  } else {
+    const label = active === 'exact' ? 'Car Freight' : 'Car Transportation (if any)';
+    d.costItems.splice(1, 0, { label, amount: val });
+  }
+  
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(d);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(d.gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+  
+  const costInputs = document.querySelectorAll('#costRows .cost-row');
+  carIdx = getCarFreightItemIndex();
+  if (carIdx !== -1 && costInputs[carIdx]) {
+    const amtInput = costInputs[carIdx].querySelector('.amt-in');
+    if (amtInput) amtInput.value = val;
+  }
+});
+
+const simpleFields = {
+  f_docNo: 'docNo', f_gstNo: 'gstNo', f_gstPercent: 'gstPercent',
+  f_addr: 'addr', f_phone: 'phone', f_email: 'email'
+};
+Object.keys(simpleFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    state[active][simpleFields[id]] = e.target.value;
+    renderPreview();
+    if (id === 'f_gstPercent') {
+      const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+      document.getElementById('totalsBox').innerHTML = `
+        <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+        <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+        <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+      `;
+    }
+  });
+});
+
+const sharedFields = {
+  f_custName: 'custName', f_custCompany: 'custCompany', f_custGst: 'custGst',
+  f_fromCity: 'fromCity', f_toCity: 'toCity'
+};
+Object.keys(sharedFields).forEach(id => {
+  document.getElementById(id).addEventListener('input', (e) => {
+    shared[sharedFields[id]] = e.target.value;
+    renderPreview();
+  });
+});
+
+// Regular input listener for the date field
+document.getElementById('f_date').addEventListener('input', (e) => {
+  shared.date = e.target.value;
+  renderPreview();
+});
+
+document.getElementById('costRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.idx;
+  const field = e.target.dataset.field;
+  if (idx === undefined) return;
+  const item = state[active].costItems[idx];
+  if (field === 'amount') item.amount = parseFloat(e.target.value) || 0;
+  else item.label = e.target.value;
+  
+  const carIdx = getCarFreightItemIndex();
+  if (Number(idx) === carIdx) {
+    document.getElementById('f_carFreight').value = item.amount || '';
+  }
+
+  renderPreview();
+  const { subtotal, gstAmount, grand } = computeTotals(state[active]);
+  document.getElementById('totalsBox').innerHTML = `
+    <div class="line"><span>Subtotal</span><span>₹ ${fmt(subtotal)}</span></div>
+    <div class="line"><span>GST (${Number(state[active].gstPercent)||0}%)</span><span>₹ ${fmt(gstAmount)}</span></div>
+    <div class="line total"><span>Total with GST</span><span>₹ ${fmt(grand)}</span></div>
+  `;
+});
+
+document.getElementById('costRows').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-remove-cost]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeCost);
+  if (Number.isNaN(idx)) return;
+  state[active].costItems.splice(idx, 1);
+  renderAll();
+});
+
+document.getElementById('addCostRow').addEventListener('click', () => {
+  state[active].costItems.push({ label: 'New Charge', amount: 0 });
+  renderAll();
+});
+
+document.getElementById('termRows').addEventListener('input', (e) => {
+  const idx = e.target.dataset.termIdx;
+  if (idx === undefined) return;
+  state[active].terms[idx] = e.target.value;
+  renderPreview();
+});
+
+document.getElementById('termRows').addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-remove-term]');
+  if (!btn) return;
+  const idx = Number(btn.dataset.removeTerm);
+  if (Number.isNaN(idx)) return;
+  state[active].terms.splice(idx, 1);
+  renderAll();
+});
+
+document.getElementById('addTermRow').addEventListener('click', () => {
+  state[active].terms.push('New term or condition.');
+  renderAll();
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  state[active] = clone(DEFAULTS[active]);
+  shared = clone(SHARED_DEFAULTS);
+  renderAll();
+});
+
+const PDF_SCALE = 2;
+const PDF_JPEG_QUALITY = 0.9;
+
+const nextPaint = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+
+function saveBlobAsFile(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+  if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Please fill in customer details before downloading."
+    });
+    return;
+  }
+
+  // Validate total amount is greater than zero
+  const d = state[active];
+  const { grand } = computeTotals(d);
+  if (grand <= 0) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: "Please fill amount first"
+    });
+    return;
+  }
+
+  const btn = document.getElementById('downloadBtn');
+  const status = document.getElementById('statusMsg');
+  const busy = document.getElementById('pdfBusy');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  status.textContent = '';
+  busy.hidden = false;
+  await nextPaint();
+
+  const node = document.getElementById('previewA4');
+  const stage = document.querySelector('.stage');
+
+  const originalWidth = node.style.width;
+  const originalMinHeight = node.style.minHeight;
+  const originalPosition = node.style.position;
+  const originalLeft = node.style.left;
+  const originalTransform = node.style.transform;
+  const restorePreview = () => {
+    stage.style.removeProperty('display');
+    node.style.width = originalWidth;
+    node.style.minHeight = originalMinHeight;
+    node.style.position = originalPosition;
+    node.style.left = originalLeft;
+    node.style.transform = originalTransform;
+  };
+
+  const marks = { start: performance.now() };
+  try {
+    stage.style.setProperty('display', 'block', 'important');
+    node.style.width = '794px';
+    node.style.minHeight = '1123px';
+    node.style.position = 'absolute';
+    node.style.left = '-9999px';
+    node.style.transform = 'none';
+
+    const canvas = await html2canvas(node, {
+      scale: PDF_SCALE,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      width: 794,
+      windowWidth: 794,
+      logging: false
+    });
+    marks.captured = performance.now();
+
+    restorePreview();
+
+    let jpegBytes;
+    const jpegBlob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', PDF_JPEG_QUALITY));
+    if (jpegBlob) jpegBytes = new Uint8Array(await jpegBlob.arrayBuffer());
+    marks.encoded = performance.now();
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+
+    let imgW = pageW;
+    let imgH = (canvas.height * imgW) / canvas.width;
+
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (imgH > pageH) {
+      const scale = pageH / imgH;
+      imgH = pageH;
+      imgW = imgW * scale;
+      xOffset = (pageW - imgW) / 2;
+    }
+
+    pdf.addImage(jpegBytes || canvas.toDataURL('image/jpeg', PDF_JPEG_QUALITY), 'JPEG', xOffset, yOffset, imgW, imgH);
+
+    const cleanClient = shared.custName ? shared.custName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Customer';
+    const cleanCompany = d.companyName ? d.companyName.replace(/[^a-zA-Z0-9 ]/g, '').trim() : 'Company';
+    const filename = `${cleanClient}_${cleanCompany}.pdf`;
+
+    const pdfBlob = pdf.output('blob');
+    marks.built = performance.now();
+
+    saveBlobAsFile(pdfBlob, filename);
+
+    try {
+      if (window.APMNotify) {
+        window.APMNotify.send({
+          type: 'pdf',
+          title: 'PDF generated',
+          file: filename,
+          details: { Customer: shared.custName, Company: d.companyName, Route: shared.fromCity + ' to ' + shared.toCity }
         });
+      }
+    } catch (e) {}
 
-        function filterByChip(term) {
-            const input = document.getElementById('masterSearchInput');
-            if (input && directoryHelper) {
-                input.value = term;
-                directoryHelper.filterData(term);
-            }
-        }
+    saveQuotationToDrive(pdfBlob, filename);
 
-        // Admin View Toggle with Google Login & Email Restriction
-        function toggleAdminMode() {
-            if (!isAdminMode) {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                firebase.auth().signInWithPopup(provider)
-                    .then((result) => {
-                        const userEmail = (result.user.email || "").toLowerCase().trim();
+    incrementPdfDownloadCount();
+    
+    if (typeof logDailyActivity === 'function') {
+      logDailyActivity('pdf');
+    }
 
-                        if (!ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
-                            firebase.auth().signOut();
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Access Denied',
-                                text: `Account (${userEmail}) is not authorized as an Admin.`
-                            });
-                            return;
-                        }
+    status.textContent = 'Downloaded ✓';
 
-                        isAdminMode = true;
-                        const btn = document.getElementById('adminToggleBtn');
-                        btn.style.background = '#991b1b';
-                        btn.title = "Exit Admin View";
-                        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px; color: #ffffff;">logout</span>';
+    // SweetAlert2 success popup when PDF is generated successfully
+    Swal.fire({
+      title: "PDF Generated Successfully!",
+      icon: "success",
+      draggable: true
+    });
 
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'success',
-                            title: `Welcome Admin (${userEmail})`,
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Something went wrong generating the PDF. Please try again.';
+    restorePreview();
+  } finally {
+    busy.hidden = true;
+    btn.disabled = false;
+  }
+});
 
-                        if (directoryHelper) {
-                            directoryHelper.toggleAdminView(true);
-                        }
-                    })
-                    .catch((error) => {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Sign-In Failed',
-                            text: error.message
-                        });
-                    });
-            } else {
-                firebase.auth().signOut().then(() => {
-                    isAdminMode = false;
-                    const btn = document.getElementById('adminToggleBtn');
-                    btn.style.background = '#ffffff';
-                    btn.title = "Admin Login";
-                    btn.innerHTML = `
-                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
-                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
-                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
-                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
-                        </svg>`;
+document.getElementById('dateStamp').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+renderAll();
+</script>
 
-                    if (directoryHelper) {
-                        directoryHelper.toggleAdminView(false);
-                    }
-                });
-            }
-        }
-
-        // Open SweetAlert modal to create new contact
-        window.openCreateContactModal = async function() {
-            const { value: formValues } = await Swal.fire({
-                title: 'Create New Contact',
-                html:
-                    '<input id="swal-category" class="swal2-input" placeholder="Category (e.g., Hub / Branch)">' +
-                    '<input id="swal-location" class="swal2-input" placeholder="Location / Branch Name">' +
-                    '<input id="swal-region" class="swal2-input" placeholder="Region">' +
-                    '<input id="swal-designation" class="swal2-input" placeholder="Designation / Role">' +
-                    '<input id="swal-name" class="swal2-input" placeholder="Contact Person Name">' +
-                    '<input id="swal-contact" class="swal2-input" placeholder="Contact Number">' +
-                    '<input id="swal-address" class="swal2-input" placeholder="Full Address">',
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonColor: '#c21d1d',
-                preConfirm: () => {
-                    return {
-                        category: document.getElementById('swal-category').value.trim(),
-                        location: document.getElementById('swal-location').value.trim(),
-                        region: document.getElementById('swal-region').value.trim(),
-                        designation: document.getElementById('swal-designation').value.trim(),
-                        name: document.getElementById('swal-name').value.trim(),
-                        contact: document.getElementById('swal-contact').value.trim(),
-                        address: document.getElementById('swal-address').value.trim(),
-                        isDeleted: false
-                    }
-                }
-            });
-
-            if (formValues) {
-                if (!formValues.name || !formValues.location) {
-                    Swal.fire('Error', 'Name and Location are required fields!', 'error');
-                    return;
-                }
-
-                directoryRef.push(formValues).then(() => {
-                    Swal.fire({
-                        position: 'top-end',
-                        icon: 'success',
-                        title: 'New contact created successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                }).catch(err => {
-                    Swal.fire('Error', err.message, 'error');
-                });
-            }
-        };
-
-        window.saveRecord = function(id) {
-            const updatedData = {
-                category: document.getElementById(`cat_${id}`).value.trim(),
-                location: document.getElementById(`loc_${id}`).value.trim(),
-                region: document.getElementById(`reg_${id}`).value.trim(),
-                designation: document.getElementById(`des_${id}`).value.trim(),
-                name: document.getElementById(`nam_${id}`).value.trim(),
-                contact: document.getElementById(`con_${id}`).value.trim(),
-                address: document.getElementById(`adr_${id}`).value.trim()
-            };
-
-            const existing = loadedMasterData.find(i => String(i.id) === String(id));
-            if (existing && existing.isDeleted) {
-                updatedData.isDeleted = true;
-            }
-
-            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
-            const targetKey = record ? (record.firebaseKey || record.id) : id;
-
-            directoryRef.child(targetKey).set(updatedData).then(() => {
-                Swal.fire({
-                  position: "top-end",
-                  icon: "success",
-                  title: "Your work has been saved",
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-                toggleEditCard(id);
-            }).catch(err => {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Error updating record: " + err.message
-                });
-            });
-        };
-
-        // Soft Delete: sets isDeleted: true using exact database key lookup
-        window.deleteRecord = function(id) {
-            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
-            const targetKey = record ? (record.firebaseKey || record.id) : id;
-
-            Swal.fire({
-              title: "Are you sure?",
-              text: "This contact will be hidden from the directory page.",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#c21d1d",
-              cancelButtonColor: "#78716c",
-              confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
-                  Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
-                  });
-                }).catch(err => {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Error deleting record: " + err.message
-                  });
-                });
-              }
-            });
-        };
-
-        // Restore contact
-        window.restoreRecord = function(id) {
-            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
-            const targetKey = record ? (record.firebaseKey || record.id) : id;
-
-            directoryRef.child(targetKey).update({ isDeleted: false }).then(() => {
-                Swal.fire({
-                  title: "Restored!",
-                  text: "Contact is now active again.",
-                  icon: "success",
-                  timer: 1500,
-                  showConfirmButton: false
-                });
-            }).catch(err => {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "Error restoring record: " + err.message
-                });
-            });
-        };
-
-        // Permanent Delete
-        window.permanentDeleteRecord = function(id) {
-            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
-            const targetKey = record ? (record.firebaseKey || record.id) : id;
-
-            Swal.fire({
-              title: "Delete Permanently?",
-              text: "This will permanently remove the contact from the database. You won't be able to recover this!",
-              icon: "error",
-              showCancelButton: true,
-              confirmButtonColor: "#dc2626",
-              cancelButtonColor: "#78716c",
-              confirmButtonText: "Yes, delete permanently!"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                directoryRef.child(targetKey).remove().then(() => {
-                  Swal.fire({
-                    title: "Permanently Deleted!",
-                    text: "The contact has been permanently removed.",
-                    icon: "success",
-                    timer: 1500,
-                    showConfirmButton: false
-                  });
-                }).catch(err => {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Error deleting permanently: " + err.message
-                  });
-                });
-              }
-            });
-        };
-    </script>
+<script src="notify.js?v=1"></script>
+<script src="common.js?v=18.0"></script>
 </body>
 </html>
