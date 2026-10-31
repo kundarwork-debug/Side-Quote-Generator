@@ -177,7 +177,7 @@
     .banner button { margin-left: auto; flex: none; }
 
     /* ---------- KPI cards ---------- */
-    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 22px; }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 22px; }
     @media (max-width: 1080px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 560px) { .kpis { grid-template-columns: 1fr; } }
 
@@ -322,6 +322,45 @@
     @media (prefers-reduced-motion: reduce) {
       * { animation: none !important; transition: none !important; }
     }
+
+    /* ---------- enhanced analytics ---------- */
+    .advanced-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 20px; }
+    .date-field { display:flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--surface-border); border-radius:12px; background:var(--surface-raised); color:var(--text-muted); font-size:12px; font-weight:700; }
+    .date-field input { min-width:132px; border:0; outline:0; background:transparent; color:var(--text-main); font:600 12px var(--font-sans); }
+    .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .btn.primary .material-symbols-outlined { color:#fff; }
+    .section-stack { display:grid; gap:20px; margin-top:22px; }
+    .section-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .mini-stat { padding:16px; border:1px solid var(--surface-border); border-radius:15px; background:var(--surface-raised); min-width:0; }
+    .mini-stat span { display:block; color:var(--text-muted); font-size:12px; font-weight:700; }
+    .mini-stat b { display:block; margin-top:7px; font:700 24px var(--font-mono); color:var(--text-main); }
+    .mini-stat small { display:block; margin-top:4px; color:var(--text-faint); font-size:11px; line-height:1.4; }
+    .insight-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .insight-item { display:flex; gap:11px; align-items:flex-start; padding:13px; border-radius:14px; background:var(--surface-subtle); color:var(--text-secondary); font-size:13px; line-height:1.5; }
+    .insight-item .material-symbols-outlined { color:var(--primary); font-size:20px; }
+    .rank-list { display:grid; gap:9px; }
+    .rank-row { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; font-size:12.5px; }
+    .rank-name { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text-secondary); }
+    .rank-track { height:6px; background:var(--surface-subtle); border-radius:99px; overflow:hidden; margin-top:5px; }
+    .rank-fill { height:100%; background:var(--primary); border-radius:99px; }
+    .heatmap { display:grid; grid-template-columns:repeat(24,minmax(0,1fr)); gap:4px; }
+    .heat-cell { aspect-ratio:1; min-width:0; border-radius:4px; background:var(--surface-subtle); }
+    .calendar-heatmap-wrap { overflow-x:auto; padding-bottom:2px; }
+    .calendar-weekdays,.calendar-heatmap { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:7px; min-width:280px; }
+    .calendar-weekdays { margin-bottom:8px; color:var(--text-muted); font-size:11px; font-weight:800; text-align:center; }
+    .calendar-heatmap { grid-auto-rows:minmax(24px,36px); }
+    .day-heat { min-width:0; border-radius:7px; background:var(--surface-subtle); border:1px solid var(--surface-border); }
+    .day-heat.empty { visibility:hidden; }
+    .day-heat:focus-visible { outline:3px solid var(--primary); outline-offset:2px; }
+    .heat-legend { display:flex; align-items:center; gap:6px; margin-top:10px; color:var(--text-muted); font-size:11px; }
+    .heat-legend i { width:12px; height:12px; border-radius:3px; background:var(--primary); opacity:.18; }
+    .heat-legend i:nth-of-type(2) { opacity:.4; } .heat-legend i:nth-of-type(3) { opacity:.68; } .heat-legend i:nth-of-type(4) { opacity:1; }
+    .muted-note { color:var(--text-muted); font-size:12px; line-height:1.55; }
+    .report-actions { display:flex; flex-wrap:wrap; gap:8px; }
+    @media(max-width:850px) { .section-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media(max-width:560px) { .section-grid,.insight-list { grid-template-columns:1fr; } .date-field { width:100%; justify-content:space-between; } .date-field input { flex:1; } .heatmap { gap:2px; } .calendar-heatmap,.calendar-weekdays { gap:4px; } }
+    @media print { .ambient-bg,#header-container,#footer-container,.head-controls,.advanced-tools,.report-actions,.chart-tools,#banner { display:none!important; } body { background:#fff!important; color:#111!important; } main { margin:0!important; padding:12px!important; max-width:none!important; } .card,.kpi { box-shadow:none!important; break-inside:avoid; } }
+
   </style>
 </head>
 <body>
@@ -354,6 +393,19 @@
       </div>
     </header>
 
+    <div class="advanced-tools" aria-label="Custom date range and reports">
+      <label class="date-field">From <input type="date" id="dateStart" aria-label="Start date"></label>
+      <label class="date-field">To <input type="date" id="dateEnd" aria-label="End date"></label>
+      <button type="button" class="btn primary" id="applyDates">Apply dates</button>
+      <button type="button" class="btn" id="thisMonthBtn">This month</button>
+      <button type="button" class="btn" id="lastMonthBtn">Last month</button>
+      <button type="button" class="btn" id="thisYearBtn">This year</button>
+      <span style="flex:1"></span>
+      <div class="report-actions">
+        <button type="button" class="btn" id="printBtn"><span class="material-symbols-outlined">picture_as_pdf</span> Print / PDF</button>
+      </div>
+    </div>
+
     <div class="banner" id="banner" role="alert" hidden>
       <span class="material-symbols-outlined" id="bannerIcon">error</span>
       <div id="bannerText"></div>
@@ -369,7 +421,7 @@
           <span class="delta" id="dVisitors">—</span>
         </div>
         <div class="kpi-value" id="sumVisitors">0</div>
-        <div class="kpi-foot"><span class="kpi-sub" id="subVisitors">Unique people per day</span><svg class="spark" id="spVisitors" viewBox="0 0 112 36" aria-hidden="true"></svg></div>
+        <div class="kpi-foot"><span class="kpi-sub" id="subVisitors">Existing daily visitor counter</span><svg class="spark" id="spVisitors" viewBox="0 0 112 36" aria-hidden="true"></svg></div>
       </article>
 
       <article class="kpi" data-series="pdf">
@@ -390,6 +442,17 @@
         </div>
         <div class="kpi-value" id="sumMedia">0</div>
         <div class="kpi-foot"><span class="kpi-sub" id="subMedia">All time: —</span><svg class="spark" id="spMedia" viewBox="0 0 112 36" aria-hidden="true"></svg></div>
+      </article>
+
+      <article class="kpi" data-series="pdf">
+        <div class="kpi-top"><span class="chip"><span class="material-symbols-outlined">download</span></span><span class="kpi-label">Total downloads</span><span class="delta" id="dTotalDownloads">—</span></div>
+        <div class="kpi-value" id="sumTotalDownloads">0</div>
+        <div class="kpi-foot"><span class="kpi-sub">PDF quotations + media</span><svg class="spark" id="spTotalDownloads" viewBox="0 0 112 36" aria-hidden="true"></svg></div>
+      </article>
+      <article class="kpi" data-series="visitors">
+        <div class="kpi-top"><span class="chip"><span class="material-symbols-outlined">person_check</span></span><span class="kpi-label">Avg. daily visitors</span></div>
+        <div class="kpi-value" id="avgVisitors">0</div>
+        <div class="kpi-foot"><span class="kpi-sub">Selected period average</span></div>
       </article>
 
       <article class="kpi" data-series="peak">
@@ -461,6 +524,39 @@
       </aside>
     </div>
 
+    <!-- EVENT-LEVEL ANALYTICS: populated by apml-analytics-tracker.js -->
+    <div class="section-stack">
+      <section class="card" aria-labelledby="eventTitle">
+        <div class="card-head"><h2 class="card-title" id="eventTitle"><span class="material-symbols-outlined">insights</span> Visitor &amp; event intelligence</h2><span class="muted-note" id="eventStatus">Waiting for event tracking</span></div>
+        <div class="section-grid">
+          <div class="mini-stat"><span>Tracked unique visitors</span><b id="eventVisitors">—</b><small>Distinct anonymous browser IDs in selected period</small></div>
+          <div class="mini-stat"><span>Repeat-session visitors</span><b id="repeatVisitors">—</b><small>Visitors with more than one session in period</small></div>
+          <div class="mini-stat"><span>Tracked page views</span><b id="pageViews">—</b><small>Page-view events recorded by tracker</small></div>
+          <div class="mini-stat"><span>Tracked file downloads</span><b id="trackedDownloads">—</b><small>Download events recorded by tracker</small></div>
+          <div class="mini-stat"><span>Event tracking coverage</span><b id="trackingCoverage">—</b><small>Events available in Firebase for selected period</small></div>
+        </div>
+        <p class="muted-note" style="margin-top:14px">The dashboard reads the latest 20,000 events for performance; very high-volume periods may therefore show partial event coverage. These event-based figures are separate from the existing daily aggregate counters. They become meaningful after the tracker is installed across the portal. They do not retroactively recreate older activity.</p>
+      </section>
+
+      <section class="card" aria-labelledby="activityHeatmapTitle">
+        <div class="card-head">
+          <h2 class="card-title" id="activityHeatmapTitle"><span class="material-symbols-outlined">calendar_month</span> Daily activity heatmap</h2>
+          <span class="muted-note" id="heatmapRange">Selected period · India time</span>
+        </div>
+        <div class="calendar-heatmap-wrap">
+          <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="calendar-heatmap" id="dailyHeatmap" role="img" aria-label="Daily activity heatmap"></div>
+        </div>
+        <div class="heat-legend"><span>Less</span><i></i><i></i><i></i><i></i><span>More</span></div>
+        <p class="muted-note" style="margin-top:12px">Each square represents one day. Darker squares indicate more combined visitors, PDF quotations and media downloads. Hover or focus a day to see its totals.</p>
+      </section>
+
+      <section class="card" aria-labelledby="insightsTitle">
+        <div class="card-head"><h2 class="card-title" id="insightsTitle"><span class="material-symbols-outlined">auto_awesome</span> Smart insights</h2><span class="muted-note" id="insightRange"></span></div>
+        <div class="insight-list" id="smartInsights"><div class="insight-item"><span class="material-symbols-outlined">info</span><span>Insights will appear after analytics data loads.</span></div></div>
+      </section>
+    </div>
+
   </main>
 
   <!-- COMMON FOOTER PLACEHOLDER -->
@@ -481,6 +577,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="apml-analytics-tracker.js?v=1.0"></script>
 
   <script>
   (function () {
@@ -489,7 +586,7 @@
     // ---------------------------------------------------------------- settings
     var TZ = 'Asia/Kolkata';                            // days are counted on India time, the same way notify.js writes them
     var RANGES = { '7d': 7, '1m': 30, '6m': 180, '1y': 365 };
-    var RANGE_NAME = { '7d': 'last 7 days', '1m': 'last 30 days', '6m': 'last 6 months', '1y': 'last year' };
+    var RANGE_NAME = { '7d': 'last 7 days', '1m': 'last 30 days', '6m': 'last 6 months', '1y': 'last year', 'custom': 'custom date range' };
     var SERIES = [
       { key: 'visitors', label: 'Visitors',        cssVar: '--c-visitors' },
       { key: 'pdf',      label: 'PDF quotations',  cssVar: '--c-pdf' },
@@ -508,7 +605,7 @@
 
     // ---------------------------------------------------------------- state
     var state = {
-      range: '7d', type: 'line', hideEmpty: true,
+      range: '7d', type: 'line', hideEmpty: true, customStart: null, customEnd: null, events: {},
       hidden: { visitors: false, pdf: false, media: false },
       logs: null,                                        // null until the first answer arrives
       totals: { pdf: null, media: null },
@@ -543,6 +640,18 @@
         out.total.push(d.visitors + d.pdf + d.media);
       }
       return out;
+    }
+    function shiftKey(key, offset) { var d = keyToDate(key); d.setUTCDate(d.getUTCDate() + offset); return d.toISOString().slice(0, 10); }
+    function customWindow(logs, start, end) {
+      var out = { keys: [], visitors: [], pdf: [], media: [], total: [] };
+      if (!start || !end || start > end) return out;
+      var cur = start, guard = 0;
+      while (cur <= end && guard++ < 740) { var d = readDay(logs, cur); out.keys.push(cur); out.visitors.push(d.visitors); out.pdf.push(d.pdf); out.media.push(d.media); out.total.push(d.visitors + d.pdf + d.media); cur = shiftKey(cur, 1); }
+      return out;
+    }
+    function selectedWindow(logs) {
+      if (state.range === 'custom') { var days = Math.max(1, Math.round((keyToDate(state.customEnd) - keyToDate(state.customStart)) / 86400000) + 1); return { win: customWindow(logs, state.customStart, state.customEnd), days: days }; }
+      var days = RANGES[state.range] || 7; return { win: windowOf(logs, days, 0), days: days };
     }
     var sum = function (a) { return a.reduce(function (x, y) { return x + y; }, 0); };
 
@@ -599,11 +708,17 @@
         el.title = 'Compared with the ' + days + ' days before: ' + num(old[s.key]);
         spark($(ids[2]), win[s.key], css(s.cssVar));
       });
+      var curDownloads = cur.pdf + cur.media, oldDownloads = old.pdf + old.media;
+      var totalDelta = deltaOf(curDownloads, oldDownloads), totalEl = $('dTotalDownloads');
+      $('sumTotalDownloads').textContent = num(curDownloads); totalEl.textContent = totalDelta.text; totalEl.className = 'delta ' + totalDelta.cls;
+      totalEl.title = 'Compared with the previous ' + days + ' days: ' + num(oldDownloads);
+      spark($('spTotalDownloads'), win.pdf.map(function(v,i){return v + win.media[i];}), css('--primary'));
+      $('avgVisitors').textContent = num(Math.round(cur.visitors / Math.max(1, days) * 10) / 10);
       var pk = peakOf(win);
       $('peakDay').textContent = pk ? labelOf(pk.key) : '—';
       $('peakSub').textContent = pk ? num(pk.value) + ' actions: visits, PDFs and downloads' : 'No activity in this period';
       var firstDay = firstLoggedDay(state.logs);
-      $('subVisitors').innerHTML = firstDay ? 'Logged since <b>' + labelOf(firstDay) + '</b>' : 'Unique people per day';
+      $('subVisitors').innerHTML = firstDay ? 'Logged since <b>' + labelOf(firstDay) + '</b>' : 'Existing daily visitor counter';
       renderTotals();
     }
     function renderTotals() {
@@ -644,7 +759,7 @@
       if (typeof Chart === 'undefined') { showBanner('error', 'The chart library could not be loaded, so the graph is hidden. The numbers and the table still work.', true); return; }
       var dark = themeName() === 'dark';
       var labels = win.keys.map(function (k) { return labelOf(k); });
-      var sig = [state.type, state.range, themeName()].join('|');
+      var sig = [state.type, state.range, state.customStart || '', state.customEnd || '', themeName()].join('|');
       var ctx = canvas.getContext('2d');
 
       if (chart && chartSig === sig) {                                             // only the numbers changed: update in place, no flicker
@@ -684,7 +799,7 @@
       }
       chart.$keys = win.keys;
       var parts = SERIES.map(function (s) { return s.label + ' ' + num(sum(win[s.key])); }).join(', ');
-      canvas.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Line') + ' chart, ' + RANGE_NAME[state.range] + '. ' + parts + '.');
+      canvas.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Line') + ' chart, ' + (state.range === 'custom' ? state.customStart + ' to ' + state.customEnd : RANGE_NAME[state.range]) + '. ' + parts + '.');
     }
 
     // ---------------------------------------------------------------- drawing: table, highlights
@@ -723,7 +838,7 @@
       var wd = weekdayTotals(win), max = Math.max.apply(null, wd), best = max > 0 ? wd.indexOf(max) : -1;
       $('fWeekday').textContent = best >= 0 ? WEEKDAYS[best] : '—';
       $('fWeekdaySub').textContent = best >= 0 ? num(max) + ' actions in total' : 'no activity yet';
-      $('wdRange').textContent = RANGE_NAME[state.range];
+      $('wdRange').textContent = state.range === 'custom' ? state.customStart + ' – ' + state.customEnd : RANGE_NAME[state.range];
       var box = $('weekdays'); box.textContent = '';
       [1, 2, 3, 4, 5, 6, 0].forEach(function (idx) {
         var col = document.createElement('div'); col.className = 'wd' + (idx === best ? ' best' : '');
@@ -736,21 +851,55 @@
       box.setAttribute('aria-label', 'Activity by weekday: ' + [1, 2, 3, 4, 5, 6, 0].map(function (i) { return WEEKDAYS[i] + ' ' + num(wd[i]); }).join(', '));
     }
 
+    function renderDailyHeatmap(win) {
+      var host = $('dailyHeatmap');
+      if (!host) return;
+      host.textContent = '';
+      $('heatmapRange').textContent = state.range === 'custom'
+        ? state.customStart + ' – ' + state.customEnd
+        : RANGE_NAME[state.range] + ' · India time';
+      var max = Math.max.apply(null, win.total.concat([0]));
+      var first = win.keys.length ? keyToDate(win.keys[0]).getUTCDay() : 1;
+      // Monday-first calendar: Sunday is the seventh column.
+      var leading = (first + 6) % 7;
+      for (var pad = 0; pad < leading; pad++) {
+        var blank = document.createElement('span');
+        blank.className = 'day-heat empty';
+        blank.setAttribute('aria-hidden', 'true');
+        host.appendChild(blank);
+      }
+      win.keys.forEach(function (key, i) {
+        var value = win.total[i];
+        var cell = document.createElement('span');
+        cell.className = 'day-heat';
+        var intensity = max > 0 && value > 0 ? value / max : 0;
+        cell.style.backgroundColor = value > 0 ? 'var(--primary)' : 'var(--surface-subtle)';
+        cell.style.opacity = value > 0 ? String(0.22 + intensity * 0.78) : '1';
+        cell.title = labelOf(key, true) + ' · ' + num(value) + ' total actions (Visitors: ' + num(win.visitors[i]) + ', PDFs: ' + num(win.pdf[i]) + ', Media: ' + num(win.media[i]) + ')';
+        cell.setAttribute('aria-label', cell.title);
+        cell.tabIndex = 0;
+        host.appendChild(cell);
+      });
+      host.setAttribute('aria-label', 'Daily activity heatmap for ' + win.keys.length + ' days. Highest daily total: ' + num(max) + '.');
+    }
+
     // ---------------------------------------------------------------- one place that redraws everything
     function render() {
       if (state.logs === null) return;
-      var days = RANGES[state.range];
-      var win = windowOf(state.logs, days, 0), prev = windowOf(state.logs, days, days);
+      var selected = selectedWindow(state.logs), days = selected.days, win = selected.win, prev;
+      if (state.range === 'custom') { var prevEnd = shiftKey(state.customStart, -1), prevStart = shiftKey(prevEnd, -(days - 1)); prev = customWindow(state.logs, prevStart, prevEnd); $('trendRange').textContent = state.customStart + ' to ' + state.customEnd; }
+      else { prev = windowOf(state.logs, days, days); $('trendRange').textContent = RANGE_NAME[state.range]; }
       var pk = peakOf(win);
       $('kpis').classList.remove('loading');
-      $('trendRange').textContent = RANGE_NAME[state.range];
       renderKpis(win, prev, days);
       renderChart(win, days);
       renderTable(win, pk);
       renderHighlights(win, days);
+      renderDailyHeatmap(win);
       $('live').classList.remove('off');
       $('liveText').textContent = 'Live · updated ' + new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: TZ });
       state.last = { win: win, days: days };
+      renderEventAnalytics();
     }
 
     // ---------------------------------------------------------------- banners
@@ -768,7 +917,7 @@
     }
     $('rangeTabs').addEventListener('click', function (e) {
       var b = e.target.closest('button[data-range]'); if (!b) return;
-      state.range = b.getAttribute('data-range'); press($('rangeTabs'), 'data-range', state.range);
+      state.range = b.getAttribute('data-range'); state.customStart = state.customEnd = null; press($('rangeTabs'), 'data-range', state.range);
       state.hideEmpty = $('hideEmpty').checked; render();
     });
     $('typeTabs').addEventListener('click', function (e) {
@@ -799,6 +948,55 @@
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     });
+
+    // ---------------------------------------------------------------- custom ranges and report actions
+    function setCustomRange(start, end) {
+      if (!start || !end || start > end) { showBanner('error', 'Choose a valid date range. The start date must be on or before the end date.', false); return; }
+      var span = Math.round((keyToDate(end) - keyToDate(start)) / 86400000) + 1;
+      if (span > 730) { showBanner('error', 'Please choose a range of 730 days or fewer for responsive reporting.', false); return; }
+      state.range = 'custom'; state.customStart = start; state.customEnd = end; $('dateStart').value = start; $('dateEnd').value = end;
+      press($('rangeTabs'), 'data-range', '__none__'); hideBanner(); render(); renderEventAnalytics();
+    }
+    $('applyDates').addEventListener('click', function () { setCustomRange($('dateStart').value, $('dateEnd').value); });
+    function dateParts(d) { return { y:d.getUTCFullYear(), m:d.getUTCMonth(), day:d.getUTCDate() }; }
+    function dateKeyUTC(y,m,d) { return new Date(Date.UTC(y,m,d)).toISOString().slice(0,10); }
+    $('thisMonthBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)); setCustomRange(dateKeyUTC(p.y,p.m,1), today); });
+    $('lastMonthBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)), end = dateKeyUTC(p.y,p.m,0), ep = dateParts(keyToDate(end)); setCustomRange(dateKeyUTC(ep.y,ep.m,1), end); });
+    $('thisYearBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)); setCustomRange(dateKeyUTC(p.y,0,1), today); });
+    $('printBtn').addEventListener('click', function () { window.print(); });
+
+    // ---------------------------------------------------------------- event analytics (new tracker schema)
+    var eventDataReady = false;
+    function eventDate(e) { return e && (e.timestamp ? istKey(new Date(Number(e.timestamp))) : (e.dateKey || '')); }
+    function renderEventAnalytics() {
+      var start = state.range === 'custom' ? state.customStart : keyDaysAgo((RANGES[state.range] || 7) - 1);
+      var end = state.range === 'custom' ? state.customEnd : istKey(new Date());
+      var list = Object.keys(state.events || {}).map(function (id) { var e = state.events[id] || {}; e._id = id; return e; }).filter(function (e) { var k = eventDate(e); return k && k >= start && k <= end; });
+      var visitors = {}, visitorSessions = {}, pageViews = 0, downloads = 0;
+      list.forEach(function (e) {
+        var vid = e.visitorId || 'unknown:' + e._id, sid = e.sessionId || e._id;
+        visitors[vid] = true; visitorSessions[vid] = visitorSessions[vid] || {}; visitorSessions[vid][sid] = true;
+        if (e.eventType === 'download' || e.type === 'download') downloads++;
+        if (e.eventType === 'page_view' || e.type === 'page_view') pageViews++;
+      });
+      var visitorIds = Object.keys(visitors), repeats = visitorIds.filter(function (id) { return Object.keys(visitorSessions[id]).length > 1; }).length;
+      var total = list.length;
+      $('eventVisitors').textContent = eventDataReady ? num(visitorIds.length) : '—';
+      $('repeatVisitors').textContent = eventDataReady ? num(repeats) : '—';
+      $('pageViews').textContent = eventDataReady ? num(pageViews) : '—';
+      $('trackedDownloads').textContent = eventDataReady ? num(downloads) : '—';
+      $('trackingCoverage').textContent = eventDataReady ? num(total) + ' events' : 'Not connected';
+      $('eventStatus').textContent = eventDataReady ? 'Live event data · ' + num(total) + ' events in range' : 'No event data yet';
+      renderSmartInsights(list, start, end, pageViews, downloads, visitorIds.length);
+    }
+    function renderSmartInsights(events, start, end, pageViews, downloads, visitors) {
+      var box=$('smartInsights'); box.textContent=''; $('insightRange').textContent=start+' – '+end;
+      var messages=[];
+      if (state.logs) { var selected=selectedWindow(state.logs).win, p=peakOf(selected); if (p) messages.push(['bolt','Busiest day was '+labelOf(p.key,true)+' with '+num(p.value)+' combined daily actions.']); var v=sum(selected.visitors), d=sum(selected.pdf)+sum(selected.media); if (v>0) messages.push(['trending_up','The selected period recorded '+(d/v).toFixed(2)+' PDF/media downloads per daily visitor count.']); if (d===0 && v===0) messages.push(['info','No daily activity is recorded in this selected period.']); }
+      if (eventDataReady && events.length) { messages.push(['groups','Tracked '+num(visitors)+' anonymous visitors and '+num(pageViews)+' page views in this period.']); if (downloads) messages.push(['download','Tracked '+num(downloads)+' file downloads.']); }
+      if (!messages.length) messages.push(['info','Smart insights will populate as daily analytics and event-level tracking data become available.']);
+      messages.forEach(function (m) { var item=document.createElement('div'); item.className='insight-item'; var icon=document.createElement('span'); icon.className='material-symbols-outlined'; icon.textContent=m[0]; var text=document.createElement('span'); text.textContent=m[1]; item.appendChild(icon); item.appendChild(text); box.appendChild(item); });
+    }
 
     // the chart takes its colours from the theme, so it is rebuilt whenever the theme changes
     new MutationObserver(function () { if (state.logs !== null) render(); })
@@ -833,10 +1031,11 @@
       });
       db.ref('analytics/totalPdfDownloads').on('value', function (s) { state.totals.pdf = Number(s.val()) || 0; renderTotals(); });
       db.ref('analytics/totalMediaDownloads').on('value', function (s) { state.totals.media = Number(s.val()) || 0; renderTotals(); });
+      db.ref('analytics/events').limitToLast(20000).on('value', function (snap) { state.events = snap.val() || {}; eventDataReady = true; renderEventAnalytics(); }, function () { eventDataReady = false; $('eventStatus').textContent = 'Event data unavailable · check Firebase read rules'; renderEventAnalytics(); });
     }
 
     // a hook for testing and for the browser console
-    window.__analytics = { istKey: istKey, keyDaysAgo: keyDaysAgo, windowOf: windowOf, deltaOf: deltaOf, peakOf: peakOf, buildCsv: buildCsv, state: state };
+    window.__analytics = { istKey: istKey, keyDaysAgo: keyDaysAgo, windowOf: windowOf, customWindow: customWindow, deltaOf: deltaOf, peakOf: peakOf, buildCsv: buildCsv, render: render, state: state };
     start();
   })();
   </script>
