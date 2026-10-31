@@ -513,7 +513,7 @@
     }
 
     /* Theme-Adapted Uiverse Button Styling (by nathAd17) */
-    .card-footer-cta button {
+    .card-footer-cta .launch-button {
       display: flex;
       justify-content: center;
       gap: 8px;
@@ -537,7 +537,7 @@
       transition: color 0.3s ease;
     }
 
-    .card-footer-cta button::before {
+    .card-footer-cta .launch-button::before {
       content: "";
       position: absolute;
       width: 100%;
@@ -551,21 +551,21 @@
       aspect-ratio: 1;
     }
 
-    .module-card:hover .card-footer-cta button::before,
-    .card-footer-cta button:hover::before {
+    .module-card:hover .card-footer-cta .launch-button::before,
+    .card-footer-cta .launch-button:hover::before {
       left: 0;
       width: 100%;
       transform: scale(1.5);
       transition-duration: 0.7s;
     }
 
-    .module-card:hover .card-footer-cta button,
-    .card-footer-cta button:hover {
+    .module-card:hover .card-footer-cta .launch-button,
+    .card-footer-cta .launch-button:hover {
       color: #ffffff;
       border-color: var(--primary);
     }
 
-    .card-footer-cta button svg {
+    .card-footer-cta .launch-button svg {
       width: 24px;
       height: 24px;
       display: flex;
@@ -578,13 +578,13 @@
       transform: rotate(45deg);
     }
 
-    .card-footer-cta button svg path {
+    .card-footer-cta .launch-button svg path {
       fill: var(--primary);
       transition: fill 0.3s ease;
     }
 
-    .module-card:hover .card-footer-cta button svg,
-    .card-footer-cta button:hover svg {
+    .module-card:hover .card-footer-cta .launch-button svg,
+    .card-footer-cta .launch-button:hover svg {
       transform: rotate(90deg);
       background: #ffffff;
       color: var(--primary);
@@ -592,8 +592,8 @@
       padding: 4px;
     }
 
-    .module-card:hover .card-footer-cta button svg path,
-    .card-footer-cta button:hover svg path {
+    .module-card:hover .card-footer-cta .launch-button svg path,
+    .card-footer-cta .launch-button:hover svg path {
       fill: var(--primary);
     }
 
@@ -761,6 +761,82 @@
         padding-bottom: 0;
       }
     }
+
+
+    /* Essential responsive and accessibility refinements */
+    .workspace-section, .telemetry-section { max-width: 1400px; }
+    .section-bar { gap: 14px; }
+    .module-card { min-width: 0; }
+    .module-card:focus-visible, .telemetry-card:focus-visible {
+      outline: 3px solid var(--primary);
+      outline-offset: 4px;
+    }
+    .launch-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.1);
+      font-size: 13.5px;
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      font-weight: 600;
+      isolation: isolate;
+      border: 1.5px solid rgba(185, 28, 28, 0.2);
+      color: var(--primary);
+      position: relative;
+      z-index: 1;
+      padding: 6px 14px;
+      overflow: hidden;
+      border-radius: var(--radius-pill);
+      transition: color 0.3s ease, border-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .launch-button svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+      color: var(--primary);
+      transition: transform 0.3s ease;
+      border-radius: 50%;
+      border: 1px solid rgba(185, 28, 28, 0.3);
+      padding: 4px;
+      transform: rotate(45deg);
+      flex: 0 0 auto;
+    }
+    .launch-button svg path { fill: var(--primary); }
+    .module-card:hover .launch-button,
+    .module-card:focus-visible .launch-button {
+      color: #fff;
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+    .module-card:hover .launch-button svg,
+    .module-card:focus-visible .launch-button svg {
+      transform: rotate(90deg);
+      background: #fff;
+      border-color: #fff;
+    }
+    .operational-badge[data-state="offline"] { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
+    .operational-badge[data-state="connecting"] { background: var(--surface-subtle); border-color: var(--surface-border); color: var(--text-muted); }
+    html[data-theme="dark"] .operational-badge[data-state="offline"] { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); color: #fca5a5; }
+    @media (max-width: 700px) {
+      .hero-center { padding: 48px 18px 32px; }
+      .workspace-section, .telemetry-section { padding-left: 16px; padding-right: 16px; }
+      .telemetry-card { padding: 24px 18px; }
+      .section-bar { align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .cursor-glow { display: none !important; }
+    }
+
   </style>
 </head>
 <body>
@@ -842,12 +918,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -874,17 +950,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
         <!-- 3. GALLERY -->
-        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <a href="gallery.html" class="module-card" data-category="media gallery" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -901,12 +977,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -928,12 +1004,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -955,12 +1031,12 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -982,12 +1058,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -1009,12 +1085,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -1036,12 +1112,12 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <button type="submit">
+            <span class="launch-button">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </button>
+            </span>
           </div>
         </a>
 
@@ -1061,23 +1137,23 @@
             <p class="telemetry-sub-title">Live enterprise statistics across Western Central Regional Office &amp; Nationwide Hubs (Click to view analytics)</p>
           </div>
           
-          <div class="operational-badge">
+          <div class="operational-badge" data-state="connecting">
             <span class="operational-dot"></span>
-            <span>All Operational Systems Monitored</span>
+            <span id="systemStatusText">Connecting to live services</span>
           </div>
         </div>
 
         <div class="telemetry-stats-grid">
 
           <div class="telemetry-stat-item">
-            <div class="telemetry-stat-label">Live Active Personnel</div>
+            <div class="telemetry-stat-label">Live Active Sessions</div>
             <div class="telemetry-stat-value">
               <span id="liveUserCount">0</span> 
               <span style="font-size: 14px; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 4px;">
                 <span style="width: 7px; height: 7px; background: #059669; border-radius: 50%; display: inline-block;"></span> Online
               </span>
             </div>
-            <div class="telemetry-stat-sub">Concurrent field officers &amp; HODs</div>
+            <div class="telemetry-stat-sub">Active portal browser sessions</div>
           </div>
 
           <div class="telemetry-stat-item">
@@ -1108,7 +1184,8 @@
   <!-- THEME SYNC CONTROLLER -->
   <script>
     (function() {
-      const savedTheme = localStorage.getItem('apml_portal_theme') || 'light';
+      let savedTheme = 'light';
+      try { savedTheme = localStorage.getItem('apml_portal_theme') || 'light'; } catch (err) { /* Storage may be blocked. */ }
       document.documentElement.setAttribute('data-theme', savedTheme);
       window.addEventListener('storage', (e) => {
         if (e.key === 'apml_portal_theme') {
@@ -1184,12 +1261,12 @@
             if (!char || Math.random() < 0.28) {
               this.queue[i].char = this.chars[Math.floor(Math.random() * this.chars.length)];
             }
-            output += `<span style="opacity: 0.5;">${this.queue[i].char}</span>`;
+            output += this.queue[i].char;
           } else {
             output += from;
           }
         }
-        this.el.innerHTML = output;
+        this.el.textContent = output;
         if (complete === this.queue.length) {
           this.resolve();
         } else {
@@ -1202,8 +1279,10 @@
     window.addEventListener('DOMContentLoaded', () => {
       const el = document.querySelector('#scrambleTitle [data-value]');
       if (el) {
+        const target = el.getAttribute('data-value') || el.textContent;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = target; return; }
         const fx = new TextScrambleEffect(el);
-        fx.setText(el.getAttribute('data-value'));
+        fx.setText(target);
       }
     });
   </script>
@@ -1224,6 +1303,18 @@
     };
 
     let hasBeenViewed = false;
+
+    function safeCounter(value) {
+      const number = Number(value);
+      return Number.isFinite(number) && number >= 0 ? Math.floor(number) : 0;
+    }
+
+    function setSystemStatus(state, message) {
+      const badge = document.querySelector('.operational-badge');
+      const label = document.getElementById('systemStatusText');
+      if (badge) badge.dataset.state = state;
+      if (label) label.textContent = message;
+    }
 
     function runCountUpAnimations() {
       if (!window.countUp || !window.countUp.CountUp) return;
@@ -1254,6 +1345,7 @@
     }
 
     try {
+      if (!window.firebase || !firebase.apps) throw new Error('Firebase SDK unavailable');
       const firebaseConfig = {
         apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
         authDomain: "apml-portal.firebaseapp.com",
@@ -1276,40 +1368,43 @@
 
       db.ref(".info/connected").on("value", (snap) => {
         if (snap.val() === true) {
+          setSystemStatus('online', 'Live services connected');
           myPresenceRef.onDisconnect().remove();
-          myPresenceRef.set({ online: true, timestamp: Date.now() });
+          myPresenceRef.set({ online: true, timestamp: Date.now() }).catch((err) => { console.warn('Presence write failed.', err); setSystemStatus('offline', 'Live presence unavailable'); });
+        } else {
+          setSystemStatus('offline', 'Live services disconnected');
         }
-      });
+      }, (err) => { console.warn('Firebase connection status unavailable.', err); setSystemStatus('offline', 'Live services unavailable'); });
 
       allPresenceRef.on("value", (snap) => {
-        targetData.liveUserCount = snap.numChildren() || 1;
+        targetData.liveUserCount = snap.numChildren();
         if (hasBeenViewed) {
           if (userCountUp) userCountUp.update(targetData.liveUserCount);
           else document.getElementById("liveUserCount").innerText = targetData.liveUserCount.toLocaleString('en-IN');
         }
-      });
+      }, (err) => { console.warn('Presence read failed.', err); setSystemStatus('offline', 'Presence data unavailable'); });
 
       db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
         const val = snap.val();
         if (val !== null && val !== undefined) {
-          targetData.totalPdfDownloads = Number(val);
+          targetData.totalPdfDownloads = safeCounter(val);
           if (hasBeenViewed) {
             if (pdfCountUp) pdfCountUp.update(targetData.totalPdfDownloads);
             else document.getElementById("totalPdfDownloads").innerText = targetData.totalPdfDownloads.toLocaleString('en-IN');
           }
         }
-      });
+      }, (err) => { console.warn('PDF counter read failed.', err); });
 
       db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
         const val = snap.val();
         if (val !== null && val !== undefined) {
-          targetData.totalMediaDownloads = Number(val);
+          targetData.totalMediaDownloads = safeCounter(val);
           if (hasBeenViewed) {
             if (mediaCountUp) mediaCountUp.update(targetData.totalMediaDownloads);
             else document.getElementById("totalMediaDownloads").innerText = targetData.totalMediaDownloads.toLocaleString('en-IN');
           }
         }
-      });
+      }, (err) => { console.warn('Media counter read failed.', err); });
 
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -1329,6 +1424,7 @@
 
     } catch (err) {
       console.warn("Live presence counters offline.", err);
+      setSystemStatus('offline', 'Live statistics unavailable');
     }
   </script>
 </body>
