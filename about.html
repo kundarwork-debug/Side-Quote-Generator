@@ -4,593 +4,158 @@
   <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Prasad Kundar - Profile & Architecture</title>
-
-  <!-- SVG LOGO FAVICON -->
+  <meta name="theme-color" content="#fdf8f5">
+  <meta name="description" content="Meet Prasad Kundar — BDO at APML, building tools that simplify daily operations through thoughtful technology.">
+  <title>About Me | Prasad Kundar</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=19.0">
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="common.css?v=19.0">
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
-  <!-- LOTTIE PLAYER SCRIPT -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js" async></script>
-
   <style>
-    :root {
-      --primary: #b91c1c;
-      --primary-dark: #881337;
-      --primary-soft: rgba(185, 28, 28, 0.06);
-      --primary-glow: rgba(185, 28, 28, 0.28);
-      --bg-base: #FDF8F5; /* Soft Warm Cream Canvas */
-      --surface-card: #ffffff;
-      --surface-border: #ede4de;
-      --surface-subtle: #f7ede6;
-      --text-main: #292524;
-      --text-muted: #78716c;
-      --radius-xl: 20px;
-      --radius-pill: 9999px;
-      --shadow-subtle: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
-      --shadow-hover: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      overflow-x: hidden;
-      overflow-y: scroll !important;
-      height: 100%;
-      touch-action: pan-y pinch-zoom !important;
-    }
-
-    body {
-      background-color: var(--bg-base);
-      color: var(--text-main);
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: visible !important;
-      position: relative;
-      touch-action: pan-y pinch-zoom !important;
-    }
-
-    /* Ambient Soft Radial Mesh */
-    .ambient-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none !important;
-      z-index: 0;
-      background: 
-        radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-        radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%);
-    }
-
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-
-    main {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    /* =========================================================
-       1. TOP BANNER WRAPPER (NOW WITH HERO PROFILE CONTENT)
-       ========================================================= */
-    .services-custom-bg-wrap {
-      width: 100%;
-      min-height: 100vh;
-      background-image: linear-gradient(90deg, rgba(28, 25, 23, 0.92) 0%, rgba(28, 25, 23, 0.6) 60%, rgba(28, 25, 23, 0.2) 100%), url('https://i.ibb.co/ks12XBGT/Gemini-Generated-Image-ewg87vewg87vewg8-1.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      padding: 120px 48px;
-      margin-top: 0;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .services-fluid-section {
-      width: 100%;
-      max-width: 680px;
-      background: transparent;
-      border: none;
-      padding: 0;
-      text-align: left;
-      box-shadow: none;
-    }
-
-    .services-content-wrapper {
-      padding-left: 24px;
-      border-left: 4px solid var(--primary);
-    }
-
-    .hero-title-top {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(32px, 5vw, 46px);
-      font-weight: 800;
-      color: #ffffff;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      margin-bottom: 12px;
-    }
-
-    .hero-title-top span {
-      background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-sub-top {
-      font-size: clamp(15px, 2.5vw, 17.5px);
-      font-weight: 500;
-      color: #e7e5e4;
-      line-height: 1.6;
-      margin-bottom: 28px;
-    }
-
-    /* TOP BANNER ACTION BUTTONS */
-    .profile-action-row-top {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-      max-width: 420px;
-    }
-
-    .profile-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      flex: 1;
-      height: 48px;
-      padding: 0 20px;
-      border-radius: 24px;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      text-decoration: none;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .profile-btn-primary {
-      background-color: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 2px 4px rgba(185, 28, 28, 0.3);
-    }
-    .profile-btn-primary:hover {
-      background-color: #991b1b;
-      transform: translateY(-1px);
-    }
-
-    .profile-btn-sponsor {
-      background-color: #ffffff;
-      color: var(--text-main);
-      border: 1px solid var(--surface-border);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-    .profile-btn-sponsor:hover {
-      background-color: var(--surface-subtle);
-      transform: translateY(-1px);
-    }
-
-    /* =========================================================
-       2. BOTTOM HERO STAGE (INCREASED HEIGHT & 1080p FIT)
-       ========================================================= */
-    .hero-stage {
-      width: 100%;
-      min-height: 100vh;
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 120px 24px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(to top, rgba(253, 248, 245, 0.95) 0%, rgba(253, 248, 245, 0.8) 100%);
-    }
-
-    .services-heading,
-    .services-subline {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: clamp(30px, 4.8vw, 44px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.3;
-    }
-
-    .services-heading {
-      color: var(--text-main);
-      margin-bottom: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 0.3em;
-    }
-
-    .services-heading span {
-      background: linear-gradient(135deg, var(--primary) 0%, #e11d48 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .services-subline {
-      color: var(--primary);
-      margin-bottom: 20px;
-      font-size: clamp(22px, 3.2vw, 30px);
-    }
-
-    .services-description {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: clamp(16px, 2.2vw, 18.5px);
-      color: var(--text-muted);
-      line-height: 1.85;
-      font-weight: 500;
-      max-width: 720px;
-      margin-bottom: 40px;
-    }
-
-    /* CENTRAL TRANSPARENT ANIMATION ZONE (EXPANDED HEIGHT) */
-    .interactive-hero-zone {
-      position: relative;
-      width: min(94vw, 560px);
-      height: 380px;
-      margin: 10px auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Ambient Pulsing Profile Waves */
-    .beacon-wave {
-      position: absolute;
-      width: 260px;
-      height: 260px;
-      border-radius: 50%;
-      border: 1.5px solid var(--primary);
-      opacity: 0;
-      animation: beaconRipple 3.6s cubic-bezier(0.1, 0.85, 0.25, 1) infinite;
-      pointer-events: none;
-    }
-    .beacon-wave:nth-child(2) { animation-delay: 1.2s; }
-    .beacon-wave:nth-child(3) { animation-delay: 2.4s; }
-
-    .profile-core-disc {
-      position: relative;
-      width: 320px;
-      height: 320px;
-      background: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 5;
-      cursor: pointer;
-    }
-
-    @keyframes beaconRipple {
-      0% { transform: scale(0.65); opacity: 0.8; }
-      50% { opacity: 0.4; }
-      100% { transform: scale(1.8); opacity: 0; }
-    }
-
-    /* =========================================================
-       REDIRECT MODAL OVERLAY (5s TIMEOUT & LOADING BAR)
-       ========================================================= */
-    .redirect-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(41, 37, 36, 0.6);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 3000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
-    }
-
-    .redirect-modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .redirect-modal-card {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius-xl);
-      padding: 32px 28px;
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      box-shadow: 0 24px 48px -12px rgba(120, 113, 108, 0.3);
-      transform: scale(0.95);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .redirect-modal-overlay.active .redirect-modal-card {
-      transform: scale(1);
-    }
-
-    .redirect-title {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 22px;
-    }
-
-    /* Loading Bar Styles */
-    .loading-track {
-      width: 100%;
-      height: 8px;
-      background: var(--surface-subtle);
-      border-radius: 99px;
-      overflow: hidden;
-      margin-bottom: 14px;
-      border: 1px solid var(--surface-border);
-    }
-
-    .loading-fill {
-      width: 0%;
-      height: 100%;
-      background: var(--text-main);
-      border-radius: 99px;
-      transition: width linear;
-    }
-
-    .redirect-countdown {
-      font-size: 13px;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 24px;
-    }
-
-    .btn-skip {
-      background: var(--text-main);
-      color: var(--bg-base);
-      border: none;
-      width: 100%;
-      height: 48px;
-      border-radius: 24px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .btn-skip:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    @media (max-width: 768px) {
-      .services-custom-bg-wrap { padding: 80px 20px; }
-      .services-content-wrapper { padding-left: 16px; }
-      .profile-action-row-top { flex-direction: column; max-width: 100%; }
-      .hero-stage { padding: 80px 20px; min-height: auto; }
-      .interactive-hero-zone { height: 300px; }
-    }
+    :root{--about-red:#b91c1c;--about-ink:#292524;--about-muted:#78716c;--about-line:#eadfd8;--about-card:#fff;--about-cream:#fdf8f5}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{margin:0;background:var(--about-cream);color:var(--about-ink);font-family:'Plus Jakarta Sans',sans-serif;overflow-x:hidden}
+    .about-shell{position:relative;isolation:isolate;flex:1;width:100%;padding:clamp(28px,5vw,68px) 22px 76px}
+    .about-shell:before,.about-shell:after{content:"";position:absolute;z-index:-1;pointer-events:none;border-radius:50%;filter:blur(2px)}
+    .about-shell:before{width:520px;height:520px;top:-190px;right:-160px;background:radial-gradient(circle,rgba(239,68,68,.12),transparent 68%)}
+    .about-shell:after{width:460px;height:460px;left:-210px;top:540px;background:radial-gradient(circle,rgba(251,146,60,.10),transparent 70%)}
+    .about-container{width:min(1120px,100%);margin:auto}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid rgba(185,28,28,.16);border-radius:999px;background:rgba(255,255,255,.72);color:var(--about-red);font:700 11px 'JetBrains Mono',monospace;letter-spacing:.09em;text-transform:uppercase}
+    .eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 4px rgba(220,38,38,.10)}
+    .about-hero{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);gap:34px;align-items:center;padding:clamp(28px,5vw,58px);border:1px solid rgba(234,223,216,.9);border-radius:30px;background:linear-gradient(125deg,rgba(255,255,255,.96),rgba(255,250,247,.88));box-shadow:0 24px 70px rgba(73,46,34,.07);overflow:hidden}
+    .hero-copy h1{font:700 clamp(42px,7vw,76px)/1.02 'Space Grotesk',sans-serif;letter-spacing:-.065em;margin:22px 0 18px}
+    .hero-copy h1 span{display:block;color:var(--about-red)}
+    .hero-lead{max-width:590px;color:#625b56;font-size:clamp(15px,1.7vw,18px);line-height:1.85;margin:0}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 28px}
+    .meta-chip{display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--about-line);border-radius:12px;background:#fff;color:#625b56;font-size:12px;font-weight:700}
+    .meta-chip .material-symbols-outlined{font-size:17px;color:var(--about-red)}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+    .about-btn{min-height:48px;padding:0 19px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:14px;text-decoration:none;font-size:13px;font-weight:800;transition:transform .2s,box-shadow .2s,background .2s;cursor:pointer}
+    .about-btn:hover{transform:translateY(-2px)}
+    .about-btn-primary{background:var(--about-red);color:#fff;box-shadow:0 9px 22px rgba(185,28,28,.2);border:1px solid var(--about-red)}
+    .about-btn-primary:hover{background:#991b1b}
+    .about-btn-light{background:#fff;color:var(--about-ink);border:1px solid var(--about-line)}
+    .about-btn-light:hover{box-shadow:0 8px 20px rgba(73,46,34,.08)}
+    .hero-art{position:relative;min-height:350px;display:grid;place-items:center;border-radius:24px;background:radial-gradient(circle at 50% 48%,#fff 0,#fff7f3 48%,rgba(255,239,232,.45) 72%,transparent 73%)}
+    .art-orbit{position:absolute;width:min(90%,330px);aspect-ratio:1;border:1px solid rgba(185,28,28,.16);border-radius:50%;animation:orbit 24s linear infinite}
+    .art-orbit:before,.art-orbit:after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:#dc2626;box-shadow:0 0 0 7px rgba(220,38,38,.08)}
+    .art-orbit:before{top:14%;left:16%}.art-orbit:after{right:8%;bottom:25%;width:6px;height:6px;background:#f59e0b}
+    .art-glow{position:absolute;width:210px;height:210px;border-radius:50%;background:rgba(248,113,113,.12);filter:blur(32px)}
+    #lottieClickTrigger{position:relative;z-index:2;width:min(100%,330px);height:330px;display:grid;place-items:center;cursor:pointer}
+    #lottieClickTrigger lottie-player{width:100%;height:100%}
+    @keyframes orbit{to{transform:rotate(360deg)}}
+    .section-intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:62px 0 22px}
+    .section-kicker{color:var(--about-red);font:700 10px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+    .section-intro h2{font:700 clamp(25px,4vw,38px)/1.15 'Space Grotesk',sans-serif;letter-spacing:-.04em;margin:0}
+    .section-intro p{max-width:390px;margin:0;color:var(--about-muted);font-size:13px;line-height:1.75}
+    .focus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+    .focus-card{position:relative;padding:23px;border:1px solid var(--about-line);border-radius:20px;background:rgba(255,255,255,.84);box-shadow:0 10px 30px rgba(73,46,34,.035);transition:transform .2s,box-shadow .2s}
+    .focus-card:hover{transform:translateY(-4px);box-shadow:0 16px 34px rgba(73,46,34,.08)}
+    .focus-icon{width:43px;height:43px;display:grid;place-items:center;border-radius:13px;background:#fff0eb;color:var(--about-red);margin-bottom:19px}
+    .focus-icon .material-symbols-outlined{font-size:22px}
+    .focus-card h3{font:700 17px 'Space Grotesk',sans-serif;margin:0 0 9px}
+    .focus-card p{font-size:12.5px;line-height:1.8;color:var(--about-muted);margin:0}
+    .about-bottom{display:grid;grid-template-columns:1fr auto;align-items:center;gap:25px;margin-top:18px;padding:clamp(24px,4vw,38px);border-radius:23px;background:#292524;color:#fff;overflow:hidden;position:relative}
+    .about-bottom:after{content:"";position:absolute;width:300px;height:300px;right:-90px;top:-180px;border-radius:50%;background:rgba(239,68,68,.22);filter:blur(8px)}
+    .about-bottom-copy{position:relative;z-index:1}
+    .about-bottom h2{font:700 clamp(22px,3vw,30px) 'Space Grotesk',sans-serif;margin:0 0 9px}
+    .about-bottom p{max-width:620px;color:#d6d3d1;font-size:13px;line-height:1.8;margin:0}
+    .about-bottom .about-btn{position:relative;z-index:1;white-space:nowrap;background:#fff;color:#292524}
+    .redirect-modal-overlay{position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(41,37,36,.62);backdrop-filter:blur(9px);opacity:0;pointer-events:none;transition:opacity .25s}
+    .redirect-modal-overlay.active{opacity:1;pointer-events:auto}
+    .redirect-modal-card{width:min(100%,410px);padding:30px 26px;border:1px solid var(--about-line);border-radius:22px;background:#fff;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.2);transform:translateY(8px) scale(.98);transition:transform .25s}
+    .redirect-modal-overlay.active .redirect-modal-card{transform:none}
+    .redirect-title{font:700 18px 'Space Grotesk',sans-serif;margin:0 0 22px}
+    .loading-track{height:8px;margin-bottom:13px;border-radius:99px;background:#f3e9e4;overflow:hidden}
+    .loading-fill{width:0;height:100%;border-radius:99px;background:var(--about-red);transition:width linear}
+    .redirect-countdown{font-size:12px;color:var(--about-muted);font-weight:700;margin-bottom:20px}
+    .btn-skip{width:100%;height:46px;border:0;border-radius:13px;background:#292524;color:#fff;font-weight:800;cursor:pointer}
+    @media(max-width:800px){.about-hero{grid-template-columns:1fr;gap:10px}.hero-art{min-height:280px}.art-orbit{width:260px}#lottieClickTrigger{width:270px;height:270px}.focus-grid{grid-template-columns:1fr 1fr}.section-intro{align-items:start;flex-direction:column}.about-bottom{grid-template-columns:1fr}}
+    @media(max-width:520px){.about-shell{padding:24px 14px 50px}.about-hero{padding:25px 20px;border-radius:23px}.hero-copy h1{font-size:48px}.hero-meta{gap:8px}.meta-chip{font-size:11px}.hero-actions{display:grid;grid-template-columns:1fr 1fr}.about-btn{padding:0 12px;font-size:12px}.hero-art{min-height:245px}.art-orbit{width:225px}#lottieClickTrigger{width:235px;height:235px}.section-intro{margin-top:46px}.focus-grid{grid-template-columns:1fr}.focus-card{padding:20px}.about-bottom .about-btn{width:100%}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
-
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
-
-  <div class="ambient-bg"></div>
-
   <div id="header-container"></div>
-
-  <main>
-    
-    <!-- 1. TOP BANNER WRAPPER WITH PROFILE / HERO CONTENT -->
-    <div class="services-custom-bg-wrap">
-      <section class="services-fluid-section">
-        <div class="services-content-wrapper">
-          <h1 class="hero-title-top">
-            Prasad <span>Kundar</span>
-          </h1>
-          <p class="hero-sub-top">
-            BDO at APML — built this project to simplify and automate daily operations.
-          </p>
-          <div class="profile-action-row-top">
-            <a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" class="profile-btn profile-btn-primary">
-              <span class="material-symbols-outlined" style="font-size: 20px;">code</span>
-              <span>GitHub Profile</span>
-            </a>
-            <button type="button" class="profile-btn profile-btn-sponsor" onclick="startSponsorRedirection()">
-              <span class="material-symbols-outlined" style="font-size: 20px; color: #d97706;">local_cafe</span>
-              <span>Sponsor</span>
-            </button>
+  <main class="about-shell">
+    <div class="about-container">
+      <section class="about-hero" aria-labelledby="aboutTitle">
+        <div class="hero-copy">
+          <span class="eyebrow">A little about me</span>
+          <h1 id="aboutTitle">Prasad <span>Kundar.</span></h1>
+          <p class="hero-lead">I’m a BDO at APML, and I built this project with a simple goal: make everyday work easier through useful tools, thoughtful automation, and technology that solves real problems.</p>
+          <div class="hero-meta">
+            <span class="meta-chip"><span class="material-symbols-outlined">work</span> BDO · APML</span>
+            <span class="meta-chip"><span class="material-symbols-outlined">code</span> Builder &amp; problem solver</span>
+          </div>
+          <div class="hero-actions">
+            <a class="about-btn about-btn-primary" href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined">code</span> Explore GitHub</a>
+            <button class="about-btn about-btn-light" type="button" onclick="startSponsorRedirection()"><span class="material-symbols-outlined">favorite</span> Support the work</button>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Animated illustration">
+          <div class="art-glow"></div><div class="art-orbit"></div>
+          <div id="lottieClickTrigger" title="A little hidden surprise">
+            <lottie-player src="https://lottie.host/81e9bbae-7cd3-41aa-b736-624121d9a09e/uBNKC93rkX.json" background="transparent" speed="1" loop autoplay></lottie-player>
           </div>
         </div>
       </section>
-    </div>
 
-    <!-- 2. BOTTOM HERO STAGE WITH SERVICES CONTENT & LOTTIE ANIMATION -->
-    <section class="hero-stage">
-      <h2 class="services-heading">
-        Need 
-        <span class="inline-flex whitespace-pre-wrap">
-          <span id="textLoopSlot">AI Solutions</span>
-        </span>
-        ?
-      </h2>
-      <div class="services-subline">We got you covered!! 🚀</div>
-      <p class="services-description">
-        We build AI solutions, modern websites, and scalable SaaS MVPs that turn ideas into real products. Whether you’re launching something new, automating your business, or taking your digital presence to the next level—we’ve got you covered. Let’s build something impactful together.
-      </p>
-
-      <div class="interactive-hero-zone">
-        <div class="beacon-wave"></div>
-        <div class="beacon-wave"></div>
-        <div class="beacon-wave"></div>
-
-        <!-- CENTRAL TRANSPARENT LOTTIE ANIMATION WITH TRIPLE-CLICK EASTER EGG -->
-        <div class="profile-core-disc" id="lottieClickTrigger" title="Click me...">
-          <lottie-player 
-            src="https://lottie.host/81e9bbae-7cd3-41aa-b736-624121d9a09e/uBNKC93rkX.json" 
-            background="transparent" 
-            speed="1" 
-            style="width: 300px; height: 300px;" 
-            loop 
-            autoplay>
-          </lottie-player>
+      <section aria-labelledby="focusTitle">
+        <div class="section-intro">
+          <div><div class="section-kicker">What I enjoy building</div><h2 id="focusTitle">Turning ideas into useful tools.</h2></div>
+          <p>From small workflow improvements to complete digital experiences, the focus is always on making technology practical and approachable.</p>
         </div>
-      </div>
-    </section>
+        <div class="focus-grid">
+          <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">smart_toy</span></div><h3>AI &amp; Automation</h3><p>Exploring ways to reduce repetitive work and make everyday processes smarter.</p></article>
+          <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">language</span></div><h3>Web Experiences</h3><p>Building clean, responsive websites and tools designed around real user needs.</p></article>
+          <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">rocket_launch</span></div><h3>Product Building</h3><p>Taking ideas from a first concept to useful digital products and SaaS-style experiences.</p></article>
+        </div>
+      </section>
 
+      <section class="about-bottom" aria-labelledby="connectTitle">
+        <div class="about-bottom-copy"><h2 id="connectTitle">Have an idea worth building?</h2><p>Explore my work on GitHub or support the ongoing development of this project. Every bit of encouragement helps keep it moving.</p></div>
+        <button class="about-btn" type="button" onclick="startSponsorRedirection()"><span class="material-symbols-outlined">volunteer_activism</span> Support this project</button>
+      </section>
+    </div>
   </main>
 
-  <!-- REDIRECTION MODAL -->
-  <div class="redirect-modal-overlay" id="redirectModal">
+  <div class="redirect-modal-overlay" id="redirectModal" role="dialog" aria-modal="true" aria-labelledby="redirectTitle">
     <div class="redirect-modal-card">
-      <h3 class="redirect-title">Taking you to the support page...</h3>
-      
-      <div class="loading-track">
-        <div class="loading-fill" id="loadingFill"></div>
-      </div>
-
-      <div class="redirect-countdown" id="redirectCountdown">Redirecting in 5s...</div>
-
-      <button type="button" class="btn-skip" onclick="executeRedirection()">Skip</button>
+      <h3 class="redirect-title" id="redirectTitle">Taking you to the support page…</h3>
+      <div class="loading-track"><div class="loading-fill" id="loadingFill"></div></div>
+      <div class="redirect-countdown" id="redirectCountdown">Redirecting in 5s…</div>
+      <button type="button" class="btn-skip" onclick="executeRedirection()">Continue now</button>
     </div>
   </div>
-
   <div id="footer-container"></div>
-
   <script src="common.js?v=19.0"></script>
-
-  <!-- FRAMER MOTION & TEXT LOOP SCRIPT DEPENDENCIES FOR VANILLA JS INTEGRATION -->
-  <script src="https://unpkg.com/framer-motion@11.1.7/dist/framer-motion.js"></script>
-
   <script>
-    // Simple Vanilla JS Text Loop Cycler matching the transition configuration
-    const loopWords = ["AI Solutions", "Website Development", "SaaS MVP"];
-    let currentWordIndex = 0;
-    const slotEl = document.getElementById('textLoopSlot');
-
-    if (slotEl) {
-      setInterval(() => {
-        slotEl.style.opacity = '0';
-        slotEl.style.transform = 'translateY(10px)';
-        slotEl.style.filter = 'blur(4px)';
-        slotEl.style.transition = 'all 0.3s ease';
-
-        setTimeout(() => {
-          currentWordIndex = (currentWordIndex + 1) % loopWords.length;
-          slotEl.textContent = loopWords[currentWordIndex];
-          slotEl.style.opacity = '1';
-          slotEl.style.transform = 'translateY(0)';
-          slotEl.style.filter = 'blur(0px)';
-        }, 300);
-      }, 2500);
+    const lottieTrigger=document.getElementById('lottieClickTrigger');
+    let clickCount=0,clickTimer=null;
+    if(lottieTrigger){lottieTrigger.addEventListener('click',()=>{clickCount++;if(clickTimer)clearTimeout(clickTimer);if(clickCount>=3){window.location.href='404.html';return;}clickTimer=setTimeout(()=>{clickCount=0;},650);});}
+    const targetSponsorUrl='https://kundarwork-debug.github.io/sponsor/support.html';
+    let redirectTimer=null,countdownInterval=null;
+    function startSponsorRedirection(){
+      const modal=document.getElementById('redirectModal'),fill=document.getElementById('loadingFill'),countdown=document.getElementById('redirectCountdown');
+      modal.classList.add('active');fill.style.transition='none';fill.style.width='0%';
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{fill.style.transition='width 5s linear';fill.style.width='100%';}));
+      let left=5;countdown.textContent='Redirecting in '+left+'s…';
+      if(countdownInterval)clearInterval(countdownInterval);
+      countdownInterval=setInterval(()=>{left--;countdown.textContent=left>0?'Redirecting in '+left+'s…':'Redirecting now…';},1000);
+      if(redirectTimer)clearTimeout(redirectTimer);redirectTimer=setTimeout(executeRedirection,5000);
     }
-
-    // TRIPLE-CLICK EASTER EGG REDIRECT TO 404.html
-    let lottieClickCount = 0;
-    let lottieClickTimer = null;
-    const lottieTrigger = document.getElementById('lottieClickTrigger');
-    if (lottieTrigger) {
-      lottieTrigger.addEventListener('click', () => {
-        lottieClickCount++;
-        if (lottieClickTimer) clearTimeout(lottieClickTimer);
-        
-        if (lottieClickCount >= 3) {
-          window.location.href = '404.html';
-        } else {
-          lottieClickTimer = setTimeout(() => {
-            lottieClickCount = 0;
-          }, 600);
-        }
-      });
+    function executeRedirection(){
+      if(redirectTimer)clearTimeout(redirectTimer);if(countdownInterval)clearInterval(countdownInterval);
+      window.open(targetSponsorUrl,'_blank','noopener,noreferrer');document.getElementById('redirectModal').classList.remove('active');
     }
-
-    // SPONSOR REDIRECTION 5-SECOND TIMER & LOADING BAR LOGIC
-    const targetSponsorUrl = "https://kundarwork-debug.github.io/sponsor/support.html";
-    let redirectTimer = null;
-    let countdownInterval = null;
-
-    function startSponsorRedirection() {
-      const modal = document.getElementById('redirectModal');
-      const fillBar = document.getElementById('loadingFill');
-      const countdownText = document.getElementById('redirectCountdown');
-
-      modal.classList.add('active');
-      
-      fillBar.style.transition = 'none';
-      fillBar.style.width = '0%';
-      
-      setTimeout(() => {
-        fillBar.style.transition = 'width 5s linear';
-        fillBar.style.width = '100%';
-      }, 50);
-
-      let timeLeft = 5;
-      countdownText.textContent = `Redirecting in ${timeLeft}s...`;
-
-      if (countdownInterval) clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) {
-          countdownText.textContent = `Redirecting in ${timeLeft}s...`;
-        } else {
-          countdownText.textContent = `Redirecting now...`;
-        }
-      }, 1000);
-
-      if (redirectTimer) clearTimeout(redirectTimer);
-      redirectTimer = setTimeout(() => {
-        executeRedirection();
-      }, 5000);
-    }
-
-    function executeRedirection() {
-      if (redirectTimer) clearTimeout(redirectTimer);
-      if (countdownInterval) clearInterval(countdownInterval);
-      window.open(targetSponsorUrl, '_blank');
-      document.getElementById('redirectModal').classList.remove('active');
-    }
+    document.getElementById('redirectModal').addEventListener('click',e=>{if(e.target.id==='redirectModal'){if(redirectTimer)clearTimeout(redirectTimer);if(countdownInterval)clearInterval(countdownInterval);e.currentTarget.classList.remove('active');}});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(redirectTimer)clearTimeout(redirectTimer);if(countdownInterval)clearInterval(countdownInterval);document.getElementById('redirectModal').classList.remove('active');}});
   </script>
-
 </body>
 </html>
