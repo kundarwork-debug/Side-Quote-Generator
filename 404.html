@@ -1090,6 +1090,7 @@
       let isGameActive = false;
       let isGameOver = false;
       let spawnTimer = null;
+      let gameFrameId = null;
       let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
       if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
 
@@ -1279,6 +1280,7 @@
         flameTrailParticles.length = 0;
 
         resetSpawnTimer();
+        if (gameFrameId === null && !document.hidden) gameFrameId = requestAnimationFrame(gameLoop);
         showToast("Defense Initialized • Clear Incoming Comets!");
       }
 
@@ -1746,8 +1748,8 @@
           ctx.restore();
         }
 
-        if (!isGameActive || isGameOver) {
-          requestAnimationFrame(gameLoop);
+        if (!isGameActive || isGameOver || document.hidden) {
+          gameFrameId = null;
           return;
         }
 
@@ -1968,10 +1970,17 @@
           }
         }
 
-        requestAnimationFrame(gameLoop);
+        gameFrameId = requestAnimationFrame(gameLoop);
       }
 
-      requestAnimationFrame(gameLoop);
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          if (gameFrameId !== null) cancelAnimationFrame(gameFrameId);
+          gameFrameId = null;
+        } else if (isGameActive && !isGameOver && gameFrameId === null) {
+          gameFrameId = requestAnimationFrame(gameLoop);
+        }
+      });
     })();
   </script>
 </body>
