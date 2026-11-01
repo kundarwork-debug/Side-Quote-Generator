@@ -367,6 +367,13 @@
         <span>Bug report saved successfully to database! Thank you.</span>
       </div>
 
+      <div class="form-group" id="googleLoginGroup">
+        <button type="button" class="btn-submit" id="googleLoginBtn" style="margin-top:0;background:#fff;color:#292524;border:1.5px solid #e5e7eb;box-shadow:none;" onclick="signInWithGoogle()">
+          <span class="material-symbols-outlined" style="font-size:20px;">account_circle</span><span>Continue with Google</span>
+        </button>
+        <div id="googleUserStatus" style="display:none;font-size:13px;color:#166534;font-weight:700;text-align:center;"></div>
+        <p style="font-size:12px;color:var(--text-muted);text-align:center;">Sign in with Google to submit a report. Your account details will be attached to the report.</p>
+      </div>
       <form id="bugReportForm" onsubmit="submitBugReportToFirebase(event)">
         
         <div class="form-group">
@@ -421,6 +428,8 @@
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
     const firebaseConfig = {
@@ -440,13 +449,51 @@
     const db = firebase.database();
     const bugReportsRef = db.ref("apml_bug_reports");
 
+    let signedInUser = null;
     let base64Image = null;
+
+    function signInWithGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: "select_account" });
+      const button = document.getElementById("googleLoginBtn");
+      button.disabled = true;
+      button.innerHTML = "<span>Connecting to Google...</span>";
+      firebase.auth().signInWithPopup(provider).catch((error) => {
+        const message = error.code === "auth/popup-blocked"
+          ? "The sign-in popup was blocked. Please allow popups and try again."
+          : error.message;
+        if (window.Swal) Swal.fire({ icon: "error", title: "Google sign-in failed", text: message });
+        else alert(message);
+      }).finally(() => {
+        button.disabled = false;
+        if (!signedInUser) button.innerHTML = "<span>Continue with Google</span>";
+      });
+    }
+
+    firebase.auth().onAuthStateChanged((user) => {
+      signedInUser = user || null;
+      const button = document.getElementById("googleLoginBtn");
+      const status = document.getElementById("googleUserStatus");
+      const submit = document.getElementById("submitBugBtn");
+      if (user) {
+        button.style.display = "none";
+        status.style.display = "block";
+        status.textContent = "Signed in as " + (user.email || user.displayName || "Google user");
+        const nameInput = document.getElementById("reporterName");
+        if (nameInput && !nameInput.value.trim()) nameInput.value = user.displayName || "";
+      } else {
+        button.style.display = "inline-flex";
+        status.style.display = "none";
+      }
+      submit.disabled = !user;
+    });
 
     function handleFilePreview(input) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
         if (file.size > 5 * 1024 * 1024) {
-          alert("File size exceeds 5MB limit. Please choose a smaller screenshot.");
+          if (window.Swal) Swal.fire({ icon: "warning", title: "Image too large", text: "File size exceeds 5MB. Please choose a smaller screenshot." });
+          else alert("File size exceeds 5MB limit. Please choose a smaller screenshot.");
           input.value = "";
           return;
         }
@@ -478,6 +525,10 @@
       const submitBtn = document.getElementById('submitBugBtn');
       const successAlert = document.getElementById('successAlert');
 
+      if (!signedInUser) {
+        if (window.Swal) Swal.fire({ icon: "info", title: "Sign in required", text: "Please continue with Google before submitting your report." });
+        return;
+      }
       if (!name || !message) return;
 
       submitBtn.disabled = true;
@@ -488,6 +539,9 @@
           name: name,
           message: message,
           imageUrl: base64Image || "",
+          userEmail: signedInUser.email || "",
+          userDisplayName: signedInUser.displayName || "",
+          userUid: signedInUser.uid,
           timestamp: Date.now(),
           dateString: new Date().toLocaleString('en-IN')
         });
@@ -502,7 +556,8 @@
         }, 6000);
 
       } catch (err) {
-        alert("Failed to save bug report: " + err.message);
+        if (window.Swal) Swal.fire({ icon: "error", title: "Could not save report", text: err.message });
+        else alert("Failed to save bug report: " + err.message);
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">send</span><span>Send Report</span>`;
