@@ -3,7 +3,7 @@
 <head>
   <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>404 - Signal Lost | APML Portal</title>
   <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link rel="manifest" href="./manifest.json">
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
   <!-- LOTTIE PLAYER SCRIPT -->
-  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@latest/dist/dotlottie-wc.js" type="module" async></script>
+  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module" async></script>
 
   <style>
     :root {
@@ -791,12 +791,6 @@
     </div>
     <div class="score-divider"></div>
 
-    <!-- Mini theme toggle button inside active scoreboard -->
-    <button type="button" class="btn-scoreboard-toggle" id="btnScoreboardThemeToggle" title="Toggle Theme (Light / Dark)">
-      <span class="material-symbols-outlined" style="font-size: 15px;" id="scoreboardThemeIcon">dark_mode</span>
-    </button>
-    <div class="score-divider"></div>
-
     <button type="button" class="btn-quit-game" id="btnQuitLiveGame" title="Exit session and return to 404 hub">
       <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
       <span>Close</span>
@@ -848,16 +842,17 @@
 
     <div class="blast-ui-group" id="blastUiGroup">
       
-      <h1 class="error-title">Signal Lost in Deep Orbit</h1>
+      <div class="error-code" aria-label="Error 404">404</div>
+      <h1 class="error-title">This destination is off the map</h1>
 
       <p class="error-description" id="gameDescText">
-        The logistics route or module has drifted out of range. Launch defense to clear incoming fire-comets before they breach the station core!
+        The page you’re looking for doesn’t exist or may have moved. Head back to the portal, or launch the optional asteroid-defense mission.
       </p>
 
       <div class="action-group" id="actionGroupBar">
         <button type="button" class="btn-action btn-primary" id="btnStartGame">
           <span class="material-symbols-outlined" style="font-size: 16px;">play_arrow</span>
-          <span>Start Game</span>
+          <span>Launch Mini Game</span>
         </button>
         <button type="button" class="btn-action btn-secondary" id="btnCheckScores">
           <span class="material-symbols-outlined" style="font-size: 16px;">leaderboard</span>
@@ -961,53 +956,6 @@
 
   <!-- Common Navigation Scripts -->
   <script src="common.js?v=5.0"></script>
-
-  <!-- DIRECT 404 THEME TOGGLE CONTROLLER -->
-  <script>
-    const THEME_STORAGE_KEY = 'apml_404_page_theme';
-    let currentPageTheme = 'light';
-
-    function setPageTheme(theme) {
-      currentPageTheme = theme;
-      document.documentElement.setAttribute('data-theme', theme);
-      document.documentElement.setAttribute('data-theme-mode', theme);
-      try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (e) {}
-
-      const scoreboardIcon = document.getElementById('scoreboardThemeIcon');
-      if (scoreboardIcon) {
-        scoreboardIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-      }
-
-      const headerIcon = document.getElementById('themeToggleIcon');
-      const headerBadge = document.querySelector('.theme-toggle-badge');
-      if (headerIcon) headerIcon.textContent = theme === 'dark' ? 'dark_mode' : 'light_mode';
-      if (headerBadge) headerBadge.style.display = 'none';
-    }
-
-    setPageTheme(currentPageTheme);
-
-    window.addEventListener('DOMContentLoaded', () => {
-      setPageTheme(currentPageTheme);
-
-      const scoreboardToggle = document.getElementById('btnScoreboardThemeToggle');
-      if (scoreboardToggle) {
-        scoreboardToggle.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setPageTheme(currentPageTheme === 'light' ? 'dark' : 'light');
-        });
-      }
-
-      const headerToggle = document.getElementById('themeToggleBtn');
-      if (headerToggle) {
-        const clone = headerToggle.cloneNode(true);
-        headerToggle.parentNode.replaceChild(clone, headerToggle);
-        clone.addEventListener('click', (e) => {
-          e.stopPropagation();
-          setPageTheme(currentPageTheme === 'light' ? 'dark' : 'light');
-        });
-      }
-    });
-  </script>
 
   <!-- PLANET ATTRACTION & MOUSE RIG -->
   <script>
