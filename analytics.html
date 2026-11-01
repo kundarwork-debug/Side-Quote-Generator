@@ -333,6 +333,10 @@
     .mini-stat span { display:block; color:var(--text-muted); font-size:12px; font-weight:700; }
     .mini-stat b { display:block; margin-top:7px; font:700 24px var(--font-mono); color:var(--text-main); }
     .mini-stat small { display:block; margin-top:4px; color:var(--text-faint); font-size:11px; line-height:1.4; }
+    .platform-status-grid { margin-top:4px; }
+    .platform-status-grid .mini-stat b { font:700 15px var(--font-sans); line-height:1.35; }
+    #firebasePlatformStatus { color:var(--up); }
+    #vercelPlatformStatus, #cloudinaryPlatformStatus { color:var(--text-muted); }
     .insight-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .insight-item { display:flex; gap:11px; align-items:flex-start; padding:13px; border-radius:14px; background:var(--surface-subtle); color:var(--text-secondary); font-size:13px; line-height:1.5; }
     .insight-item .material-symbols-outlined { color:var(--primary); font-size:20px; }
@@ -546,6 +550,40 @@
         <div class="weekdays" id="weekdays" role="img" aria-label="Activity by weekday"></div>
       </aside>
     </div>
+
+    <!-- PLATFORM ANALYTICS -->
+    <section class="section-stack" aria-labelledby="platformAnalyticsTitle">
+      <div class="card">
+        <div class="card-head">
+          <h2 class="card-title" id="platformAnalyticsTitle"><span class="material-symbols-outlined">monitoring</span> Platform analytics</h2>
+          <span class="muted-note">Uses the selected date range above</span>
+        </div>
+        <div class="section-grid platform-status-grid">
+          <article class="mini-stat">
+            <span>Firebase · Portal activity</span>
+            <b id="firebasePlatformStatus">Connected</b>
+            <small>Daily visitors, PDF quotations and media downloads from the existing Realtime Database logs.</small>
+          </article>
+          <article class="mini-stat">
+            <span>Vercel · Hosting metrics</span>
+            <b id="vercelPlatformStatus">API connection needed</b>
+            <small>Deployment activity, bandwidth and function usage will appear after a server-side Vercel token is configured.</small>
+          </article>
+          <article class="mini-stat">
+            <span>Cloudinary · Media metrics</span>
+            <b id="cloudinaryPlatformStatus">API connection needed</b>
+            <small>Storage, bandwidth and transformations require the Cloudinary Admin API credentials on the server.</small>
+          </article>
+        </div>
+      </div>
+      <section class="card" aria-labelledby="firebasePlatformChartTitle">
+        <div class="card-head">
+          <h2 class="card-title" id="firebasePlatformChartTitle"><span class="material-symbols-outlined">database</span> Firebase activity</h2>
+          <span class="muted-note" id="firebasePlatformRange">Selected period · India time</span>
+        </div>
+        <div class="canvas-wrap"><canvas id="firebasePlatformChart" role="img" aria-label="Firebase visitors and download activity over time"></canvas></div>
+      </section>
+    </section>
 
     <!-- EVENT-LEVEL ANALYTICS: populated by apml-analytics-tracker.js -->
     <div class="section-stack">
@@ -925,6 +963,7 @@
       $('kpis').classList.remove('loading');
       renderKpis(win, prev, days);
       renderChart(win, days);
+      renderFirebasePlatformChart(win);
       renderTable(win, pk);
       renderHighlights(win, days);
       renderDailyHeatmap(win);
@@ -932,6 +971,41 @@
       $('live').classList.remove('off');
       $('liveText').textContent = 'Live · updated ' + new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: TZ });
       state.last = { win: win, days: days };
+    }
+
+    // Dedicated provider view for the Firebase data already collected by this portal.
+    var firebasePlatformChart = null;
+    function renderFirebasePlatformChart(win) {
+      var canvas = $('firebasePlatformChart');
+      if (!canvas || typeof Chart === 'undefined') return;
+      $('firebasePlatformRange').textContent = RANGE_NAME[state.range] || 'custom date range';
+      var labels = win.keys.map(function (k) { return labelOf(k); });
+      var colors = ['#059669', '#b91c1c', '#2563eb'];
+      var datasets = [
+        { label: 'Visitors', data: win.visitors, borderColor: colors[0], backgroundColor: colors[0] + '18', fill: true },
+        { label: 'PDF quotations', data: win.pdf, borderColor: colors[1], backgroundColor: colors[1] + '18', fill: true },
+        { label: 'Media downloads', data: win.media, borderColor: colors[2], backgroundColor: colors[2] + '18', fill: true }
+      ].map(function (d) {
+        d.borderWidth = 2.5; d.tension = 0.35; d.pointRadius = labels.length > 60 ? 0 : 2.5;
+        d.pointHoverRadius = 5; d.borderRadius = 4;
+        return d;
+      });
+      var options = {
+        responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          x: { grid: { display: false }, ticks: { maxTicksLimit: 12, color: css('--text-muted') } },
+          y: { beginAtZero: true, ticks: { precision: 0, color: css('--text-muted') }, grid: { color: css('--surface-border') } }
+        }
+      };
+      if (firebasePlatformChart) {
+        firebasePlatformChart.data.labels = labels;
+        firebasePlatformChart.data.datasets = datasets;
+        firebasePlatformChart.options = options;
+        firebasePlatformChart.update('none');
+      } else {
+        firebasePlatformChart = new Chart(canvas.getContext('2d'), { type: 'line', data: { labels: labels, datasets: datasets }, options: options });
+      }
     }
 
     // ---------------------------------------------------------------- banners
