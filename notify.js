@@ -19,7 +19,7 @@
   'use strict';
 
   // ---------------- settings ----------------
-  var ENABLED = { pdf: true, drive: true, gallery: true, visit: true };   // switch a kind off with false
+  var ENABLED = { pdf: true, drive: true, gallery: true, visit: true, bug: true };   // switch a kind off with false
 
   // "Someone is online": one alert per device, then quiet for this many hours, however many pages they open
   var VISIT = { cooldownHours: 0.5, delayMs: 1500 };
