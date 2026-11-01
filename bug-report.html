@@ -10,7 +10,7 @@
   <meta http-equiv="Expires" content="0">
 
   <title>APML Portal — Bug Report &amp; Feedback</title>
-  <meta name="description" content="Report bugs, submit feedback, and share media attachments directly with the administrator.">
+  <meta name="description" content="Report a bug or share feedback directly with the APML Portal administrator.">
 
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.45">
   
@@ -175,98 +175,6 @@
       min-height: 140px;
     }
 
-    .file-upload-box {
-      border: 2px dashed var(--surface-border);
-      border-radius: 14px;
-      padding: 24px;
-      text-align: center;
-      background: var(--surface-subtle);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-    }
-
-    .file-upload-box:hover {
-      border-color: var(--primary);
-      background: #fff5f5;
-    }
-
-    .file-upload-box input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-
-    .upload-icon {
-      color: var(--primary);
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-
-    .upload-text {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-    }
-
-    .upload-subtext {
-      font-size: 11.5px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .preview-container {
-      display: none;
-      margin-top: 12px;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface-subtle);
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--surface-border);
-    }
-
-    .preview-thumb {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      object-fit: cover;
-      border: 1px solid var(--surface-border);
-    }
-
-    .preview-info {
-      flex: 1;
-      min-width: 0;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .btn-remove-file {
-      background: #fee2e2;
-      color: #dc2626;
-      border: none;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s ease;
-    }
-
-    .btn-remove-file:hover {
-      background: #dc2626;
-      color: #FFFFFF;
-    }
-
     .btn-submit {
       width: 100%;
       background: var(--primary);
@@ -359,16 +267,16 @@
     <div class="bug-card">
       <div class="bug-header">
         <h1 class="bug-title">Report a <span>Bug</span></h1>
-        <p class="bug-sub">Encountered an issue or glitch? Submit the details directly to the database.</p>
+        <p class="bug-sub">Found an issue? Describe it below and send it directly to the administrator via Telegram.</p>
       </div>
 
       <div class="success-alert" id="successAlert">
         <span class="material-symbols-outlined" style="font-size: 20px; color: #16a34a;">check_circle</span>
-        <span>Bug report saved successfully to database! Thank you.</span>
+        <span>Your report has been submitted for Telegram notification. Thank you!</span>
       </div>
 
 
-      <form id="bugReportForm" onsubmit="submitBugReportToFirebase(event)">
+      <form id="bugReportForm" onsubmit="submitBugReportToTelegram(event)">
         
         <div class="form-group">
           <label class="form-label" for="reporterName">Your Name / HOD / Officer</label>
@@ -378,24 +286,6 @@
         <div class="form-group">
           <label class="form-label" for="bugMessage">Bug Description &amp; Details</label>
           <textarea id="bugMessage" class="form-textarea" placeholder="Describe what went wrong, steps to reproduce, or module name..." required></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Attach Screenshot (Optional)</label>
-          <div class="file-upload-box">
-            <span class="material-symbols-outlined upload-icon">add_photo_alternate</span>
-            <div class="upload-text">Click or drag image here</div>
-            <div class="upload-subtext">Supports PNG, JPG, WEBP images</div>
-            <input type="file" id="mediaInput" accept="image/*" onchange="handleFilePreview(this)">
-          </div>
-
-          <div class="preview-container" id="filePreviewBox">
-            <img id="previewImage" class="preview-thumb" src="" alt="Media Preview">
-            <span class="preview-info" id="previewFileName">attachment.png</span>
-            <button type="button" class="btn-remove-file" onclick="clearAttachment()" title="Remove Attachment">
-              <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
-            </button>
-          </div>
         </div>
 
         <button type="submit" class="btn-submit" id="submitBugBtn">
@@ -419,109 +309,42 @@
   <!-- COMMON JS -->
   <script src="common.js?v=21.45"></script>
 
-  <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+  <!-- Telegram notification service -->
+  <script src="notify.js?v=21.46"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-      authDomain: "apml-portal.firebaseapp.com",
-      databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-      projectId: "apml-portal",
-      storageBucket: "apml-portal.firebasestorage.app",
-      messagingSenderId: "479017159240",
-      appId: "1:479017159240:web:0853422718e6195b74a67d",
-      measurementId: "G-4H1HT31DYB"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-    const bugReportsRef = db.ref("apml_bug_reports");
-
-
-    let base64Image = null;
-
-    function handleFilePreview(input) {
-      if (input.files && input.files[0]) {
-        const file = input.files[0];
-        if (file.size > 5 * 1024 * 1024) {
-          if (window.Swal) Swal.fire({ icon: "warning", title: "Image too large", text: "File size exceeds 5MB. Please choose a smaller screenshot." });
-          else alert("File size exceeds 5MB limit. Please choose a smaller screenshot.");
-          input.value = "";
-          return;
-        }
-
-        document.getElementById('previewFileName').textContent = file.name;
-        document.getElementById('filePreviewBox').style.display = 'flex';
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          base64Image = e.target.result;
-          document.getElementById('previewImage').src = base64Image;
-          document.getElementById('previewImage').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function clearAttachment() {
-      base64Image = null;
-      document.getElementById('mediaInput').value = "";
-      document.getElementById('filePreviewBox').style.display = 'none';
-      document.getElementById('previewImage').src = "";
-    }
-
-    async function submitBugReportToFirebase(event) {
+    async function submitBugReportToTelegram(event) {
       event.preventDefault();
-      const name = document.getElementById('reporterName').value.trim();
-      const message = document.getElementById('bugMessage').value.trim();
-      const submitBtn = document.getElementById('submitBugBtn');
-      const successAlert = document.getElementById('successAlert');
-
+      const name = document.getElementById("reporterName").value.trim();
+      const message = document.getElementById("bugMessage").value.trim();
+      const submitBtn = document.getElementById("submitBugBtn");
+      const successAlert = document.getElementById("successAlert");
       if (!name || !message) return;
 
+      if (!window.APMNotify || typeof window.APMNotify.send !== "function") {
+        if (window.Swal) Swal.fire({ icon: "error", title: "Notification unavailable", text: "Please try again in a moment." });
+        else alert("Notification service is unavailable. Please try again in a moment.");
+        return;
+      }
+
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>Saving report to database...</span>`;
-
+      submitBtn.innerHTML = "<span>Sending report...</span>";
       try {
-        await bugReportsRef.push({
-          name: name,
-          message: message,
-          imageUrl: base64Image || "",
-          timestamp: Date.now(),
-          dateString: new Date().toLocaleString('en-IN')
+        window.APMNotify.send({
+          type: "bug",
+          title: "New APML Portal bug report",
+          file: name,
+          folder: message.slice(0, 700)
         });
-
-        // Notify the existing APML Telegram Worker only after Firebase confirms the report save.
-        // The bot token and chat ID remain server-side in the Worker secrets.
-        if (window.APMNotify && typeof window.APMNotify.send === "function") {
-          window.APMNotify.send({
-            type: "bug",
-            title: "New bug report submitted",
-            file: name,
-            folder: message.slice(0, 700)
-          });
-        }
-
-        successAlert.style.display = 'flex';
-        document.getElementById('bugReportForm').reset();
-        clearAttachment();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        setTimeout(() => {
-          successAlert.style.display = 'none';
-        }, 6000);
-
+        successAlert.style.display = "flex";
+        document.getElementById("bugReportForm").reset();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setTimeout(() => { successAlert.style.display = "none"; }, 6000);
       } catch (err) {
-        if (window.Swal) Swal.fire({ icon: "error", title: "Could not save report", text: err.message });
-        else alert("Failed to save bug report: " + err.message);
+        if (window.Swal) Swal.fire({ icon: "error", title: "Could not send report", text: err.message });
+        else alert("Could not send report: " + err.message);
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size: 20px;">send</span><span>Send Report</span>`;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 20px;">send</span><span>Send Report</span>';
       }
     }
   </script>
