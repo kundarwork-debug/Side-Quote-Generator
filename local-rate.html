@@ -23,7 +23,7 @@
       --primary-dark: #881337;
       --primary-soft: rgba(185, 28, 28, 0.08);
       --primary-glow: rgba(185, 28, 28, 0.22);
-      --bg-base: #f8fafc;
+      --bg-base: #F5EFEB;
       --surface: #ffffff;
       --surface-glass: rgba(255, 255, 255, 0.94);
       --surface-border: #e2e8f0;
@@ -52,13 +52,26 @@
     }
 
     body {
-      background-color: var(--bg-base);
+      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
+                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
+                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
+      background-attachment: fixed;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       overflow-x: hidden;
       position: relative;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     /* Ambient Background Mesh */
