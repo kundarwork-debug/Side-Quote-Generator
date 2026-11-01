@@ -620,7 +620,7 @@
 
     // ---------------------------------------------------------------- state
     var state = {
-      range: '7d', type: 'line', hideEmpty: true, customStart: null, customEnd: null, events: {},
+      range: '1y', type: 'line', hideEmpty: true, customStart: null, customEnd: null, events: {},
       hidden: { visitors: false, pdf: false, media: false },
       logs: null,                                        // null until the first answer arrives
       totals: { pdf: null, media: null },
@@ -871,9 +871,14 @@
       if (!host || !months) return;
       host.textContent = '';
       months.textContent = '';
-      $('heatmapRange').textContent = state.range === 'custom'
-        ? state.customStart + ' – ' + state.customEnd
-        : RANGE_NAME[state.range] + ' · India time';
+
+      // The heatmap always shows the complete calendar year, January through December.
+      var year = Number(istKey(new Date()).slice(0, 4));
+      var yearStart = year + '-01-01';
+      var yearEnd = year + '-12-31';
+      var yearWin = customWindow(state.logs || {}, yearStart, yearEnd);
+      win = yearWin;
+      $('heatmapRange').textContent = 'January – December ' + year + ' · India time';
 
       // GitHub-style layout: weeks run left-to-right, weekdays top-to-bottom.
       var firstDate = win.keys.length ? keyToDate(win.keys[0]) : new Date();
