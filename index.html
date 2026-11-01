@@ -1179,8 +1179,61 @@
   <!-- COMMON FOOTER PLACEHOLDER -->
   <div id="footer-container"></div>
 
+  <!-- Firebase Realtime Database for homepage telemetry -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <!-- YOUR COMMON JS -->
   <script src="common.js?v=21.44"></script>
+
+  <script>
+    (function () {
+      const statusBadge = document.querySelector('.operational-badge');
+      const statusText = document.getElementById('systemStatusText');
+      const setStatus = (state, label) => {
+        if (statusBadge) statusBadge.dataset.state = state;
+        if (statusText) statusText.textContent = label;
+      };
+      const setNumber = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = new Intl.NumberFormat('en-IN').format(Math.max(0, Number(value) || 0));
+      };
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+        authDomain: "apml-portal.firebaseapp.com",
+        databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+        projectId: "apml-portal",
+        storageBucket: "apml-portal.firebasestorage.app",
+        messagingSenderId: "479017159240",
+        appId: "1:479017159240:web:0853422718e6195b74a67d",
+        measurementId: "G-4H1HT31DYB"
+      };
+
+      try {
+        if (!window.firebase || !firebase.database) throw new Error('Firebase SDK unavailable');
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let connected = false;
+        db.ref('.info/connected').on('value', snap => {
+          connected = snap.val() === true;
+          setStatus(connected ? 'online' : 'connecting', connected ? 'Live services connected' : 'Connecting to live services');
+        });
+        db.ref('analytics/totalPdfDownloads').on('value',
+          snap => setNumber('totalPdfDownloads', snap.val()),
+          err => { console.warn('PDF telemetry read failed:', err); setStatus('offline', 'Telemetry unavailable'); });
+        db.ref('analytics/totalMediaDownloads').on('value',
+          snap => setNumber('totalMediaDownloads', snap.val()),
+          err => { console.warn('Media telemetry read failed:', err); setStatus('offline', 'Telemetry unavailable'); });
+        db.ref('presence').on('value',
+          snap => setNumber('liveUserCount', snap.numChildren()),
+          err => { console.warn('Presence telemetry read failed:', err); });
+      } catch (err) {
+        console.warn('Homepage telemetry initialization failed:', err);
+        setStatus('offline', 'Telemetry unavailable');
+      }
+    })();
+  </script>
 
   </body>
 </html>
