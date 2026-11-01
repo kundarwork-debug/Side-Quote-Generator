@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
         s.setJavaScriptCanOpenWindowsAutomatically(true);
         s.setSupportMultipleWindows(false);
         s.setUseWideViewPort(true);
-        s.setLoadWithOverviewMode(false);
+        s.setLoadWithOverviewMode(true);
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
@@ -188,13 +188,16 @@ public class MainActivity extends Activity {
                 // Keep the portal responsive inside the phone's available screen width.
                 String responsiveFix = "(function(){"
                     + "var m=document.querySelector('meta[name=viewport]');"
-                    + "if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}"
-                    + "m.content='width=device-width, initial-scale=1.0';"
+                    + "if(!m){m=document.createElement('meta');m.name='viewport';m.content='width=device-width,initial-scale=1';document.head.appendChild(m);}"
                     + "var s=document.getElementById('apml-android-fit');"
                     + "if(!s){s=document.createElement('style');s.id='apml-android-fit';document.head.appendChild(s);}"
-                    + "s.textContent='html,body{width:100%;max-width:100%;overflow-x:hidden;}"
-                    + "*,*:before,*:after{box-sizing:border-box;}"
-                    + "img,video,canvas,svg{max-width:100%;height:auto;}';"
+                    + "s.textContent='html{width:100%!important;max-width:100%!important;height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important;-webkit-text-size-adjust:100%;}'"
+                    + "+'body{width:100%!important;max-width:100%!important;height:auto!important;min-height:100vh;overflow-x:hidden!important;overflow-y:auto!important;}'"
+                    + "+'body>*{max-width:100%;}'"
+                    + "+'*,*:before,*:after{box-sizing:border-box;}'"
+                    + "+'img,video,canvas,svg,iframe{max-width:100%;}'"
+                    + "+'table{max-width:100%;}'"
+                    + "+'@media(max-width:768px){main,.container,.page-container,.content,.drive-container,.gallery-container{max-width:100%!important;width:100%!important;} .page-head,.drive-head-bar,.gallery-head-bar{flex-wrap:wrap!important;} .grid,.kpis,.modules-grid{min-width:0!important;} #footer-container,footer,.site-footer{width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;flex-shrink:0!important;overflow:visible!important;} .sheet-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;} .sheet{max-width:100%!important;} }';"
                     + "})();";
                 view.evaluateJavascript(responsiveFix, null);
                 progress.setProgress(100);
