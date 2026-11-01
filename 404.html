@@ -747,6 +747,47 @@
       .metrics-row { gap: 6px; }
       .leaderboard-wrap { max-height: 200px; }
     }
+
+    .error-code {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(64px, 12vw, 112px);
+      line-height: .9;
+      letter-spacing: -.09em;
+      font-weight: 800;
+      color: var(--primary);
+      text-shadow: 0 12px 36px rgba(185,28,28,.16);
+      margin: -12px 0 10px;
+    }
+    html, body { min-height: 100%; height: auto; }
+    body { min-height: 100svh; overflow-x: hidden; overflow-y: auto; }
+    .screen-view { min-height: calc(100svh - 76px); padding: clamp(18px,4vh,42px) 18px; }
+    .open-space-stage { width: min(360px,82vw); height: min(300px,42svh); min-height: 190px; }
+    .broken-planet-center, dotlottie-wc { width: min(320px,78vw); height: min(320px,78vw); max-height: 300px; }
+    .blast-ui-group { max-width: 720px; }
+    .error-description { max-width: 480px; font-size: 13px; line-height: 1.65; }
+    .btn-action { min-height: 42px; padding: 10px 17px; font-size: 12px; }
+    .score-page-container { max-height: calc(100svh - 28px); overflow-y: auto; }
+    @media (max-width: 600px) {
+      .screen-view { justify-content: flex-start; padding-top: 22px; padding-bottom: 30px; }
+      .open-space-stage { margin-top: 12px; height: 220px; min-height: 180px; }
+      .broken-planet-center, dotlottie-wc { width: 230px; height: 230px; }
+      .error-code { font-size: clamp(68px,19vw,92px); margin-top: -8px; }
+      .error-title { font-size: 20px; }
+      .action-group { width: 100%; max-width: 360px; gap: 10px; }
+      .btn-action { flex: 1 1 calc(50% - 8px); justify-content: center; }
+      .arcade-scoreboard { top: max(8px,env(safe-area-inset-top)); padding: 7px 9px; gap: 6px; }
+      .score-item { font-size: 9px; gap: 3px; }
+      .score-val { font-size: 12px; }
+      .score-divider { height: 12px; }
+      .btn-quit-game { padding: 5px 8px; font-size: 9px; }
+      .score-page-container { padding: 16px 12px; max-height: calc(100svh - 20px); }
+      .save-score-form { flex-direction: column; }
+      .btn-submit-score { justify-content: center; min-height: 42px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+
   </style>
 
 <style id="apml-editor-page-theme">
