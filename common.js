@@ -148,6 +148,8 @@ window.sendPortalNotification = function () {};
               </div>
             </div>
 
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" title="Switch theme"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
+
             <!-- Animated Rotating Hamburger Button -->
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
               <span class="bar"></span>
@@ -197,6 +199,23 @@ window.sendPortalNotification = function () {};
           </div>
         </header>
       `;
+
+      // Shared light/dark theme control. The preference is applied in the document head before CSS paints.
+      const themeToggle = document.getElementById("themeToggle");
+      function syncThemeToggle() {
+        if (!themeToggle) return;
+        const dark = document.documentElement.getAttribute("data-theme") === "dark";
+        themeToggle.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">' + (dark ? 'light_mode' : 'dark_mode') + '</span>';
+        themeToggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+        themeToggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
+      }
+      syncThemeToggle();
+      themeToggle?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", nextTheme);
+        try { localStorage.setItem("apml-theme", nextTheme); } catch (error) {}
+        syncThemeToggle();
+      });
 
       // Initialize Live Clock Updater
       function updateLiveClock() {
