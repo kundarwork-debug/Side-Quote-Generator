@@ -872,13 +872,12 @@
       host.textContent = '';
       months.textContent = '';
 
-      // The heatmap always shows the complete calendar year, January through December.
-      var year = Number(istKey(new Date()).slice(0, 4));
-      var yearStart = year + '-01-01';
-      var yearEnd = year + '-12-31';
-      var yearWin = customWindow(state.logs || {}, yearStart, yearEnd);
-      win = yearWin;
-      $('heatmapRange').textContent = 'January – December ' + year + ' · India time';
+      // Always show a rolling 365-day window ending today; older dates are
+      // available by scrolling horizontally from left (oldest) to right (today).
+      var today = istKey(new Date());
+      var yearStart = keyDaysAgo(364);
+      win = customWindow(state.logs || {}, yearStart, today);
+      $('heatmapRange').textContent = labelOf(yearStart, false) + ' – ' + labelOf(today, false) + ' · Last 365 days';
 
       // GitHub-style layout: weeks run left-to-right, weekdays top-to-bottom.
       var firstDate = win.keys.length ? keyToDate(win.keys[0]) : new Date();
