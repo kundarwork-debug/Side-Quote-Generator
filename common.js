@@ -148,9 +148,7 @@ window.sendPortalNotification = function () {};
               </div>
             </div>
 
-            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark theme" title="Switch theme"><span class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
-
-            <!-- Animated Rotating Hamburger Button -->
+<!-- Animated Rotating Hamburger Button -->
             <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
               <span class="bar"></span>
               <span class="bar"></span>
