@@ -53,6 +53,7 @@
   }
 
   // ---------------- queue ----------------
+  var DEDUPE_SECONDS = 30; // suppress duplicate bug/download alerts for 30 seconds
   var recent = {};
   var pending = [], timer = null, lastSent = 0, sentTimes = [], pausedUntil = 0, retries = 0;
 
