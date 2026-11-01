@@ -16,11 +16,13 @@ import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebSettings;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -61,16 +63,9 @@ public class MainActivity extends Activity {
         header.setPadding(dp(18), dp(12), dp(16), dp(12));
         header.setBackgroundColor(NAVY);
 
-        TextView mark = new TextView(this);
-        mark.setText("AP");
-        mark.setTextColor(Color.WHITE);
-        mark.setTextSize(16);
-        mark.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        mark.setGravity(Gravity.CENTER);
-        GradientDrawable markBg = new GradientDrawable();
-        markBg.setColor(BLUE);
-        markBg.setCornerRadius(dp(12));
-        mark.setBackground(markBg);
+        ImageView mark = new ImageView(this);
+        mark.setImageResource(R.drawable.ic_launcher);
+        mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
         header.addView(mark, new LinearLayout.LayoutParams(dp(42), dp(42)));
 
         LinearLayout brand = new LinearLayout(this);
@@ -165,6 +160,7 @@ public class MainActivity extends Activity {
         s.setSupportMultipleWindows(false);
         s.setUseWideViewPort(true);
         s.setLoadWithOverviewMode(true);
+        webView.addJavascriptInterface(new NativeDownloads(), "ApmNativeDownload");
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
@@ -248,6 +244,31 @@ public class MainActivity extends Activity {
                 Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
             } catch (Exception e) { Toast.makeText(this, "Unable to download this file", Toast.LENGTH_LONG).show(); }
         });
+    }
+
+    private final class NativeDownloads {
+        @JavascriptInterface
+        public void start(String url, String fileName) {
+            runOnUiThread(() -> {
+                try {
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    request.addRequestHeader("User-Agent", webView.getSettings().getUserAgentString());
+                    String cookie = CookieManager.getInstance().getCookie(url);
+                    if (cookie != null) request.addRequestHeader("Cookie", cookie);
+                    String safeName = (fileName == null || fileName.trim().isEmpty()) ? "APML-" + System.currentTimeMillis() : fileName;
+                    request.setTitle(safeName);
+                    request.setDescription("Downloading from APML Portal");
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, safeName);
+                    request.setAllowedOverMetered(true);
+                    request.setAllowedOverRoaming(false);
+                    ((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(request);
+                    Toast.makeText(MainActivity.this, "Download started - check Downloads", Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    Toast.makeText(MainActivity.this, "Download failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private void reloadPortal() {
