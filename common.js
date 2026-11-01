@@ -626,9 +626,9 @@ window.sendPortalNotification = function () {};
     const supportFab = document.createElement('div');
     supportFab.className = 'support-fab';
     supportFab.id = 'support-fab';
-    if (!isIndexPage) {
-      supportFab.classList.add('visible'); // On other pages, start visible
-    }
+    // Show the mascot briefly on every page for the Diwali greeting,
+    // including the home page which normally waits for the user to scroll.
+    supportFab.classList.add('visible');
 
     supportFab.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
@@ -689,6 +689,7 @@ window.sendPortalNotification = function () {};
         transition: opacity 0.4s ease, transform 0.4s ease, box-shadow 0.3s ease;
         pointer-events: auto;
         line-height: 1.5;
+        white-space: pre-line;
       }
       .support-msg-bubble.show {
         opacity: 1;
@@ -715,6 +716,31 @@ window.sendPortalNotification = function () {};
         align-items: center;
         justify-content: center;
         pointer-events: auto;
+      }
+      .support-btn {
+        position: relative;
+      }
+      .apml-diwali-sparkles {
+        position: absolute;
+        inset: -25px;
+        z-index: 5;
+        pointer-events: none;
+        overflow: visible;
+      }
+      .apml-diwali-sparkle {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        color: #f59e0b;
+        font-size: var(--sparkle-size, 15px);
+        line-height: 1;
+        text-shadow: 0 0 7px rgba(251, 191, 36, 0.95), 0 0 15px rgba(245, 158, 11, 0.7);
+        animation: apmlDiwaliTwinkle 1.15s ease-in-out infinite alternate;
+        animation-delay: var(--sparkle-delay, 0s);
+      }
+      @keyframes apmlDiwaliTwinkle {
+        0% { opacity: 0.2; transform: translate(-50%, -50%) scale(0.45) rotate(0deg); }
+        100% { opacity: 1; transform: translate(-50%, -50%) scale(1.25) rotate(35deg); }
       }
       .support-btn img {
         width: 100%;
@@ -909,11 +935,40 @@ window.sendPortalNotification = function () {};
       }
     };
 
+    // Diwali welcome: a random two-line greeting and a 10-second sparkle burst.
+    const diwaliMessages = [
+      "May the lights of Diwali brighten every path\nWishing you joy, success and prosperity! 🪔",
+      "May this Diwali bring new hopes and fresh beginnings\nWishing you and your family a Happy Diwali! ✨",
+      "Let every diya light up a moment of happiness\nMay success and positivity shine all year! 🪔",
+      "Wishing you a Diwali filled with warmth and cheer\nMay peace, progress and prosperity be yours! 🌟",
+      "May your celebrations sparkle with happiness\nHave a safe, joyful and wonderful Diwali! 🎆"
+    ];
+    const diwaliGreeting = diwaliMessages[Math.floor(Math.random() * diwaliMessages.length)];
+    const sparkleLayer = document.createElement('div');
+    sparkleLayer.className = 'apml-diwali-sparkles';
+    sparkleLayer.setAttribute('aria-hidden', 'true');
+    const sparkleSymbols = ['✦', '✧', '✨', '✺', '✧', '✦', '✴', '✨', '✧', '✦', '✺', '✧'];
+    sparkleSymbols.forEach((symbol, index) => {
+      const particle = document.createElement('span');
+      const angle = (Math.PI * 2 * index) / sparkleSymbols.length;
+      const radius = 43 + (index % 3) * 5;
+      particle.className = 'apml-diwali-sparkle';
+      particle.textContent = symbol;
+      particle.style.left = (32 + Math.cos(angle) * radius) + 'px';
+      particle.style.top = (32 + Math.sin(angle) * radius) + 'px';
+      particle.style.setProperty('--sparkle-size', (12 + (index % 3) * 4) + 'px');
+      particle.style.setProperty('--sparkle-delay', ((index % 5) * 0.16) + 's');
+      sparkleLayer.appendChild(particle);
+    });
+    if (moodBtn) moodBtn.appendChild(sparkleLayer);
+    playTypewriter(diwaliGreeting, true, 10000);
     setTimeout(() => {
-      if (!isTyping && typeToken === 0 && !pinnedText && (!isIndexPage || window.scrollY > 250)) {
-        playTypewriter(tipsArray[tipIndex], isIndexPage);
-      }
-    }, 1000);
+      sparkleLayer.remove();
+      // Restore the normal home-page visibility rule after the greeting.
+      window.dispatchEvent(new Event('scroll'));
+    }, 10000);
+
+    // Skip the ordinary tip on first load; the Diwali greeting takes its place.
 
     const avatarBtn = document.getElementById('supportAvatarBtn');
     if (avatarBtn) {
