@@ -1,4 +1,40 @@
 // =========================================================
+// SORTABLEJS - SHARED DRAG-AND-DROP LIBRARY
+// Available on every page that loads common.js.
+// Pages can await window.APMLSortableReady before creating sortable lists.
+// =========================================================
+(function loadSortableJS() {
+  if (window.Sortable) {
+    window.APMLSortableReady = Promise.resolve(window.Sortable);
+    return;
+  }
+  if (window.APMLSortableReady) return;
+
+  window.APMLSortableReady = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-apml-sortablejs]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.Sortable), { once: true });
+      existing.addEventListener('error', reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js';
+    script.async = true;
+    script.dataset.apmlSortablejs = 'true';
+    script.onload = () => {
+      if (window.Sortable) resolve(window.Sortable);
+      else reject(new Error('SortableJS loaded but window.Sortable is unavailable.'));
+    };
+    script.onerror = () => reject(new Error('Unable to load SortableJS.'));
+    document.head.appendChild(script);
+  });
+  window.APMLSortableReady.catch((error) => {
+    console.warn('APML SortableJS load failed:', error);
+  });
+})();
+
+// =========================================================
 // APML STANDALONE APK DETECTION
 // =========================================================
 (function detectStandaloneApp() {
