@@ -1006,10 +1006,68 @@ window.sendPortalNotification = function () {};
 
     // Skip the ordinary tip on first load; the Diwali greeting takes its place.
 
+    // Full-screen Diwali celebration whenever the mascot is tapped.
+    let diwaliShowTimer = null;
+    function showDiwaliCelebration() {
+      const existing = document.getElementById('apml-diwali-celebration');
+      if (existing) existing.remove();
+      if (diwaliShowTimer) clearTimeout(diwaliShowTimer);
+
+      if (!document.getElementById('apml-diwali-celebration-style')) {
+        const style = document.createElement('style');
+        style.id = 'apml-diwali-celebration-style';
+        style.textContent = `
+          #apml-diwali-celebration { position:fixed; inset:0; z-index:2147483000; overflow:hidden; pointer-events:none; display:flex; align-items:center; justify-content:center; background:radial-gradient(ellipse at center,rgba(42,13,65,.91),rgba(12,7,29,.82) 70%,rgba(10,5,20,.72)); animation:apmlDiwaliFadeIn .25s ease-out both; }
+          #apml-diwali-celebration .diwali-center { position:relative; z-index:3; text-align:center; padding:22px 24px; max-width:90vw; color:#fff7c2; text-shadow:0 0 12px #ff9d00,0 0 28px #ff3c9e; font-family:Georgia,serif; animation:apmlDiwaliTitle 1s ease-in-out infinite alternate; }
+          #apml-diwali-celebration .diwali-title { font-size:clamp(32px,8vw,64px); line-height:1.08; font-weight:800; }
+          #apml-diwali-celebration .diwali-subtitle { margin-top:12px; font:600 clamp(14px,3.5vw,22px)/1.4 system-ui,sans-serif; color:#fff; }
+          #apml-diwali-celebration .diwali-decor { position:absolute; top:5%; left:0; width:100%; text-align:center; font-size:clamp(22px,5vw,42px); letter-spacing:clamp(4px,2vw,18px); }
+          #apml-diwali-celebration .diwali-bottom { position:absolute; bottom:5%; left:0; width:100%; text-align:center; font-size:clamp(24px,6vw,46px); letter-spacing:clamp(4px,2vw,16px); }
+          #apml-diwali-celebration .diwali-rocket { position:absolute; bottom:-60px; font-size:30px; animation:apmlRocketRise 1.45s ease-in forwards; filter:drop-shadow(0 0 8px #ffb000); }
+          #apml-diwali-celebration .diwali-burst { position:absolute; font-size:clamp(22px,5vw,42px); animation:apmlBurst 1.15s ease-out both; filter:drop-shadow(0 0 8px #ffcf33); }
+          @keyframes apmlDiwaliFadeIn { from{opacity:0}to{opacity:1} }
+          @keyframes apmlDiwaliTitle { from{transform:scale(.97)}to{transform:scale(1.03)} }
+          @keyframes apmlRocketRise { 0%{transform:translateY(0) scale(.7);opacity:0} 12%{opacity:1} 76%{opacity:1} 100%{transform:translateY(-78vh) scale(1.1);opacity:0} }
+          @keyframes apmlBurst { 0%{transform:scale(.15) rotate(0deg);opacity:0} 20%{opacity:1} 100%{transform:scale(1.8) rotate(35deg);opacity:0} }
+          @media (prefers-reduced-motion:reduce) { #apml-diwali-celebration *,#apml-diwali-celebration { animation-duration:.01ms!important; } }
+        `;
+        document.head.appendChild(style);
+      }
+
+      const overlay = document.createElement('div');
+      overlay.id = 'apml-diwali-celebration';
+      overlay.setAttribute('aria-hidden', 'true');
+      overlay.innerHTML = '<div class="diwali-decor">✦ 🪔 ✧ 🪔 ✦</div><div class="diwali-center"><div class="diwali-title">Happy Diwali!</div><div class="diwali-subtitle">May your life shine with joy, love & prosperity ✨</div></div><div class="diwali-bottom">🪔 ✨ 🪔 ✨ 🪔</div>';
+      document.body.appendChild(overlay);
+
+      const burstEmojis = ['✨','🎆','💥','🌟','🎇'];
+      const positions = [[16,25],[78,22],[28,67],[84,64],[50,15],[60,78]];
+      positions.forEach((pos, i) => {
+        const rocket = document.createElement('span');
+        rocket.className = 'diwali-rocket';
+        rocket.textContent = '🚀';
+        rocket.style.left = (8 + ((i * 17) % 84)) + '%';
+        rocket.style.animationDelay = (i * .18) + 's';
+        overlay.appendChild(rocket);
+        const burst = document.createElement('span');
+        burst.className = 'diwali-burst';
+        burst.textContent = burstEmojis[i % burstEmojis.length];
+        burst.style.left = pos[0] + '%';
+        burst.style.top = pos[1] + '%';
+        burst.style.animationDelay = (.65 + i * .22) + 's';
+        overlay.appendChild(burst);
+      });
+      diwaliShowTimer = setTimeout(() => {
+        overlay.remove();
+        diwaliShowTimer = null;
+      }, 5000);
+    }
+
     const avatarBtn = document.getElementById('supportAvatarBtn');
     if (avatarBtn) {
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        showDiwaliCelebration();
         if (isTyping) return;
         if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }
 
