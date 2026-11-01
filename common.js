@@ -669,15 +669,8 @@ window.sendPortalNotification = function () {};
     supportFab.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
         <div class="support-msg-bubble" id="supportBubble" style="position: relative;">        
-          <lottie-player 
-            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" 
-            background="transparent" 
-            speed="1" 
-            style="width: 75px; height: 75px; position: absolute; top: -52px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none;" 
-            loop 
-            autoplay>
-          </lottie-player>        
-          <span style="position: relative; z-index: 2;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>      
+        
+          <span style="position: relative; z-index: 2; display: block; margin: 0; padding: 0;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>      
         </div>      
         <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
           <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
@@ -715,7 +708,9 @@ window.sendPortalNotification = function () {};
         color: var(--text-main, #1c1917);
         border: 2px solid var(--text-main, #1c1917);
         box-shadow: 4px 4px 0px var(--text-main, #1c1917);
+        display: block;
         padding: 4px 16px 10px;
+        margin: 0;
         min-height: 0;
         height: auto;
         box-sizing: border-box;
