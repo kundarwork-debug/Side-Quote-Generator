@@ -345,20 +345,21 @@
     .rank-fill { height:100%; background:var(--primary); border-radius:99px; }
     .heatmap { display:grid; grid-template-columns:repeat(24,minmax(0,1fr)); gap:4px; }
     .heat-cell { aspect-ratio:1; min-width:0; border-radius:4px; background:var(--surface-subtle); }
-    .calendar-heatmap-wrap { overflow-x:auto; padding-bottom:2px; }
-    .calendar-weekdays,.calendar-heatmap { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:7px; min-width:280px; }
-    .calendar-weekdays { margin-bottom:8px; color:var(--text-muted); font-size:11px; font-weight:800; text-align:center; }
-    .calendar-heatmap { grid-auto-rows:minmax(24px,36px); }
-    .day-heat { min-width:0; border-radius:7px; background:var(--surface-subtle); border:1px solid var(--surface-border); }
+    .calendar-heatmap-wrap { overflow-x:auto; padding:2px 0 6px; }
+    .calendar-heatmap-inner { display:grid; grid-template-columns:24px max-content; grid-template-rows:16px auto; column-gap:7px; width:max-content; min-width:100%; }
+    .calendar-months { display:grid; grid-auto-flow:column; grid-auto-columns:14px; gap:3px; grid-column:2; grid-row:1; color:var(--text-muted); font-size:10px; line-height:14px; }
+    .calendar-weekdays { display:grid; grid-template-rows:repeat(7,11px); gap:3px; grid-column:1; grid-row:2; color:var(--text-muted); font-size:9px; line-height:11px; }
+    .calendar-heatmap { display:grid; grid-template-rows:repeat(7,11px); grid-auto-columns:11px; grid-auto-flow:column; gap:3px; grid-column:2; grid-row:2; }
+    .day-heat { width:11px; height:11px; border-radius:2px; background:var(--surface-subtle); border:1px solid var(--surface-border); }
     .day-heat.empty { visibility:hidden; }
-    .day-heat:focus-visible { outline:3px solid var(--primary); outline-offset:2px; }
+    .day-heat:focus-visible { outline:2px solid var(--primary); outline-offset:1px; }
     .heat-legend { display:flex; align-items:center; gap:6px; margin-top:10px; color:var(--text-muted); font-size:11px; }
-    .heat-legend i { width:12px; height:12px; border-radius:3px; background:var(--primary); opacity:.18; }
+    .heat-legend i { width:10px; height:10px; border-radius:2px; background:var(--primary); opacity:.18; }
     .heat-legend i:nth-of-type(2) { opacity:.4; } .heat-legend i:nth-of-type(3) { opacity:.68; } .heat-legend i:nth-of-type(4) { opacity:1; }
     .muted-note { color:var(--text-muted); font-size:12px; line-height:1.55; }
     .report-actions { display:flex; flex-wrap:wrap; gap:8px; }
     @media(max-width:850px) { .section-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media(max-width:560px) { .section-grid,.insight-list { grid-template-columns:1fr; } .date-field { width:100%; justify-content:space-between; } .date-field input { flex:1; } .heatmap { gap:2px; } .calendar-heatmap,.calendar-weekdays { gap:4px; } }
+    @media(max-width:560px) { .section-grid,.insight-list { grid-template-columns:1fr; } .date-field { width:100%; justify-content:space-between; } .date-field input { flex:1; }  .heatmap { gap:2px; } .calendar-heatmap,.calendar-weekdays { gap:3px; } }
 
     /* APML Android/mobile viewport and footer corrections */
     @media (max-width: 768px) {
@@ -555,8 +556,11 @@
           <span class="muted-note" id="heatmapRange">Selected period · India time</span>
         </div>
         <div class="calendar-heatmap-wrap">
-          <div class="calendar-weekdays" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-          <div class="calendar-heatmap" id="dailyHeatmap" role="img" aria-label="Daily activity heatmap"></div>
+          <div class="calendar-heatmap-inner">
+            <div class="calendar-months" id="heatmapMonths" aria-hidden="true"></div>
+            <div class="calendar-weekdays" aria-hidden="true"><span></span><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span></div>
+            <div class="calendar-heatmap" id="dailyHeatmap" role="img" aria-label="Daily activity heatmap"></div>
+          </div>
         </div>
         <div class="heat-legend"><span>Less</span><i></i><i></i><i></i><i></i><span>More</span></div>
         <p class="muted-note" style="margin-top:12px">Each square represents one day. Darker squares indicate more combined visitors, PDF quotations and media downloads. Hover or focus a day to see its totals.</p>
@@ -863,22 +867,46 @@
     }
 
     function renderDailyHeatmap(win) {
-      var host = $('dailyHeatmap');
-      if (!host) return;
+      var host = $('dailyHeatmap'), months = $('heatmapMonths');
+      if (!host || !months) return;
       host.textContent = '';
+      months.textContent = '';
       $('heatmapRange').textContent = state.range === 'custom'
         ? state.customStart + ' – ' + state.customEnd
         : RANGE_NAME[state.range] + ' · India time';
-      var max = Math.max.apply(null, win.total.concat([0]));
-      var first = win.keys.length ? keyToDate(win.keys[0]).getUTCDay() : 1;
-      // Monday-first calendar: Sunday is the seventh column.
-      var leading = (first + 6) % 7;
+
+      // GitHub-style layout: weeks run left-to-right, weekdays top-to-bottom.
+      var firstDate = win.keys.length ? keyToDate(win.keys[0]) : new Date();
+      var leading = (firstDate.getUTCDay() + 6) % 7;
+      var totalSlots = leading + win.keys.length;
+      var weeks = Math.max(1, Math.ceil(totalSlots / 7));
+      host.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
+      months.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
+      var monthSeen = {};
+      for (var w = 0; w < weeks; w++) {
+        var weekDateIndex = Math.max(0, w * 7 - leading);
+        var weekKey = win.keys[weekDateIndex];
+        var weekDate = weekKey ? keyToDate(weekKey) : null;
+        var monthLabel = '';
+        if (weekDate) {
+          var monthKey = weekDate.getUTCFullYear() + '-' + weekDate.getUTCMonth();
+          if (!monthSeen[monthKey]) {
+            monthSeen[monthKey] = true;
+            monthLabel = weekDate.toLocaleString('en', { month: 'short', timeZone: 'UTC' });
+          }
+        }
+        var month = document.createElement('span');
+        month.textContent = monthLabel;
+        month.style.gridColumn = String(w + 1);
+        months.appendChild(month);
+      }
       for (var pad = 0; pad < leading; pad++) {
         var blank = document.createElement('span');
         blank.className = 'day-heat empty';
         blank.setAttribute('aria-hidden', 'true');
         host.appendChild(blank);
       }
+      var max = Math.max.apply(null, win.total.concat([0]));
       win.keys.forEach(function (key, i) {
         var value = win.total[i];
         var cell = document.createElement('span');
