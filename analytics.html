@@ -548,17 +548,6 @@
 
     <!-- EVENT-LEVEL ANALYTICS: populated by apml-analytics-tracker.js -->
     <div class="section-stack">
-      <section class="card" aria-labelledby="eventTitle">
-        <div class="card-head"><h2 class="card-title" id="eventTitle"><span class="material-symbols-outlined">insights</span> Visitor &amp; event intelligence</h2><span class="muted-note" id="eventStatus">Waiting for event tracking</span></div>
-        <div class="section-grid">
-          <div class="mini-stat"><span>Tracked unique visitors</span><b id="eventVisitors">—</b><small>Distinct anonymous browser IDs in selected period</small></div>
-          <div class="mini-stat"><span>Repeat-session visitors</span><b id="repeatVisitors">—</b><small>Visitors with more than one session in period</small></div>
-          <div class="mini-stat"><span>Tracked page views</span><b id="pageViews">—</b><small>Page-view events recorded by tracker</small></div>
-          <div class="mini-stat"><span>Tracked file downloads</span><b id="trackedDownloads">—</b><small>Download events recorded by tracker</small></div>
-          <div class="mini-stat"><span>Event tracking coverage</span><b id="trackingCoverage">—</b><small>Events available in Firebase for selected period</small></div>
-        </div>
-        <p class="muted-note" style="margin-top:14px">The dashboard reads the latest 20,000 events for performance; very high-volume periods may therefore show partial event coverage. These event-based figures are separate from the existing daily aggregate counters. They become meaningful after the tracker is installed across the portal. They do not retroactively recreate older activity.</p>
-      </section>
 
       <section class="card" aria-labelledby="activityHeatmapTitle">
         <div class="card-head">
@@ -918,10 +907,10 @@
       renderTable(win, pk);
       renderHighlights(win, days);
       renderDailyHeatmap(win);
+      renderSmartInsights();
       $('live').classList.remove('off');
       $('liveText').textContent = 'Live · updated ' + new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', timeZone: TZ });
       state.last = { win: win, days: days };
-      renderEventAnalytics();
     }
 
     // ---------------------------------------------------------------- banners
@@ -977,7 +966,7 @@
       var span = Math.round((keyToDate(end) - keyToDate(start)) / 86400000) + 1;
       if (span > 730) { showBanner('error', 'Please choose a range of 730 days or fewer for responsive reporting.', false); return; }
       state.range = 'custom'; state.customStart = start; state.customEnd = end; $('dateStart').value = start; $('dateEnd').value = end;
-      press($('rangeTabs'), 'data-range', '__none__'); hideBanner(); render(); renderEventAnalytics();
+      press($('rangeTabs'), 'data-range', '__none__'); hideBanner(); render();
     }
     $('applyDates').addEventListener('click', function () { setCustomRange($('dateStart').value, $('dateEnd').value); });
     function dateParts(d) { return { y:d.getUTCFullYear(), m:d.getUTCMonth(), day:d.getUTCDate() }; }
@@ -987,37 +976,26 @@
     $('thisYearBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)); setCustomRange(dateKeyUTC(p.y,0,1), today); });
     $('printBtn').addEventListener('click', function () { window.print(); });
 
-    // ---------------------------------------------------------------- event analytics (new tracker schema)
-    var eventDataReady = false;
-    function eventDate(e) { return e && (e.timestamp ? istKey(new Date(Number(e.timestamp))) : (e.dateKey || '')); }
-    function renderEventAnalytics() {
+    // ---------------------------------------------------------------- smart insights
+    function renderSmartInsights() {
       var start = state.range === 'custom' ? state.customStart : keyDaysAgo((RANGES[state.range] || 7) - 1);
       var end = state.range === 'custom' ? state.customEnd : istKey(new Date());
-      var list = Object.keys(state.events || {}).map(function (id) { var e = state.events[id] || {}; e._id = id; return e; }).filter(function (e) { var k = eventDate(e); return k && k >= start && k <= end; });
-      var visitors = {}, visitorSessions = {}, pageViews = 0, downloads = 0;
-      list.forEach(function (e) {
-        var vid = e.visitorId || 'unknown:' + e._id, sid = e.sessionId || e._id;
-        visitors[vid] = true; visitorSessions[vid] = visitorSessions[vid] || {}; visitorSessions[vid][sid] = true;
-        if (e.eventType === 'download' || e.type === 'download') downloads++;
-        if (e.eventType === 'page_view' || e.type === 'page_view') pageViews++;
+      var box = $('smartInsights'); box.textContent = ''; $('insightRange').textContent = start + ' – ' + end;
+      var messages = [];
+      if (state.logs) {
+        var selected = selectedWindow(state.logs).win, p = peakOf(selected);
+        if (p) messages.push(['bolt', 'Busiest day was ' + labelOf(p.key, true) + ' with ' + num(p.value) + ' combined daily actions.']);
+        var v = sum(selected.visitors), d = sum(selected.pdf) + sum(selected.media);
+        if (v > 0) messages.push(['trending_up', 'The selected period recorded ' + (d / v).toFixed(2) + ' PDF/media downloads per daily visitor count.']);
+        if (d === 0 && v === 0) messages.push(['info', 'No daily activity is recorded in this selected period.']);
+      }
+      if (!messages.length) messages.push(['info', 'Smart insights will populate as daily analytics data becomes available.']);
+      messages.forEach(function (m) {
+        var item = document.createElement('div'); item.className = 'insight-item';
+        var icon = document.createElement('span'); icon.className = 'material-symbols-outlined'; icon.textContent = m[0];
+        var text = document.createElement('span'); text.textContent = m[1];
+        item.appendChild(icon); item.appendChild(text); box.appendChild(item);
       });
-      var visitorIds = Object.keys(visitors), repeats = visitorIds.filter(function (id) { return Object.keys(visitorSessions[id]).length > 1; }).length;
-      var total = list.length;
-      $('eventVisitors').textContent = eventDataReady ? num(visitorIds.length) : '—';
-      $('repeatVisitors').textContent = eventDataReady ? num(repeats) : '—';
-      $('pageViews').textContent = eventDataReady ? num(pageViews) : '—';
-      $('trackedDownloads').textContent = eventDataReady ? num(downloads) : '—';
-      $('trackingCoverage').textContent = eventDataReady ? num(total) + ' events' : 'Not connected';
-      $('eventStatus').textContent = eventDataReady ? 'Live event data · ' + num(total) + ' events in range' : 'No event data yet';
-      renderSmartInsights(list, start, end, pageViews, downloads, visitorIds.length);
-    }
-    function renderSmartInsights(events, start, end, pageViews, downloads, visitors) {
-      var box=$('smartInsights'); box.textContent=''; $('insightRange').textContent=start+' – '+end;
-      var messages=[];
-      if (state.logs) { var selected=selectedWindow(state.logs).win, p=peakOf(selected); if (p) messages.push(['bolt','Busiest day was '+labelOf(p.key,true)+' with '+num(p.value)+' combined daily actions.']); var v=sum(selected.visitors), d=sum(selected.pdf)+sum(selected.media); if (v>0) messages.push(['trending_up','The selected period recorded '+(d/v).toFixed(2)+' PDF/media downloads per daily visitor count.']); if (d===0 && v===0) messages.push(['info','No daily activity is recorded in this selected period.']); }
-      if (eventDataReady && events.length) { messages.push(['groups','Tracked '+num(visitors)+' anonymous visitors and '+num(pageViews)+' page views in this period.']); if (downloads) messages.push(['download','Tracked '+num(downloads)+' file downloads.']); }
-      if (!messages.length) messages.push(['info','Smart insights will populate as daily analytics and event-level tracking data become available.']);
-      messages.forEach(function (m) { var item=document.createElement('div'); item.className='insight-item'; var icon=document.createElement('span'); icon.className='material-symbols-outlined'; icon.textContent=m[0]; var text=document.createElement('span'); text.textContent=m[1]; item.appendChild(icon); item.appendChild(text); box.appendChild(item); });
     }
 
     // the chart takes its colours from the theme, so it is rebuilt whenever the theme changes
@@ -1053,7 +1031,6 @@
       });
       db.ref('analytics/totalPdfDownloads').on('value', function (s) { state.totals.pdf = Number(s.val()) || 0; renderTotals(); });
       db.ref('analytics/totalMediaDownloads').on('value', function (s) { state.totals.media = Number(s.val()) || 0; renderTotals(); });
-      db.ref('analytics/events').limitToLast(20000).on('value', function (snap) { state.events = snap.val() || {}; eventDataReady = true; renderEventAnalytics(); }, function () { eventDataReady = false; $('eventStatus').textContent = 'Event data unavailable · check Firebase read rules'; renderEventAnalytics(); });
     }
 
     // a hook for testing and for the browser console
