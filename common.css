@@ -563,3 +563,131 @@
     gap: 12px;
   }
 }
+
+
+/* =========================================================
+   APML PORTAL GLOBAL DARK THEME
+   Theme is applied on <html> before first paint by each page.
+   ========================================================= */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --md-sys-color-primary: #f87171;
+  --md-sys-color-primary-container: #3b1820;
+  --md-sys-color-on-primary-container: #fecaca;
+  --md-sys-color-surface: #111827;
+  --md-sys-color-surface-container-lowest: #111827;
+  --md-sys-color-surface-container-low: #1e293b;
+  --md-sys-color-surface-container: #334155;
+  --md-sys-color-outline-variant: #334155;
+  --md-sys-color-on-surface: #f8fafc;
+  --md-sys-color-on-surface-variant: #cbd5e1;
+  --bg-base: #0b1120;
+  --surface-card: #151e2e;
+  --surface: #151e2e;
+  --surface-glass: rgba(21, 30, 46, .94);
+  --surface-raised: #1e293b;
+  --surface-subtle: #1e293b;
+  --surface-border: #334155;
+  --border-subtle: #334155;
+  --text-main: #f8fafc;
+  --text-secondary: #e2e8f0;
+  --text-muted: #a8b5c7;
+  --text-faint: #8493a8;
+  --shadow-soft: 0 8px 28px rgba(0,0,0,.28);
+  --shadow-subtle: 0 8px 28px rgba(0,0,0,.28);
+  --shadow-sm: 0 8px 24px rgba(0,0,0,.24);
+  --shadow-md: 0 14px 36px rgba(0,0,0,.32);
+}
+html[data-theme="dark"] body {
+  background: #0b1120 !important;
+  background-color: #0b1120 !important;
+  background-image: radial-gradient(circle at 50% 12%, rgba(127,29,29,.16), transparent 58%) !important;
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .site-header,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .nav-menu,
+html[data-theme="dark"] .footer-grid-container,
+html[data-theme="dark"] .footer-links-columns {
+  background: rgba(15,23,42,.96) !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+html[data-theme="dark"] .nav-link,
+html[data-theme="dark"] .site-logo,
+html[data-theme="dark"] .logo-text,
+html[data-theme="dark"] .footer-item-link,
+html[data-theme="dark"] .footer-title-text,
+html[data-theme="dark"] .footer-brand-desc,
+html[data-theme="dark"] .footer-col-title {
+  color: #e2e8f0 !important;
+}
+html[data-theme="dark"] .header-live-clock,
+html[data-theme="dark"] .hamburger-btn,
+html[data-theme="dark"] .nav-menu,
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .table-section,
+html[data-theme="dark"] .kpi,
+html[data-theme="dark"] .banner,
+html[data-theme="dark"] .module-card,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .info-card,
+html[data-theme="dark"] .content-card,
+html[data-theme="dark"] .feature-card,
+html[data-theme="dark"] .glass-card,
+html[data-theme="dark"] .surface-card,
+html[data-theme="dark"] .quick-pricing-card,
+html[data-theme="dark"] #sharedFieldGroup,
+html[data-theme="dark"] .footer-card {
+  background-color: #151e2e !important;
+  color: #e2e8f0;
+  border-color: #334155 !important;
+}
+html[data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select,
+html[data-theme="dark"] .field input,
+html[data-theme="dark"] .field textarea {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder { color: #94a3b8 !important; }
+html[data-theme="dark"] table th,
+html[data-theme="dark"] .suggestion-cat,
+html[data-theme="dark"] .tabs,
+html[data-theme="dark"] .tab-btn:not(.active),
+html[data-theme="dark"] .seg button:not([aria-pressed="true"]) {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+html[data-theme="dark"] table td,
+html[data-theme="dark"] table th,
+html[data-theme="dark"] .price-row,
+html[data-theme="dark"] .suggestion-item { border-color: #334155 !important; }
+html[data-theme="dark"] .suggestion-item { color: #e2e8f0 !important; }
+html[data-theme="dark"] .suggestions-dropdown { background: #151e2e !important; border-color: #334155 !important; }
+html[data-theme="dark"] .ambient-bg,
+html[data-theme="dark"] .ambient-glow,
+html[data-theme="dark"] .ambient-mesh { opacity: .22; }
+html[data-theme="dark"] .support-msg-bubble { background: #151e2e !important; color: #f8fafc !important; }
+html[data-theme="dark"] .swal2-popup { background: #151e2e !important; color: #f8fafc !important; }
+html[data-theme="dark"] .swal2-title,
+html[data-theme="dark"] .swal2-html-container { color: #e2e8f0 !important; }
+html[data-theme="dark"] .theme-toggle {
+  width: 40px; height: 40px; flex: 0 0 40px; display: inline-flex;
+  align-items: center; justify-content: center; border-radius: 50%;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface); cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.theme-toggle:hover { transform: translateY(-1px); border-color: var(--md-sys-color-primary); }
+.theme-toggle .material-symbols-outlined { font-size: 20px; }
+html[data-theme="dark"] .theme-toggle { background: #1e293b; color: #f8fafc; border-color: #475569; }
+@media (prefers-reduced-motion: reduce) {
+  html, html *, html *::before, html *::after { transition-duration: 0s !important; animation-duration: .01ms !important; }
+}
