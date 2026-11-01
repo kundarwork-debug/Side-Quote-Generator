@@ -1,14 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>
-    (function(){
-      try {
-        var saved = localStorage.getItem('apml-theme');
-        document.documentElement.setAttribute('data-theme', saved === 'dark' ? 'dark' : 'light');
-      } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
-    })();
-  </script>
+  <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Traffic &amp; Download Analytics</title>
@@ -585,17 +578,6 @@
   <div id="footer-container"></div>
 
   <script src="common.js?v=21.44"></script>
-
-  <!-- THEME SYNC -->
-  <script>
-    (function () {
-      var saved = localStorage.getItem('apml_portal_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', saved);
-      window.addEventListener('storage', function (e) {
-        if (e.key === 'apml_portal_theme') document.documentElement.setAttribute('data-theme', e.newValue || 'light');
-      });
-    })();
-  </script>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
