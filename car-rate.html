@@ -28,6 +28,7 @@
       .ambient-mesh { position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:0; background:radial-gradient(circle at 12% 16%,rgba(185,28,28,.05),transparent 45%),radial-gradient(circle at 88% 84%,rgba(225,29,72,.04),transparent 40%); }
       main { position:relative; z-index:1; width:100%; flex:1; padding:84px 0 50px; }
       .container { width:100%; max-width:1100px; margin:0 auto; padding:20px; }
+      #header-container + .container { padding-top:104px; }
       .calc-header { text-align:center; margin:0 auto 24px; max-width:760px; }
       .eyebrow { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border:1px solid rgba(185,28,28,.16); border-radius:999px; background:var(--primary-soft); color:var(--primary); font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
       .calc-title { margin-top:14px; font-family:'Space Grotesk','Plus Jakarta Sans',sans-serif; font-size:clamp(26px,4vw,38px); line-height:1.15; font-weight:800; letter-spacing:-.04em; }
@@ -65,6 +66,7 @@
       @media(max-width:700px) {
         main { padding-top:76px; }
         .container { padding:18px 14px 34px; }
+        #header-container + .container { padding-top:92px; }
         .grid { grid-template-columns:1fr; gap:14px; }
         .card,.table-section { padding:19px 16px; border-radius:18px; }
         .calc-header { margin-bottom:20px; }
