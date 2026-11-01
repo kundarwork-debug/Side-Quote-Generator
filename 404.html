@@ -648,6 +648,13 @@
       gap: 6px;
     }
 
+    .mission-hints { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:0 0 18px; max-width:620px; }
+    .mission-hints span { display:inline-flex; gap:5px; align-items:center; padding:7px 10px; border:1px solid var(--surface-border); border-radius:999px; background:var(--surface-card); color:var(--text-muted); font-size:10px; box-shadow:var(--shadow-subtle); }
+    .mission-hints b { color:var(--primary); font-weight:800; }
+    .leaderboard-row.top-rank { padding:7px 8px; border-radius:9px; background:rgba(245,158,11,.08); }
+    .leaderboard-row.rank-1 .rank-num { color:#d97706; }
+    .leaderboard-row.rank-2 .rank-num { color:#64748b; }
+    .leaderboard-row.rank-3 .rank-num { color:#b45309; }
     .leaderboard-row {
       display: flex;
       align-items: center;
@@ -889,6 +896,11 @@
       <p class="error-description" id="gameDescText">
         The page you’re looking for doesn’t exist or may have moved. Head back to the portal, or launch the optional asteroid-defense mission.
       </p>
+      <div class="mission-hints" aria-label="Mini game instructions">
+        <span><b>Move</b> Move your pointer or finger</span>
+        <span><b>Fire</b> Click or tap to shoot</span>
+        <span><b>Goal</b> Protect the planet for as long as you can</span>
+      </div>
 
       <div class="action-group" id="actionGroupBar">
         <button type="button" class="btn-action btn-primary" id="btnStartGame">
@@ -1158,7 +1170,7 @@
           return;
         }
         leaderboardList.innerHTML = entries.map((item, idx) => `
-          <div class="leaderboard-row">
+          <div class="leaderboard-row ${idx < 3 ? `top-rank rank-${idx + 1}` : ''}">
             <div class="rank-name">
               <span class="rank-num">#${idx + 1}</span>
               <span>${escapeHtml(item.pilot || 'Pilot')}</span>
