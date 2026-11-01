@@ -324,9 +324,6 @@
     }
 
     /* ---------- enhanced analytics ---------- */
-    .advanced-tools { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:0 0 20px; }
-    .date-field { display:flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid var(--surface-border); border-radius:12px; background:var(--surface-raised); color:var(--text-muted); font-size:12px; font-weight:700; }
-    .date-field input { min-width:132px; border:0; outline:0; background:transparent; color:var(--text-main); font:600 12px var(--font-sans); }
     .btn.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
     .btn.primary .material-symbols-outlined { color:#fff; }
     .section-stack { display:grid; gap:20px; margin-top:22px; }
@@ -359,14 +356,14 @@
     .muted-note { color:var(--text-muted); font-size:12px; line-height:1.55; }
     .report-actions { display:flex; flex-wrap:wrap; gap:8px; }
     @media(max-width:850px) { .section-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-    @media(max-width:560px) { .section-grid,.insight-list { grid-template-columns:1fr; } .date-field { width:100%; justify-content:space-between; } .date-field input { flex:1; }  .heatmap { gap:2px; } .calendar-heatmap,.calendar-weekdays { gap:3px; } }
+    @media(max-width:560px) { .section-grid,.insight-list { grid-template-columns:1fr; }  .heatmap { gap:2px; } .calendar-heatmap,.calendar-weekdays { gap:3px; } }
 
     /* APML Android/mobile viewport and footer corrections */
     @media (max-width: 768px) {
       html, body { width:100%; max-width:100%; overflow-x:hidden!important; }
       body { min-height:100vh; height:auto!important; overflow-y:auto!important; }
       main { width:100%!important; max-width:100%!important; min-width:0!important; margin:0 auto!important; margin-top:0!important; padding:22px 14px 40px!important; }
-      .page-head, .head-controls, .advanced-tools, .chart-tools { min-width:0; max-width:100%; }
+      .page-head, .head-controls, .chart-tools { min-width:0; max-width:100%; }
       .page-head { align-items:flex-start; gap:14px; }
       .kpis, .two-col, .section-grid, .insight-list { min-width:0; }
       .card, .kpi { min-width:0; max-width:100%; padding:16px!important; }
@@ -427,17 +424,8 @@
       </div>
     </header>
 
-    <div class="advanced-tools" aria-label="Custom date range and reports">
-      <label class="date-field">From <input type="date" id="dateStart" aria-label="Start date"></label>
-      <label class="date-field">To <input type="date" id="dateEnd" aria-label="End date"></label>
-      <button type="button" class="btn primary" id="applyDates">Apply dates</button>
-      <button type="button" class="btn" id="thisMonthBtn">This month</button>
-      <button type="button" class="btn" id="lastMonthBtn">Last month</button>
-      <button type="button" class="btn" id="thisYearBtn">This year</button>
-      <span style="flex:1"></span>
-      <div class="report-actions">
-        <button type="button" class="btn" id="printBtn"><span class="material-symbols-outlined">picture_as_pdf</span> Print / PDF</button>
-      </div>
+    <div class="report-actions">
+      <button type="button" class="btn" id="printBtn"><span class="material-symbols-outlined">picture_as_pdf</span> Print / PDF</button>
     </div>
 
     <div class="banner" id="banner" role="alert" hidden>
@@ -1003,20 +991,7 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     });
 
-    // ---------------------------------------------------------------- custom ranges and report actions
-    function setCustomRange(start, end) {
-      if (!start || !end || start > end) { showBanner('error', 'Choose a valid date range. The start date must be on or before the end date.', false); return; }
-      var span = Math.round((keyToDate(end) - keyToDate(start)) / 86400000) + 1;
-      if (span > 730) { showBanner('error', 'Please choose a range of 730 days or fewer for responsive reporting.', false); return; }
-      state.range = 'custom'; state.customStart = start; state.customEnd = end; $('dateStart').value = start; $('dateEnd').value = end;
-      press($('rangeTabs'), 'data-range', '__none__'); hideBanner(); render();
-    }
-    $('applyDates').addEventListener('click', function () { setCustomRange($('dateStart').value, $('dateEnd').value); });
-    function dateParts(d) { return { y:d.getUTCFullYear(), m:d.getUTCMonth(), day:d.getUTCDate() }; }
-    function dateKeyUTC(y,m,d) { return new Date(Date.UTC(y,m,d)).toISOString().slice(0,10); }
-    $('thisMonthBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)); setCustomRange(dateKeyUTC(p.y,p.m,1), today); });
-    $('lastMonthBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)), end = dateKeyUTC(p.y,p.m,0), ep = dateParts(keyToDate(end)); setCustomRange(dateKeyUTC(ep.y,ep.m,1), end); });
-    $('thisYearBtn').addEventListener('click', function () { var today = istKey(new Date()), p = dateParts(keyToDate(today)); setCustomRange(dateKeyUTC(p.y,0,1), today); });
+    // ---------------------------------------------------------------- report actions
     $('printBtn').addEventListener('click', function () { window.print(); });
 
     // ---------------------------------------------------------------- smart insights
