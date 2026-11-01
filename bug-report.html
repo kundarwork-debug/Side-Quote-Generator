@@ -368,23 +368,6 @@
       </div>
 
 
-      <div class="form-group" id="adminLoginGroup">
-        <button type="button" class="btn-submit" id="adminLoginBtn" style="margin-top:0;background:#fff;color:#292524;border:1.5px solid #e5e7eb;box-shadow:none;width:auto;padding:10px 18px;" onclick="adminGoogleLogin()">
-          <span class="material-symbols-outlined">admin_panel_settings</span><span>Admin Login</span>
-        </button>
-        <div id="adminSessionStatus" style="display:none;font-size:13px;color:#166534;font-weight:700;"></div>
-        <button type="button" class="btn-submit" id="viewReportsBtn" style="display:none;margin-top:10px;" onclick="toggleAdminReports()">
-          <span class="material-symbols-outlined">list_alt</span><span>View Bug Reports</span>
-        </button>
-      </div>
-      <section id="adminReportsPanel" style="display:none;margin:18px 0;padding:18px;border:1px solid var(--surface-border);border-radius:16px;background:var(--surface-subtle);">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">
-          <h2 style="font-size:17px;font-weight:800;color:var(--text-main);">Submitted Bug Reports</h2>
-          <button type="button" class="btn-back" onclick="loadAdminReports()">Refresh</button>
-        </div>
-        <div id="adminReportsList" style="display:grid;gap:12px;"><p style="font-size:13px;color:var(--text-muted);">Sign in as an admin to view reports.</p></div>
-      </section>
-
       <form id="bugReportForm" onsubmit="submitBugReportToFirebase(event)">
         
         <div class="form-group">
@@ -439,7 +422,6 @@
   <!-- FIREBASE SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <script>
@@ -461,82 +443,7 @@
     const bugReportsRef = db.ref("apml_bug_reports");
 
 
-    const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "kundar.work@gmail.com"];
-    let isVerifiedAdmin = false;
     let base64Image = null;
-
-    function adminGoogleLogin() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: "select_account" });
-      const button = document.getElementById("adminLoginBtn");
-      button.disabled = true;
-      button.innerHTML = "<span>Signing in...</span>";
-      firebase.auth().signInWithPopup(provider).catch((error) => {
-        const message = error.code === "auth/popup-blocked" ? "Please allow popups and try again." : error.message;
-        Swal.fire({ icon: "error", title: "Admin sign-in failed", text: message });
-      }).finally(() => {
-        button.disabled = false;
-        if (!isVerifiedAdmin) button.innerHTML = '<span class="material-symbols-outlined">admin_panel_settings</span><span>Admin Login</span>';
-      });
-    }
-
-    firebase.auth().onAuthStateChanged(async (user) => {
-      const loginButton = document.getElementById("adminLoginBtn");
-      const status = document.getElementById("adminSessionStatus");
-      const reportsButton = document.getElementById("viewReportsBtn");
-      isVerifiedAdmin = !!(user && ALLOWED_ADMIN_EMAILS.includes((user.email || "").toLowerCase().trim()));
-      if (user && !isVerifiedAdmin) {
-        await firebase.auth().signOut();
-        Swal.fire({ icon: "error", title: "Access denied", text: "Only authorized APML administrators can access the reports dashboard." });
-        return;
-      }
-      loginButton.style.display = isVerifiedAdmin ? "none" : "inline-flex";
-      status.style.display = isVerifiedAdmin ? "block" : "none";
-      status.textContent = isVerifiedAdmin ? "Admin verified: " + user.email : "";
-      reportsButton.style.display = isVerifiedAdmin ? "inline-flex" : "none";
-      if (!isVerifiedAdmin) document.getElementById("adminReportsPanel").style.display = "none";
-    });
-
-    function toggleAdminReports() {
-      if (!isVerifiedAdmin) return;
-      const panel = document.getElementById("adminReportsPanel");
-      const opening = panel.style.display === "none";
-      panel.style.display = opening ? "block" : "none";
-      if (opening) loadAdminReports();
-    }
-
-    function escapeHtml(value) {
-      const entities = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-      return String(value == null ? "" : value).replace(/[&<>"']/g, (char) => entities[char]);
-    }
-
-    async function loadAdminReports() {
-      if (!isVerifiedAdmin) return;
-      const list = document.getElementById("adminReportsList");
-      list.innerHTML = "<p>Loading reports...</p>";
-      try {
-        const snapshot = await bugReportsRef.once("value");
-        const reports = [];
-        snapshot.forEach((child) => reports.push({ id: child.key, ...child.val() }));
-        reports.sort((a, b) => (Number(b.timestamp) || 0) - (Number(a.timestamp) || 0));
-        if (!reports.length) {
-          list.innerHTML = "<p>No bug reports have been submitted yet.</p>";
-          return;
-        }
-        list.innerHTML = reports.map((report) => {
-          const image = report.imageUrl
-            ? '<a href="' + escapeHtml(report.imageUrl) + '" target="_blank" rel="noopener"><img src="' + escapeHtml(report.imageUrl) + '" alt="Report attachment" style="max-width:100%;max-height:220px;object-fit:contain;border-radius:10px;margin-top:10px;"></a>'
-            : "";
-          const date = report.dateString || (report.timestamp ? new Date(report.timestamp).toLocaleString("en-IN") : "");
-          return '<article style="background:#fff;border:1px solid var(--surface-border);border-radius:12px;padding:14px;">' +
-            '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;"><strong>' + escapeHtml(report.name || "Anonymous") + '</strong><span style="font-size:11px;color:var(--text-muted);">' + escapeHtml(date) + '</span></div>' +
-            '<p style="font-size:13px;line-height:1.6;white-space:pre-wrap;margin-top:8px;">' + escapeHtml(report.message || "") + '</p>' +
-            image + '</article>';
-        }).join("");
-      } catch (error) {
-        list.innerHTML = "<p>Unable to load reports: " + escapeHtml(error.message) + "</p>";
-      }
-    }
 
     function handleFilePreview(input) {
       if (input.files && input.files[0]) {
@@ -588,6 +495,17 @@
           timestamp: Date.now(),
           dateString: new Date().toLocaleString('en-IN')
         });
+
+        // Notify the existing APML Telegram Worker only after Firebase confirms the report save.
+        // The bot token and chat ID remain server-side in the Worker secrets.
+        if (window.APMNotify && typeof window.APMNotify.send === "function") {
+          window.APMNotify.send({
+            type: "bug",
+            title: "New bug report submitted",
+            file: name,
+            folder: message.slice(0, 700)
+          });
+        }
 
         successAlert.style.display = 'flex';
         document.getElementById('bugReportForm').reset();
