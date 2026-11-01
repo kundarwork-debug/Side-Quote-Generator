@@ -41,9 +41,10 @@ public class MainActivity extends Activity {
 
     @Override public void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().setStatusBarColor(NAVY);
+        getWindow().setStatusBarColor(Color.WHITE);
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         getWindow().setNavigationBarColor(Color.WHITE);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         buildNativeShell();
         configureWebView();
         if (state == null) webView.loadUrl(PORTAL_URL);
@@ -115,18 +116,6 @@ public class MainActivity extends Activity {
         contentFrame.addView(errorView, new FrameLayout.LayoutParams(-1, -1));
         root.addView(contentFrame, new LinearLayout.LayoutParams(-1, 0, 1));
 
-        LinearLayout bottom = new LinearLayout(this);
-        bottom.setGravity(Gravity.CENTER);
-        bottom.setBackgroundColor(Color.WHITE);
-        bottom.setElevation(dp(10));
-        bottom.setPadding(dp(8), dp(5), dp(8), dp(5));
-        bottom.addView(navItem("⌂", "Home", v -> { errorView.setVisibility(View.GONE); webView.loadUrl(PORTAL_URL); }));
-        bottom.addView(navItem("‹", "Back", v -> {
-            if (webView.canGoBack()) webView.goBack();
-            else Toast.makeText(this, "You are on the home screen", Toast.LENGTH_SHORT).show();
-        }));
-        bottom.addView(navItem("↻", "Refresh", v -> reloadPortal()));
-        root.addView(bottom, new LinearLayout.LayoutParams(-1, dp(62)));
         setContentView(root);
     }
 
@@ -174,6 +163,8 @@ public class MainActivity extends Activity {
         s.setAllowFileAccess(true);
         s.setJavaScriptCanOpenWindowsAutomatically(true);
         s.setSupportMultipleWindows(false);
+        s.setUseWideViewPort(true);
+        s.setLoadWithOverviewMode(false);
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
@@ -194,6 +185,18 @@ public class MainActivity extends Activity {
                 progress.setProgress(5);
             }
             @Override public void onPageFinished(WebView view, String url) {
+                // Keep the portal responsive inside the phone's available screen width.
+                String responsiveFix = "(function(){"
+                    + "var m=document.querySelector('meta[name=viewport]');"
+                    + "if(!m){m=document.createElement('meta');m.name='viewport';document.head.appendChild(m);}"
+                    + "m.content='width=device-width, initial-scale=1.0';"
+                    + "var s=document.getElementById('apml-android-fit');"
+                    + "if(!s){s=document.createElement('style');s.id='apml-android-fit';document.head.appendChild(s);}"
+                    + "s.textContent='html,body{width:100%;max-width:100%;overflow-x:hidden;}"
+                    + "*,*:before,*:after{box-sizing:border-box;}"
+                    + "img,video,canvas,svg{max-width:100%;height:auto;}';"
+                    + "})();";
+                view.evaluateJavascript(responsiveFix, null);
                 progress.setProgress(100);
                 progress.postDelayed(() -> progress.setVisibility(View.GONE), 250);
             }
