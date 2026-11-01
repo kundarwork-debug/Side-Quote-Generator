@@ -715,7 +715,7 @@ window.sendPortalNotification = function () {};
         color: var(--text-main, #1c1917);
         border: 2px solid var(--text-main, #1c1917);
         box-shadow: 4px 4px 0px var(--text-main, #1c1917);
-        padding: 6px 24px 16px;
+        padding: 0 24px 16px;
         border-radius: 20px 20px 0 20px;
         font-size: 14.5px;
         font-weight: 600;
