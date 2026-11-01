@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
@@ -514,7 +513,7 @@
     }
 
     /* Theme-Adapted Uiverse Button Styling (by nathAd17) */
-    .card-footer-cta .launch-button {
+    .card-footer-cta button {
       display: flex;
       justify-content: center;
       gap: 8px;
@@ -538,7 +537,7 @@
       transition: color 0.3s ease;
     }
 
-    .card-footer-cta .launch-button::before {
+    .card-footer-cta button::before {
       content: "";
       position: absolute;
       width: 100%;
@@ -552,21 +551,21 @@
       aspect-ratio: 1;
     }
 
-    .module-card:hover .card-footer-cta .launch-button::before,
-    .card-footer-cta .launch-button:hover::before {
+    .module-card:hover .card-footer-cta button::before,
+    .card-footer-cta button:hover::before {
       left: 0;
       width: 100%;
       transform: scale(1.5);
       transition-duration: 0.7s;
     }
 
-    .module-card:hover .card-footer-cta .launch-button,
-    .card-footer-cta .launch-button:hover {
+    .module-card:hover .card-footer-cta button,
+    .card-footer-cta button:hover {
       color: #ffffff;
       border-color: var(--primary);
     }
 
-    .card-footer-cta .launch-button svg {
+    .card-footer-cta button svg {
       width: 24px;
       height: 24px;
       display: flex;
@@ -579,13 +578,13 @@
       transform: rotate(45deg);
     }
 
-    .card-footer-cta .launch-button svg path {
+    .card-footer-cta button svg path {
       fill: var(--primary);
       transition: fill 0.3s ease;
     }
 
-    .module-card:hover .card-footer-cta .launch-button svg,
-    .card-footer-cta .launch-button:hover svg {
+    .module-card:hover .card-footer-cta button svg,
+    .card-footer-cta button:hover svg {
       transform: rotate(90deg);
       background: #ffffff;
       color: var(--primary);
@@ -593,8 +592,8 @@
       padding: 4px;
     }
 
-    .module-card:hover .card-footer-cta .launch-button svg path,
-    .card-footer-cta .launch-button:hover svg path {
+    .module-card:hover .card-footer-cta button svg path,
+    .card-footer-cta button:hover svg path {
       fill: var(--primary);
     }
 
@@ -762,82 +761,6 @@
         padding-bottom: 0;
       }
     }
-
-
-    /* Essential responsive and accessibility refinements */
-    .workspace-section, .telemetry-section { max-width: 1400px; }
-    .section-bar { gap: 14px; }
-    .module-card { min-width: 0; }
-    .module-card:focus-visible, .telemetry-card:focus-visible {
-      outline: 3px solid var(--primary);
-      outline-offset: 4px;
-    }
-    .launch-button {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin: 0;
-      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.1);
-      font-size: 13.5px;
-      background: var(--surface-card);
-      backdrop-filter: blur(12px);
-      font-weight: 600;
-      isolation: isolate;
-      border: 1.5px solid rgba(185, 28, 28, 0.2);
-      color: var(--primary);
-      position: relative;
-      z-index: 1;
-      padding: 6px 14px;
-      overflow: hidden;
-      border-radius: var(--radius-pill);
-      transition: color 0.3s ease, border-color 0.3s ease;
-      white-space: nowrap;
-    }
-    .launch-button svg {
-      width: 24px;
-      height: 24px;
-      display: block;
-      color: var(--primary);
-      transition: transform 0.3s ease;
-      border-radius: 50%;
-      border: 1px solid rgba(185, 28, 28, 0.3);
-      padding: 4px;
-      transform: rotate(45deg);
-      flex: 0 0 auto;
-    }
-    .launch-button svg path { fill: var(--primary); }
-    .module-card:hover .launch-button,
-    .module-card:focus-visible .launch-button {
-      color: #fff;
-      border-color: var(--primary);
-      background: var(--primary);
-    }
-    .module-card:hover .launch-button svg,
-    .module-card:focus-visible .launch-button svg {
-      transform: rotate(90deg);
-      background: #fff;
-      border-color: #fff;
-    }
-    .operational-badge[data-state="offline"] { background: #FEF2F2; border-color: #FECACA; color: #991B1B; }
-    .operational-badge[data-state="connecting"] { background: var(--surface-subtle); border-color: var(--surface-border); color: var(--text-muted); }
-    html[data-theme="dark"] .operational-badge[data-state="offline"] { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); color: #fca5a5; }
-    @media (max-width: 700px) {
-      .hero-center { padding: 48px 18px 32px; }
-      .workspace-section, .telemetry-section { padding-left: 16px; padding-right: 16px; }
-      .telemetry-card { padding: 24px 18px; }
-      .section-bar { align-items: flex-start; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      .cursor-glow { display: none !important; }
-    }
-
   </style>
 </head>
 <body>
@@ -919,12 +842,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -951,17 +874,17 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
         <!-- 3. GALLERY -->
-        <a href="gallery.html" class="module-card" data-category="media gallery" data-tags="gallery packing video standards bike car fleet photos packaging">
+        <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
           <div>
             <div class="card-head">
               <div class="card-icon-pill">
@@ -978,12 +901,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1005,12 +928,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1032,12 +955,12 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1059,12 +982,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1086,12 +1009,12 @@
           </div>
           <div class="card-footer-cta interactive">
             <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1113,12 +1036,12 @@
           </div>
           <div class="card-footer-cta static">
             <span>Live Web Module</span>
-            <span class="launch-button">
+            <button type="submit">
               Launch
               <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
                 <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
               </svg>
-            </span>
+            </button>
           </div>
         </a>
 
@@ -1138,23 +1061,23 @@
             <p class="telemetry-sub-title">Live enterprise statistics across Western Central Regional Office &amp; Nationwide Hubs (Click to view analytics)</p>
           </div>
           
-          <div class="operational-badge" data-state="connecting">
+          <div class="operational-badge">
             <span class="operational-dot"></span>
-            <span id="systemStatusText">Connecting to live services</span>
+            <span>All Operational Systems Monitored</span>
           </div>
         </div>
 
         <div class="telemetry-stats-grid">
 
           <div class="telemetry-stat-item">
-            <div class="telemetry-stat-label">Live Active Sessions</div>
+            <div class="telemetry-stat-label">Live Active Personnel</div>
             <div class="telemetry-stat-value">
               <span id="liveUserCount">0</span> 
               <span style="font-size: 14px; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 4px;">
                 <span style="width: 7px; height: 7px; background: #059669; border-radius: 50%; display: inline-block;"></span> Online
               </span>
             </div>
-            <div class="telemetry-stat-sub">Active portal browser sessions</div>
+            <div class="telemetry-stat-sub">Concurrent field officers &amp; HODs</div>
           </div>
 
           <div class="telemetry-stat-item">
@@ -1179,26 +1102,158 @@
   <!-- COMMON FOOTER PLACEHOLDER -->
   <div id="footer-container"></div>
 
-  <!-- Firebase Realtime Database for homepage telemetry -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <!-- YOUR COMMON JS -->
   <script src="common.js?v=21.44"></script>
 
+  <!-- THEME SYNC CONTROLLER -->
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('apml_portal_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'apml_portal_theme') {
+          document.documentElement.setAttribute('data-theme', e.newValue || 'light');
+        }
+      });
+    })();
+  </script>
+
+  <!-- HERO CURSOR GLOW -->
   <script>
     (function () {
-      const statusBadge = document.querySelector('.operational-badge');
-      const statusText = document.getElementById('systemStatusText');
-      const setStatus = (state, label) => {
-        if (statusBadge) statusBadge.dataset.state = state;
-        if (statusText) statusText.textContent = label;
-      };
-      const setNumber = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = new Intl.NumberFormat('en-IN').format(Math.max(0, Number(value) || 0));
-      };
+      var glow = document.querySelector('.cursor-glow');
+      var hero = document.querySelector('.hero-center');
+      if (!glow || !hero) return;
+      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var inView = true, pending = false, x = 0, y = 0;
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        if (!inView) glow.classList.remove('active');
+      }, { threshold: 0.15 }).observe(hero);
+      function paint() {
+        pending = false;
+        glow.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
+        glow.classList.add('active');
+      }
+      window.addEventListener('pointermove', function (ev) {
+        if (!inView || document.hidden) return;
+        x = ev.clientX; y = ev.clientY;
+        if (!pending) { pending = true; requestAnimationFrame(paint); }
+      }, { passive: true });
+      document.documentElement.addEventListener('mouseleave', function () {
+        glow.classList.remove('active');
+      });
+    })();
+  </script>
 
+  <!-- TEXT SCRAMBLE EFFECT CONTROLLER -->
+  <script>
+    class TextScrambleEffect {
+      constructor(el) {
+        this.el = el;
+        this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*';
+        this.update = this.update.bind(this);
+      }
+      setText(newText) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise((resolve) => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 20);
+          const end = start + Math.floor(Math.random() * 20);
+          this.queue.push({ from, to, start, end });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          const { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) {
+              this.queue[i].char = this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+            output += `<span style="opacity: 0.5;">${this.queue[i].char}</span>`;
+          } else {
+            output += from;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) {
+          this.resolve();
+        } else {
+          this.frameRequest = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const el = document.querySelector('#scrambleTitle [data-value]');
+      if (el) {
+        const fx = new TextScrambleEffect(el);
+        fx.setText(el.getAttribute('data-value'));
+      }
+    });
+  </script>
+
+  <!-- FIREBASE REALTIME PRESENCE & SCROLL-TRIGGERED COUNTUP.JS ANIMATIONS -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+  <script>
+    let userCountUp = null;
+    let pdfCountUp = null;
+    let mediaCountUp = null;
+
+    let targetData = {
+      liveUserCount: 0,
+      totalPdfDownloads: 0,
+      totalMediaDownloads: 0
+    };
+
+    let hasBeenViewed = false;
+
+    function runCountUpAnimations() {
+      if (!window.countUp || !window.countUp.CountUp) return;
+
+      if (!userCountUp) {
+        userCountUp = new window.countUp.CountUp('liveUserCount', targetData.liveUserCount, { duration: 1.5, useGrouping: true });
+      } else {
+        userCountUp.update(targetData.liveUserCount);
+      }
+      userCountUp.reset();
+      userCountUp.start();
+
+      if (!pdfCountUp) {
+        pdfCountUp = new window.countUp.CountUp('totalPdfDownloads', targetData.totalPdfDownloads, { duration: 1.5, useGrouping: true });
+      } else {
+        pdfCountUp.update(targetData.totalPdfDownloads);
+      }
+      pdfCountUp.reset();
+      pdfCountUp.start();
+
+      if (!mediaCountUp) {
+        mediaCountUp = new window.countUp.CountUp('totalMediaDownloads', targetData.totalMediaDownloads, { duration: 1.5, useGrouping: true });
+      } else {
+        mediaCountUp.update(targetData.totalMediaDownloads);
+      }
+      mediaCountUp.reset();
+      mediaCountUp.start();
+    }
+
+    try {
       const firebaseConfig = {
         apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
         authDomain: "apml-portal.firebaseapp.com",
@@ -1210,30 +1265,71 @@
         measurementId: "G-4H1HT31DYB"
       };
 
-      try {
-        if (!window.firebase || !firebase.database) throw new Error('Firebase SDK unavailable');
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        let connected = false;
-        db.ref('.info/connected').on('value', snap => {
-          connected = snap.val() === true;
-          setStatus(connected ? 'online' : 'connecting', connected ? 'Live services connected' : 'Connecting to live services');
-        });
-        db.ref('analytics/totalPdfDownloads').on('value',
-          snap => setNumber('totalPdfDownloads', snap.val()),
-          err => { console.warn('PDF telemetry read failed:', err); setStatus('offline', 'Telemetry unavailable'); });
-        db.ref('analytics/totalMediaDownloads').on('value',
-          snap => setNumber('totalMediaDownloads', snap.val()),
-          err => { console.warn('Media telemetry read failed:', err); setStatus('offline', 'Telemetry unavailable'); });
-        db.ref('presence').on('value',
-          snap => setNumber('liveUserCount', snap.numChildren()),
-          err => { console.warn('Presence telemetry read failed:', err); });
-      } catch (err) {
-        console.warn('Homepage telemetry initialization failed:', err);
-        setStatus('offline', 'Telemetry unavailable');
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
       }
-    })();
-  </script>
+      const db = firebase.database();
 
-  </body>
+      const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
+      const myPresenceRef = db.ref("presence/" + userSessionId);
+      const allPresenceRef = db.ref("presence");
+
+      db.ref(".info/connected").on("value", (snap) => {
+        if (snap.val() === true) {
+          myPresenceRef.onDisconnect().remove();
+          myPresenceRef.set({ online: true, timestamp: Date.now() });
+        }
+      });
+
+      allPresenceRef.on("value", (snap) => {
+        targetData.liveUserCount = snap.numChildren() || 1;
+        if (hasBeenViewed) {
+          if (userCountUp) userCountUp.update(targetData.liveUserCount);
+          else document.getElementById("liveUserCount").innerText = targetData.liveUserCount.toLocaleString('en-IN');
+        }
+      });
+
+      db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
+        const val = snap.val();
+        if (val !== null && val !== undefined) {
+          targetData.totalPdfDownloads = Number(val);
+          if (hasBeenViewed) {
+            if (pdfCountUp) pdfCountUp.update(targetData.totalPdfDownloads);
+            else document.getElementById("totalPdfDownloads").innerText = targetData.totalPdfDownloads.toLocaleString('en-IN');
+          }
+        }
+      });
+
+      db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
+        const val = snap.val();
+        if (val !== null && val !== undefined) {
+          targetData.totalMediaDownloads = Number(val);
+          if (hasBeenViewed) {
+            if (mediaCountUp) mediaCountUp.update(targetData.totalMediaDownloads);
+            else document.getElementById("totalMediaDownloads").innerText = targetData.totalMediaDownloads.toLocaleString('en-IN');
+          }
+        }
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            hasBeenViewed = true;
+            runCountUpAnimations();
+          }
+        });
+      }, { threshold: 0.25 });
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const telemetryCard = document.querySelector('.telemetry-card');
+        if (telemetryCard) {
+          observer.observe(telemetryCard);
+        }
+      });
+
+    } catch (err) {
+      console.warn("Live presence counters offline.", err);
+    }
+  </script>
+</body>
 </html>
