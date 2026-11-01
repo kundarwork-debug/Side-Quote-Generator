@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
-  <script>(function(){try{var t=localStorage.getItem('apml-theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+  <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>404 - Signal Lost | APML Portal</title>
@@ -965,13 +965,13 @@
   <!-- DIRECT 404 THEME TOGGLE CONTROLLER -->
   <script>
     const THEME_STORAGE_KEY = 'apml_404_page_theme';
-    let currentPageTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+    let currentPageTheme = 'light';
 
     function setPageTheme(theme) {
       currentPageTheme = theme;
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.setAttribute('data-theme-mode', theme);
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      try { localStorage.setItem(THEME_STORAGE_KEY, theme); } catch (e) {}
 
       const scoreboardIcon = document.getElementById('scoreboardThemeIcon');
       if (scoreboardIcon) {
