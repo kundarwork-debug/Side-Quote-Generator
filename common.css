@@ -691,3 +691,62 @@ html[data-theme="dark"] .theme-toggle { background: #1e293b; color: #f8fafc; bor
 @media (prefers-reduced-motion: reduce) {
   html, html *, html *::before, html *::after { transition-duration: 0s !important; animation-duration: .01ms !important; }
 }
+
+/* =========================================================
+   FULL-WIDTH PAGE LAYOUT
+   Let each page use the available viewport instead of leaving
+   large empty gutters, while keeping comfortable edge padding.
+   ========================================================= */
+.workspace-section,
+.about-container,
+.analytics-main,
+.bug-card,
+.calculator-shell,
+.policy-card,
+.main-container,
+.drive-container,
+.gallery-container,
+body > main > .container,
+body > .container {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.workspace-section,
+.about-container,
+.analytics-main,
+.main-container,
+.drive-container,
+.gallery-container,
+body > main > .container,
+body > .container {
+  padding-left: clamp(16px, 2.2vw, 36px) !important;
+  padding-right: clamp(16px, 2.2vw, 36px) !important;
+}
+
+.bug-card,
+.calculator-shell,
+.policy-card {
+  max-width: none !important;
+}
+
+.footer-inner {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .workspace-section,
+  .about-container,
+  .analytics-main,
+  .main-container,
+  .drive-container,
+  .gallery-container,
+  body > main > .container,
+  body > .container {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
