@@ -148,11 +148,13 @@ window.sendPortalNotification = function () {};
               </div>
             </div>
 
-<!-- Animated Rotating Hamburger Button -->
-            <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span class="bar"></span>
-              <span class="bar"></span>
-              <span class="bar"></span>
+<!-- Animated Collapse Hamburger Button -->
+            <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+              <span class="hamburger-icon" aria-hidden="true">
+                <span class="bar bar--top"></span>
+                <span class="bar bar--middle"></span>
+                <span class="bar bar--bottom"></span>
+              </span>
             </button>
 
             <!-- Navigation Menu Dropdown -->
