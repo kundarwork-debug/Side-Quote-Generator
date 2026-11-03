@@ -93,8 +93,8 @@ class APMLDirectory {
       const subTextColor = isDeleted ? '#b91c1c' : '#78716c';
       const badgeText = isDeleted ? ' [DELETED]' : '';
 
-      const isHub = String(category).includes('Hub');
-      const avatarBg = isDeleted ? '#991b1b' : (isHub ? '#0284c7' : '#c21d1d');
+      // Keep every active contact avatar red; use black for deleted contacts.
+      const avatarBg = isDeleted ? '#171717' : '#c21d1d';
       const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'AP';
 
       const encodedAddress = encodeURIComponent(address);
