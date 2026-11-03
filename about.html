@@ -60,6 +60,13 @@
     .focus-icon .material-symbols-outlined{font-size:22px}
     .focus-card h3{font:700 17px 'Space Grotesk',sans-serif;margin:0 0 9px}
     .focus-card p{font-size:12.5px;line-height:1.8;color:var(--about-muted);margin:0}
+    .project-card{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:24px;border:1px solid var(--about-line);border-radius:20px;background:rgba(255,255,255,.88);box-shadow:0 10px 30px rgba(73,46,34,.035);transition:transform .2s,box-shadow .2s}
+    .project-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(73,46,34,.08)}
+    .project-card-copy{display:flex;align-items:flex-start;gap:16px}
+    .project-card .focus-icon{flex:0 0 43px;margin:0}
+    .project-card h3{font:700 18px 'Space Grotesk',sans-serif;margin:1px 0 7px}
+    .project-card p{font-size:13px;line-height:1.75;color:var(--about-muted);margin:0}
+    .project-link{flex:0 0 auto}
     .about-bottom{display:grid;grid-template-columns:1fr auto;align-items:center;gap:25px;margin-top:18px;padding:clamp(24px,4vw,38px);border-radius:23px;background:#292524;color:#fff;overflow:hidden;position:relative}
     .about-bottom:after{content:"";position:absolute;width:300px;height:300px;right:-90px;top:-180px;border-radius:50%;background:rgba(239,68,68,.22);filter:blur(8px)}
     .about-bottom-copy{position:relative;z-index:1}
@@ -76,7 +83,7 @@
     .redirect-countdown{font-size:12px;color:var(--about-muted);font-weight:700;margin-bottom:20px}
     .btn-skip{width:100%;height:46px;border:0;border-radius:13px;background:#292524;color:#fff;font-weight:800;cursor:pointer}
     @media(max-width:800px){.about-hero{grid-template-columns:1fr;gap:10px}.hero-art{min-height:280px}.art-orbit{width:260px}#lottieClickTrigger{width:270px;height:270px}.focus-grid{grid-template-columns:1fr 1fr}.section-intro{align-items:start;flex-direction:column}.about-bottom{grid-template-columns:1fr}}
-    @media(max-width:520px){.about-shell{padding:24px 14px 50px}.about-hero{padding:25px 20px;border-radius:23px}.hero-copy h1{font-size:48px}.hero-meta{gap:8px}.meta-chip{font-size:11px}.hero-actions{display:grid;grid-template-columns:1fr 1fr}.about-btn{padding:0 12px;font-size:12px}.hero-art{min-height:245px}.art-orbit{width:225px}#lottieClickTrigger{width:235px;height:235px}.section-intro{margin-top:46px}.focus-grid{grid-template-columns:1fr}.focus-card{padding:20px}.about-bottom .about-btn{width:100%}}
+    @media(max-width:520px){.about-shell{padding:24px 14px 50px}.about-hero{padding:25px 20px;border-radius:23px}.hero-copy h1{font-size:48px}.hero-meta{gap:8px}.meta-chip{font-size:11px}.hero-actions{display:grid;grid-template-columns:1fr 1fr}.about-btn{padding:0 12px;font-size:12px}.hero-art{min-height:245px}.art-orbit{width:225px}#lottieClickTrigger{width:235px;height:235px}.section-intro{margin-top:46px}.focus-grid{grid-template-columns:1fr}.focus-card{padding:20px}.project-card{align-items:flex-start;flex-direction:column;padding:20px}.project-link{width:100%}.project-link .about-btn{width:100%}.about-bottom .about-btn{width:100%}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
   </style>
 </head>
@@ -116,6 +123,20 @@
           <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">language</span></div><h3>Web Experiences</h3><p>Building clean, responsive websites and tools designed around real user needs.</p></article>
           <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">rocket_launch</span></div><h3>Product Building</h3><p>Taking ideas from a first concept to useful digital products and SaaS-style experiences.</p></article>
         </div>
+      </section>
+
+      <section aria-labelledby="projectsTitle">
+        <div class="section-intro">
+          <div><div class="section-kicker">More things I've made</div><h2 id="projectsTitle">Other projects to check out.</h2></div>
+          <p>A few more ideas and experiences I'm working on beyond APML Portal.</p>
+        </div>
+        <article class="project-card">
+          <div class="project-card-copy">
+            <div class="focus-icon"><span class="material-symbols-outlined">auto_awesome</span></div>
+            <div><h3>For You</h3><p>A little corner for thoughtful messages, greetings, and moments worth sharing.</p></div>
+          </div>
+          <a class="about-btn about-btn-primary project-link" href="https://4r-you.vercel.app/" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined">open_in_new</span> Visit project</a>
+        </article>
       </section>
 
       <section class="about-bottom" aria-labelledby="connectTitle">
