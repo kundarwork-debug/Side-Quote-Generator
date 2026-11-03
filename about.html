@@ -63,6 +63,7 @@
     .project-card{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:24px;border:1px solid var(--about-line);border-radius:20px;background:rgba(255,255,255,.88);box-shadow:0 10px 30px rgba(73,46,34,.035);transition:transform .2s,box-shadow .2s}
     .project-card:hover{transform:translateY(-3px);box-shadow:0 16px 34px rgba(73,46,34,.08)}
     .project-card-copy{display:flex;align-items:flex-start;gap:16px}
+    .project-logo{width:56px;height:56px;flex:0 0 56px;object-fit:contain;border-radius:16px;background:#f5f5f4;padding:5px;border:1px solid var(--about-line)}
     .project-card .focus-icon{flex:0 0 43px;margin:0}
     .project-card h3{font:700 18px 'Space Grotesk',sans-serif;margin:1px 0 7px}
     .project-card p{font-size:13px;line-height:1.75;color:var(--about-muted);margin:0}
@@ -132,7 +133,7 @@
         </div>
         <article class="project-card">
           <div class="project-card-copy">
-            <div class="focus-icon"><span class="material-symbols-outlined">auto_awesome</span></div>
+            <img class="project-logo" src="other/logo.svg" alt="For You logo" width="56" height="56">
             <div><h3>For You</h3><p>A little corner for thoughtful messages, greetings, and moments worth sharing.</p></div>
           </div>
           <a class="about-btn about-btn-primary project-link" href="https://4r-you.vercel.app/" target="_blank" rel="noopener noreferrer"><span class="material-symbols-outlined">open_in_new</span> Visit project</a>
