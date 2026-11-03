@@ -750,3 +750,49 @@ body > .container {
     padding-right: 14px !important;
   }
 }
+
+/* Page-level content surfaces: fill the viewport on desktop too. */
+main {
+  width: 100% !important;
+  max-width: none !important;
+}
+main > .bug-card,
+main > .policy-card,
+main > .calculator-shell,
+main > .about-container,
+main > .container,
+main > .drive-container,
+main > .gallery-container,
+main > .main-container,
+main > .app {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+main > .bug-card,
+main > .policy-card,
+main > .calculator-shell,
+main > .about-container,
+main > .container,
+main > .drive-container,
+main > .gallery-container,
+main > .main-container,
+main > .app {
+  padding-left: clamp(16px, 2.2vw, 36px) !important;
+  padding-right: clamp(16px, 2.2vw, 36px) !important;
+}
+@media (max-width: 768px) {
+  main > .bug-card,
+  main > .policy-card,
+  main > .calculator-shell,
+  main > .about-container,
+  main > .container,
+  main > .drive-container,
+  main > .gallery-container,
+  main > .main-container,
+  main > .app {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
