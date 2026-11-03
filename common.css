@@ -222,60 +222,98 @@
 }
 
 /* =========================================================
-   ANIMATED ROTATING HAMBURGER BUTTON
+   COLLAPSING HAMBURGER BUTTON
+   Animation based on the supplied three-bar collapse effect.
    ========================================================= */
 .hamburger-btn {
   display: flex;
-  background: var(--md-sys-color-surface-container-low);
-  border: 1px solid var(--md-sys-color-outline-variant);
-  cursor: pointer;
-  width: 42px;
-  height: 42px;
-  padding: 8px;
-  border-radius: 50%;
-  position: relative;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 4.5px;
-  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease, border-color 0.2s ease;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--md-sys-color-outline-variant);
+  border-radius: 50%;
+  background: var(--md-sys-color-surface-container-low);
+  color: var(--md-sys-color-on-surface);
+  cursor: pointer;
+  position: relative;
   z-index: 1002;
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
-.hamburger-btn:hover {
-  background-color: var(--md-sys-color-primary-container);
-  border-color: rgba(185, 28, 28, 0.3);
-}
-
-.hamburger-btn .bar {
-  display: block;
-  width: 20px;
-  height: 2.5px;
-  background-color: var(--md-sys-color-on-surface);
-  border-radius: 2px;
-  transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), opacity 0.25s ease, background-color 0.25s ease;
-  transform-origin: center;
-}
-
+.hamburger-btn:hover,
 .hamburger-btn.is-active {
-  transform: rotate(90deg);
-  background-color: var(--md-sys-color-primary-container);
+  background: var(--md-sys-color-primary-container);
   border-color: var(--md-sys-color-primary);
 }
 
-.hamburger-btn.is-active .bar:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-  background-color: var(--md-sys-color-primary);
+.hamburger-btn:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 3px;
 }
 
-.hamburger-btn.is-active .bar:nth-child(2) {
+.hamburger-icon {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 34px;
+}
+
+.hamburger-btn .bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--md-sys-color-on-surface);
+  opacity: 1;
+  transition: none .35s cubic-bezier(.5,-.35,.35,1.5) 0s;
+}
+
+.hamburger-btn .bar--top {
+  bottom: calc(50% + 11px + 2px);
+  transition-property: bottom, margin, transform;
+  transition-delay: .35s, 0s, 0s;
+}
+
+.hamburger-btn .bar--middle {
+  top: calc(50% - 2px);
+  transition-property: top, opacity;
+  transition-duration: .35s, 0s;
+  transition-delay: .455s, .455s;
+}
+
+.hamburger-btn .bar--bottom {
+  top: calc(50% + 11px + 2px);
+  transition-property: top, transform;
+  transition-delay: 0s;
+}
+
+.hamburger-btn.is-active .bar--top {
+  bottom: calc(50% - 11px - 4px);
+  margin-bottom: 13px;
+  transform: rotate(45deg);
+  transition-delay: .105s, .455s, .455s;
+  background: var(--md-sys-color-primary);
+}
+
+.hamburger-btn.is-active .bar--middle {
+  top: calc(50% + 11px);
   opacity: 0;
-  transform: scaleX(0);
+  transition-duration: .35s, 0s;
+  transition-delay: 0s, .35s;
 }
 
-.hamburger-btn.is-active .bar:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-  background-color: var(--md-sys-color-primary);
+.hamburger-btn.is-active .bar--bottom {
+  top: calc(50% - 2px);
+  transform: rotate(-45deg);
+  transition-delay: .455s, .455s;
+  background: var(--md-sys-color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hamburger-btn .bar { transition-duration: .01ms !important; }
 }
 
 /* =========================================================
