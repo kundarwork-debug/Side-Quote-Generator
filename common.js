@@ -50,13 +50,23 @@
 // =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
+// Keep analytics date keys aligned with the dashboard's Asia/Kolkata calendar.
+function getIndiaDateKey() {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+}
+
 function logDailyActivity(type) {
   try {
     if (typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
     
     // Get today's date string in YYYY-MM-DD format (local date)
-    const today = new Date().toISOString().split('T')[0];
+    const today = getIndiaDateKey();
     const logRef = db.ref(`analytics/daily_logs/${today}/${type}`);
     
     // Atomically increment the counter for today in Firebase
@@ -71,7 +81,7 @@ function logDailyActivity(type) {
 // Automatically log unique visitor once per calendar day per browser session
 window.addEventListener('DOMContentLoaded', () => {
   const lastVisitDate = localStorage.getItem('apml_last_visit_date');
-  const today = new Date().toISOString().split('T')[0];
+  const today = getIndiaDateKey();
   
   if (lastVisitDate !== today) {
     logDailyActivity('visitors');
@@ -85,7 +95,7 @@ function initDailyPeakTracker() {
     if (typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
     
-    const today = new Date().toISOString().split('T')[0];
+    const today = getIndiaDateKey();
     const peakRef = db.ref(`analytics/daily_logs/${today}/peak_online`);
 
     // Monitor active presence nodes in real-time
