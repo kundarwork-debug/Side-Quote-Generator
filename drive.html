@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>
+    (() => {
+      let theme = 'light';
+      try {
+        const savedTheme = localStorage.getItem('apml-theme');
+        if (savedTheme === 'dark' || savedTheme === 'light') theme = savedTheme;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Enterprise Cloud Drive</title>
@@ -1241,17 +1250,6 @@
     }
 
   </style>
-
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
