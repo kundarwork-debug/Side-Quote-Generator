@@ -900,6 +900,346 @@
       .pagination-bar { padding:9px!important; gap:8px!important; margin-top:16px!important; }
       .btn-page { min-width:32px!important; height:32px!important; font-size:12px!important; }
     }
+  
+    /* =========================================================
+       APML PREMIUM ENTERPRISE — CLOUD DRIVE PRESENTATION
+       Presentation-only overrides. Drive data and behaviours
+       remain in the existing markup and JavaScript below.
+       ========================================================= */
+    :root {
+      --primary: var(--apml-color-brand, #b4232c);
+      --primary-dark: var(--apml-color-brand-hover, #941c24);
+      --primary-gradient: linear-gradient(135deg, #941c24 0%, #b4232c 100%);
+      --primary-soft: var(--apml-color-brand-soft, #f8e9e9);
+      --bg-base: var(--apml-color-page, #f7f5f0);
+      --surface-card: var(--apml-color-surface, #ffffff);
+      --surface-glass: rgba(255,255,255,.92);
+      --border-subtle: var(--apml-color-border, #e5e1d9);
+      --border-hover: rgba(180,35,44,.38);
+      --text-main: var(--apml-color-text, #202124);
+      --text-secondary: var(--apml-color-text-secondary, #55565a);
+      --text-muted: var(--apml-color-text-muted, #777a80);
+      --radius-xl: var(--apml-radius-lg, 18px);
+      --shadow-card: var(--apml-shadow-soft, 0 2px 8px rgba(32,33,36,.04), 0 12px 28px rgba(32,33,36,.035));
+      --shadow-float: var(--apml-shadow-raised, 0 8px 24px rgba(32,33,36,.09));
+      --font-sans: var(--apml-font-sans, 'Plus Jakarta Sans', sans-serif);
+      --font-display: var(--apml-font-sans, 'Plus Jakarta Sans', sans-serif);
+    }
+
+    body {
+      background: var(--apml-color-page, #f7f5f0) !important;
+      background-image:
+        radial-gradient(circle at 88% 4%, rgba(180,35,44,.055), transparent 34%),
+        linear-gradient(180deg, #faf9f6 0%, var(--apml-color-page, #f7f5f0) 62%) !important;
+      color: var(--apml-color-text, #202124);
+    }
+    body::before { display: none; }
+
+    .drive-container {
+      max-width: 1500px;
+      margin-top: 88px !important;
+      padding: 0 clamp(18px, 3vw, 42px) 72px !important;
+    }
+    .drive-head-bar {
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    .drive-title {
+      font-family: var(--apml-font-sans, 'Plus Jakarta Sans', sans-serif);
+      font-size: clamp(30px, 3.4vw, 40px);
+      font-weight: 800;
+      letter-spacing: -.045em;
+      line-height: 1.12;
+      color: var(--apml-color-text, #202124);
+      margin-bottom: 9px;
+    }
+    .drive-title span {
+      background: none;
+      color: var(--apml-color-brand, #b4232c);
+      -webkit-text-fill-color: currentColor;
+    }
+    .drive-sub {
+      max-width: 680px;
+      color: var(--apml-color-text-muted, #777a80);
+      font-size: 13.5px;
+      line-height: 1.65;
+      font-weight: 500;
+    }
+    .drive-stats-pills { margin-top: 14px; gap: 8px; }
+    .stat-pill {
+      padding: 7px 12px;
+      border-radius: 10px;
+      background: var(--apml-color-surface, #fff);
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      color: var(--apml-color-text-secondary, #55565a);
+      font-size: 11px;
+      letter-spacing: .01em;
+    }
+    .stat-pill strong { color: var(--apml-color-brand, #b4232c); }
+
+    .admin-action-wrap { align-self: flex-start; }
+    #adminToggleBtn {
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 12px !important;
+      box-shadow: none !important;
+      border-color: var(--apml-color-border, #e5e1d9) !important;
+    }
+
+    .drive-action-bar {
+      gap: 14px;
+      padding: 14px 16px;
+      margin-bottom: 30px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 16px;
+      box-shadow: var(--apml-shadow-soft);
+      backdrop-filter: blur(14px);
+    }
+    .breadcrumb-nav {
+      min-width: 0;
+      flex-wrap: wrap;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--apml-color-text-secondary, #55565a);
+    }
+    .breadcrumb-item {
+      color: var(--apml-color-brand, #b4232c);
+      border-radius: 8px;
+      padding: 7px 9px;
+      transition: background var(--apml-transition, 180ms ease);
+    }
+    .breadcrumb-item:hover { background: var(--apml-color-brand-soft, #f8e9e9); text-decoration: none; }
+    .drive-action-buttons { gap: 8px; }
+    .btn-drive-action {
+      min-height: 40px;
+      padding: 9px 14px;
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 10px;
+      background: #fff;
+      color: var(--apml-color-text, #202124);
+      box-shadow: none;
+      font-size: 12px;
+      font-weight: 700;
+      transition: border-color var(--apml-transition, 180ms ease), background var(--apml-transition, 180ms ease), transform var(--apml-transition, 180ms ease);
+    }
+    .btn-drive-action:hover {
+      border-color: var(--apml-color-brand, #b4232c);
+      background: #fffafa;
+      color: var(--apml-color-brand, #b4232c);
+      transform: translateY(-1px);
+    }
+    .btn-drive-primary,
+    .btn-drive-primary:hover {
+      background: var(--apml-color-brand, #b4232c);
+      border-color: var(--apml-color-brand, #b4232c);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(180,35,44,.16);
+    }
+
+    .drive-section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 14px;
+      color: var(--apml-color-text, #202124);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -.015em;
+      text-transform: none;
+    }
+    .folders-grid {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+      gap: 12px;
+      margin-bottom: 34px;
+    }
+    .folder-card {
+      min-height: 68px;
+      padding: 13px 15px;
+      gap: 12px;
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 13px;
+      background: var(--apml-color-surface, #fff);
+      box-shadow: 0 1px 2px rgba(32,33,36,.025);
+      backdrop-filter: none;
+      transition: border-color var(--apml-transition, 180ms ease), box-shadow var(--apml-transition, 180ms ease), transform var(--apml-transition, 180ms ease);
+    }
+    .folder-card:hover, .folder-card.drag-over {
+      border-color: rgba(180,35,44,.42);
+      background: #fff;
+      box-shadow: var(--apml-shadow-soft);
+      transform: translateY(-2px);
+    }
+    .folder-card-left { gap: 11px; }
+    .folder-card-left .material-symbols-outlined {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--apml-color-brand-soft, #f8e9e9);
+      color: var(--apml-color-brand, #b4232c);
+      font-size: 21px;
+    }
+    .folder-card-name {
+      color: var(--apml-color-text, #202124);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+    .folder-delete-btn { width: 30px; height: 30px; flex: 0 0 30px; }
+    .folder-delete-btn:hover { background: var(--apml-color-brand-soft, #f8e9e9); color: var(--apml-color-brand, #b4232c); }
+
+    .drive-files-grid {
+      grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+      gap: 16px;
+    }
+    .drive-file-grid-card {
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 15px;
+      background: var(--apml-color-surface, #fff);
+      box-shadow: 0 1px 3px rgba(32,33,36,.035);
+      backdrop-filter: none;
+      transition: border-color var(--apml-transition, 180ms ease), box-shadow var(--apml-transition, 180ms ease), transform var(--apml-transition, 180ms ease);
+    }
+    .drive-file-grid-card:hover {
+      border-color: rgba(180,35,44,.35);
+      background: #fff;
+      box-shadow: var(--apml-shadow-raised);
+      transform: translateY(-3px);
+    }
+    .grid-preview-box { height: 174px; background: #f0eee8; }
+    .grid-preview-box img, .grid-preview-box video { transition: transform .35s ease; }
+    .drive-file-grid-card:hover .grid-preview-box img { transform: scale(1.025); }
+    .grid-preview-placeholder { color: #62656b; }
+    .grid-preview-placeholder span.material-symbols-outlined { font-size: 40px; }
+    .grid-card-body { padding: 14px 15px 12px; gap: 7px; }
+    .file-name {
+      color: var(--apml-color-text, #202124);
+      font-size: 12.5px;
+      font-weight: 750;
+      line-height: 1.45;
+    }
+    .file-timestamp { color: var(--apml-color-text-muted, #777a80); font-size: 10px; font-weight: 600; }
+    .file-details-row { gap: 8px; color: var(--apml-color-text-muted, #777a80); font-size: 10px; }
+    .file-type-pill {
+      padding: 4px 7px;
+      border-radius: 6px;
+      background: var(--apml-color-brand-soft, #f8e9e9);
+      color: var(--apml-color-brand, #b4232c);
+      font-size: 9px;
+      letter-spacing: .035em;
+    }
+    .file-size-label { color: var(--apml-color-text-muted, #777a80); font-size: 9.5px; }
+    .grid-card-footer { padding: 0 15px 14px; gap: 8px; }
+    .btn-download-file {
+      min-height: 34px;
+      padding: 7px 11px;
+      border-radius: 9px;
+      background: var(--apml-color-brand, #b4232c);
+      box-shadow: none;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .btn-download-file:hover { background: var(--apml-color-brand-hover, #941c24); transform: translateY(-1px); }
+    .btn-edit-file, .btn-delete-file {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+    }
+    .btn-edit-file { color: #315f9f; background: #edf3fb; }
+    .btn-edit-file:hover { color: #fff; background: #315f9f; }
+    .btn-delete-file { color: #a83238; background: #f9e9e9; }
+    .btn-delete-file:hover { color: #fff; background: #a83238; }
+
+    .pagination-bar {
+      gap: 12px;
+      margin-top: 28px;
+      padding: 12px 16px;
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 14px;
+      background: var(--apml-color-surface, #fff);
+      box-shadow: var(--apml-shadow-soft);
+      backdrop-filter: none;
+    }
+    .btn-page { min-width: 36px; height: 36px; border-radius: 9px; font-size: 12px; }
+    .btn-page.active { background: var(--apml-color-brand, #b4232c); box-shadow: none; }
+    .pagination-jump-row { border-color: var(--apml-color-border, #e5e1d9); font-size: 11px; }
+    .jump-input {
+      background: var(--apml-color-surface, #fff);
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 8px;
+      font-size: 12px;
+    }
+    .jump-input:focus { border-color: var(--apml-color-brand, #b4232c); box-shadow: var(--apml-shadow-focus); }
+    .btn-jump-go { border-radius: 8px; background: var(--apml-color-brand-soft, #f8e9e9); color: var(--apml-color-brand, #b4232c); }
+    .btn-jump-go:hover { background: var(--apml-color-brand, #b4232c); color: #fff; }
+    .state-msg {
+      padding: 44px 20px;
+      border: 1px dashed var(--apml-color-border, #e5e1d9);
+      border-radius: 15px;
+      background: rgba(255,255,255,.72);
+      color: var(--apml-color-text-muted, #777a80);
+      box-shadow: none;
+      font-size: 12px;
+    }
+    .loader-card-box {
+      border: 1px solid var(--apml-color-border, #e5e1d9);
+      border-radius: 18px;
+      box-shadow: var(--apml-shadow-soft);
+    }
+    :where(button, a, input, .folder-card, .breadcrumb-item):focus-visible {
+      outline: 2px solid var(--apml-color-brand, #b4232c);
+      outline-offset: 3px;
+    }
+
+    @media (max-width: 900px) {
+      .drive-container { margin-top: 82px !important; }
+      .drive-action-bar { align-items: flex-start; }
+      .drive-action-buttons { justify-content: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .drive-container { margin-top: 78px !important; padding: 0 14px 48px !important; }
+      .drive-head-bar { align-items: flex-start; margin-bottom: 20px; gap: 12px; }
+      .drive-title { font-size: clamp(27px, 8vw, 34px); }
+      .drive-sub { font-size: 12px; }
+      .drive-action-bar { padding: 11px; gap: 10px; margin-bottom: 23px; }
+      .breadcrumb-nav { font-size: 12px; }
+      .drive-action-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; gap: 7px; }
+      .btn-drive-action { justify-content: center; min-width: 0; min-height: 39px; padding: 8px 9px; font-size: 11px; }
+      .drive-section-title { font-size: 13px; margin-bottom: 11px; }
+      .folders-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 25px; }
+      .folder-card { min-height: 58px; padding: 9px; border-radius: 11px; }
+      .folder-card-left { gap: 7px; }
+      .folder-card-left .material-symbols-outlined { width: 30px; height: 30px; font-size: 17px; }
+      .folder-card-name { white-space: normal; overflow-wrap: anywhere; font-size: 10px; }
+      .drive-files-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+      .drive-file-grid-card { border-radius: 11px; }
+      .grid-preview-box { height: clamp(96px, 28vw, 132px); }
+      .grid-card-body { padding: 9px 9px 8px; gap: 5px; }
+      .file-name { font-size: 10.5px; line-height: 1.35; overflow-wrap: anywhere; white-space: normal; }
+      .file-timestamp, .file-size-label { font-size: 8px; }
+      .file-details-row { flex-wrap: wrap; gap: 4px; font-size: 9px; }
+      .file-type-pill { font-size: 8px; padding: 3px 5px; }
+      .grid-card-footer { padding: 0 8px 9px; gap: 5px; flex-wrap: wrap; }
+      .btn-download-file { min-height: 29px; padding: 6px 7px; font-size: 9px; }
+      .btn-edit-file, .btn-delete-file { width: 27px; height: 27px; }
+      .card-actions-admin { gap: 3px; }
+      .pagination-bar { max-width: 100%; padding: 9px; gap: 8px; margin-top: 18px; }
+      .btn-page { min-width: 30px; height: 30px; font-size: 10px; }
+      .pagination-jump-row { flex-wrap: wrap; justify-content: center; padding-top: 9px; font-size: 10px; }
+      .jump-input { width: 48px; height: 31px; }
+      .btn-jump-go { height: 31px; padding: 0 10px; }
+    }
+    @media (max-width: 360px) {
+      .drive-files-grid, .folders-grid { grid-template-columns: 1fr; }
+      .grid-preview-box { height: 150px; }
+      .drive-action-buttons { grid-template-columns: 1fr 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .drive-file-grid-card, .folder-card, .btn-drive-action, .grid-preview-box img { transition: none !important; }
+    }
+
   </style>
 
 <style id="apml-editor-page-theme">
