@@ -1249,6 +1249,25 @@
       .drive-file-grid-card, .folder-card, .btn-drive-action, .grid-preview-box img { transition: none !important; }
     }
 
+    /* Consistent, touch-friendly controls across desktop and mobile. */
+    .btn-edit-file,
+    .btn-delete-file,
+    .folder-delete-btn {
+      min-width: 34px;
+      min-height: 34px;
+    }
+    .btn-download-file { min-height: 34px; }
+    .drive-action-buttons button { white-space: nowrap; }
+    @media (max-width: 600px) {
+      .drive-action-bar { align-items: stretch; }
+      .breadcrumb-nav { width: 100%; overflow-wrap: anywhere; }
+      .drive-action-buttons { align-items: stretch; }
+      .grid-card-footer { align-items: center; }
+      .btn-download-file { min-height: 34px; }
+      .btn-edit-file,
+      .btn-delete-file { min-width: 34px; min-height: 34px; }
+    }
+
   </style>
 </head>
 <body>
