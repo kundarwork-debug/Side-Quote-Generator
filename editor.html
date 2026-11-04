@@ -786,75 +786,6 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
-
-/* APML PREMIUM ENTERPRISE — QUOTATION EDITOR (presentation only) */
-:root{--editor-ink:#252321;--editor-muted:#77716c;--editor-line:#e9e2dc}
-body{background:#f5f2ee;color:var(--editor-ink)}
-.ambient-glow{background:radial-gradient(circle at 78% 12%,rgba(185,28,28,.055),transparent 34%),linear-gradient(180deg,#f8f6f3 0%,#f1eeea 100%)}
-.app{grid-template-columns:minmax(370px,420px) minmax(0,1fr);align-items:start;gap:0}
-.panel{position:sticky;top:64px;height:calc(100vh - 64px);max-height:calc(100vh - 64px);padding:26px 24px 34px;overflow-y:auto;overscroll-behavior:contain;background:rgba(255,255,255,.97);border-right:1px solid #e7e0da;box-shadow:8px 0 28px rgba(48,39,32,.035);scrollbar-width:thin;scrollbar-color:#d8d0c8 transparent}
-.brand-row{align-items:flex-start;gap:12px;margin-bottom:22px}
-.brand-row h1{font-family:'Plus Jakarta Sans',sans-serif;font-size:22px;line-height:1.25;letter-spacing:-.045em;font-weight:800}
-.brand-row span{white-space:nowrap;background:#f7f4f1;color:#746b64;border:1px solid #e9e2dc;font-size:11px;font-weight:650}
-.tabs{gap:5px;padding:5px;margin-bottom:26px;border-radius:14px;background:#f4f1ed;border-color:#e9e2dc}
-.tab-btn{min-height:48px;padding:9px 10px;border-radius:10px;font-size:11px;line-height:1.4;font-weight:700}
-.tab-btn.active[data-company="exact"]{background:#fff;color:#a51d24;box-shadow:0 2px 8px rgba(40,30,20,.08),0 0 0 1px rgba(165,29,36,.1)}
-.tab-btn.active[data-company="maxcare"]{background:#fff;color:#24478e;box-shadow:0 2px 8px rgba(40,30,20,.08),0 0 0 1px rgba(36,71,142,.1)}
-.field-group{margin-bottom:22px;padding-bottom:2px}
-.field-group h2{gap:9px;margin-bottom:15px;color:#5f5954;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:800;letter-spacing:.075em}
-.field-group h2 .material-symbols-outlined{font-size:17px!important;color:#9b302f}
-.field-group h2::after{background:#e9e2dc}
-#sharedFieldGroup{padding:18px 17px 5px;margin-bottom:23px;border:1px solid #eadbd5;border-radius:15px;background:linear-gradient(145deg,#fffaf8 0%,#fff 78%);box-shadow:0 5px 18px rgba(91,48,36,.035)}
-#sharedFieldGroup h2{color:#9f292b}
-#sharedFieldGroup h2::after{background:#eadbd5}
-#sharedFieldGroup input{border-color:#e9e1dc;background:#fff}
-.field{margin-bottom:13px}
-.field label{margin-bottom:6px;color:#6f6862;font-size:11px;font-weight:700}
-.field input,.field textarea,.cost-row input,.term-row textarea{min-height:42px;padding:10px 12px;border:1px solid #e6dfd9;border-radius:10px;background:#fff;color:#292522;font-size:12px;box-shadow:0 1px 2px rgba(30,20,10,.025);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
-.field input:hover,.field textarea:hover,.cost-row input:hover,.term-row textarea:hover{border-color:#cfc4bb}
-.field input:focus,.field textarea:focus,.cost-row input:focus,.term-row textarea:focus{outline:none;border-color:#b13a37;box-shadow:0 0 0 3px rgba(177,58,55,.1)}
-.row2{gap:10px}
-.quick-pricing-card{padding:16px;border:1px solid #eadbd5;border-radius:14px;background:#fbf7f4;box-shadow:none}
-.quick-pricing-badge{display:flex;align-items:center;gap:7px;margin-bottom:13px;color:#9f292b;font-size:10px;letter-spacing:.075em}
-.quick-pricing-card .field label{color:#57504b!important;font-size:11px;font-weight:750}
-#f_totalAmount,#f_carFreight,#f_gstPercent{border-color:#e4d8d1!important;background:#fff!important}
-#applyTotalBtn{min-height:42px;border-radius:10px!important;background:#a92329!important;box-shadow:none!important;font-weight:750!important}
-#applyTotalBtn:hover{background:#891c22!important}
-.cost-row,.term-row{gap:7px;margin-bottom:9px}
-.cost-row input.label-in{flex:1.5}
-.cost-row input.amt-in{flex:1}
-.icon-btn{width:36px;height:36px;border-radius:10px;border-color:#eee2df;background:#fff;color:#a64a46}
-.icon-btn:hover{transform:none;background:#fff5f3;border-color:#e8c4bf}
-.add-btn{min-height:42px;border:1px dashed #d9cec6;border-radius:10px;background:#fff;color:#8f2929;font-size:12px}
-.add-btn:hover{background:#fcf6f3;border-color:#bd7770}
-.totals-box{padding:16px;border:1px solid #e8e0d9;border-radius:13px;background:#faf8f5;box-shadow:none}
-.totals-box .line{padding:5px 0;color:#625b55;font-size:12px}
-.totals-box .line.total{margin-top:9px;padding-top:12px;border-top:1px solid #e5dcd4;color:#8f2528;font-size:15px;font-weight:800}
-.reset-btn{min-height:42px;margin-top:8px;border-radius:10px;border-color:#e6dfd9;font-size:12px}
-.reset-btn:hover{background:#f8f5f2}
-.download-bar{bottom:-1px;margin-top:20px;padding:14px 0 4px;border-top-color:#e9e2dc;background:rgba(255,255,255,.97)}
-.download-btn{height:48px;border-radius:11px;box-shadow:0 5px 14px rgba(100,25,25,.12)}
-.download-btn:hover{transform:translateY(-1px)}
-.status-msg{font-size:11px}
-.stage{position:sticky;top:64px;height:calc(100vh - 64px);max-height:calc(100vh - 64px);min-width:0;padding:34px clamp(18px,3vw,46px) 48px;overflow:auto;align-items:flex-start;justify-content:center;background:radial-gradient(ellipse at 50% 0%,rgba(255,255,255,.72),transparent 65%),#f1eeea;scrollbar-width:thin;scrollbar-color:#d8d0c8 transparent}
-.sheet-wrap{width:100%;max-width:794px}
-.sheet-shadow{border:1px solid #e4ddd6;border-radius:5px;background:#fff;box-shadow:0 18px 48px rgba(47,38,30,.13),0 2px 7px rgba(47,38,30,.05)}
-button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid rgba(177,58,55,.24);outline-offset:2px}
-@media(max-width:1100px) and (min-width:769px){.app{grid-template-columns:minmax(340px,390px) minmax(0,1fr)}.panel{padding:22px 18px 30px}.stage{padding:24px 16px 36px}}
-@media(max-width:768px){
-.app{display:flex!important;flex-direction:column;gap:0;padding:64px 0 0!important;min-height:auto}
-.panel{position:relative;top:auto;order:1;width:100%!important;height:auto;max-height:none!important;overflow:visible;padding:22px 16px 28px!important;border-right:0!important;border-bottom:1px solid #e7e0da;box-shadow:none}
-.brand-row{margin-bottom:18px}.brand-row h1{font-size:20px}.tabs{margin-bottom:22px}.field-group{margin-bottom:20px}
-#docDetailsGroup,#termsGroup,#regOfficeGroup{display:block!important}
-.row2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.quick-pricing-card{padding:14px}.cost-row input.label-in{flex:1.2}
-.stage{position:relative;top:auto;order:2;display:block!important;width:100%;height:auto;max-height:none;padding:22px 0 34px;overflow-x:auto;overflow-y:visible;justify-content:flex-start;background:#eeeae5;-webkit-overflow-scrolling:touch}
-.stage::before{content:"LIVE DOCUMENT PREVIEW";display:block;position:sticky;left:16px;width:max-content;margin:0 16px 14px;color:#77716c;font-size:10px;font-weight:800;letter-spacing:.12em}
-.sheet-wrap{width:794px;max-width:none;margin:0 16px}.sheet-shadow{border-radius:3px}.download-bar{position:sticky;bottom:-1px}
-}
-@media(max-width:420px){.panel{padding-right:13px!important;padding-left:13px!important}.row2{gap:8px}.field input,.field textarea{padding:10px}.tab-btn{padding:9px 6px;font-size:10px}.stage{padding-top:18px}}
-@media(prefers-reduced-motion:reduce){.panel *,.stage *,.download-btn,.tab-btn,.add-btn,.icon-btn{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
-
 </style>
 </head>
 <body>
@@ -1857,6 +1788,6 @@ renderAll();
 </script>
 
 <script src="notify.js?v=1"></script>
-<script src="common.js?v=18.1"></script>
+<script src="common.js?v=18.0"></script>
 </body>
 </html>

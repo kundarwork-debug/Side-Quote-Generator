@@ -50,23 +50,13 @@
 // =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
-// Keep analytics date keys aligned with the dashboard's Asia/Kolkata calendar.
-function getIndiaDateKey() {
-  return new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Kolkata',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(new Date());
-}
-
 function logDailyActivity(type) {
   try {
     if (typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
     
     // Get today's date string in YYYY-MM-DD format (local date)
-    const today = getIndiaDateKey();
+    const today = new Date().toISOString().split('T')[0];
     const logRef = db.ref(`analytics/daily_logs/${today}/${type}`);
     
     // Atomically increment the counter for today in Firebase
@@ -81,7 +71,7 @@ function logDailyActivity(type) {
 // Automatically log unique visitor once per calendar day per browser session
 window.addEventListener('DOMContentLoaded', () => {
   const lastVisitDate = localStorage.getItem('apml_last_visit_date');
-  const today = getIndiaDateKey();
+  const today = new Date().toISOString().split('T')[0];
   
   if (lastVisitDate !== today) {
     logDailyActivity('visitors');
@@ -95,7 +85,7 @@ function initDailyPeakTracker() {
     if (typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
     
-    const today = getIndiaDateKey();
+    const today = new Date().toISOString().split('T')[0];
     const peakRef = db.ref(`analytics/daily_logs/${today}/peak_online`);
 
     // Monitor active presence nodes in real-time
@@ -158,13 +148,14 @@ window.sendPortalNotification = function () {};
               </div>
             </div>
 
-<!-- Animated three-line hamburger toggle -->
-            <input id="burger-checkbox" class="burger-checkbox" type="checkbox" aria-label="Toggle navigation menu" aria-controls="navMenu">
-            <label class="burger hamburger-btn" id="hamburgerBtn" for="burger-checkbox" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </label>
+<!-- Animated Collapse Hamburger Button -->
+            <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
+              <span class="hamburger-icon" aria-hidden="true">
+                <span class="bar bar--top"></span>
+                <span class="bar bar--middle"></span>
+                <span class="bar bar--bottom"></span>
+              </span>
+            </button>
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
@@ -246,37 +237,41 @@ window.sendPortalNotification = function () {};
       updateLiveClock();
       setInterval(updateLiveClock, 1000);
 
-      // Event Listeners for Hamburger Toggle & Outside Clicks
+      // Event Listeners for Hamburger Click & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
-      const burgerCheckbox = document.getElementById("burger-checkbox");
       const navMenu = document.getElementById("navMenu");
       const siteHeader = document.getElementById("siteHeader");
 
-      function setMenuOpen(isOpen) {
-        if (!hamburgerBtn || !burgerCheckbox || !navMenu) return;
-        burgerCheckbox.checked = isOpen;
-        hamburgerBtn.classList.toggle("is-active", isOpen);
-        navMenu.classList.toggle("open", isOpen);
-        hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      }
-
-      if (hamburgerBtn && burgerCheckbox && navMenu) {
-        burgerCheckbox.addEventListener("change", () => {
-          setMenuOpen(burgerCheckbox.checked);
+      if (hamburgerBtn && navMenu) {
+        hamburgerBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isOpen = hamburgerBtn.classList.toggle("is-active");
+          navMenu.classList.toggle("open", isOpen);
+          hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
         });
 
         navMenu.querySelectorAll(".nav-link").forEach((link) => {
-          link.addEventListener("click", () => setMenuOpen(false));
+          link.addEventListener("click", () => {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          });
         });
 
         document.addEventListener("click", (e) => {
-          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target) && e.target !== burgerCheckbox) {
-            setMenuOpen(false);
+          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
           }
         });
 
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") setMenuOpen(false);
+          if (e.key === "Escape") {
+            hamburgerBtn.classList.remove("is-active");
+            navMenu.classList.remove("open");
+            hamburgerBtn.setAttribute("aria-expanded", "false");
+          }
         });
       }
 
@@ -290,7 +285,11 @@ window.sendPortalNotification = function () {};
           } else {
             siteHeader?.classList.remove("header-visible");
             if (navMenu && navMenu.classList.contains("open")) {
-              setMenuOpen(false);
+              navMenu.classList.remove("open");
+              if (hamburgerBtn) {
+                hamburgerBtn.classList.remove("is-active");
+                hamburgerBtn.setAttribute("aria-expanded", "false");
+              }
             }
           }
         }
@@ -545,45 +544,6 @@ window.sendPortalNotification = function () {};
             height: 20px;
             border-radius: 50%;
             object-fit: cover;
-          }
-
-          /* Responsive shared footer: prevent the desktop grid from compressing
-             the brand and link columns on tablet and mobile screens. */
-          @media (max-width: 768px) {
-            .site-footer-extended {
-              padding: 40px 24px 24px;
-            }
-
-            .footer-grid-container {
-              grid-template-columns: minmax(0, 1fr);
-              gap: 28px;
-              padding-bottom: 28px;
-            }
-
-            .footer-links-columns {
-              grid-template-columns: repeat(2, minmax(0, 1fr));
-              gap: 22px 18px;
-            }
-
-            .footer-bottom-bar {
-              align-items: flex-start;
-            }
-          }
-
-          @media (max-width: 480px) {
-            .site-footer-extended {
-              padding: 32px 18px 22px;
-            }
-
-            .footer-links-columns {
-              grid-template-columns: minmax(0, 1fr);
-              gap: 20px;
-            }
-
-            .footer-bottom-bar {
-              flex-direction: column;
-              align-items: flex-start;
-            }
           }
         </style>
       `;
@@ -1064,4 +1024,20 @@ window.sendPortalNotification = function () {};
   document.head.appendChild(s);
 })();
 
-// Station tracker is not included in this repository; do not request a missing script.
+// ---------------------------------------------------------------------
+// STATION TRACKER: load station-tracker.js
+// ---------------------------------------------------------------------
+(function loadStationTracker() {
+  var base = '';
+  var tags = document.getElementsByTagName('script');
+  for (var i = 0; i < tags.length; i++) {
+    if (/common\.js(\?|$)/.test(tags[i].src)) { 
+      base = tags[i].src.replace(/common\.js.*$/, ''); 
+      break; 
+    }
+  }
+  var s = document.createElement('script');
+  s.src = base + 'station-tracker.js';
+  s.async = true;
+  document.head.appendChild(s);
+})();
