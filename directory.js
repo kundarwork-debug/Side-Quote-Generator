@@ -59,15 +59,15 @@ class APMLDirectory {
     
     if (!items || items.length === 0) {
       this.container.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #78716c; font-weight: 600;">
+        <div class="directory-empty-state" style="text-align: center; padding: 40px; color: #78716c; font-weight: 600;">
           No matching records found.
         </div>`;
       return;
     }
 
     let html = `
-      <div style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px -2px rgba(120, 113, 108, 0.05);">
-        <div style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1.5px solid #ede4de; font-size: 11.5px; font-weight: 700; color: #c21d1d; text-transform: uppercase; letter-spacing: 0.05em; background: #fdf8f5;">
+      <div class="directory-results-shell" style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 20px -2px rgba(120, 113, 108, 0.05);">
+        <div class="directory-table-head" style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1.5px solid #ede4de; font-size: 11.5px; font-weight: 700; color: #c21d1d; text-transform: uppercase; letter-spacing: 0.05em; background: #fdf8f5;">
           <div>Name / Category</div>
           <div>Location / Region</div>
           <div>Contact Number</div>
@@ -102,31 +102,31 @@ class APMLDirectory {
       const escapedAddressJson = JSON.stringify(address).replace(/"/g, '&quot;');
 
       return `
-        <div id="row_view_${recordId}" style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1px solid #ede4de; align-items: center; background: ${rowBg}; transition: background 0.15s ease;" onmouseover="this.style.background='${isDeleted ? '#fee2e2' : '#fdf8f5'}'" onmouseout="this.style.background='${rowBg}'">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: ${avatarBg}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
+        <div id="row_view_${recordId}" class="directory-record-row" data-deleted="${isDeleted}" style="display: grid; grid-template-columns: 2fr 2fr 2fr 2.5fr 1fr; padding: 16px 24px; border-bottom: 1px solid #ede4de; align-items: center; background: ${rowBg}; transition: background 0.15s ease;" onmouseover="this.style.background='${isDeleted ? '#fee2e2' : '#fdf8f5'}'" onmouseout="this.style.background='${rowBg}'">
+          <div class="directory-person" style="display: flex; align-items: center; gap: 14px;">
+            <div class="directory-avatar" style="width: 38px; height: 38px; border-radius: 50%; background: ${avatarBg}; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0;">
               ${escapeHtml(initials)}
             </div>
             <div style="display: flex; flex-direction: column;">
-              <span style="font-size: 14px; font-weight: 700; color: ${textColor};">${escapeHtml(name)}${badgeText}</span>
-              <span style="font-size: 11.5px; color: ${subTextColor}; font-weight: 600;">${escapeHtml(designation || category)}</span>
+              <span class="directory-person-name" style="font-size: 14px; font-weight: 700; color: ${textColor};">${escapeHtml(name)}${badgeText}</span>
+              <span class="directory-person-role" style="font-size: 11.5px; color: ${subTextColor}; font-weight: 600;">${escapeHtml(designation || category)}</span>
             </div>
           </div>
 
           <div style="display: flex; flex-direction: column;">
-            <span style="font-size: 13.5px; font-weight: 600; color: ${textColor};">${escapeHtml(location)}</span>
-            <span style="font-size: 11.5px; color: ${subTextColor};">${escapeHtml(region)}</span>
+            <span class="directory-location-primary" style="font-size: 13.5px; font-weight: 600; color: ${textColor};">${escapeHtml(location)}</span>
+            <span class="directory-location-secondary" style="font-size: 11.5px; color: ${subTextColor};">${escapeHtml(region)}</span>
           </div>
 
-          <div style="font-size: 13.5px; font-weight: 600; color: ${textColor};">
+          <div class="directory-contact" style="font-size: 13.5px; font-weight: 600; color: ${textColor};">
             ${escapeHtml(contact)}
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 4px; padding-right: 8px;">
-            <div style="font-size: 12px; color: ${subTextColor}; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="${escapeHtml(address)}">
+            <div class="directory-address" style="font-size: 12px; color: ${subTextColor}; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="${escapeHtml(address)}">
               ${escapeHtml(address)}
             </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="directory-address-actions" style="display: flex; gap: 8px; align-items: center;">
               <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 11.5px; font-weight: 700; color: #0284c7; text-decoration: none; display: inline-flex; align-items: center; gap: 3px;" title="Open in Google Maps">
                 <span class="material-symbols-outlined" style="font-size: 14px;">map</span> Maps
               </a>
@@ -136,7 +136,7 @@ class APMLDirectory {
             </div>
           </div>
 
-          <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <div class="directory-row-actions" style="display: flex; justify-content: flex-end; gap: 8px;">
             ${isDeleted ? `
               <button onclick="restoreRecord('${recordId}')" title="Restore Contact" style="background: rgba(5, 150, 105, 0.1); border: 1.5px solid rgba(5, 150, 105, 0.3); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #059669; transition: all 0.2s ease;" onmouseover="this.style.background='#059669'; this.style.color='#ffffff'" onmouseout="this.style.background='rgba(5, 150, 105, 0.1)'; this.style.color='#059669'">
                 <span class="material-symbols-outlined" style="font-size: 18px;">settings_backup_restore</span>
@@ -157,8 +157,8 @@ class APMLDirectory {
 
         <!-- EXPANDED EDIT BOX (Hidden by default, shows on Edit click) -->
         ${!isDeleted ? `
-        <div id="row_edit_${recordId}" style="display: none; padding: 24px; background: #fdf8f5; border-bottom: 1.5px solid #ede4de;">
-          <div style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px;">
+        <div id="row_edit_${recordId}" class="directory-edit-panel" style="display: none; padding: 24px; background: #fdf8f5; border-bottom: 1.5px solid #ede4de;">
+          <div class="directory-edit-form" style="background: #ffffff; border: 1.5px solid #ede4de; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); display: flex; flex-direction: column; gap: 14px;">
             <div style="font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 800; color: #c21d1d; display: flex; align-items: center; gap: 8px;">
               <span class="material-symbols-outlined">badge</span>
               Edit Record Details (#${escapeHtml(String(recordId))})
