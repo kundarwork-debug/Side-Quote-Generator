@@ -546,6 +546,45 @@ window.sendPortalNotification = function () {};
             border-radius: 50%;
             object-fit: cover;
           }
+
+          /* Responsive shared footer: prevent the desktop grid from compressing
+             the brand and link columns on tablet and mobile screens. */
+          @media (max-width: 768px) {
+            .site-footer-extended {
+              padding: 40px 24px 24px;
+            }
+
+            .footer-grid-container {
+              grid-template-columns: minmax(0, 1fr);
+              gap: 28px;
+              padding-bottom: 28px;
+            }
+
+            .footer-links-columns {
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 22px 18px;
+            }
+
+            .footer-bottom-bar {
+              align-items: flex-start;
+            }
+          }
+
+          @media (max-width: 480px) {
+            .site-footer-extended {
+              padding: 32px 18px 22px;
+            }
+
+            .footer-links-columns {
+              grid-template-columns: minmax(0, 1fr);
+              gap: 20px;
+            }
+
+            .footer-bottom-bar {
+              flex-direction: column;
+              align-items: flex-start;
+            }
+          }
         </style>
       `;
 
