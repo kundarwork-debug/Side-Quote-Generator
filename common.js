@@ -148,14 +148,13 @@ window.sendPortalNotification = function () {};
               </div>
             </div>
 
-<!-- Animated Collapse Hamburger Button -->
-            <button class="hamburger-btn" id="hamburgerBtn" type="button" aria-label="Toggle navigation menu" aria-expanded="false">
-              <span class="hamburger-icon" aria-hidden="true">
-                <span class="bar bar--top"></span>
-                <span class="bar bar--middle"></span>
-                <span class="bar bar--bottom"></span>
-              </span>
-            </button>
+<!-- Animated three-line hamburger toggle -->
+            <input id="burger-checkbox" class="burger-checkbox" type="checkbox" aria-label="Toggle navigation menu" aria-controls="navMenu">
+            <label class="burger hamburger-btn" id="hamburgerBtn" for="burger-checkbox" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </label>
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
@@ -237,41 +236,37 @@ window.sendPortalNotification = function () {};
       updateLiveClock();
       setInterval(updateLiveClock, 1000);
 
-      // Event Listeners for Hamburger Click & Outside Clicks
+      // Event Listeners for Hamburger Toggle & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const burgerCheckbox = document.getElementById("burger-checkbox");
       const navMenu = document.getElementById("navMenu");
       const siteHeader = document.getElementById("siteHeader");
 
-      if (hamburgerBtn && navMenu) {
-        hamburgerBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const isOpen = hamburgerBtn.classList.toggle("is-active");
-          navMenu.classList.toggle("open", isOpen);
-          hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      function setMenuOpen(isOpen) {
+        if (!hamburgerBtn || !burgerCheckbox || !navMenu) return;
+        burgerCheckbox.checked = isOpen;
+        hamburgerBtn.classList.toggle("is-active", isOpen);
+        navMenu.classList.toggle("open", isOpen);
+        hamburgerBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
+
+      if (hamburgerBtn && burgerCheckbox && navMenu) {
+        burgerCheckbox.addEventListener("change", () => {
+          setMenuOpen(burgerCheckbox.checked);
         });
 
         navMenu.querySelectorAll(".nav-link").forEach((link) => {
-          link.addEventListener("click", () => {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          });
+          link.addEventListener("click", () => setMenuOpen(false));
         });
 
         document.addEventListener("click", (e) => {
-          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
+          if (!navMenu.contains(e.target) && !hamburgerBtn.contains(e.target) && e.target !== burgerCheckbox) {
+            setMenuOpen(false);
           }
         });
 
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape") {
-            hamburgerBtn.classList.remove("is-active");
-            navMenu.classList.remove("open");
-            hamburgerBtn.setAttribute("aria-expanded", "false");
-          }
+          if (e.key === "Escape") setMenuOpen(false);
         });
       }
 
@@ -285,11 +280,7 @@ window.sendPortalNotification = function () {};
           } else {
             siteHeader?.classList.remove("header-visible");
             if (navMenu && navMenu.classList.contains("open")) {
-              navMenu.classList.remove("open");
-              if (hamburgerBtn) {
-                hamburgerBtn.classList.remove("is-active");
-                hamburgerBtn.setAttribute("aria-expanded", "false");
-              }
+              setMenuOpen(false);
             }
           }
         }
