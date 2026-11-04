@@ -222,98 +222,73 @@
 }
 
 /* =========================================================
-   COLLAPSING HAMBURGER BUTTON
-   Animation based on the supplied three-bar collapse effect.
+   THREE-LINE CHECKBOX HAMBURGER BUTTON
    ========================================================= */
-.hamburger-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 52px;
-  height: 52px;
+.burger-checkbox {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 42px;
+  height: 42px;
+  gap: 0;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1002;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 50%;
   background: var(--md-sys-color-surface-container-low);
-  color: var(--md-sys-color-on-surface);
-  cursor: pointer;
-  position: relative;
-  z-index: 1002;
-  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  transition: background-color .2s ease, border-color .2s ease;
 }
 
-.hamburger-btn:hover,
-.hamburger-btn.is-active {
+.burger span {
+  display: block;
+  width: 24px;
+  height: 3px;
+  background: var(--md-sys-color-on-surface);
+  margin: 2.5px 0;
+  border-radius: 3px;
+  transition: transform .3s cubic-bezier(.68, -.55, .265, 1.55), opacity .3s ease;
+}
+
+.burger:hover,
+.burger.is-active {
   background: var(--md-sys-color-primary-container);
   border-color: var(--md-sys-color-primary);
 }
 
-.hamburger-btn:focus-visible {
+.burger-checkbox:focus-visible + .burger {
   outline: 3px solid var(--md-sys-color-primary);
   outline-offset: 3px;
 }
 
-.hamburger-icon {
-  position: relative;
-  display: block;
-  width: 40px;
-  height: 34px;
+.burger-checkbox:checked + .burger span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
 }
 
-.hamburger-btn .bar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--md-sys-color-on-surface);
-  opacity: 1;
-  transition: none .35s cubic-bezier(.5,-.35,.35,1.5) 0s;
-}
-
-.hamburger-btn .bar--top {
-  bottom: calc(50% + 11px + 2px);
-  transition-property: bottom, margin, transform;
-  transition-delay: .35s, 0s, 0s;
-}
-
-.hamburger-btn .bar--middle {
-  top: calc(50% - 2px);
-  transition-property: top, opacity;
-  transition-duration: .35s, 0s;
-  transition-delay: .455s, .455s;
-}
-
-.hamburger-btn .bar--bottom {
-  top: calc(50% + 11px + 2px);
-  transition-property: top, transform;
-  transition-delay: 0s;
-}
-
-.hamburger-btn.is-active .bar--top {
-  bottom: calc(50% - 11px - 4px);
-  margin-bottom: 13px;
-  transform: rotate(45deg);
-  transition-delay: .105s, .455s, .455s;
-  background: var(--md-sys-color-primary);
-}
-
-.hamburger-btn.is-active .bar--middle {
-  top: calc(50% + 11px);
+.burger-checkbox:checked + .burger span:nth-child(2) {
   opacity: 0;
-  transition-duration: .35s, 0s;
-  transition-delay: 0s, .35s;
+  transform: translateX(-20px);
 }
 
-.hamburger-btn.is-active .bar--bottom {
-  top: calc(50% - 2px);
-  transform: rotate(-45deg);
-  transition-delay: .455s, .455s;
-  background: var(--md-sys-color-primary);
+.burger-checkbox:checked + .burger span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hamburger-btn .bar { transition-duration: .01ms !important; }
+  .burger span { transition-duration: .01ms !important; }
 }
 
 /* =========================================================
@@ -832,5 +807,85 @@ main > .app {
   main > .app {
     padding-left: 14px !important;
     padding-right: 14px !important;
+  }
+}
+
+
+/* =========================================================
+   APML PREMIUM ENTERPRISE DESIGN SYSTEM
+   Shared tokens for the staged portal refresh.
+   These namespaced tokens are additive: existing page styles
+   and legacy Material variables remain unchanged for now.
+   ========================================================= */
+:root {
+  /* Brand */
+  --apml-color-brand: #b4232c;
+  --apml-color-brand-hover: #941c24;
+  --apml-color-brand-soft: #f8e9e9;
+
+  /* Surfaces */
+  --apml-color-page: #f7f5f0;
+  --apml-color-surface: #ffffff;
+  --apml-color-surface-subtle: #f0eee8;
+  --apml-color-border: #e5e1d9;
+
+  /* Text */
+  --apml-color-text: #202124;
+  --apml-color-text-secondary: #55565a;
+  --apml-color-text-muted: #777a80;
+  --apml-color-text-inverse: #ffffff;
+
+  /* Typography */
+  --apml-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --apml-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* Shape and spacing */
+  --apml-radius-sm: 8px;
+  --apml-radius-md: 12px;
+  --apml-radius-lg: 18px;
+  --apml-radius-xl: 24px;
+  --apml-radius-pill: 9999px;
+  --apml-space-1: 4px;
+  --apml-space-2: 8px;
+  --apml-space-3: 12px;
+  --apml-space-4: 16px;
+  --apml-space-5: 20px;
+  --apml-space-6: 24px;
+  --apml-space-8: 32px;
+
+  /* Elevation and motion */
+  --apml-shadow-soft: 0 2px 8px rgba(32, 33, 36, 0.04), 0 12px 28px rgba(32, 33, 36, 0.035);
+  --apml-shadow-raised: 0 8px 24px rgba(32, 33, 36, 0.09);
+  --apml-shadow-focus: 0 0 0 3px rgba(180, 35, 44, 0.16);
+  --apml-transition: 180ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+html[data-theme="dark"] {
+  --apml-color-brand: #f0787e;
+  --apml-color-brand-hover: #ff9297;
+  --apml-color-brand-soft: #3b2025;
+  --apml-color-page: #10141d;
+  --apml-color-surface: #171d29;
+  --apml-color-surface-subtle: #202838;
+  --apml-color-border: #303a4b;
+  --apml-color-text: #f2f3f5;
+  --apml-color-text-secondary: #d0d4dc;
+  --apml-color-text-muted: #a2aab8;
+  --apml-color-text-inverse: #171d29;
+  --apml-shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.18), 0 12px 28px rgba(0, 0, 0, 0.12);
+  --apml-shadow-raised: 0 8px 24px rgba(0, 0, 0, 0.28);
+  --apml-shadow-focus: 0 0 0 3px rgba(240, 120, 126, 0.2);
+}
+
+/* Accessible defaults for shared controls when adopted by a page. */
+.apml-focus-ring:focus-visible {
+  outline: 2px solid var(--apml-color-brand);
+  outline-offset: 3px;
+  box-shadow: var(--apml-shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --apml-transition: 0ms;
   }
 }
