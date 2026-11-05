@@ -122,7 +122,7 @@
   left: 0;
   right: 0;
   width: 100%;
-  height: 64px;
+  height: 60px;
   /* Solid page-coloured surface; never transparent. */
   background: var(--apml-color-page, #f7f5f0);
   backdrop-filter: none;
@@ -145,7 +145,7 @@
   max-width: none;
   width: 100%;
   margin: 0;
-  padding: 0 32px;
+  padding: 0 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -161,9 +161,9 @@
   user-select: none;
 }
 
-.logo-badge {
-  width: 36px;
-  height: 36px;
+ .logo-badge {
+  width: 34px;
+  height: 34px;
   background: var(--md-sys-color-primary-container);
   color: var(--md-sys-color-primary);
   border: 1.5px solid rgba(185, 28, 28, 0.25);
@@ -216,9 +216,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
   cursor: pointer;
   z-index: 1002;
   border: 1px solid var(--md-sys-color-outline-variant);
@@ -280,7 +280,7 @@
    ========================================================= */
 .nav-menu {
   position: fixed;
-  top: 70px;
+  top: 66px;
   right: 32px;
   width: 260px;
   max-width: calc(100vw - 32px);
