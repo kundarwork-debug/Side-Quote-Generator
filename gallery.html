@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
@@ -975,16 +974,6 @@
     }
   </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 
   <style id="apml-gallery-premium-overrides">
     :root {
@@ -1183,6 +1172,30 @@
     @media (prefers-reduced-motion: reduce) {
       .media-card, .btn-action-primary, .btn-action-secondary, .filter-item-wrapper,
       .btn-download, .btn-delete, .btn-page { transition: none !important; }
+    }
+
+    /* Consistent, comfortable touch targets on compact screens. */
+    .btn-action-primary, .btn-action-secondary, .btn-add-folder-chip {
+      min-height: 42px;
+    }
+    .btn-download, .btn-delete, .btn-page {
+      min-height: 36px;
+    }
+    .btn-delete {
+      width: 36px;
+      height: 36px;
+    }
+    @media (max-width: 600px) {
+      .btn-action-primary, .btn-action-secondary, .btn-add-folder-chip {
+        min-height: 40px;
+      }
+      .btn-download, .btn-delete, .btn-page {
+        min-height: 36px;
+      }
+      .btn-delete {
+        width: 36px;
+        height: 36px;
+      }
     }
   </style>
 
@@ -1404,12 +1417,12 @@
 
     <!-- MEDIA GRID WRAPPER WITH DYNAMIC PAGINATION -->
     <div class="media-grid-wrapper">
-      <main class="media-grid" id="mediaGrid">
+      <div class="media-grid" id="mediaGrid">
         <div class="state-msg">
           <div class="spinner"></div>
           Syncing live cloud storage feed...
         </div>
-      </main>
+      </div>
       
       <!-- NUMERIC PAGINATION CONTROLS -->
       <div class="pagination-bar" id="paginationBar" style="display: none;"></div>
@@ -1417,7 +1430,6 @@
 
   </main>
 
-  <div id="header-container"></div>
   <div id="footer-container"></div>
 
   <script src="notify.js?v=1"></script>
