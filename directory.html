@@ -7,7 +7,7 @@
     <title>APML Hub & Branch Directory</title>
     
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
-    <link rel="stylesheet" href="common.css?v=21.35">
+    <link rel="stylesheet" href="common.css?v=21.36">
 
     <!-- SweetAlert2 Library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -428,6 +428,28 @@
         @media(prefers-reduced-motion:reduce) {
             *,*::before,*::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
         }
+    
+        /* Final page-width override: this page must use the full desktop canvas. */
+        body.apml-directory-page main.main-container,
+        body.apml-directory-page .main-container {
+            display: flex !important;
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            align-self: stretch !important;
+            box-sizing: border-box !important;
+        }
+        body.apml-directory-page main.main-container > .card,
+        body.apml-directory-page .directory-results-shell,
+        body.apml-directory-page .lookup-results-list {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+        }
+
     </style>
 
 </head>
@@ -661,7 +683,7 @@
     </script>
 
     <!-- Core Scripts -->
-    <script src="common.js?v=21.35"></script>
+    <script src="common.js?v=21.36"></script>
     <script src="directory.js?v=3"></script>
 
     <script>
