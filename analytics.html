@@ -132,6 +132,20 @@
     .page-head p { font-size: 14.5px; color: var(--text-muted); margin-top: 8px; max-width: 560px; line-height: 1.5; }
 
     .head-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .custom-range-wrap { position: relative; }
+    .custom-range-panel {
+      position: absolute; top: calc(100% + 9px); right: 0; z-index: 30;
+      display: flex; align-items: flex-end; flex-wrap: wrap; gap: 10px;
+      min-width: min(520px, calc(100vw - 32px)); padding: 14px;
+      background: var(--surface-raised); border: 1px solid var(--surface-border);
+      border-radius: 14px; box-shadow: var(--shadow-card);
+    }
+    .custom-range-panel label { display:flex; flex:1 1 145px; flex-direction:column; gap:6px; color:var(--text-muted); font-size:12px; font-weight:700; }
+    .custom-range-panel input { width:100%; min-width:0; padding:9px 10px; border:1px solid var(--surface-border); border-radius:9px; background:var(--surface-subtle); color:var(--text-main); font:inherit; }
+    .custom-range-panel input:focus { outline:2px solid var(--primary); outline-offset:1px; }
+    .custom-range-panel .btn-primary { background:var(--primary); color:#fff; border-color:var(--primary); }
+    .custom-range-panel .btn-primary .material-symbols-outlined { color:#fff; }
+    #customRangeToggle[aria-pressed="true"] { border-color:var(--primary); color:var(--primary); }
 
     .seg {
       display: inline-flex; background: var(--surface-subtle); border: 1px solid var(--surface-border);
@@ -389,6 +403,11 @@
       .head-controls > * { max-width:100%; }
       .head-controls .seg { flex:1 1 100%; justify-content:flex-start; }
       .head-controls .btn { justify-content:center; }
+      .custom-range-wrap { width:100%; }
+      .custom-range-wrap > .btn { width:100%; }
+      .custom-range-panel { position:static; min-width:0; width:100%; margin-top:8px; align-items:stretch; }
+      .custom-range-panel label { flex-basis:100%; }
+      .custom-range-panel .btn { width:100%; }
       .report-actions { margin-bottom:16px; }
       .card-head { align-items:flex-start; }
       .chart-tools, .series-chips { width:100%; }
@@ -431,6 +450,16 @@
           <button type="button" data-range="1m" aria-pressed="false">30 days</button>
           <button type="button" data-range="6m" aria-pressed="false">6 months</button>
           <button type="button" data-range="1y" aria-pressed="false">1 year</button>
+        </div>
+        <div class="custom-range-wrap">
+          <button type="button" class="btn" id="customRangeToggle" aria-expanded="false" aria-controls="customRangePanel" aria-pressed="false">
+            <span class="material-symbols-outlined">date_range</span> Custom range
+          </button>
+          <div class="custom-range-panel" id="customRangePanel" hidden>
+            <label>From <input type="date" id="customStartDate"></label>
+            <label>To <input type="date" id="customEndDate"></label>
+            <button type="button" class="btn btn-primary" id="applyCustomRange">Apply</button>
+          </div>
         </div>
         <button type="button" class="btn" id="exportBtn" title="Download analytics data as a CSV spreadsheet">
           <span class="material-symbols-outlined">download</span> Download CSV
@@ -993,7 +1022,34 @@
     $('rangeTabs').addEventListener('click', function (e) {
       var b = e.target.closest('button[data-range]'); if (!b) return;
       state.range = b.getAttribute('data-range'); state.customStart = state.customEnd = null; press($('rangeTabs'), 'data-range', state.range);
+      $('customRangeToggle').setAttribute('aria-pressed', 'false');
+      $('customRangePanel').hidden = true; $('customRangeToggle').setAttribute('aria-expanded', 'false');
       state.hideEmpty = $('hideEmpty').checked; render();
+    });
+    function setCustomDateDefaults() {
+      var today = istKey(new Date());
+      $('customStartDate').max = today; $('customEndDate').max = today;
+      $('customStartDate').value = state.customStart || keyDaysAgo(6);
+      $('customEndDate').value = state.customEnd || today;
+    }
+    $('customRangeToggle').addEventListener('click', function () {
+      var panel = $('customRangePanel'), opening = panel.hidden;
+      if (opening) setCustomDateDefaults();
+      panel.hidden = !opening;
+      $('customRangeToggle').setAttribute('aria-expanded', String(opening));
+    });
+    $('applyCustomRange').addEventListener('click', function () {
+      var start = $('customStartDate').value, end = $('customEndDate').value, today = istKey(new Date());
+      if (!start || !end) { showBanner('info', 'Please select both a start date and an end date.', false); return; }
+      if (start > end) { showBanner('info', 'The start date must be on or before the end date.', false); return; }
+      if (end > today) { showBanner('info', 'Future dates cannot be included in an Analytics report.', false); return; }
+      var days = Math.round((keyToDate(end) - keyToDate(start)) / 86400000) + 1;
+      if (days > 730) { showBanner('info', 'Please choose a date range of up to 730 days.', false); return; }
+      state.range = 'custom'; state.customStart = start; state.customEnd = end;
+      press($('rangeTabs'), 'data-range', 'custom');
+      $('customRangeToggle').setAttribute('aria-pressed', 'true');
+      $('customRangePanel').hidden = true; $('customRangeToggle').setAttribute('aria-expanded', 'false');
+      state.hideEmpty = $('hideEmpty').checked; hideBanner(); render();
     });
     $('typeTabs').addEventListener('click', function (e) {
       var b = e.target.closest('button[data-type]'); if (!b) return;
