@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>(function(){var theme='light';try{var saved=localStorage.getItem('apml-theme');if(saved==='dark'||saved==='light')theme=saved;}catch(error){}document.documentElement.setAttribute('data-theme',theme);})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>404 - Signal Lost | APML Portal</title>
@@ -791,22 +791,27 @@
       .save-score-form { flex-direction: column; }
       .btn-submit-score { justify-content: center; min-height: 42px; }
     }
+    .btn-action, .btn-submit-score, .btn-quit-game, .btn-scoreboard-toggle, .esc-prompt-bar { min-height:44px; }
+    .pilot-input { min-height:48px; font-size:16px; }
+    .btn-action:focus-visible, .btn-submit-score:focus-visible, .btn-quit-game:focus-visible,
+    .btn-scoreboard-toggle:focus-visible, .esc-prompt-bar:focus-visible, .pilot-input:focus-visible {
+      outline:3px solid color-mix(in srgb, var(--primary) 48%, transparent); outline-offset:3px;
+    }
+    #scoreView { padding-left:max(14px,env(safe-area-inset-left)); padding-right:max(14px,env(safe-area-inset-right)); }
+    .leaderboard-wrap { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+    @media (max-width:380px) {
+      .arcade-scoreboard { gap:4px; padding:6px 7px; }
+      .score-item { font-size:8px; } .score-val { font-size:11px; }
+      .btn-quit-game { padding:4px 6px; font-size:8px; }
+      .score-page-container { padding:14px 10px; border-radius:18px; }
+      .metrics-row { grid-template-columns:1fr 1fr; }
+    }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      *, *::before, *::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; scroll-behavior:auto!important; }
     }
 
   </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
