@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>(function(){var theme='light';try{var saved=localStorage.getItem('apml-theme');if(saved==='dark'||saved==='light')theme=saved;}catch(error){}document.documentElement.setAttribute('data-theme',theme);})();</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>APML Hub & Branch Directory</title>
     
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
@@ -382,18 +382,54 @@
             .site-footer { padding-left: 14px !important; padding-right: 14px !important; }
             .footer-author-pill { max-width: 100%; }
         }
+
+        html[data-theme="dark"] body.apml-directory-page {
+            --primary:#f87171; --primary-dark:#ef4444; --primary-soft:rgba(248,113,113,.12);
+            --bg-base:var(--apml-color-page,#10141d); --surface-card:var(--apml-color-surface,#171d29);
+            --border-subtle:var(--apml-color-border,#303a4b); --border-hover:rgba(248,113,113,.35);
+            --text-main:var(--apml-color-text,#f2f3f5); --text-secondary:var(--apml-color-text-secondary,#d0d4dc);
+            --text-muted:var(--apml-color-text-muted,#a2aab8); --shadow-card:var(--apml-shadow-soft,0 2px 8px rgba(0,0,0,.18));
+        }
+        html[data-theme="dark"] body.apml-directory-page .header-badge,
+        html[data-theme="dark"] body.apml-directory-page #masterSearchInput,
+        html[data-theme="dark"] body.apml-directory-page .chip,
+        html[data-theme="dark"] body.apml-directory-page .directory-results-shell,
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row,
+        html[data-theme="dark"] body.apml-directory-page .directory-empty-state,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-form,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-form input,
+        html[data-theme="dark"] body.apml-directory-page #adminToggleBtn {
+            background:var(--apml-color-surface,#171d29)!important;
+            color:var(--apml-color-text,#f2f3f5)!important;
+            border-color:var(--apml-color-border,#303a4b)!important;
+        }
+        html[data-theme="dark"] body.apml-directory-page .directory-table-head,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-panel {
+            background:var(--apml-color-surface-subtle,#202838)!important;
+            border-color:var(--apml-color-border,#303a4b)!important;
+            color:var(--apml-color-text-muted,#a2aab8)!important;
+        }
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row[data-deleted="true"] { background:rgba(127,29,29,.18)!important; }
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row:hover { background:var(--apml-color-surface-subtle,#202838)!important; }
+        html[data-theme="dark"] body.apml-directory-page .status-badge { background:rgba(16,185,129,.12)!important;border-color:rgba(52,211,153,.24)!important;color:#6ee7b7!important; }
+        html[data-theme="dark"] body.apml-directory-page .loader-card-box { background:var(--apml-color-surface,#171d29);border-color:var(--apml-color-border,#303a4b);color:var(--apml-color-text,#f2f3f5); }
+        #masterSearchInput { min-height:52px;font-size:16px!important; }
+        .chip { min-height:40px;display:inline-flex;align-items:center;justify-content:center; }
+        #createContactBtn,#adminToggleBtn { min-height:44px; }
+        #adminToggleBtn { min-width:44px; }
+        .chip:focus-visible,#createContactBtn:focus-visible,#adminToggleBtn:focus-visible,#masterSearchInput:focus-visible,
+        .directory-row-actions button:focus-visible,.directory-address-actions a:focus-visible,.directory-address-actions button:focus-visible {
+            outline:3px solid color-mix(in srgb,var(--primary) 48%,transparent);outline-offset:3px;
+        }
+        @media(max-width:560px) {
+            .main-container { padding-left:14px!important;padding-right:14px!important; }
+            .card-header { gap:10px!important; } .quick-chips { gap:7px!important; } .chip { padding:8px 12px!important; }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            *,*::before,*::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+        }
     </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
