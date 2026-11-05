@@ -933,3 +933,20 @@ html[data-theme="dark"] {
     right: 14px !important;
   }
 }
+
+
+/* Directory-specific hard override: keep the admin Google control perfectly circular. */
+html body.apml-directory-page button#adminToggleBtn {
+  width: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  aspect-ratio: 1 / 1 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  clip-path: circle(50%) !important;
+  flex: 0 0 42px !important;
+}
