@@ -603,7 +603,7 @@
             
             <span class="status-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
-                Firestore Contacts (<span id="recordCount">0</span> Records)
+                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
             </span>
         </div>
 
@@ -661,7 +661,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <!-- Initialize Firebase -->
@@ -687,14 +687,14 @@
     <script src="directory.js?v=3"></script>
 
     <script>
-        const firestore = firebase.firestore();
-        const contactsRef = firestore.collection('contacts');
+        const db = firebase.database();
+        const directoryRef = db.ref('directory');
 
         let directoryHelper = null;
         let loadedMasterData = [];
         let isAdminMode = false;
+
         const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "kundar.work@gmail.com"];
-        const FIRESTORE_BATCH_SIZE = 500;
 
         function hideLoadingOverlay() {
             const overlay = document.getElementById('pageLoadingOverlay');
@@ -704,74 +704,24 @@
             }
         }
 
-        function showDirectoryError(error) {
-            console.error('Directory Firestore error:', error);
-            hideLoadingOverlay();
-            if (window.Swal) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Unable to load contacts',
-                    text: error && error.message ? error.message : 'Please check your connection and Firestore permissions.'
-                });
-            }
-        }
-
-        // Read the entire collection in ordered batches so directories with
-        // more than 1,000 documents are not cut off by a single-page limit.
-        async function loadDirectoryContacts() {
-            const allContacts = [];
-            let lastDocument = null;
-
-            try {
-                while (true) {
-                    let query = contactsRef
-                        .orderBy(firebase.firestore.FieldPath.documentId())
-                        .limit(FIRESTORE_BATCH_SIZE);
-
-                    if (lastDocument) query = query.startAfter(lastDocument);
-
-                    const snapshot = await query.get();
-                    if (snapshot.empty) break;
-
-                    snapshot.forEach(doc => {
-                        const data = doc.data() || {};
-                        allContacts.push({
-                            ...data,
-                            id: doc.id,
-                            firebaseKey: doc.id,
-                            // Adapt Firestore's field names to the existing renderer.
-                            name: data.contactName || data.name || '',
-                            contact: data.contactNumber || data.contact || '',
-                            address: data.fullAddress || data.address || '',
-                            category: data.category || '',
-                            location: data.location || '',
-                            region: data.region || '',
-                            designation: data.designation || '',
-                            isDeleted: data.isDeleted === true || data.isDeleted === 'true' || data.isDeleted === 1
-                        });
-                    });
-
-                    lastDocument = snapshot.docs[snapshot.docs.length - 1];
-                    if (snapshot.size < FIRESTORE_BATCH_SIZE) break;
-                }
-
-                loadedMasterData = allContacts;
-                const activeCount = loadedMasterData.filter(item => !item.isDeleted).length;
-                document.getElementById('recordCount').innerText = activeCount.toLocaleString('en-IN');
-                directoryHelper.setData(loadedMasterData);
-                hideLoadingOverlay();
-            } catch (error) {
-                showDirectoryError(error);
-            }
-        }
-
-        async function refreshDirectoryAfterWrite() {
-            await loadDirectoryContacts();
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
-            loadDirectoryContacts();
+
+            directoryRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data || Object.keys(data).length === 0) {
+                    document.getElementById('recordCount').innerText = "0";
+                    hideLoadingOverlay();
+                    return;
+                }
+
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.filter(i => !i.isDeleted).length;
+
+                directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
+            });
         });
 
         function filterByChip(term) {
@@ -815,10 +765,16 @@
                             timer: 3000
                         });
 
-                        if (directoryHelper) directoryHelper.toggleAdminView(true);
+                        if (directoryHelper) {
+                            directoryHelper.toggleAdminView(true);
+                        }
                     })
                     .catch((error) => {
-                        Swal.fire({ icon: 'error', title: 'Sign-In Failed', text: error.message });
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Sign-In Failed',
+                            text: error.message
+                        });
                     });
             } else {
                 firebase.auth().signOut().then(() => {
@@ -834,14 +790,15 @@
                             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
                         </svg>`;
 
-                    if (directoryHelper) directoryHelper.toggleAdminView(false);
+                    if (directoryHelper) {
+                        directoryHelper.toggleAdminView(false);
+                    }
                 });
             }
         }
 
+        // Open SweetAlert modal to create new contact
         window.openCreateContactModal = async function() {
-            if (!isAdminMode) return Swal.fire('Admin access required', 'Please sign in as an authorized admin.', 'warning');
-
             const { value: formValues } = await Swal.fire({
                 title: 'Create New Contact',
                 html:
@@ -855,109 +812,162 @@
                 focusConfirm: false,
                 showCancelButton: true,
                 confirmButtonColor: '#c21d1d',
-                preConfirm: () => ({
-                    category: document.getElementById('swal-category').value.trim(),
-                    location: document.getElementById('swal-location').value.trim(),
-                    region: document.getElementById('swal-region').value.trim(),
-                    designation: document.getElementById('swal-designation').value.trim(),
-                    contactName: document.getElementById('swal-name').value.trim(),
-                    contactNumber: document.getElementById('swal-contact').value.trim(),
-                    fullAddress: document.getElementById('swal-address').value.trim(),
-                    isDeleted: false
-                })
+                preConfirm: () => {
+                    return {
+                        category: document.getElementById('swal-category').value.trim(),
+                        location: document.getElementById('swal-location').value.trim(),
+                        region: document.getElementById('swal-region').value.trim(),
+                        designation: document.getElementById('swal-designation').value.trim(),
+                        name: document.getElementById('swal-name').value.trim(),
+                        contact: document.getElementById('swal-contact').value.trim(),
+                        address: document.getElementById('swal-address').value.trim(),
+                        isDeleted: false
+                    }
+                }
             });
 
-            if (!formValues) return;
-            if (!formValues.contactName || !formValues.location) {
-                Swal.fire('Error', 'Name and Location are required fields!', 'error');
-                return;
-            }
+            if (formValues) {
+                if (!formValues.name || !formValues.location) {
+                    Swal.fire('Error', 'Name and Location are required fields!', 'error');
+                    return;
+                }
 
-            try {
-                await contactsRef.add(formValues);
-                await refreshDirectoryAfterWrite();
-                Swal.fire({ position: 'top-end', icon: 'success', title: 'New contact created successfully!', showConfirmButton: false, timer: 1500 });
-            } catch (err) {
-                Swal.fire('Error', err.message, 'error');
+                directoryRef.push(formValues).then(() => {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'New contact created successfully!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }).catch(err => {
+                    Swal.fire('Error', err.message, 'error');
+                });
             }
         };
 
-        window.saveRecord = async function(id) {
-            if (!isAdminMode) return Swal.fire('Admin access required', 'Please sign in as an authorized admin.', 'warning');
-
+        window.saveRecord = function(id) {
             const updatedData = {
                 category: document.getElementById(`cat_${id}`).value.trim(),
                 location: document.getElementById(`loc_${id}`).value.trim(),
                 region: document.getElementById(`reg_${id}`).value.trim(),
                 designation: document.getElementById(`des_${id}`).value.trim(),
-                contactName: document.getElementById(`nam_${id}`).value.trim(),
-                contactNumber: document.getElementById(`con_${id}`).value.trim(),
-                fullAddress: document.getElementById(`adr_${id}`).value.trim()
+                name: document.getElementById(`nam_${id}`).value.trim(),
+                contact: document.getElementById(`con_${id}`).value.trim(),
+                address: document.getElementById(`adr_${id}`).value.trim()
             };
 
-            try {
-                await contactsRef.doc(String(id)).update(updatedData);
-                await refreshDirectoryAfterWrite();
-                Swal.fire({ position: "top-end", icon: "success", title: "Your work has been saved", showConfirmButton: false, timer: 1500 });
-            } catch (err) {
-                Swal.fire({ icon: "error", title: "Oops...", text: "Error updating record: " + err.message });
+            const existing = loadedMasterData.find(i => String(i.id) === String(id));
+            if (existing && existing.isDeleted) {
+                updatedData.isDeleted = true;
             }
-        };
 
-        window.deleteRecord = function(id) {
-            if (!isAdminMode) return Swal.fire('Admin access required', 'Please sign in as an authorized admin.', 'warning');
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
 
-            Swal.fire({
-                title: "Are you sure?",
-                text: "This contact will be hidden from the directory page.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: '#c21d1d',
-                cancelButtonColor: "#78716c",
-                confirmButtonText: "Yes, delete it!"
-            }).then(async (result) => {
-                if (!result.isConfirmed) return;
-                try {
-                    await contactsRef.doc(String(id)).update({ isDeleted: true });
-                    await refreshDirectoryAfterWrite();
-                    Swal.fire({ title: "Deleted!", text: "Contact hidden from the directory.", icon: "success" });
-                } catch (err) {
-                    Swal.fire({ icon: "error", title: "Oops...", text: "Error deleting record: " + err.message });
-                }
+            directoryRef.child(targetKey).set(updatedData).then(() => {
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Your work has been saved",
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+                toggleEditCard(id);
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Error updating record: " + err.message
+                });
             });
         };
 
-        window.restoreRecord = async function(id) {
-            if (!isAdminMode) return Swal.fire('Admin access required', 'Please sign in as an authorized admin.', 'warning');
-            try {
-                await contactsRef.doc(String(id)).update({ isDeleted: false });
-                await refreshDirectoryAfterWrite();
-                Swal.fire({ title: "Restored!", text: "Contact is now active again.", icon: "success", timer: 1500, showConfirmButton: false });
-            } catch (err) {
-                Swal.fire({ icon: "error", title: "Oops...", text: "Error restoring record: " + err.message });
-            }
-        };
-
-        window.permanentDeleteRecord = function(id) {
-            if (!isAdminMode) return Swal.fire('Admin access required', 'Please sign in as an authorized admin.', 'warning');
+        // Soft Delete: sets isDeleted: true using exact database key lookup
+        window.deleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
 
             Swal.fire({
-                title: "Delete Permanently?",
-                text: "This will permanently remove the contact from the database. You won't be able to recover this!",
-                icon: "error",
-                showCancelButton: true,
-                confirmButtonColor: "#dc2626",
-                cancelButtonColor: "#78716c",
-                confirmButtonText: "Yes, delete permanently!"
-            }).then(async (result) => {
-                if (!result.isConfirmed) return;
-                try {
-                    await contactsRef.doc(String(id)).delete();
-                    await refreshDirectoryAfterWrite();
-                    Swal.fire({ title: "Permanently Deleted!", text: "The contact has been permanently removed.", icon: "success", timer: 1500, showConfirmButton: false });
-                } catch (err) {
-                    Swal.fire({ icon: "error", title: "Oops...", text: "Error deleting permanently: " + err.message });
-                }
+              title: "Are you sure?",
+              text: "This contact will be hidden from the directory page.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: '#c21d1d',
+              cancelButtonColor: "#78716c",
+              confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
+                  Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success"
+                  });
+                }).catch(err => {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting record: " + err.message
+                  });
+                });
+              }
+            });
+        };
+
+        // Restore contact
+        window.restoreRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).update({ isDeleted: false }).then(() => {
+                Swal.fire({
+                  title: "Restored!",
+                  text: "Contact is now active again.",
+                  icon: "success",
+                  timer: 1500,
+                  showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Error restoring record: " + err.message
+                });
+            });
+        };
+
+        // Permanent Delete
+        window.permanentDeleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            Swal.fire({
+              title: "Delete Permanently?",
+              text: "This will permanently remove the contact from the database. You won't be able to recover this!",
+              icon: "error",
+              showCancelButton: true,
+              confirmButtonColor: "#dc2626",
+              cancelButtonColor: "#78716c",
+              confirmButtonText: "Yes, delete permanently!"
+            }).then((result) => {
+              if (result.isConfirmed) {
+                directoryRef.child(targetKey).remove().then(() => {
+                  Swal.fire({
+                    title: "Permanently Deleted!",
+                    text: "The contact has been permanently removed.",
+                    icon: "success",
+                    timer: 1500,
+                    showConfirmButton: false
+                  });
+                }).catch(err => {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Error deleting permanently: " + err.message
+                  });
+                });
+              }
             });
         };
     </script>
