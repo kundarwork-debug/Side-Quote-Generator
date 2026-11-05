@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Lite Rate Calculator - Mumbai & Pune Hub</title>
 
   <!-- Network/Hub SVG Favicon from root folder -->
@@ -355,7 +366,24 @@
         font-size: 12px;
       }
     }
-  </style>
+  
+    html[data-theme="dark"] {
+      --md-sys-color-primary:#f87171;
+      --md-sys-color-primary-container:#3b2028;
+      --md-sys-color-on-primary-container:#fecaca;
+      --md-sys-color-surface:#0f172a;
+      --md-sys-color-surface-container-lowest:#172235;
+      --md-sys-color-surface-container-low:#1e293b;
+      --md-sys-color-outline-variant:#334155;
+      --md-sys-color-on-surface:#f1f5f9;
+      --md-sys-color-on-surface-variant:#cbd5e1;
+      --md-elevation-1:0 2px 8px rgba(0,0,0,.18);
+      --md-elevation-2:0 8px 22px rgba(0,0,0,.24);
+    }
+    html[data-theme="dark"] .min-alert-text { background:#3a2d17;color:#fcd34d; }
+    html[data-theme="dark"] .error-alert-box { background:#3b2028;color:#fecaca;border-color:#7f1d1d; }
+    html[data-theme="dark"] .table-section th { background:#202c40;color:#cbd5e1; }
+</style>
 
 </head>
 <body>
