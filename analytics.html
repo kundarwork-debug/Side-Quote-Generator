@@ -15,8 +15,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- Chart.js, pinned to one version so a future release can never break this page -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- ApexCharts, pinned for predictable rendering across the portal -->
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"></script>
 
   <style>
     :root {
@@ -259,6 +259,7 @@
     .series-chip[data-series="media"] { --c: var(--c-media); }
 
     .canvas-wrap { position: relative; width: 100%; height: 380px; }
+    #trendChart { width: 100%; height: 100%; min-height: 0; }
     @media (max-width: 640px) { .canvas-wrap { height: 300px; } .card { padding: 20px; } }
 
     .empty {
@@ -516,7 +517,7 @@
       </div>
 
       <div class="canvas-wrap">
-        <canvas id="trendChart" role="img" aria-label="Trend chart"></canvas>
+        <div id="trendChart" role="img" aria-label="Trend chart"></div>
         <div class="empty" id="chartEmpty" hidden>
           <span class="material-symbols-outlined">query_stats</span>
           <b>No activity recorded in this period</b>
@@ -745,75 +746,109 @@
       return keys.length ? keys[0] : null;
     }
 
-    // ---------------------------------------------------------------- drawing: chart
+    // ---------------------------------------------------------------- drawing: chart (ApexCharts)
     function themeName() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
-    function gradient(ctx, color, height) {
-      var g = ctx.createLinearGradient(0, 0, 0, height || 380);
-      g.addColorStop(0, color + '55'); g.addColorStop(1, color + '00');
-      return g;
-    }
-    function buildDatasets(win, ctxObj, count) {
-      var radius = count > 100 ? 0 : count > 40 ? 1.5 : 3.5;
+    function chartSeries(win) {
       return SERIES.map(function (s) {
-        var color = css(s.cssVar), bar = state.type === 'bar';
-        return {
-          label: s.label, data: win[s.key], hidden: state.hidden[s.key],
-          borderColor: color, borderWidth: bar ? 0 : 2.5,
-          backgroundColor: bar ? color : function (c) { return gradient(ctxObj, color, c.chart.height); },
-          fill: !bar, tension: 0.35, pointRadius: radius, pointHoverRadius: 5.5,
-          pointBackgroundColor: color, pointBorderColor: css('--surface-raised'), pointBorderWidth: 2,
-          borderRadius: bar ? 5 : 0, maxBarThickness: 22
-        };
+        return { name: s.label, data: win[s.key].map(function (value) { return state.hidden[s.key] ? null : value; }) };
+      });
+    }
+    function applySeriesVisibility() {
+      if (!chart) return;
+      SERIES.forEach(function (s) {
+        if (state.hidden[s.key]) chart.hideSeries(s.label);
+        else chart.showSeries(s.label);
       });
     }
     function renderChart(win, days) {
-      var canvas = $('trendChart');
+      var host = $('trendChart');
       var empty = sum(win.total) === 0;
       $('chartEmpty').hidden = !empty;
-      if (typeof Chart === 'undefined') { showBanner('error', 'The chart library could not be loaded, so the graph is hidden. The numbers and the table still work.', true); return; }
+      if (typeof ApexCharts === 'undefined') {
+        showBanner('error', 'ApexCharts could not be loaded, so the graph is hidden. The numbers and daily table are still available.', true);
+        return;
+      }
       var dark = themeName() === 'dark';
-      var labels = win.keys.map(function (k) { return labelOf(k); });
-      var sig = [state.type, state.range, state.customStart || '', state.customEnd || '', themeName()].join('|');
-      var ctx = canvas.getContext('2d');
+      var labels = win.keys.map(function (key) { return labelOf(key); });
+      var sig = [state.type, themeName()].join('|');
+      var palette = SERIES.map(function (s) { return css(s.cssVar); });
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var options = {
+        chart: {
+          type: state.type === 'bar' ? 'bar' : 'area',
+          height: '100%',
+          width: '100%',
+          parentHeightOffset: 0,
+          toolbar: { show: false },
+          zoom: { enabled: false },
+          animations: { enabled: !reducedMotion, easing: 'easeinout', speed: 450, dynamicAnimation: { speed: 300 } },
+          foreColor: css('--text-muted'),
+          fontFamily: 'Plus Jakarta Sans, sans-serif',
+          background: 'transparent'
+        },
+        series: chartSeries(win),
+        colors: palette,
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: state.type === 'bar' ? 0 : 2.5, lineCap: 'round' },
+        fill: {
+          type: state.type === 'bar' ? 'solid' : 'gradient',
+          opacity: state.type === 'bar' ? 0.88 : 0.22,
+          gradient: { shadeIntensity: 0.35, opacityFrom: 0.32, opacityTo: 0.015, stops: [0, 90, 100] }
+        },
+        markers: { size: win.keys.length > 100 ? 0 : win.keys.length > 40 ? 2 : 3.5, strokeWidth: 2, strokeColors: dark ? '#0f172a' : '#ffffff', hover: { size: 5 } },
+        plotOptions: { bar: { columnWidth: '48%', borderRadius: 5, borderRadiusApplication: 'end' } },
+        grid: { borderColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(28,25,23,0.07)', strokeDashArray: 3, padding: { left: 8, right: 12, top: 4, bottom: 0 } },
+        xaxis: {
+          categories: labels,
+          axisBorder: { show: false },
+          axisTicks: { show: false },
+          tickAmount: Math.min(10, labels.length),
+          labels: { rotate: 0, trim: true, hideOverlappingLabels: true, style: { fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif' } },
+          tooltip: { enabled: false }
+        },
+        yaxis: {
+          min: 0,
+          forceNiceScale: true,
+          decimalsInFloat: 0,
+          labels: { formatter: function (value) { return Number.isFinite(value) ? Math.round(value).toString() : '0'; }, style: { fontSize: '11px', fontFamily: 'Plus Jakarta Sans, sans-serif' } }
+        },
+        legend: { show: false },
+        tooltip: {
+          shared: true,
+          intersect: false,
+          theme: dark ? 'dark' : 'light',
+          style: { fontFamily: 'Plus Jakarta Sans, sans-serif', fontSize: '12px' },
+          x: { formatter: function (value, context) { var key = win.keys[context.dataPointIndex]; return key ? labelOf(key, true) : value; } },
+          y: { formatter: function (value) { return num(value || 0); } },
+          marker: { show: true }
+        },
+        noData: { text: 'No activity recorded', align: 'center', verticalAlign: 'middle', style: { color: css('--text-muted'), fontSize: '13px' } },
+        responsive: [{
+          breakpoint: 640,
+          options: { chart: { height: 260 }, xaxis: { tickAmount: 6, labels: { rotate: 0 } }, plotOptions: { bar: { columnWidth: '58%' } } }
+        }]
+      };
 
-      if (chart && chartSig === sig) {                                             // only the numbers changed: update in place, no flicker
-        chart.data.labels = labels;
-        SERIES.forEach(function (s, i) { chart.data.datasets[i].data = win[s.key]; chart.data.datasets[i].hidden = state.hidden[s.key]; });
-        chart.update();
+      if (chart && chartSig === sig) {
+        chart.updateOptions({
+          series: options.series,
+          xaxis: options.xaxis,
+          yaxis: options.yaxis,
+          tooltip: options.tooltip,
+          grid: options.grid,
+          colors: options.colors,
+          markers: options.markers,
+          fill: options.fill
+        }, false, !reducedMotion, false);
       } else {
         if (chart) chart.destroy();
-        var grid = dark ? 'rgba(255,255,255,0.07)' : 'rgba(28,25,23,0.06)';
-        var text = css('--text-muted');
-        chart = new Chart(ctx, {
-          type: state.type,
-          data: { labels: labels, datasets: buildDatasets(win, ctx, win.keys.length) },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            animation: window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? false : { duration: 500 },
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                backgroundColor: dark ? '#0f172a' : '#ffffff', titleColor: dark ? '#f8fafc' : '#1c1917', bodyColor: dark ? '#cbd5e1' : '#44403c',
-                borderColor: dark ? '#1e293b' : '#e7e0d8', borderWidth: 1, padding: 12, boxPadding: 6, cornerRadius: 12, usePointStyle: true,
-                titleFont: { family: 'Plus Jakarta Sans', weight: '800', size: 13 }, bodyFont: { family: 'Plus Jakarta Sans', size: 12.5 },
-                callbacks: {
-                  title: function (items) { var i = items[0].dataIndex; return labelOf(chart.$keys[i], true); },
-                  footer: function (items) { var t = 0; items.forEach(function (it) { t += it.parsed.y; }); return items.length > 1 ? 'Total  ' + num(t) : ''; }
-                }
-              }
-            },
-            scales: {
-              x: { grid: { display: false }, border: { display: false }, ticks: { color: text, font: { family: 'Plus Jakarta Sans', size: 11.5 }, maxTicksLimit: 10, maxRotation: 0 } },
-              y: { beginAtZero: true, grid: { color: grid }, border: { display: false }, ticks: { color: text, precision: 0, font: { family: 'Plus Jakarta Sans', size: 11.5 }, padding: 8 } }
-            }
-          }
-        });
+        chart = new ApexCharts(host, options);
+        chart.render().then(applySeriesVisibility);
         chartSig = sig;
       }
-      chart.$keys = win.keys;
+      applySeriesVisibility();
       var parts = SERIES.map(function (s) { return s.label + ' ' + num(sum(win[s.key])); }).join(', ');
-      canvas.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Line') + ' chart, ' + (state.range === 'custom' ? state.customStart + ' to ' + state.customEnd : RANGE_NAME[state.range]) + '. ' + parts + '.');
+      host.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Area') + ' chart, ' + (state.range === 'custom' ? state.customStart + ' to ' + state.customEnd : RANGE_NAME[state.range]) + '. ' + parts + '.');
     }
 
     // ---------------------------------------------------------------- drawing: table, highlights
@@ -971,7 +1006,7 @@
       var key = b.getAttribute('data-series');
       state.hidden[key] = !state.hidden[key];
       b.setAttribute('aria-pressed', String(!state.hidden[key]));
-      if (chart) { var i = SERIES.findIndex(function (s) { return s.key === key; }); chart.data.datasets[i].hidden = state.hidden[key]; chart.update(); }
+      if (chart) { var series = SERIES.find(function (s) { return s.key === key; }); if (state.hidden[key]) chart.hideSeries(series.label); else chart.showSeries(series.label); }
     });
     $('hideEmpty').addEventListener('change', function (e) { state.hideEmpty = e.target.checked; render(); });
     $('bannerRetry').addEventListener('click', function () { location.reload(); });
@@ -1016,7 +1051,7 @@
       });
     }
 
-    // the chart takes its colours from the theme, so it is rebuilt whenever the theme changes
+    // ApexCharts is rebuilt when the theme changes so its labels, grid and tooltip match the active theme.
     new MutationObserver(function () { if (state.logs !== null) render(); })
       .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
