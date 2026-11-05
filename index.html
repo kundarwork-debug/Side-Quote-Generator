@@ -1,6 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
@@ -761,6 +771,22 @@
         padding-bottom: 0;
       }
     }
+    /* Keyboard and touch polish; keep the existing homepage layout and cards intact */
+    .module-card:focus-visible, a:focus-visible, button:focus-visible {
+      outline: 3px solid color-mix(in srgb, var(--primary) 48%, transparent);
+      outline-offset: 3px;
+    }
+    .module-card { -webkit-tap-highlight-color: transparent; }
+    @media (hover:none) {
+      .module-card:hover { transform:none; box-shadow:var(--shadow-subtle); }
+    }
+    @media (max-width:560px) {
+      .module-card { min-width:0; }
+      .card-title { overflow-wrap:anywhere; }
+    }
+    @media (prefers-reduced-motion:reduce) {
+      *, *::before, *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
+    }
   </style>
 </head>
 <body>
@@ -1105,17 +1131,13 @@
   <!-- YOUR COMMON JS -->
   <script src="common.js?v=21.44"></script>
 
-  <!-- THEME SYNC CONTROLLER -->
+  <!-- Keep this page in sync with the shared APML theme preference -->
   <script>
-    (function() {
-      const savedTheme = localStorage.getItem('apml_portal_theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'apml_portal_theme') {
-          document.documentElement.setAttribute('data-theme', e.newValue || 'light');
-        }
-      });
-    })();
+    window.addEventListener('storage', function (event) {
+      if (event.key === 'apml-theme') {
+        document.documentElement.setAttribute('data-theme', event.newValue === 'dark' ? 'dark' : 'light');
+      }
+    });
   </script>
 
   <!-- HERO CURSOR GLOW -->
