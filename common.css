@@ -138,19 +138,7 @@
   will-change: transform, opacity;
 }
 
-/* Main/Home page override: Hidden until scrolled */
-.is-home-page .site-header {
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Main/Home page state: Visible when scrolled */
-.is-home-page .site-header.header-visible {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
+/* Shared header remains visible on the homepage and all inner pages. */
 
 .header-inner {
   max-width: none;
