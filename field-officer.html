@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Field Officer Directory WCRO - APML Portal</title>
     
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
@@ -60,7 +59,7 @@
         }
 
         body {
-            background-color: var(--bg-base);
+            background-color: var(--bg-base, #FDF8F5);
             color: var(--text-main);
             min-height: 100%;
             display: flex;
@@ -234,7 +233,7 @@
             align-items: center;
             gap: 6px;
             padding: 5px 14px;
-            background: #FFFFFF;
+            background: var(--surface, #FFFFFF);
             border: 1px solid var(--border-subtle);
             color: var(--primary);
             border-radius: var(--radius-pill);
@@ -275,7 +274,7 @@
         }
 
         .card {
-            background: #FFFFFF !important;
+            background: var(--surface-card, #FFFFFF);
             border: 1px solid var(--border-subtle);
             border-radius: var(--radius-xl);
             padding: 28px;
@@ -313,7 +312,7 @@
             border: 1.5px solid var(--border-subtle);
             border-radius: var(--radius-pill);
             outline: none;
-            background: #FFFFFF;
+            background: var(--surface, #FFFFFF);
             color: var(--text-main);
             transition: all 0.2s ease;
         }
@@ -382,18 +381,91 @@
             .site-footer { padding-left: 14px !important; padding-right: 14px !important; }
             .footer-author-pill { max-width: 100%; }
         }
+
+    /* Theme-aware surfaces and accessible controls */
+    .header-badge { background:var(--surface, #fff); }
+    .chip { background:var(--surface-subtle, #F7EDE6); }
+    .lookup-input { min-height:48px; font-size:16px; }
+    .chip { min-height:40px; display:inline-flex; align-items:center; }
+    .lookup-input:focus-visible, .chip:focus-visible, button:focus-visible, a:focus-visible {
+      outline:3px solid rgba(194,29,29,.28); outline-offset:2px;
+    }
+    html[data-theme="dark"] .card,
+    html[data-theme="dark"] .loader-card-box { background:var(--surface-card) !important; border-color:var(--surface-border); }
+    html[data-theme="dark"] .header-badge { background:var(--surface); border-color:var(--surface-border); }
+    html[data-theme="dark"] .chip { background:var(--surface-subtle); border-color:var(--surface-border); color:var(--text-main); }
+    html[data-theme="dark"] #officerResultsContainer > div {
+      background:var(--surface-card) !important; border-color:var(--surface-border) !important;
+    }
+    html[data-theme="dark"] #officerResultsContainer > div > div:first-child {
+      background:var(--surface-raised) !important; border-color:var(--surface-border) !important;
+    }
+    html[data-theme="dark"] #officerResultsContainer [id^="row_view_"] {
+      background:var(--surface-card) !important; border-color:var(--surface-border) !important;
+    }
+    html[data-theme="dark"] #officerResultsContainer [id^="row_view_"] span,
+    html[data-theme="dark"] #officerResultsContainer [id^="row_view_"] div {
+      color:var(--text-main);
+    }
+    html[data-theme="dark"] #officerResultsContainer [id^="row_view_"] button {
+      background:var(--surface-raised) !important; border-color:var(--surface-border) !important;
+    }
+    @media (max-width:768px) {
+      .main-container { gap:20px; }
+      .card { padding:20px 16px !important; border-radius:18px; }
+      .card-header { align-items:flex-start; font-size:15px; }
+      .card-header > div { flex-wrap:wrap; }
+      .lookup-input { padding:14px 16px 14px 46px; }
+      .quick-chips { gap:8px; }
+      .chip { padding:8px 12px; }
+      #officerResultsContainer > div { border-radius:16px !important; }
+      #officerResultsContainer > div > div:first-child { display:none !important; }
+      #officerResultsContainer [id^="row_view_"] {
+        display:grid !important;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+        gap:12px 10px !important;
+        padding:16px !important;
+        align-items:start !important;
+      }
+      #officerResultsContainer [id^="row_view_"] > div:first-child {
+        grid-column:1 / -1;
+        padding-bottom:10px;
+        border-bottom:1px solid var(--surface-border, #ede4de);
+      }
+      #officerResultsContainer [id^="row_view_"] > div:nth-child(2),
+      #officerResultsContainer [id^="row_view_"] > div:nth-child(3) {
+        min-width:0;
+        overflow-wrap:anywhere;
+      }
+      #officerResultsContainer [id^="row_view_"] > div:nth-child(4) {
+        grid-column:1 / -1;
+        padding-top:2px;
+      }
+      #officerResultsContainer [id^="row_view_"] > div:nth-child(5) {
+        grid-column:1 / -1;
+        justify-content:flex-start !important;
+        padding-top:2px;
+      }
+      #officerResultsContainer [id^="row_view_"] > div:nth-child(5) button {
+        width:40px !important; height:40px !important;
+      }
+      #officerResultsContainer [id^="row_view_"] a {
+        min-height:40px;
+        padding:6px 4px;
+      }
+    }
+    @media (max-width:420px) {
+      .directory-header-wrap { padding:0 4px; }
+      .header-badge { max-width:100%; text-align:center; justify-content:center; }
+      .page-title { font-size:clamp(25px,8vw,32px); }
+      .status-badge { text-align:center; justify-content:center; flex-wrap:wrap; }
+      .card-header { flex-direction:column; align-items:stretch; }
+      .card-header > div:last-child { align-self:flex-end; }
+      #officerResultsContainer [id^="row_view_"] { padding:14px !important; }
+    }
+
     </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
