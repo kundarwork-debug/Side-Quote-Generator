@@ -415,8 +415,8 @@
         html[data-theme="dark"] body.apml-directory-page .loader-card-box { background:var(--apml-color-surface,#171d29);border-color:var(--apml-color-border,#303a4b);color:var(--apml-color-text,#f2f3f5); }
         #masterSearchInput { min-height:52px;font-size:16px!important; }
         .chip { min-height:40px;display:inline-flex;align-items:center;justify-content:center; }
-        #createContactBtn,#adminToggleBtn { min-height:44px; }
-        #adminToggleBtn { min-width:44px; }
+        #createContactBtn,#adminToggleBtn,#bulkUploadBtn { min-height:44px; }
+        #adminToggleBtn { min-width:44px; }\n        #bulkUploadBtn:focus-visible { outline:3px solid color-mix(in srgb,var(--primary) 48%,transparent);outline-offset:3px; }\n        @media(max-width:560px){ #bulkUploadBtn{padding:8px 10px!important;font-size:11px!important;} }
         .chip:focus-visible,#createContactBtn:focus-visible,#adminToggleBtn:focus-visible,#masterSearchInput:focus-visible,
         .directory-row-actions button:focus-visible,.directory-address-actions a:focus-visible,.directory-address-actions button:focus-visible {
             outline:3px solid color-mix(in srgb,var(--primary) 48%,transparent);outline-offset:3px;
@@ -618,6 +618,11 @@
                     <button type="button" id="createContactBtn" onclick="openCreateContactModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary); color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
                         <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Contact
                     </button>
+                    <!-- Admin-only Excel bulk upload -->
+                    <button type="button" id="bulkUploadBtn" onclick="document.getElementById('contactsExcelInput').click()" title="Import contacts from Excel" style="display:none; align-items:center; gap:7px; padding:8px 14px; background:#1f6f4a; color:#fff; border:0; border-radius:9999px; font-size:12px; font-weight:700; cursor:pointer;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload Excel
+                    </button>
+                    <input type="file" id="contactsExcelInput" accept=".xlsx,.xls,.csv" hidden onchange="handleContactsExcel(event)">
                     <!-- Google Logo Admin Button -->
                     <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" title="Admin Login" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.2s ease;">
                         <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
@@ -659,7 +664,7 @@
 
     <div id="footer-container"></div>
 
-    <!-- Firebase SDKs -->
+    <!-- SheetJS: browser-side Excel parsing; files are not sent to a third-party service -->\n    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>\n\n    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -751,6 +756,8 @@
                         }
 
                         isAdminMode = true;
+                        const uploadBtn = document.getElementById('bulkUploadBtn');
+                        if (uploadBtn) uploadBtn.style.display = 'inline-flex';
                         const btn = document.getElementById('adminToggleBtn');
                         btn.style.background = '#991b1b';
                         btn.title = "Exit Admin View";
@@ -779,6 +786,10 @@
             } else {
                 firebase.auth().signOut().then(() => {
                     isAdminMode = false;
+                    const uploadBtn = document.getElementById('bulkUploadBtn');
+                    if (uploadBtn) uploadBtn.style.display = 'none';
+                    const fileInput = document.getElementById('contactsExcelInput');
+                    if (fileInput) fileInput.value = '';
                     const btn = document.getElementById('adminToggleBtn');
                     btn.style.background = '#ffffff';
                     btn.title = "Admin Login";
@@ -843,6 +854,117 @@
                 }).catch(err => {
                     Swal.fire('Error', err.message, 'error');
                 });
+            }
+        };
+
+
+        // Excel bulk import into the same Realtime Database directory used by this page.
+        // Excel headers: category, contactName, contactNumber, designation, fullAddress, location, region.
+        window.handleContactsExcel = async function(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            if (!isAdminMode || !firebase.auth().currentUser ||
+                !ALLOWED_ADMIN_EMAILS.includes(String(firebase.auth().currentUser.email || '').toLowerCase().trim())) {
+                event.target.value = '';
+                Swal.fire('Admin access required', 'Please sign in with an authorized admin account first.', 'warning');
+                return;
+            }
+            if (!window.XLSX) {
+                Swal.fire('Excel reader unavailable', 'Please refresh the page and try again.', 'error');
+                event.target.value = '';
+                return;
+            }
+            try {
+                const buffer = await file.arrayBuffer();
+                const workbook = XLSX.read(buffer, { type: 'array', cellText: true, cellDates: false });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                if (!sheet) throw new Error('The workbook does not contain a readable sheet.');
+                const rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false });
+                if (!rows.length) throw new Error('No contact rows were found in the first worksheet.');
+
+                const requiredHeaders = ['category','contactname','contactnumber','designation','fulladdress','location','region'];
+                const headers = Object.keys(rows[0]).map(h => String(h).trim().toLowerCase());
+                const missing = requiredHeaders.filter(h => !headers.includes(h));
+                if (missing.length) throw new Error('Missing columns: ' + missing.join(', ') + '. Please use the agreed seven column names exactly.');
+
+                const normalized = rows.map((row, index) => {
+                    const get = key => {
+                        const actual = Object.keys(row).find(h => String(h).trim().toLowerCase() === key.toLowerCase());
+                        return actual ? String(row[actual] ?? '').trim() : '';
+                    };
+                    const record = {
+                        category: get('category'),
+                        name: get('contactName'),
+                        contact: get('contactNumber').replace(/\s+/g, ''),
+                        designation: get('designation'),
+                        address: get('fullAddress'),
+                        location: get('location'),
+                        region: get('region'),
+                        isDeleted: false
+                    };
+                    return { rowNumber: index + 2, record };
+                }).filter(item => Object.values(item.record).some(v => v !== '' && v !== false));
+
+                const invalid = normalized.filter(x => !x.record.category || !x.record.name || !x.record.contact);
+                const valid = normalized.filter(x => x.record.category && x.record.name && x.record.contact);
+                const existingKeys = new Set((loadedMasterData || []).filter(x => !x.isDeleted).map(x =>
+                    String(x.contact || '').replace(/\D/g,'') + '|' + String(x.location || '').trim().toLowerCase()
+                ));
+                const seen = new Set();
+                const unique = [];
+                const duplicates = [];
+                valid.forEach(item => {
+                    const key = item.record.contact.replace(/\D/g,'') + '|' + item.record.location.trim().toLowerCase();
+                    if (existingKeys.has(key) || seen.has(key)) duplicates.push(item);
+                    else { seen.add(key); unique.push(item); }
+                });
+
+                const previewRows = unique.slice(0, 8).map(x =>
+                    '<tr><td>' + x.rowNumber + '</td><td>' + escapeHtml(x.record.name) + '</td><td>' +
+                    escapeHtml(x.record.contact) + '</td><td>' + escapeHtml(x.record.location) + '</td></tr>'
+                ).join('');
+                const preview = '<div style="text-align:left;font-size:13px;line-height:1.6">' +
+                    '<p><b>' + rows.length + '</b> rows read from <b>' + escapeHtml(file.name) + '</b>.</p>' +
+                    '<p>Ready to import: <b style="color:#15803d">' + unique.length + '</b> · Duplicates to skip: <b>' + duplicates.length +
+                    '</b> · Invalid rows: <b>' + invalid.length + '</b></p>' +
+                    (previewRows ? '<div style="max-height:220px;overflow:auto;margin-top:12px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th>Row</th><th>Name</th><th>Number</th><th>Location</th></tr></thead><tbody>' + previewRows + '</tbody></table></div>' : '<p>No new valid contacts to import.</p>') +
+                    '</div>';
+                if (!unique.length) {
+                    await Swal.fire({ icon:'info', title:'Nothing to import', html:preview });
+                    return;
+                }
+                const confirm = await Swal.fire({
+                    icon:'question', title:'Review Excel import', html:preview,
+                    showCancelButton:true, confirmButtonText:'Import ' + unique.length + ' contacts',
+                    cancelButtonText:'Cancel', confirmButtonColor:'#1f6f4a', width:680
+                });
+                if (!confirm.isConfirmed) return;
+                if (!isAdminMode || !firebase.auth().currentUser ||
+                    !ALLOWED_ADMIN_EMAILS.includes(String(firebase.auth().currentUser.email || '').toLowerCase().trim())) {
+                    throw new Error('Admin session expired. Please sign in again.');
+                }
+
+                const updates = {};
+                unique.forEach(item => {
+                    const key = directoryRef.push().key;
+                    updates[key] = item.record;
+                });
+                const entries = Object.entries(updates);
+                let imported = 0;
+                for (let i = 0; i < entries.length; i += 200) {
+                    const chunk = Object.fromEntries(entries.slice(i, i + 200));
+                    await directoryRef.update(chunk);
+                    imported += Object.keys(chunk).length;
+                    Swal.update({ title:'Importing contacts…', html:'Successfully saved ' + imported + ' of ' + unique.length + ' contacts.' });
+                }
+                await Swal.fire({ icon:'success', title:'Import complete', html:
+                    '<p><b>' + imported + '</b> contacts added to the live Directory.</p>' +
+                    '<p>Skipped duplicates: ' + duplicates.length + ' · Invalid rows: ' + invalid.length + '</p>' });
+            } catch (error) {
+                console.error('Directory Excel import failed:', error);
+                Swal.fire('Import failed', error.message || 'Unable to import this workbook.', 'error');
+            } finally {
+                event.target.value = '';
             }
         };
 
