@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>(function(){var theme='light';try{var saved=localStorage.getItem('apml-theme');if(saved==='dark'||saved==='light')theme=saved;}catch(error){}document.documentElement.setAttribute('data-theme',theme);})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Traffic &amp; Download Analytics</title>
@@ -110,7 +110,7 @@
     main {
       flex: 1; width: 100%; max-width: 1280px; margin: 0 auto;
       padding: 28px 24px 72px;
-      margin-top: 100px !important;
+      margin-top: 76px !important;
       position: relative; z-index: 1;
     }
 
@@ -363,7 +363,7 @@
     @media (max-width: 768px) {
       html, body { width:100%; max-width:100%; overflow-x:hidden!important; }
       body { min-height:100vh; height:auto!important; overflow-y:auto!important; }
-      main { width:100%!important; max-width:100%!important; min-width:0!important; margin:0 auto!important; margin-top:0!important; padding:22px 14px 40px!important; }
+      main { width:100%!important; max-width:100%!important; min-width:0!important; margin:0 auto!important; margin-top:64px!important; padding:22px 14px 40px!important; }
       .page-head, .head-controls, .chart-tools { min-width:0; max-width:100%; }
       .page-head { align-items:flex-start; gap:14px; }
       .kpis, .two-col, .section-grid, .insight-list { min-width:0; }
@@ -376,6 +376,26 @@
       .footer-grid-layout, .footer-bottom-row { width:100%!important; flex-direction:column!important; align-items:flex-start!important; gap:18px!important; }
       .footer-left-col, .footer-right-col { width:100%!important; max-width:100%!important; min-width:0!important; }
     }
+    .seg button, .btn, .series-chip { min-height:40px; }
+    .seg button:focus-visible, .btn:focus-visible, .series-chip:focus-visible, .check input:focus-visible { outline:3px solid color-mix(in srgb, var(--primary) 45%, transparent); outline-offset:2px; }
+    .table-scroll { overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; }
+    .canvas-wrap { min-width:0; }
+    @media (max-width:640px) {
+      .page-head { margin-bottom:20px; }
+      .head-controls { width:100%; align-items:stretch; gap:9px; }
+      .head-controls > * { max-width:100%; }
+      .head-controls .seg { flex:1 1 100%; justify-content:flex-start; }
+      .head-controls .btn { justify-content:center; }
+      .report-actions { margin-bottom:16px; }
+      .card-head { align-items:flex-start; }
+      .chart-tools, .series-chips { width:100%; }
+      .series-chip { min-height:40px; }
+      .table-scroll { border-radius:12px; }
+      .facts { gap:9px; }
+      .fact { padding:12px; min-width:0; }
+      .fact b { font-size:17px; overflow-wrap:anywhere; }
+      .banner { padding:12px 14px; }
+    }
     @media (max-width:420px) {
       main { padding-left:12px!important; padding-right:12px!important; }
       .card, .kpi { padding:14px!important; }
@@ -384,16 +404,6 @@
 
   </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
