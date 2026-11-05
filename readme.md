@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="readme-banner.svg" alt="APML Portal — A connected workspace for everyday operations" width="100%">
+<img src="logo.svg" alt="APML Portal logo" width="120">
 
 # APML Portal
 
