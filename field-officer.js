@@ -78,7 +78,8 @@ class APMLFieldOfficerDirectory {
     `;
 
     html += items.map((item, index) => {
-      const recordId = item.id !== undefined && item.id !== null ? String(item.id) : '';\n      if (!recordId) return ''; // A record without its Firebase key must not expose destructive actions.
+      const recordId = item.id !== undefined && item.id !== null ? String(item.id) : '';
+      if (!recordId) return ''; // A record without its Firebase key must not expose destructive actions.
       const name = item.name || 'Unnamed Officer';
       const branch = item.branch || 'N/A';
       const apmCode = item.apmCode || 'N/A';
