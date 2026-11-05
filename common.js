@@ -48,6 +48,80 @@
 })();
 
 // =========================================================
+// APML ANDROID APP PROMOTION (MOBILE WEB BROWSER ONLY)
+// =========================================================
+(function initAndroidAppPromotion() {
+  const ua = navigator.userAgent || '';
+  const isAndroid = /Android/i.test(ua);
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone
+    || document.referrer.includes('android-app://');
+  const isNativeApk = document.documentElement.classList.contains('is-native-apk');
+
+  if (!isAndroid || isStandalone || isNativeApk) return;
+
+  let dismissedUntil = 0;
+  try {
+    dismissedUntil = Number(localStorage.getItem('apml-app-promo-dismissed-until') || 0);
+  } catch (error) {}
+  if (Date.now() < dismissedUntil) return;
+
+  const style = document.createElement('style');
+  style.textContent = `
+    .apml-app-promo-backdrop{position:fixed;inset:0;z-index:100500;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.58);backdrop-filter:blur(7px);opacity:0;animation:apmlPromoFade .24s ease forwards}
+    .apml-app-promo-card{position:relative;width:min(100%,410px);overflow:hidden;border:1px solid rgba(255,255,255,.72);border-radius:24px;background:var(--surface-card,#fff);color:var(--text-main,#1c1917);box-shadow:0 28px 90px rgba(0,0,0,.28);padding:30px 26px 24px;text-align:center;font-family:var(--font-sans,Arial,sans-serif)}
+    .apml-app-promo-top{height:5px;position:absolute;inset:0 0 auto;background:linear-gradient(90deg,#991b1b,#dc2626,#fb7185)}
+    .apml-app-promo-logo{width:66px;height:66px;object-fit:contain;margin:4px auto 16px;display:block}
+    .apml-app-promo-kicker{font-size:11px;letter-spacing:.16em;font-weight:800;color:#b91c1c;text-transform:uppercase;margin-bottom:8px}
+    .apml-app-promo-title{font-size:24px;line-height:1.2;font-weight:800;letter-spacing:-.04em;margin:0 0 10px;color:var(--text-main,#1c1917)}
+    .apml-app-promo-copy{font-size:14px;line-height:1.65;color:var(--text-secondary,#57534e);margin:0 auto 22px;max-width:320px}
+    .apml-app-promo-actions{display:grid;gap:10px}
+    .apml-app-promo-download{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:13px;background:#b91c1c;color:#fff!important;text-decoration:none!important;font-size:14px;font-weight:800;box-shadow:0 7px 18px rgba(185,28,28,.2)}
+    .apml-app-promo-dismiss{min-height:44px;border:0;background:transparent;color:var(--text-muted,#78716c);font:700 13px inherit;cursor:pointer}
+    .apml-app-promo-note{font-size:11px;color:var(--text-muted,#78716c);margin-top:13px}
+    .apml-app-promo-close{position:absolute;right:13px;top:13px;width:34px;height:34px;border:0;border-radius:50%;background:var(--surface-subtle,#f5f5f4);color:var(--text-secondary,#57534e);font-size:21px;line-height:1;cursor:pointer}
+    @keyframes apmlPromoFade{to{opacity:1}}
+    @media(prefers-reduced-motion:reduce){.apml-app-promo-backdrop{animation:none;opacity:1}}
+  `;
+  document.head.appendChild(style);
+
+  const backdrop = document.createElement('div');
+  backdrop.className = 'apml-app-promo-backdrop';
+  backdrop.setAttribute('role','dialog');
+  backdrop.setAttribute('aria-modal','true');
+  backdrop.setAttribute('aria-labelledby','apml-app-promo-title');
+  backdrop.innerHTML = `
+    <section class="apml-app-promo-card">
+      <div class="apml-app-promo-top"></div>
+      <button class="apml-app-promo-close" type="button" aria-label="Close app promotion">×</button>
+      <img class="apml-app-promo-logo" src="logo.svg" alt="APML Portal">
+      <div class="apml-app-promo-kicker">A better way to work</div>
+      <h2 class="apml-app-promo-title" id="apml-app-promo-title">Take APML Portal with you</h2>
+      <p class="apml-app-promo-copy">Get the APML Android app for a focused, app-like experience with your everyday tools just a tap away.</p>
+      <div class="apml-app-promo-actions">
+        <a class="apml-app-promo-download" href="https://github.com/kundarwork-debug/Side-Quote-Generator/releases/download/apml-apk-latest/APML-Portal.apk">Download Android App</a>
+        <button class="apml-app-promo-dismiss" type="button">Continue in Browser</button>
+      </div>
+      <div class="apml-app-promo-note">Android app · Free to use</div>
+    </section>`;
+  document.body.appendChild(backdrop);
+
+  const close = () => {
+    try { localStorage.setItem('apml-app-promo-dismissed-until', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (error) {}
+    backdrop.remove();
+  };
+  backdrop.querySelector('.apml-app-promo-close').addEventListener('click', close);
+  backdrop.querySelector('.apml-app-promo-dismiss').addEventListener('click', close);
+  backdrop.addEventListener('click', event => { if (event.target === backdrop) close(); });
+  document.addEventListener('keydown', function onEscape(event) {
+    if (event.key === 'Escape' && document.body.contains(backdrop)) {
+      close();
+      document.removeEventListener('keydown', onEscape);
+    }
+  });
+})();
+
+// =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
 // Keep analytics date keys aligned with the dashboard's Asia/Kolkata calendar.
