@@ -912,12 +912,15 @@
       win = customWindow(state.logs || {}, yearStart, today);
       $('heatmapRange').textContent = labelOf(yearStart, false) + ' – ' + labelOf(today, false) + ' · Last 365 days';
 
-      // Sunday-first calendar layout: keep date placement aligned with the weekday labels.
+      // Place every date explicitly in its Sunday–Saturday row.
+      // This avoids browser CSS auto-placement shifting the current day.
       var firstDate = win.keys.length ? keyToDate(win.keys[0]) : new Date();
       var leading = firstDate.getUTCDay();
       var totalSlots = leading + win.keys.length;
       var weeks = Math.max(1, Math.ceil(totalSlots / 7));
       host.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
+      host.style.gridTemplateRows = 'repeat(7, 11px)';
+      host.style.gridAutoFlow = 'row';
       months.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
       var monthSeen = {};
       for (var w = 0; w < weeks; w++) {
@@ -937,17 +940,14 @@
         month.style.gridColumn = String(w + 1);
         months.appendChild(month);
       }
-      for (var pad = 0; pad < leading; pad++) {
-        var blank = document.createElement('span');
-        blank.className = 'day-heat empty';
-        blank.setAttribute('aria-hidden', 'true');
-        host.appendChild(blank);
-      }
       var max = Math.max.apply(null, win.total.concat([0]));
       win.keys.forEach(function (key, i) {
         var value = win.total[i];
+        var date = keyToDate(key);
         var cell = document.createElement('span');
         cell.className = 'day-heat';
+        cell.style.gridColumn = String(Math.floor((leading + i) / 7) + 1);
+        cell.style.gridRow = String(date.getUTCDay() + 1);
         var intensity = max > 0 && value > 0 ? value / max : 0;
         cell.style.backgroundColor = value > 0 ? 'var(--primary)' : 'var(--surface-subtle)';
         cell.style.opacity = value > 0 ? String(0.22 + intensity * 0.78) : '1';
