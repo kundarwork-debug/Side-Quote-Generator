@@ -257,23 +257,8 @@ window.sendPortalNotification = function () {};
 
     // Shared header stays visible on every page.
 
-    // 1. ENSURE SHARED LAYOUT MOUNTS EXIST ON EVERY PAGE.
-    // Some legacy pages do not include the placeholders; create them safely.
-    let headerContainer = document.getElementById("header-container");
-    if (!headerContainer && document.body) {
-      headerContainer = document.createElement("div");
-      headerContainer.id = "header-container";
-      document.body.insertBefore(headerContainer, document.body.firstChild);
-    }
-
-    let footerContainer = document.getElementById("footer-container");
-    if (!footerContainer && document.body) {
-      footerContainer = document.createElement("div");
-      footerContainer.id = "footer-container";
-      document.body.appendChild(footerContainer);
-    }
-
-    // 2. INJECT HEADER (Rotating Hub Logo + Navigation)
+    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
+    const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
         <header class="site-header" id="siteHeader">
@@ -390,7 +375,8 @@ window.sendPortalNotification = function () {};
         });
       }
 
-    // 3. INJECT EDGE-TO-EDGE STRETCHED FOOTER
+    // 2. INJECT EDGE-TO-EDGE STRETCHED FOOTER
+    const footerContainer = document.getElementById("footer-container");
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
       footerContainer.innerHTML = `
