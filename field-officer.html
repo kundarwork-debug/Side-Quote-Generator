@@ -1062,7 +1062,7 @@
                     return;
                 }
 
-                loadedOfficerData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                loadedOfficerData = Object.entries(data).map(([key, value]) => ({ ...(value || {}), id: key }));
                 document.getElementById('recordCount').innerText = loadedOfficerData.filter(i => !i.isDeleted).length;
 
                 officerHelper.setData(loadedOfficerData);
@@ -1196,12 +1196,12 @@
             if (!officer) return;
 
             const { value: formValues } = await Swal.fire({
-                title: `Edit Officer: ${officer.name || ''}`,
+                title: `Edit Officer: ${String(officer.name || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}`,
                 html:
-                    `<input id="swal-name" class="swal2-input" placeholder="Officer Name *" value="${officer.name || ''}">` +
-                    `<input id="swal-branch" class="swal2-input" placeholder="Branch Code *" value="${officer.branch || ''}">` +
-                    `<input id="swal-apm" class="swal2-input" placeholder="APM Code" value="${officer.apmCode || ''}">` +
-                    `<input id="swal-mobile" class="swal2-input" placeholder="Mobile Number *" value="${officer.mobile || ''}">` +
+                    `<input id="swal-name" class="swal2-input" placeholder="Officer Name *" value="${escapeHtml(officer.name || '')}">` +
+                    `<input id="swal-branch" class="swal2-input" placeholder="Branch Code *" value="${escapeHtml(officer.branch || '')}">` +
+                    `<input id="swal-apm" class="swal2-input" placeholder="APM Code" value="${escapeHtml(officer.apmCode || '')}">` +
+                    `<input id="swal-mobile" class="swal2-input" placeholder="Mobile Number *" value="${escapeHtml(officer.mobile || '')}">` +
                     `<select id="swal-desig" class="swal2-input"><option value="Marketing Executive" ${officer.designation==='Marketing Executive'?'selected':''}>Marketing Executive</option><option value="Branch Incharge" ${officer.designation==='Branch Incharge'?'selected':''}>Branch Incharge</option></select>` +
                     `<select id="swal-status" class="swal2-input"><option value="Active" ${officer.status==='Active'?'selected':''}>Active</option><option value="Assco" ${officer.status==='Assco'?'selected':''}>Assco</option><option value="Leave" ${officer.status==='Leave'?'selected':''}>Leave</option><option value="Left" ${officer.status==='Left'?'selected':''}>Left</option></select>`,
                 focusConfirm: false,
