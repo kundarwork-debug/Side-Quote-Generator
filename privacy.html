@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>(function(){var theme='light';try{var saved=localStorage.getItem('apml-theme');if(saved==='dark'||saved==='light')theme=saved;}catch(error){}document.documentElement.setAttribute('data-theme',theme);})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
@@ -236,18 +236,21 @@
       background: var(--primary-dark);
       transform: translateY(-1px);
     }
+
+    html[data-theme="dark"] {
+      --bg-base:#111827; --surface-card:#1e293b; --surface-border:#334155;
+      --surface-subtle:#263449; --text-main:#f1f5f9; --text-secondary:#cbd5e1;
+      --text-muted:#a8b4c5; --text-faint:#94a3b8;
+    }
+    html[data-theme="dark"] body { background:var(--bg-base); color:var(--text-main); }
+    html[data-theme="dark"] .ambient-bg { opacity:.22; }
+    html[data-theme="dark"] .policy-card { background:var(--surface-card); }
+    html[data-theme="dark"] .policy-meta,html[data-theme="dark"] .contact-box { background:var(--surface-subtle); border-color:var(--surface-border); }
+    .btn-back { min-height:44px; }
+    .btn-back:focus-visible,.contact-item:focus-visible { outline:3px solid rgba(185,28,28,.35); outline-offset:3px; }
+    @media(max-width:600px){ main { padding-left:16px; padding-right:16px; margin-top:96px; margin-bottom:52px; } .policy-card { padding:24px 18px; } .policy-content { gap:23px; } .policy-section p { font-size:14.5px; line-height:1.7; } .back-home-row { gap:14px; flex-wrap:wrap; } }
   </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
