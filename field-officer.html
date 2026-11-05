@@ -699,6 +699,28 @@
       body.apml-field-officer-page .chip { transition: none !important; }
     }
 
+    
+    /* Final Field Officer layout override, after legacy page styles. */
+    body.apml-field-officer-page main.main-container,
+    body.apml-field-officer-page .main-container {
+      display: flex !important;
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      align-self: stretch !important;
+      box-sizing: border-box !important;
+    }
+    body.apml-field-officer-page main.main-container > .card,
+    body.apml-field-officer-page #officerResultsContainer,
+    body.apml-field-officer-page #officerResultsContainer > div {
+      width: 100% !important;
+      max-width: none !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+    }
+
     </style>
 
 </head>
@@ -929,7 +951,7 @@
 
     <!-- Core Scripts -->
     <script src="common.js?v=21.36"></script>
-    <script src="field-officer.js?v=1"></script>
+    <script src="field-officer.js?v=2"></script>
 
     <script>
         const db = firebase.database();
