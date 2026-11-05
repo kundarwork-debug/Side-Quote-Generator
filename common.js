@@ -676,6 +676,8 @@ window.sendPortalNotification = function () {};
     }
   }
 
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", renderHeaderAndFooter);
   } else {
