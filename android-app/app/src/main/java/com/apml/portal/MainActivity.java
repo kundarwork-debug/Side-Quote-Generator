@@ -193,6 +193,7 @@ public class MainActivity extends Activity {
                     + "+'*,*:before,*:after{box-sizing:border-box;}'"
                     + "+'img,video,canvas,svg,iframe{max-width:100%;}'"
                     + "+'table{max-width:100%;}'"
+                    + "+'#support-fab,.support-fab,#supportBubble,#supportAvatarBtn{display:none!important;visibility:hidden!important;pointer-events:none!important;}'"
                     + "+'@media(max-width:768px){main,.container,.page-container,.content,.drive-container,.gallery-container{max-width:100%!important;width:100%!important;} .page-head,.drive-head-bar,.gallery-head-bar{flex-wrap:wrap!important;} .grid,.kpis,.modules-grid{min-width:0!important;} #footer-container,footer,.site-footer{width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;flex-shrink:0!important;overflow:visible!important;} .sheet-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;} .sheet{max-width:100%!important;} }';"
                     + "})();";
                 view.evaluateJavascript(responsiveFix, null);
