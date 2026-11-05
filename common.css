@@ -123,9 +123,10 @@
   right: 0;
   width: 100%;
   height: 64px;
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Let each page's own background show through for a seamless layout. */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
   z-index: 1000;
   display: flex;
@@ -337,7 +338,8 @@
 }
 
 .site-footer {
-  background: var(--md-sys-color-surface-container-lowest);
+  /* Match the page background instead of using a separate footer panel. */
+  background: transparent;
   border-top: 1px solid var(--md-sys-color-outline-variant);
   padding: 18px 0;
   width: 100%;
@@ -593,7 +595,11 @@ html[data-theme="dark"] body {
   color: #f8fafc !important;
 }
 html[data-theme="dark"] .site-header,
-html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .site-footer {
+  background: transparent !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
 html[data-theme="dark"] .nav-menu,
 html[data-theme="dark"] .footer-grid-container,
 html[data-theme="dark"] .footer-links-columns {
