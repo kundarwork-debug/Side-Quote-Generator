@@ -30,58 +30,31 @@
 }
 
 /* =========================================================
-   APK / TOUCH STANDALONE ONLY (FIXES MOUSE LOCK IN FULLSCREEN)
+   INSTALLED PWA TOUCH SUPPORT
+   Keep native browser gesture handling intact. Do not globally
+   disable selection or apply touch-action to every element.
    ========================================================= */
-@media all and (display-mode: standalone) {
-  @media (hover: none) and (pointer: coarse) {
-    *, *::before, *::after {
-      -webkit-touch-callout: none !important;
-      -webkit-user-select: none !important;
-      user-select: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
+@media (display-mode: standalone) {
+  html, body {
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
 
-    input, textarea {
-      -webkit-user-select: text !important;
-      user-select: text !important;
-    }
+  a, button, [role="button"], [role="tab"], summary,
+  input[type="button"], input[type="submit"], input[type="reset"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    html, body {
-      overscroll-behavior-y: auto !important;
-      touch-action: auto !important;
-      padding-top: env(safe-area-inset-top) !important;
-      padding-bottom: env(safe-area-inset-bottom) !important;
-    }
+  input, textarea, select, [contenteditable="true"] {
+    touch-action: auto;
+    -webkit-user-select: text;
+    user-select: text;
+  }
 
-    /* Keep native taps available to every page control in installed PWA mode. */
-    a, button, input, textarea, select, label, summary, [role="button"],
-    [role="tab"], [onclick], .btn-action, .module-card, .nav-link,
-    .hamburger-btn, .m3-about-btn, .support-btn, .cta-arrow {
-      touch-action: manipulation !important;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    input, textarea, select, [contenteditable="true"] {
-      -webkit-user-select: text !important;
-      user-select: text !important;
-      touch-action: auto !important;
-    }
-
-    button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
-    .hamburger-btn, .support-btn, .cta-arrow {
-      touch-action: manipulation !important;
-    }
-
-    button:active, 
-    .btn-action:active, 
-    .module-card:active, 
-    .tech-chip:active, 
-    .nav-link:active,
-    .m3-about-btn:active {
-      transform: scale(0.96) !important;
-      transition: transform 0.06s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      filter: brightness(0.92) !important;
-    }
+  /* Decorative layers must never intercept taps. */
+  .ambient-bg, .ambient-glow, .cursor-glow {
+    pointer-events: none !important;
   }
 }
 
