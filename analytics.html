@@ -750,7 +750,7 @@
     function themeName() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
     function chartSeries(win) {
       return SERIES.map(function (s) {
-        return { name: s.label, data: win[s.key].map(function (value) { return state.hidden[s.key] ? null : value; }) };
+        return { name: s.label, data: win[s.key] };
       });
     }
     function applySeriesVisibility() {
@@ -839,16 +839,15 @@
           colors: options.colors,
           markers: options.markers,
           fill: options.fill
-        }, false, !reducedMotion, false);
+        }, false, !reducedMotion, false).then(applySeriesVisibility);
       } else {
         if (chart) chart.destroy();
         chart = new ApexCharts(host, options);
         chart.render().then(applySeriesVisibility);
         chartSig = sig;
       }
-      applySeriesVisibility();
       var parts = SERIES.map(function (s) { return s.label + ' ' + num(sum(win[s.key])); }).join(', ');
-      host.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Area') + ' chart, ' + (state.range === 'custom' ? state.customStart + ' to ' + state.customEnd : RANGE_NAME[state.range]) + '. ' + parts + '.');
+      host.setAttribute('aria-label', (state.type === 'bar' ? 'Bar' : 'Line') + ' chart, ' + (state.range === 'custom' ? state.customStart + ' to ' + state.customEnd : RANGE_NAME[state.range]) + '. ' + parts + '.');
     }
 
     // ---------------------------------------------------------------- drawing: table, highlights
