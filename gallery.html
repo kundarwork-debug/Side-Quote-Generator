@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>APML Portal — Standards &amp; Media Gallery</title>
@@ -1197,7 +1208,28 @@
         height: 36px;
       }
     }
-  </style>
+  
+    html[data-theme="dark"] {
+      --primary:#f87171; --primary-dark:#ef4444; --primary-soft:rgba(248,113,113,.12);
+      --text-main:#f1f5f9; --text-muted:#a8b4c5; --border-subtle:#334155;
+      --shadow-card:0 2px 10px rgba(0,0,0,.2); --shadow-float:0 14px 32px rgba(0,0,0,.3);
+    }
+    html[data-theme="dark"] body { background:var(--apml-color-page,#10141d)!important;color:var(--text-main); }
+    html[data-theme="dark"] .stat-pill,html[data-theme="dark"] .unified-action-panel,
+    html[data-theme="dark"] .filter-item-wrapper,html[data-theme="dark"] .media-card,
+    html[data-theme="dark"] .pagination-bar,html[data-theme="dark"] .state-msg,
+    html[data-theme="dark"] .folder-select,html[data-theme="dark"] .jump-input {
+      background:var(--apml-color-surface,#171d29)!important;color:var(--text-main)!important;border-color:var(--border-subtle)!important;
+    }
+    html[data-theme="dark"] .media-card:hover { background:var(--apml-color-surface-subtle,#202838)!important; }
+    html[data-theme="dark"] .media-badge.video-tag { background:#334155;color:#e2e8f0; }
+    html[data-theme="dark"] .btn-delete { background:rgba(248,113,113,.16); }
+    html[data-theme="dark"] .panel-head p,html[data-theme="dark"] .gallery-sub,
+    html[data-theme="dark"] .media-size-label { color:var(--text-muted); }
+    html[data-theme="dark"] .filter-item-wrapper.active,html[data-theme="dark"] .filter-item-wrapper.drag-over {
+      background:var(--primary)!important;color:#fff!important;
+    }
+</style>
 
 </head>
 <body>
