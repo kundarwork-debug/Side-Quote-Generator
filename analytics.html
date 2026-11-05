@@ -17,6 +17,8 @@
 
   <!-- ApexCharts, pinned for predictable rendering across the portal -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.54.1/dist/apexcharts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
 
   <style>
     :root {
@@ -430,15 +432,14 @@
           <button type="button" data-range="6m" aria-pressed="false">6 months</button>
           <button type="button" data-range="1y" aria-pressed="false">1 year</button>
         </div>
-        <button type="button" class="btn" id="exportBtn" title="Download the table below as a spreadsheet file">
-          <span class="material-symbols-outlined">download</span> Export CSV
+        <button type="button" class="btn" id="exportBtn" title="Download analytics data as a CSV spreadsheet">
+          <span class="material-symbols-outlined">download</span> Download CSV
+        </button>
+        <button type="button" class="btn" id="downloadPdfBtn" title="Download a PDF report for the selected period">
+          <span class="material-symbols-outlined">picture_as_pdf</span> Download PDF
         </button>
       </div>
     </header>
-
-    <div class="report-actions">
-      <button type="button" class="btn" id="printBtn"><span class="material-symbols-outlined">picture_as_pdf</span> Print / PDF</button>
-    </div>
 
     <div class="banner" id="banner" role="alert" hidden>
       <span class="material-symbols-outlined" id="bannerIcon">error</span>
@@ -1025,8 +1026,43 @@
       setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
     });
 
-    // ---------------------------------------------------------------- report actions
-    $('printBtn').addEventListener('click', function () { window.print(); });
+    $('downloadPdfBtn').addEventListener('click', function () {
+      if (!state.last) { showBanner('info', 'There is nothing to export yet. Wait for the numbers to load.', false); return; }
+      if (!window.jspdf || !window.jspdf.jsPDF) { showBanner('error', 'PDF export could not load. Please refresh and try again.', false); return; }
+      var win = state.last.win;
+      var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+      var pageWidth = doc.internal.pageSize.getWidth();
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(19); doc.setTextColor(35, 45, 62);
+      doc.text('APML Portal - Analytics Report', 14, 17);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(100, 110, 125);
+      doc.text('Selected period: ' + (win.keys[0] || '-') + ' to ' + (win.keys[win.keys.length - 1] || '-') + ' | Range: ' + state.range.toUpperCase() + ' | India time (IST)', 14, 24);
+      doc.text('Generated: ' + new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }), pageWidth - 14, 24, { align: 'right' });
+      var totalVisitors = sum(win.visitors), totalPdf = sum(win.pdf), totalMedia = sum(win.media), totalActions = sum(win.total);
+      doc.autoTable({
+        startY: 31,
+        head: [['Summary', 'Visitors', 'PDF quotations', 'Media downloads', 'Total downloads', 'Total activity']],
+        body: [['Selected period', String(totalVisitors), String(totalPdf), String(totalMedia), String(totalPdf + totalMedia), String(totalActions)]],
+        theme: 'grid',
+        headStyles: { fillColor: [36, 54, 78], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 9, cellPadding: 3 }
+      });
+      var rows = win.keys.map(function (key, i) { return [key, String(win.visitors[i] || 0), String(win.pdf[i] || 0), String(win.media[i] || 0), String(win.total[i] || 0)]; });
+      doc.autoTable({
+        startY: doc.lastAutoTable.finalY + 9,
+        head: [['Date', 'Visitors', 'PDF quotations', 'Media downloads', 'Total activity']],
+        body: rows.length ? rows : [['No data', '0', '0', '0', '0']],
+        theme: 'striped',
+        headStyles: { fillColor: [36, 54, 78], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 8, cellPadding: 2.5 },
+        didDrawPage: function () {
+          var pageHeight = doc.internal.pageSize.getHeight();
+          doc.setFontSize(8); doc.setTextColor(130);
+          doc.text('APML Portal - Analytics', 14, pageHeight - 7);
+          doc.text('Page ' + doc.internal.getNumberOfPages(), pageWidth - 14, pageHeight - 7, { align: 'right' });
+        }
+      });
+      doc.save('apml-analytics-' + state.range + '-' + istKey(new Date()) + '.pdf');
+    });
 
     // ---------------------------------------------------------------- smart insights
     function renderSmartInsights() {
