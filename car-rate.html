@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>APML - Vehicle Transport Calculator</title>
     
     <!-- Network/Hub SVG Favicon from root folder -->
@@ -79,7 +90,19 @@
         table { min-width:520px; }
       }
       @media(max-width:380px) { .badge { font-size:9px; padding:5px 7px; } .price-row { font-size:12px; } }
-    </style>
+    
+      html[data-theme="dark"] {
+        --primary:#f87171; --primary-dark:#ef4444; --primary-soft:rgba(248,113,113,.12);
+        --bg-base:#0b1220; --surface:#172235; --surface-border:#334155;
+        --text-main:#f1f5f9; --text-muted:#a8b4c5; --text-faint:#94a3b8;
+        --shadow-sm:0 2px 8px rgba(0,0,0,.18); --shadow-md:0 12px 30px rgba(0,0,0,.25);
+      }
+      html[data-theme="dark"] body { background:radial-gradient(circle at 85% 10%,rgba(248,113,113,.10) 0%,transparent 55%),linear-gradient(135deg,#0b1220 0%,#111827 100%); }
+      html[data-theme="dark"] .suggestions-dropdown { background:#172235; }
+      html[data-theme="dark"] .suggestion-cat,html[data-theme="dark"] th { background:#202c40;color:#cbd5e1; }
+      html[data-theme="dark"] .suggestion-item,html[data-theme="dark"] td { border-color:#334155;color:var(--text-main); }
+      html[data-theme="dark"] .price-row { border-color:#334155; }
+</style>
 
 </head>
 <body>
