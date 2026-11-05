@@ -1,8 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Field Officer Directory WCRO - APML Portal</title>
     
     <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
