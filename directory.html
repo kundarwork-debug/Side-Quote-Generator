@@ -1005,35 +1005,26 @@
             });
         };
 
-        // Soft Delete: sets isDeleted: true using exact database key lookup
+        // Soft Delete: admin action executes immediately without a confirmation warning.
         window.deleteRecord = function(id) {
             const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
             const targetKey = record ? (record.firebaseKey || record.id) : id;
 
-            Swal.fire({
-              title: "Are you sure?",
-              text: "This contact will be hidden from the directory page.",
-              icon: "warning",
-              showCancelButton: true,
-              confirmButtonColor: '#c21d1d',
-              cancelButtonColor: "#78716c",
-              confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
-                  Swal.fire({
-                    title: "Deleted!",
-                    text: "Your file has been deleted.",
-                    icon: "success"
-                  });
-                }).catch(err => {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Error deleting record: " + err.message
-                  });
+            directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  icon: "success",
+                  title: "Contact moved to deleted records",
+                  showConfirmButton: false,
+                  timer: 1800
                 });
-              }
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Delete failed",
+                  text: "Error deleting record: " + err.message
+                });
             });
         };
 
@@ -1059,37 +1050,26 @@
             });
         };
 
-        // Permanent Delete
+        // Permanent Delete: admin action executes immediately without a confirmation warning.
         window.permanentDeleteRecord = function(id) {
             const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
             const targetKey = record ? (record.firebaseKey || record.id) : id;
 
-            Swal.fire({
-              title: "Delete Permanently?",
-              text: "This will permanently remove the contact from the database. You won't be able to recover this!",
-              icon: "error",
-              showCancelButton: true,
-              confirmButtonColor: "#dc2626",
-              cancelButtonColor: "#78716c",
-              confirmButtonText: "Yes, delete permanently!"
-            }).then((result) => {
-              if (result.isConfirmed) {
-                directoryRef.child(targetKey).remove().then(() => {
-                  Swal.fire({
-                    title: "Permanently Deleted!",
-                    text: "The contact has been permanently removed.",
-                    icon: "success",
-                    timer: 1500,
-                    showConfirmButton: false
-                  });
-                }).catch(err => {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Error deleting permanently: " + err.message
-                  });
+            directoryRef.child(targetKey).remove().then(() => {
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  icon: "success",
+                  title: "Contact permanently deleted",
+                  showConfirmButton: false,
+                  timer: 1800
                 });
-              }
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Delete failed",
+                  text: "Error deleting permanently: " + err.message
+                });
             });
         };
     </script>
