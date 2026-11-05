@@ -47,10 +47,24 @@
     }
 
     html, body {
-      overscroll-behavior-y: none !important;
-      touch-action: pan-y !important;
+      overscroll-behavior-y: auto !important;
+      touch-action: auto !important;
       padding-top: env(safe-area-inset-top) !important;
       padding-bottom: env(safe-area-inset-bottom) !important;
+    }
+
+    /* Keep native taps available to every page control in installed PWA mode. */
+    a, button, input, textarea, select, label, summary, [role="button"],
+    [role="tab"], [onclick], .btn-action, .module-card, .nav-link,
+    .hamburger-btn, .m3-about-btn, .support-btn, .cta-arrow {
+      touch-action: manipulation !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    input, textarea, select, [contenteditable="true"] {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      touch-action: auto !important;
     }
 
     button, .btn-action, .module-card, .tech-chip, .nav-link, .m3-about-btn,
@@ -92,8 +106,8 @@
 
 .is-native-apk,
 .is-native-apk body {
-  overscroll-behavior-y: none !important;
-  touch-action: pan-y !important;
+  overscroll-behavior-y: auto !important;
+  touch-action: auto !important;
   padding-top: env(safe-area-inset-top) !important;
   padding-bottom: env(safe-area-inset-bottom) !important;
 }
@@ -949,4 +963,11 @@ html body.apml-directory-page button#adminToggleBtn {
   overflow: hidden !important;
   clip-path: circle(50%) !important;
   flex: 0 0 42px !important;
+}
+
+/* PWA standalone: do not globally restrict touch gestures or tap targets. */
+@media (display-mode: standalone) {
+  html, body { touch-action: auto !important; }
+  a, button, input, textarea, select, label, summary, [role="button"], [role="tab"], [onclick] { touch-action: manipulation !important; }
+  input, textarea, select, [contenteditable="true"] { touch-action: auto !important; -webkit-user-select: text !important; user-select: text !important; }
 }
