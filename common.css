@@ -139,6 +139,22 @@
   will-change: transform, opacity;
 }
 
+/* Homepage-only scroll reveal. Inner-page header behaviour is unchanged. */
+.site-header.home-scroll-header {
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.45s ease;
+}
+
+.site-header.home-scroll-header.home-header-hidden {
+  transform: translateY(-105%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header.home-scroll-header { transition: none; }
+}
+
 /* Shared header remains visible on the homepage and all inner pages. */
 
 .header-inner {
