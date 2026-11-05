@@ -123,8 +123,8 @@
   right: 0;
   width: 100%;
   height: 64px;
-  /* Let each page's own background show through for a seamless layout. */
-  background: transparent;
+  /* Solid page-coloured surface; never transparent. */
+  background: var(--apml-color-page, #f7f5f0);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
@@ -338,8 +338,8 @@
 }
 
 .site-footer {
-  /* Match the page background instead of using a separate footer panel. */
-  background: transparent;
+  /* Solid page-coloured surface matching the shared page canvas. */
+  background: var(--apml-color-page, #f7f5f0);
   border-top: 1px solid var(--md-sys-color-outline-variant);
   padding: 18px 0;
   width: 100%;
@@ -596,7 +596,7 @@ html[data-theme="dark"] body {
 }
 html[data-theme="dark"] .site-header,
 html[data-theme="dark"] .site-footer {
-  background: transparent !important;
+  background: var(--apml-color-page, #10141d) !important;
   color: #f8fafc !important;
   border-color: #334155 !important;
 }
