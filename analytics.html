@@ -912,9 +912,9 @@
       win = customWindow(state.logs || {}, yearStart, today);
       $('heatmapRange').textContent = labelOf(yearStart, false) + ' – ' + labelOf(today, false) + ' · Last 365 days';
 
-      // GitHub-style layout: weeks run left-to-right, weekdays top-to-bottom.
+      // Sunday-first calendar layout: keep date placement aligned with the weekday labels.
       var firstDate = win.keys.length ? keyToDate(win.keys[0]) : new Date();
-      var leading = (firstDate.getUTCDay() + 6) % 7;
+      var leading = firstDate.getUTCDay();
       var totalSlots = leading + win.keys.length;
       var weeks = Math.max(1, Math.ceil(totalSlots / 7));
       host.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
