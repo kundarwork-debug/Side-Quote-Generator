@@ -48,23 +48,27 @@
 })();
 
 // =========================================================
-// APML ANDROID APP PROMOTION (MOBILE WEB BROWSER ONLY)
+// APML WEB APP INSTALL PROMOTION (PWA SHORTCUT)
 // =========================================================
-(function initAndroidAppPromotion() {
-  const ua = navigator.userAgent || '';
-  const isAndroid = /Android/i.test(ua);
+(function initPwaInstallPromotion() {
+  // Make the install manifest available on every portal page.
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const manifest = document.createElement('link');
+    manifest.rel = 'manifest';
+    manifest.href = './manifest.json';
+    document.head.appendChild(manifest);
+  }
+
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
     || window.navigator.standalone
     || document.referrer.includes('android-app://');
-  const isNativeApk = document.documentElement.classList.contains('is-native-apk');
+  if (isStandalone) return;
 
-  if (!isAndroid || isStandalone || isNativeApk) return;
-
+  let deferredInstallPrompt = null;
   let dismissedUntil = 0;
   try {
-    dismissedUntil = Number(localStorage.getItem('apml-app-promo-dismissed-until') || 0);
+    dismissedUntil = Number(localStorage.getItem('apml-pwa-promo-dismissed-until') || 0);
   } catch (error) {}
-  if (Date.now() < dismissedUntil) return;
 
   const style = document.createElement('style');
   style.textContent = `
@@ -76,51 +80,98 @@
     .apml-app-promo-title{font-size:24px;line-height:1.2;font-weight:800;letter-spacing:-.04em;margin:0 0 10px;color:var(--text-main,#1c1917)}
     .apml-app-promo-copy{font-size:14px;line-height:1.65;color:var(--text-secondary,#57534e);margin:0 auto 22px;max-width:320px}
     .apml-app-promo-actions{display:grid;gap:10px}
-    .apml-app-promo-download{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:13px;background:#b91c1c;color:#fff!important;text-decoration:none!important;font-size:14px;font-weight:800;box-shadow:0 7px 18px rgba(185,28,28,.2)}
+    .apml-app-promo-install{display:flex;align-items:center;justify-content:center;min-height:48px;border:0;border-radius:13px;background:#b91c1c;color:#fff!important;font:800 14px inherit;text-decoration:none!important;cursor:pointer;box-shadow:0 7px 18px rgba(185,28,28,.2)}
     .apml-app-promo-dismiss{min-height:44px;border:0;background:transparent;color:var(--text-muted,#78716c);font:700 13px inherit;cursor:pointer}
-    .apml-app-promo-note{font-size:11px;color:var(--text-muted,#78716c);margin-top:13px}
+    .apml-app-promo-note{font-size:11px;line-height:1.55;color:var(--text-muted,#78716c);margin-top:13px}
     .apml-app-promo-close{position:absolute;right:13px;top:13px;width:34px;height:34px;border:0;border-radius:50%;background:var(--surface-subtle,#f5f5f4);color:var(--text-secondary,#57534e);font-size:21px;line-height:1;cursor:pointer}
     @keyframes apmlPromoFade{to{opacity:1}}
     @media(prefers-reduced-motion:reduce){.apml-app-promo-backdrop{animation:none;opacity:1}}
   `;
   document.head.appendChild(style);
 
-  const backdrop = document.createElement('div');
-  backdrop.className = 'apml-app-promo-backdrop';
-  backdrop.setAttribute('role','dialog');
-  backdrop.setAttribute('aria-modal','true');
-  backdrop.setAttribute('aria-labelledby','apml-app-promo-title');
-  backdrop.innerHTML = `
-    <section class="apml-app-promo-card">
-      <div class="apml-app-promo-top"></div>
-      <button class="apml-app-promo-close" type="button" aria-label="Close app promotion">×</button>
-      <img class="apml-app-promo-logo" src="logo.svg" alt="APML Portal">
-      <div class="apml-app-promo-kicker">A better way to work</div>
-      <h2 class="apml-app-promo-title" id="apml-app-promo-title">Take APML Portal with you</h2>
-      <p class="apml-app-promo-copy">Get the APML Android app for a focused, app-like experience with your everyday tools just a tap away.</p>
-      <div class="apml-app-promo-actions">
-        <a class="apml-app-promo-download" href="https://github.com/kundarwork-debug/Side-Quote-Generator/releases/download/apml-apk-latest/APML-Portal.apk">Download Android App</a>
-        <button class="apml-app-promo-dismiss" type="button">Continue in Browser</button>
-      </div>
-      <div class="apml-app-promo-note">Android app · Free to use</div>
-    </section>`;
-  document.body.appendChild(backdrop);
+  let backdrop = null;
+  let installButton = null;
+  let note = null;
+  let hasBeenShown = false;
 
-  const close = () => {
-    try { localStorage.setItem('apml-app-promo-dismissed-until', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (error) {}
-    backdrop.remove();
-  };
-  backdrop.querySelector('.apml-app-promo-close').addEventListener('click', close);
-  backdrop.querySelector('.apml-app-promo-dismiss').addEventListener('click', close);
-  backdrop.addEventListener('click', event => { if (event.target === backdrop) close(); });
-  document.addEventListener('keydown', function onEscape(event) {
-    if (event.key === 'Escape' && document.body.contains(backdrop)) {
-      close();
-      document.removeEventListener('keydown', onEscape);
+  function closePromo(saveDismissal = true) {
+    if (!backdrop) return;
+    if (saveDismissal) {
+      try { localStorage.setItem('apml-pwa-promo-dismissed-until', String(Date.now() + 7 * 24 * 60 * 60 * 1000)); } catch (error) {}
     }
-  });
-})();
+    backdrop.remove();
+    backdrop = null;
+  }
 
+  function showPromo() {
+    if (hasBeenShown || Date.now() < dismissedUntil || window.matchMedia('(display-mode: standalone)').matches) return;
+    hasBeenShown = true;
+    backdrop = document.createElement('div');
+    backdrop.className = 'apml-app-promo-backdrop';
+    backdrop.setAttribute('role','dialog');
+    backdrop.setAttribute('aria-modal','true');
+    backdrop.setAttribute('aria-labelledby','apml-app-promo-title');
+    backdrop.innerHTML = `
+      <section class="apml-app-promo-card">
+        <div class="apml-app-promo-top"></div>
+        <button class="apml-app-promo-close" type="button" aria-label="Close install prompt">×</button>
+        <img class="apml-app-promo-logo" src="logo.svg" alt="APML Portal">
+        <div class="apml-app-promo-kicker">Your workspace, one tap away</div>
+        <h2 class="apml-app-promo-title" id="apml-app-promo-title">Add APML Portal to your home screen</h2>
+        <p class="apml-app-promo-copy">Open your portal like an app — quickly, in its own window, without searching for the website every time.</p>
+        <div class="apml-app-promo-actions">
+          <button class="apml-app-promo-install" type="button">Add APML Shortcut</button>
+          <button class="apml-app-promo-dismiss" type="button">Continue in Browser</button>
+        </div>
+        <div class="apml-app-promo-note">Free · No APK · Uses your browser</div>
+      </section>`;
+    document.body.appendChild(backdrop);
+    installButton = backdrop.querySelector('.apml-app-promo-install');
+    note = backdrop.querySelector('.apml-app-promo-note');
+
+    installButton.addEventListener('click', async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        if (choice && choice.outcome === 'accepted') closePromo(false);
+        else if (note) note.textContent = 'No problem — you can add APML Portal later from your browser menu.';
+        return;
+      }
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      if (note) note.textContent = isIOS
+        ? 'In Safari, tap Share, then choose “Add to Home Screen”.'
+        : 'Open your browser menu (⋮) and choose “Install app” or “Add to Home screen”.';
+      installButton.textContent = 'Got it';
+      installButton.onclick = () => closePromo();
+    });
+
+    backdrop.querySelector('.apml-app-promo-close').addEventListener('click', () => closePromo());
+    backdrop.querySelector('.apml-app-promo-dismiss').addEventListener('click', () => closePromo());
+    backdrop.addEventListener('click', event => { if (event.target === backdrop) closePromo(); });
+    document.addEventListener('keydown', function onEscape(event) {
+      if (event.key === 'Escape' && backdrop) {
+        closePromo();
+        document.removeEventListener('keydown', onEscape);
+      }
+    });
+  }
+
+  window.addEventListener('beforeinstallprompt', event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    closePromo(false);
+  });
+
+  // Give the page time to load before showing the install suggestion.
+  window.addEventListener('load', () => {
+    window.setTimeout(showPromo, 3500);
+  }, { once: true });
+})();
+ 
 // =========================================================
 // HISTORICAL DAILY ANALYTICS TRACKER
 // =========================================================
