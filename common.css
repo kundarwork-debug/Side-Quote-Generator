@@ -198,7 +198,7 @@
 }
 
 /* =========================================================
-   THREE-LINE CHECKBOX HAMBURGER BUTTON
+   ANIMATED SVG HAMBURGER BUTTON
    ========================================================= */
 .burger-checkbox {
   position: absolute;
@@ -212,59 +212,67 @@
   border: 0;
 }
 
-.burger {
+.hamburger {
   display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 42px;
-  height: 42px;
-  gap: 0;
-  padding: 0;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   cursor: pointer;
   z-index: 1002;
   border: 1px solid var(--md-sys-color-outline-variant);
   border-radius: 50%;
   background: var(--md-sys-color-surface-container-low);
   transition: background-color .2s ease, border-color .2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.burger span {
-  display: block;
-  width: 24px;
-  height: 3px;
-  background: var(--md-sys-color-on-surface);
-  margin: 2.5px 0;
-  border-radius: 3px;
-  transition: transform .3s cubic-bezier(.68, -.55, .265, 1.55), opacity .3s ease;
+.hamburger svg {
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+  transition: transform 600ms cubic-bezier(.4, 0, .2, 1);
 }
 
-.burger:hover,
-.burger.is-active {
+.hamburger .line {
+  fill: none;
+  stroke: var(--md-sys-color-on-surface);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.7;
+  transition: stroke-dasharray 600ms cubic-bezier(.4, 0, .2, 1),
+              stroke-dashoffset 600ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.hamburger .line-top-bottom {
+  stroke-dasharray: 12 63;
+}
+
+.hamburger:has(input:checked),
+.hamburger:hover {
   background: var(--md-sys-color-primary-container);
   border-color: var(--md-sys-color-primary);
 }
 
-.burger-checkbox:focus-visible + .burger {
+.hamburger input:checked + svg {
+  transform: rotate(-45deg);
+}
+
+.hamburger input:checked + svg .line-top-bottom {
+  stroke-dasharray: 20 300;
+  stroke-dashoffset: -32.42;
+}
+
+.hamburger input:focus-visible + svg {
   outline: 3px solid var(--md-sys-color-primary);
-  outline-offset: 3px;
-}
-
-.burger-checkbox:checked + .burger span:nth-child(1) {
-  transform: translateY(8px) rotate(45deg);
-}
-
-.burger-checkbox:checked + .burger span:nth-child(2) {
-  opacity: 0;
-  transform: translateX(-20px);
-}
-
-.burger-checkbox:checked + .burger span:nth-child(3) {
-  transform: translateY(-8px) rotate(-45deg);
+  outline-offset: 5px;
+  border-radius: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .burger span { transition-duration: .01ms !important; }
+  .hamburger svg,
+  .hamburger .line { transition-duration: .01ms !important; }
 }
 
 /* =========================================================
