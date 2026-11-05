@@ -255,14 +255,9 @@ window.sendPortalNotification = function () {};
     const currentPage = window.location.pathname.split("/").pop() || "index.html";
     const isHomePage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
 
-    // Add flag to <html> if on home page
-    if (isHomePage) {
-      document.documentElement.classList.add("is-home-page");
-    } else {
-      document.documentElement.classList.remove("is-home-page");
-    }
+    // Shared header stays visible on every page.
 
-    // 1. INJECT HEADER (Rotating Hub Logo + Live Clock + Navigation)
+    // 1. INJECT HEADER (Rotating Hub Logo + Navigation)
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
@@ -276,11 +271,6 @@ window.sendPortalNotification = function () {};
                 <div class="logo-text">APML <span>Portal</span></div>
               </a>
 
-              <!-- Live Header Date & Time Display -->
-              <div class="header-live-clock" id="headerLiveClock" style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted, #78716c); background: var(--md-sys-color-surface-container-low, #f7ede6); padding: 5px 12px; border-radius: 9999px; border: 1px solid var(--md-sys-color-outline-variant, #ede4de);">
-                <span class="material-symbols-outlined" style="font-size: 15px; color: var(--primary, #b91c1c);">schedule</span>
-                <span id="liveClockText">Loading time...</span>
-              </div>
             </div>
 
 <!-- Animated three-line hamburger toggle -->
@@ -351,26 +341,6 @@ window.sendPortalNotification = function () {};
         syncThemeToggle();
       });
 
-      // Initialize Live Clock Updater
-      function updateLiveClock() {
-        const clockEl = document.getElementById("liveClockText");
-        if (clockEl) {
-          const now = new Date();
-          const options = { 
-            weekday: 'short', 
-            day: '2-digit', 
-            month: 'short', 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: true 
-          };
-          clockEl.textContent = now.toLocaleString('en-IN', options);
-        }
-      }
-      updateLiveClock();
-      setInterval(updateLiveClock, 1000);
-
       // Event Listeners for Hamburger Toggle & Outside Clicks
       const hamburgerBtn = document.getElementById("hamburgerBtn");
       const burgerCheckbox = document.getElementById("burger-checkbox");
@@ -404,26 +374,6 @@ window.sendPortalNotification = function () {};
           if (e.key === "Escape") setMenuOpen(false);
         });
       }
-
-      // Hide/reveal on scroll only applies to home page
-      if (isHomePage) {
-        const scrollTriggerDistance = 110;
-        function handleHeaderScroll() {
-          const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-          if (scrollY > scrollTriggerDistance) {
-            siteHeader?.classList.add("header-visible");
-          } else {
-            siteHeader?.classList.remove("header-visible");
-            if (navMenu && navMenu.classList.contains("open")) {
-              setMenuOpen(false);
-            }
-          }
-        }
-
-        window.addEventListener("scroll", handleHeaderScroll, { passive: true });
-        handleHeaderScroll();
-      }
-    }
 
     // 2. INJECT EDGE-TO-EDGE STRETCHED FOOTER
     const footerContainer = document.getElementById("footer-container");
