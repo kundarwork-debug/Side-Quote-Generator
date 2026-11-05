@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APML - Local Shifting Rate Calculator</title>
 
   <!-- Network/Hub SVG Favicon from root folder -->
@@ -373,7 +372,10 @@
       box-shadow: var(--shadow-sm);
     }
 
+    .matrix-table-scroll { width:100%; overflow-x:auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; }
+
     table.rate-matrix {
+      min-width:620px;
       width: 100%;
       border-collapse: collapse;
       font-size: 13px;
@@ -425,26 +427,34 @@
       font-weight: 500;
     }
 
+    input:focus-visible, .addon-counter-input:focus-visible { outline:3px solid rgba(185,28,28,.24); outline-offset:2px; }
+
     @media (max-width: 768px) {
-      .calc-grid {
-        grid-template-columns: 1fr;
-      }
-      .calculator-shell {
-        padding: 14px;
-      }
+      .calc-grid { grid-template-columns: 1fr; gap:16px; }
+      .calculator-shell { padding:16px 14px 30px; gap:18px; }
+      .calc-card, .matrix-section, .terms-card { padding:20px 16px; border-radius:20px; }
+      .calc-subtitle { font-size:13px; }
+      .addon-item { min-height:56px; gap:10px; padding:11px 12px; }
+      .addon-left { min-width:0; flex:1; }
+      .addon-left span { line-height:1.4; }
+      .addon-right { flex-wrap:wrap; justify-content:flex-end; }
+      .addon-counter-input { min-height:40px; font-size:16px; }
+      .form-input { min-height:48px; font-size:16px; }
+      .breakdown-row { gap:12px; align-items:flex-start; }
+      .breakdown-row strong { text-align:right; }
+      .total-highlight-box { gap:12px; padding:16px; }
+      .total-amount { font-size:clamp(22px,6vw,28px); white-space:nowrap; }
+      .terms-list { font-size:13px; }
+    }
+
+    @media (max-width:380px) {
+      .card-title-row { align-items:flex-start; gap:10px; flex-wrap:wrap; }
+      .addon-item { align-items:flex-start; flex-wrap:wrap; }
+      .addon-right { width:100%; justify-content:space-between; padding-left:26px; }
+      .total-highlight-box { align-items:flex-start; flex-direction:column; }
     }
   </style>
 
-<style id="apml-editor-page-theme">
-  /* Shared warm cream background theme from editor.html */
-  html body {
-    background-color: #FDF8F5 !important;
-    background-image:
-      radial-gradient(circle at 50% 18%, rgba(254, 215, 202, 0.35) 0%, transparent 60%),
-      radial-gradient(circle at 85% 85%, rgba(254, 226, 226, 0.25) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
-  }
-</style>
 </head>
 <body>
 
@@ -635,6 +645,7 @@
           <span>Applicable Booking Rates (August to February)</span>
         </div>
 
+        <div class="matrix-table-scroll">
         <table class="rate-matrix">
           <thead>
             <tr>
@@ -659,6 +670,7 @@
             </tr>
           </tbody>
         </table>
+        </div>
       </section>
 
       <!-- Terms & Conditions Card -->
