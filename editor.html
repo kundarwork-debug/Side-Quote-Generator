@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script>document.documentElement.setAttribute('data-theme','light');</script>
+  <script>
+  (() => {
+    let theme = 'light';
+    try { theme = localStorage.getItem('apml-theme') === 'dark' ? 'dark' : 'light'; } catch (error) {}
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Quotation Editor - APML Support Page</title>
@@ -786,6 +792,296 @@
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
+
+  /* =========================================================
+     APML EDITOR — PREMIUM WORKSPACE OVERRIDES
+     Keep the quotation artwork itself white for faithful PDF export.
+     ========================================================= */
+  body {
+    background: var(--bg-base) !important;
+    color: var(--text-main);
+  }
+
+  .ambient-glow {
+    background:
+      radial-gradient(circle at 50% 12%, rgba(185, 28, 28, 0.075), transparent 58%),
+      radial-gradient(circle at 90% 88%, rgba(148, 163, 184, 0.08), transparent 48%);
+  }
+
+  .app {
+    min-height: calc(100vh - 64px);
+    padding-top: 64px;
+    grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .panel {
+    background: var(--surface-card);
+    border-right: 1px solid var(--surface-border);
+    padding: 26px clamp(18px, 2vw, 30px) 28px;
+    box-shadow: 8px 0 28px rgba(15, 23, 42, 0.035);
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-border) transparent;
+  }
+
+  .brand-row {
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--surface-border);
+    margin-bottom: 20px;
+  }
+
+  .brand-row h1 {
+    font-size: clamp(20px, 2vw, 24px);
+    letter-spacing: -0.045em;
+  }
+
+  .brand-row > span {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tabs {
+    background: var(--surface-subtle);
+    border-color: var(--surface-border);
+    border-radius: 15px;
+  }
+
+  .tab-btn {
+    min-height: 48px;
+    font-size: 12px;
+    border-radius: 11px;
+  }
+
+  .tab-btn.active[data-company="exact"] {
+    background: var(--surface-card);
+    color: var(--primary);
+  }
+
+  .tab-btn.active[data-company="maxcare"] {
+    background: var(--surface-card);
+    color: var(--accent-max-blue);
+  }
+
+  #sharedFieldGroup,
+  .quick-pricing-card,
+  .totals-box {
+    box-shadow: none;
+  }
+
+  .field input,
+  .field textarea,
+  .cost-row input,
+  .term-row textarea {
+    min-height: 42px;
+    background: var(--surface-card);
+    color: var(--text-main);
+    border-color: var(--surface-border);
+  }
+
+  .field input::placeholder,
+  .field textarea::placeholder,
+  .cost-row input::placeholder {
+    color: var(--text-muted);
+    opacity: .8;
+  }
+
+  .field input:focus-visible,
+  .field textarea:focus-visible,
+  .cost-row input:focus-visible,
+  .term-row textarea:focus-visible,
+  button:focus-visible {
+    outline: 3px solid rgba(185, 28, 28, .22);
+    outline-offset: 2px;
+  }
+
+  .icon-btn,
+  .add-btn,
+  .reset-btn {
+    min-height: 42px;
+  }
+
+  .icon-btn {
+    width: 42px;
+    height: 42px;
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+  }
+
+  .add-btn,
+  .reset-btn {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+  }
+
+  .totals-box {
+    background: var(--surface-subtle);
+    border-color: var(--surface-border);
+  }
+
+  .download-bar {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+    padding: 16px 0 4px;
+    z-index: 5;
+  }
+
+  .download-btn {
+    min-height: 50px;
+    border-radius: 13px;
+  }
+
+  .stage {
+    min-width: 0;
+    padding: clamp(20px, 3vw, 42px);
+    background: var(--bg-base);
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-border) transparent;
+  }
+
+  .sheet-wrap { max-width: 794px; }
+  .sheet-shadow {
+    border-color: rgba(148, 163, 184, .28);
+    box-shadow: 0 18px 48px rgba(15, 23, 42, .12), 0 2px 8px rgba(15, 23, 42, .05);
+  }
+
+  html[data-theme="dark"] body {
+    background: var(--bg-base) !important;
+    color: var(--text-main) !important;
+  }
+
+  html[data-theme="dark"] .panel {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+    box-shadow: 8px 0 28px rgba(0, 0, 0, .16);
+  }
+
+  html[data-theme="dark"] .brand-row h1,
+  html[data-theme="dark"] .field label,
+  html[data-theme="dark"] .field-group h2,
+  html[data-theme="dark"] .totals-box .line {
+    color: var(--text-main);
+  }
+
+  html[data-theme="dark"] .brand-row > span,
+  html[data-theme="dark"] #sharedFieldGroup,
+  html[data-theme="dark"] .quick-pricing-card {
+    background: var(--surface-raised);
+    border-color: var(--surface-border);
+    color: var(--text-main);
+  }
+
+  html[data-theme="dark"] #sharedFieldGroup h2,
+  html[data-theme="dark"] .quick-pricing-badge {
+    color: #fca5a5;
+  }
+
+  html[data-theme="dark"] #sharedFieldGroup input,
+  html[data-theme="dark"] .quick-pricing-card input,
+  html[data-theme="dark"] .field input,
+  html[data-theme="dark"] .field textarea,
+  html[data-theme="dark"] .cost-row input,
+  html[data-theme="dark"] .term-row textarea,
+  html[data-theme="dark"] .icon-btn,
+  html[data-theme="dark"] .add-btn,
+  html[data-theme="dark"] .reset-btn,
+  html[data-theme="dark"] .totals-box {
+    background: #111c2d;
+    color: var(--text-main);
+    border-color: var(--surface-border);
+  }
+
+  html[data-theme="dark"] .stage {
+    background: var(--bg-base);
+  }
+
+  html[data-theme="dark"] .download-bar {
+    background: var(--surface-card);
+    border-color: var(--surface-border);
+  }
+
+  html[data-theme="dark"] .status-msg {
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .app {
+      display: flex;
+      flex-direction: column;
+      min-height: auto;
+      padding-top: 64px !important;
+    }
+
+    .panel {
+      width: 100% !important;
+      max-height: none !important;
+      overflow: visible;
+      padding: 20px 16px 24px !important;
+      border-right: 0 !important;
+      border-bottom: 1px solid var(--surface-border);
+    }
+
+    #docDetailsGroup,
+    #termsGroup,
+    #regOfficeGroup {
+      display: block !important;
+    }
+
+    .stage {
+      display: block !important;
+      width: 100%;
+      max-height: none !important;
+      overflow-x: auto;
+      overflow-y: visible;
+      padding: 20px 12px 32px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .sheet-wrap {
+      width: 794px;
+      max-width: none;
+      margin: 0 auto;
+    }
+
+    .sheet-shadow {
+      width: 794px;
+    }
+
+    .download-bar {
+      position: sticky;
+      bottom: 0;
+      margin: 22px -16px 0;
+      padding: 12px 16px max(12px, env(safe-area-inset-bottom));
+      box-shadow: 0 -8px 24px rgba(15, 23, 42, .06);
+    }
+
+    .row2 { gap: 10px; }
+    .field-group { margin-bottom: 22px; }
+    .cost-row, .term-row { gap: 7px; }
+    .cost-row input.label-in { flex: 1.25; }
+    .cost-row input.amt-in { flex: .9; }
+  }
+
+  @media (max-width: 380px) {
+    .panel { padding-left: 13px !important; padding-right: 13px !important; }
+    .row2 { gap: 8px; }
+    .field input, .field textarea { padding-left: 11px; padding-right: 11px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-glow,
+    .button-content,
+    .download-icon,
+    .truckBody,
+    .road::before,
+    .road::after,
+    .lampPost {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
 </style>
 </head>
 <body>
