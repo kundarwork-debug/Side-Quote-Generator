@@ -615,8 +615,11 @@ window.sendPortalNotification = function () {};
     const isIndexPage = (currentPage === "index.html" || currentPage === "" || currentPage === "index");
     const is404Page = (currentPage === "404.html" || currentPage === "404");
 
-    // Completely hide avatar on 404.html
-    if (is404Page) return;
+    // Keep the floating mascot on desktop web only. It is intentionally
+    // omitted on phones, narrow layouts and the native Android app.
+    const isMobileLayout = window.matchMedia('(max-width: 768px)').matches;
+    const isNativeApk = document.documentElement.classList.contains('is-native-apk');
+    if (is404Page || isMobileLayout || isNativeApk) return;
 
     // Five rotating tips for each page
     const pageTips = {
