@@ -889,3 +889,47 @@ html[data-theme="dark"] {
     --apml-transition: 0ms;
   }
 }
+
+
+/* =========================================================
+   SHARED ADMIN GOOGLE BUTTON — consistent across admin pages
+   ========================================================= */
+#adminToggleBtn {
+  position: fixed !important;
+  top: 76px !important;
+  right: 22px !important;
+  z-index: 1201 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  width: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  border: 1.5px solid var(--apml-color-border, var(--md-sys-color-outline-variant, #e5e1d9)) !important;
+  background: var(--apml-color-surface, #ffffff) !important;
+  box-shadow: 0 2px 9px rgba(0,0,0,.12) !important;
+  cursor: pointer !important;
+  flex: 0 0 42px !important;
+}
+#adminToggleBtn svg {
+  display: block !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+}
+#adminToggleBtn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--apml-color-brand, #c21d1d) 45%, transparent) !important;
+  outline-offset: 3px !important;
+}
+@media (max-width: 600px) {
+  #adminToggleBtn {
+    top: 72px !important;
+    right: 14px !important;
+  }
+}
