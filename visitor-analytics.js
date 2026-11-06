@@ -61,7 +61,7 @@
       cities[city]=(cities[city]||0)+1;
       const d=[s.device,s.os,s.browser].filter(Boolean).join(" · ")||"Unknown";
       devices[d]=(devices[d]||0)+1;
-      const h=new Date(Number(s.startedAt)).getHours(); hours[h]++;
+      const h=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23"}).format(new Date(Number(s.startedAt)))); hours[h]++;
       const day=toDay(s.startedAt); days[day]=(days[day]||0)+1;
       Object.values(s.pages||{}).forEach(p=>{
         const key=p.path||"/";
