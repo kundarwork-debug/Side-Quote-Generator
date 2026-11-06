@@ -28,20 +28,46 @@
 
   function showConsent() {
     if (document.getElementById("apml-analytics-consent")) return;
-    const box = document.createElement("aside");
-    box.id = "apml-analytics-consent";
-    box.setAttribute("role", "dialog");
-    box.setAttribute("aria-label", "Analytics privacy choice");
-    box.innerHTML = '<div class="apml-consent-copy"><strong>Help us improve APML Portal</strong><span>With your permission, we collect anonymous usage analytics such as approximate city, masked IP, device type, pages visited and time spent. We do not collect precise location or track you across other websites.</span></div><div class="apml-consent-actions"><button type="button" data-choice="no">Decline</button><button type="button" data-choice="yes">Allow analytics</button></div>';
+    const overlay = document.createElement("div");
+    overlay.id = "apml-analytics-consent";
+    overlay.setAttribute("role", "presentation");
+    overlay.innerHTML = '<section class="apml-consent-dialog" role="dialog" aria-modal="true" aria-labelledby="apml-consent-title" aria-describedby="apml-consent-description"><div class="apml-consent-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12s3.2-6 9-6 9 6 9 6-3.2 6-9 6-9-6-9-6Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="12" r="2.7" stroke="currentColor" stroke-width="1.7"/><path d="m18.5 4.5 1-1m-15 1-1-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div><span class="apml-consent-eyebrow">YOUR PRIVACY MATTERS</span><h2 id="apml-consent-title">Help us make APML Portal better</h2><p id="apml-consent-description">We’d like to understand how the portal is used so we can improve the experience for everyone.</p><div class="apml-consent-details"><div><b>What we measure</b><span>Approximate city, masked IP, device type, pages visited and time spent.</span></div><div><b>What we don’t do</b><span>No precise location tracking and no tracking across other websites.</span></div></div><div class="apml-consent-actions"><button type="button" class="apml-consent-decline" data-choice="no">Not now</button><button type="button" class="apml-consent-accept" data-choice="yes">Allow analytics <span aria-hidden="true">→</span></button></div><p class="apml-consent-footnote">Your choice is saved on this browser. You can use the portal either way.</p></section>';
     const style = document.createElement("style");
-    style.textContent = '#apml-analytics-consent{position:fixed;z-index:100900;left:16px;right:16px;bottom:16px;max-width:760px;margin:auto;display:flex;align-items:center;gap:18px;padding:17px 19px;border:1px solid var(--md-sys-color-outline-variant,#ddd);border-radius:17px;background:var(--apml-color-page,#fff);color:var(--md-sys-color-on-surface,#222);box-shadow:0 14px 48px rgba(0,0,0,.2);font:13px/1.5 system-ui,sans-serif}#apml-analytics-consent .apml-consent-copy{display:grid;gap:4px;flex:1}#apml-analytics-consent strong{font-size:14px}#apml-analytics-consent span{color:var(--md-sys-color-on-surface-variant,#666)}#apml-analytics-consent .apml-consent-actions{display:flex;gap:8px;flex-shrink:0}#apml-analytics-consent button{min-height:38px;padding:0 13px;border:1px solid var(--md-sys-color-outline-variant,#ccc);border-radius:10px;background:transparent;color:inherit;font:700 12px system-ui;cursor:pointer}#apml-analytics-consent button[data-choice=yes]{background:#b4232c;color:#fff;border-color:#b4232c}@media(max-width:600px){#apml-analytics-consent{left:10px;right:10px;bottom:10px;display:block;padding:15px}#apml-analytics-consent .apml-consent-actions{margin-top:12px}#apml-analytics-consent button{flex:1}}';
+    style.textContent = `
+      #apml-analytics-consent{position:fixed;inset:0;z-index:100900;display:grid;place-items:center;padding:22px;background:rgba(15,18,24,.48);backdrop-filter:blur(11px) saturate(115%);-webkit-backdrop-filter:blur(11px) saturate(115%);animation:apmlConsentFade .24s ease-out;font:14px/1.55 'Plus Jakarta Sans',system-ui,sans-serif}
+      #apml-analytics-consent *{box-sizing:border-box}
+      #apml-analytics-consent .apml-consent-dialog{width:min(100%,490px);padding:34px 34px 25px;border:1px solid rgba(255,255,255,.68);border-radius:25px;background:var(--surface-card,#fff);color:var(--text-main,#201b18);box-shadow:0 28px 90px rgba(0,0,0,.3);text-align:center;animation:apmlConsentRise .32s cubic-bezier(.2,.8,.2,1)}
+      #apml-analytics-consent .apml-consent-mark{width:58px;height:58px;margin:0 auto 17px;display:grid;place-items:center;border-radius:19px;background:rgba(185,35,44,.1);color:#b4232c}
+      #apml-analytics-consent .apml-consent-mark svg{width:29px;height:29px}
+      #apml-analytics-consent .apml-consent-eyebrow{display:block;color:#b4232c;font-size:10px;font-weight:800;letter-spacing:.16em}
+      #apml-analytics-consent h2{margin:9px 0 9px;font-size:clamp(21px,4vw,27px);line-height:1.2;letter-spacing:-.045em;font-weight:800}
+      #apml-analytics-consent #apml-consent-description{max-width:370px;margin:0 auto 21px;color:var(--text-secondary,#625b55);font-size:13px;line-height:1.7}
+      #apml-analytics-consent .apml-consent-details{display:grid;gap:0;margin:0 0 23px;padding:0 15px;border:1px solid var(--surface-border,rgba(120,100,80,.16));border-radius:15px;text-align:left}
+      #apml-analytics-consent .apml-consent-details div{display:grid;gap:3px;padding:12px 0}
+      #apml-analytics-consent .apml-consent-details div+div{border-top:1px solid var(--surface-border,rgba(120,100,80,.16))}
+      #apml-analytics-consent .apml-consent-details b{font-size:12px;font-weight:800}
+      #apml-analytics-consent .apml-consent-details span{color:var(--text-muted,#777);font-size:11px;line-height:1.55}
+      #apml-analytics-consent .apml-consent-actions{display:grid;grid-template-columns:.82fr 1.35fr;gap:10px}
+      #apml-analytics-consent button{min-height:49px;padding:0 15px;border-radius:13px;font:700 13px system-ui,sans-serif;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease}
+      #apml-analytics-consent button:focus-visible{outline:3px solid rgba(180,35,44,.3);outline-offset:3px}
+      #apml-analytics-consent .apml-consent-decline{border:1px solid var(--surface-border,#ddd);background:transparent;color:var(--text-secondary,#555)}
+      #apml-analytics-consent .apml-consent-accept{display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #a71924;background:linear-gradient(135deg,#c52c36 0%,#991b27 100%);color:#fff;box-shadow:0 8px 20px rgba(170,25,36,.28),inset 0 1px rgba(255,255,255,.2);font-weight:800}
+      #apml-analytics-consent .apml-consent-accept span{font-size:19px;line-height:1;transition:transform .18s ease}
+      #apml-analytics-consent .apml-consent-accept:hover{transform:translateY(-2px);box-shadow:0 12px 25px rgba(170,25,36,.36),inset 0 1px rgba(255,255,255,.2)}
+      #apml-analytics-consent .apml-consent-accept:hover span{transform:translateX(3px)}
+      #apml-analytics-consent .apml-consent-decline:hover{background:var(--surface-subtle,#f4f0eb)}
+      #apml-analytics-consent .apml-consent-footnote{margin:16px 0 0;color:var(--text-muted,#888);font-size:10px;line-height:1.5}
+      @keyframes apmlConsentFade{from{opacity:0}to{opacity:1}}@keyframes apmlConsentRise{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+      @media(max-width:480px){#apml-analytics-consent{padding:14px}#apml-analytics-consent .apml-consent-dialog{padding:27px 20px 20px;border-radius:21px}#apml-analytics-consent .apml-consent-actions{grid-template-columns:1fr 1.25fr}#apml-analytics-consent button{min-height:47px;padding:0 9px;font-size:12px}}
+      @media(prefers-reduced-motion:reduce){#apml-analytics-consent,#apml-analytics-consent .apml-consent-dialog{animation:none}#apml-analytics-consent button{transition:none}}
+    `;
     document.head.appendChild(style);
-    document.body.appendChild(box);
+    document.body.appendChild(overlay);
     box.addEventListener("click", function (event) {
       const button = event.target.closest("button[data-choice]");
       if (!button) return;
       try { localStorage.setItem(CONSENT_KEY, button.dataset.choice === "yes" ? "yes" : "no"); } catch (_) {}
-      box.remove();
+      overlay.remove();
       if (button.dataset.choice === "yes") startTracking();
     });
   }
