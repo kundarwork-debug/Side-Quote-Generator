@@ -9,7 +9,7 @@
    To force every visitor to drop old copies after a big change, just bump
    VERSION below (for example 'v7').
    ===================================================================== */
-const VERSION = 'v17';
+const VERSION = 'v18';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
@@ -30,7 +30,9 @@ const PRECACHE = [
   'gallery.html',
   'dump.html',
   'analytics.html',
-  'common.js',\n  'visitor-tracker.js',
+  'common.js',
+  'visitor-tracker.js',
+  'visitor-analytics.js',
   'notify.js',
   'common.css',
   'logo.svg',
