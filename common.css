@@ -962,3 +962,94 @@ html body.apml-directory-page button#adminToggleBtn {
   a, button, input, textarea, select, label, summary, [role="button"], [role="tab"], [onclick] { touch-action: manipulation !important; }
   input, textarea, select, [contenteditable="true"] { touch-action: auto !important; -webkit-user-select: text !important; user-select: text !important; }
 }
+
+
+/* =========================================================
+   UIVERSE THEME SWITCH — SHARED HEADER
+   Checked = dark theme; unchecked = light theme.
+   ========================================================= */
+.header-controls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+.l {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0.15em;
+  width: 3em;
+  min-width: 3em;
+  height: 1.5em;
+  flex: 0 0 3em;
+  border: 0;
+  border-radius: 0.75em;
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.3) inset;
+  color: #fdea7b;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
+}
+.l::before,
+.l::after {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+}
+.l::before {
+  width: 1.2em;
+  height: 1.2em;
+  flex: 0 0 1.2em;
+  border-radius: 50%;
+  background-color: #d7d7d7;
+  transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+  z-index: 1;
+}
+.l::after {
+  width: 1.2em;
+  height: 1em;
+  flex: 0 0 1.2em;
+  background:
+    linear-gradient(transparent 50%, rgba(0, 0, 0, 0.15) 0) 0 50% / 50% 100%,
+    repeating-linear-gradient(90deg, #bbb 0, #bbb, #bbb 20%, #999 20%, #999 40%) 0 50% / 50% 100%,
+    radial-gradient(circle at 50% 50%, #888 25%, transparent 26%);
+  background-repeat: no-repeat;
+  border: 0.25em solid transparent;
+  border-left: 0.4em solid #d8d8d8;
+  border-right: 0 solid transparent;
+  transform: translateX(-22.5%);
+  transform-origin: 25% 50%;
+  transition: border-left-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+}
+.l:checked {
+  background-color: rgba(0, 0, 0, 0.45);
+  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.1) inset;
+}
+.l:checked::before {
+  background-color: currentColor;
+  transform: translateX(125%);
+}
+.l:checked::after {
+  border-left-color: currentColor;
+  transform: translateX(-2.5%) rotateY(180deg);
+}
+.l:focus-visible {
+  outline: 2px solid var(--apml-color-brand, #b4232c);
+  outline-offset: 4px;
+}
+html[data-theme="dark"] .l {
+  color: #fdea7b;
+}
+@media (max-width: 420px) {
+  .header-controls { gap: 9px; }
+  .l { font-size: 0.95em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .l, .l::before, .l::after { transition-duration: 0.01ms !important; }
+}
