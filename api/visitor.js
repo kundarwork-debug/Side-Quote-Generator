@@ -69,7 +69,8 @@ export default async function handler(req, res) {
   const now = Date.now();
   const page = safeText(body.page, 180) || "/";
   const title = safeText(body.title, 120);
-  let referrer = "";\n  try { referrer = new URL(safeText(body.referrer, 500)).origin; } catch (_) {}
+  let referrer = "";
+  try { referrer = new URL(safeText(body.referrer, 500)).origin; } catch (_) {}
   const delta = Math.max(0, Math.min(45, Number(body.seconds) || 0));
   const ua = safeText(req.headers["user-agent"], 500);
   const device = classifyDevice(ua);
