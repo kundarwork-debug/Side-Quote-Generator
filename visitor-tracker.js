@@ -46,7 +46,7 @@
     });
   }
 
-  let visitorId, sessionId, pageStarted = Date.now(), sentSeconds = 0, heartbeat = null;
+  let visitorId, sessionId, lastCountedAt = Date.now(), heartbeat = null;
   function payload(action, seconds) {
     return {
       action, visitorId, sessionId, page: location.pathname.slice(0, 180) || "/",
@@ -71,25 +71,25 @@
     return sendQueue;
   }
   function accountPageTime() {
-    const elapsed = Math.floor((Date.now() - pageStarted) / 1000);
-    const delta = Math.max(0, Math.min(45, elapsed - sentSeconds));
-    if (delta > 0) { sentSeconds += delta; send("page_time", delta, true); }
+    const now = Date.now();
+    const delta = Math.max(0, Math.min(45, Math.floor((now - lastCountedAt) / 1000)));
+    lastCountedAt = now;
+    if (delta > 0) send("page_time", delta, true);
   }
   function startTracking() {
     visitorId = getId("apml-visitor-id");
     sessionId = getSessionId();
     send("start", 0, false).then(() => send("pageview", 0, false));
     heartbeat = window.setInterval(function () {
-      const elapsed = Math.floor((Date.now() - pageStarted) / 1000);
-      const delta = Math.max(0, Math.min(45, elapsed - sentSeconds));
-      if (delta > 0) { sentSeconds += delta; send("heartbeat", delta, false); }
+      if (document.visibilityState === "visible") accountPageTime();
     }, 20000);
     window.addEventListener("pagehide", accountPageTime, { passive: true });
     document.addEventListener("visibilitychange", function () {
       if (document.visibilityState === "hidden") accountPageTime();
+      else lastCountedAt = Date.now();
     });
     window.addEventListener("pageshow", function (event) {
-      if (event.persisted) { pageStarted = Date.now(); sentSeconds = 0; send("pageview", 0, false); }
+      if (event.persisted) { lastCountedAt = Date.now(); send("pageview", 0, false); }
     });
   }
 
