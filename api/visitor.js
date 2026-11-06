@@ -34,7 +34,7 @@ function pageKey(path) {
   return Buffer.from(path).toString("base64").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 90) || "home";
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== "POST") return json(res, 405, { ok: false, error: "Method not allowed" });
   const origin = req.headers.origin;
   const host = String(req.headers.host || "").split(":")[0].toLowerCase();
