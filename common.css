@@ -965,7 +965,7 @@ html body.apml-directory-page button#adminToggleBtn {
 
 
 /* =========================================================
-   UIVERSE THEME SWITCH — SHARED HEADER
+   PILL THEME SWITCH — SHARED HEADER
    Checked = dark theme; unchecked = light theme.
    ========================================================= */
 .header-controls {
@@ -975,81 +975,63 @@ html body.apml-directory-page button#adminToggleBtn {
   gap: 12px;
   flex: 0 0 auto;
 }
-.l {
+.theme-switch {
   display: inline-flex;
   align-items: center;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0.15em;
-  width: 3em;
-  min-width: 3em;
-  height: 1.5em;
-  flex: 0 0 3em;
-  border: 0;
-  border-radius: 0.75em;
-  background-color: rgba(0, 0, 0, 0.7);
-  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.3) inset;
-  color: #fdea7b;
+  position: relative;
+  flex: 0 0 auto;
   cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  transition: background-color 0.1s 0.3s ease-out, box-shadow 0.1s 0.3s ease-out;
+  -webkit-tap-highlight-color: transparent;
 }
-.l::before,
-.l::after {
-  content: "";
+.theme-switch-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+  border: 0;
+}
+.theme-switch-track {
+  position: relative;
   display: block;
   box-sizing: border-box;
+  width: 41px;
+  height: 22px;
+  background: #080808;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 15px;
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
 }
-.l::before {
-  width: 1.2em;
-  height: 1.2em;
-  flex: 0 0 1.2em;
-  border-radius: 50%;
-  background-color: #d7d7d7;
-  transition: background-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
-  z-index: 1;
+.theme-switch-thumb {
+  position: absolute;
+  top: 1.5px;
+  left: 1.3px;
+  width: 27px;
+  height: 17px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.18);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.l::after {
-  width: 1.2em;
-  height: 1em;
-  flex: 0 0 1.2em;
-  background:
-    linear-gradient(transparent 50%, rgba(0, 0, 0, 0.15) 0) 0 50% / 50% 100%,
-    repeating-linear-gradient(90deg, #bbb 0, #bbb, #bbb 20%, #999 20%, #999 40%) 0 50% / 50% 100%,
-    radial-gradient(circle at 50% 50%, #888 25%, transparent 26%);
-  background-repeat: no-repeat;
-  border: 0.25em solid transparent;
-  border-left: 0.4em solid #d8d8d8;
-  border-right: 0 solid transparent;
-  transform: translateX(-22.5%);
-  transform-origin: 25% 50%;
-  transition: border-left-color 0.1s 0.3s ease-out, transform 0.3s ease-out;
+.theme-switch-input:checked + .theme-switch-track .theme-switch-thumb {
+  transform: translateX(9px);
 }
-.l:checked {
-  background-color: rgba(0, 0, 0, 0.45);
-  box-shadow: 0.125em 0.125em 0 0.125em rgba(0, 0, 0, 0.1) inset;
-}
-.l:checked::before {
-  background-color: currentColor;
-  transform: translateX(125%);
-}
-.l:checked::after {
-  border-left-color: currentColor;
-  transform: translateX(-2.5%) rotateY(180deg);
-}
-.l:focus-visible {
+.theme-switch-input:focus-visible + .theme-switch-track {
   outline: 2px solid var(--apml-color-brand, #b4232c);
   outline-offset: 4px;
 }
-html[data-theme="dark"] .l {
-  color: #fdea7b;
+.theme-switch:active .theme-switch-thumb {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 3px 7px rgba(0, 0, 0, 0.16);
 }
 @media (max-width: 420px) {
   .header-controls { gap: 9px; }
-  .l { font-size: 0.95em; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .l, .l::before, .l::after { transition-duration: 0.01ms !important; }
+  .theme-switch-track, .theme-switch-thumb { transition-duration: 0.01ms !important; }
 }
