@@ -105,6 +105,8 @@ module.exports = async function handler(req, res) {
       const key = pageKey(page);
       const previous = next.pages[key] || {};
       next.pages[key] = { path: page, title, views: (Number(previous.views) || 0) + 1, seconds: Number(previous.seconds) || 0, lastSeen: now };
+      next.journey = Array.isArray(current.journey) ? current.journey.slice(-29) : [];
+      next.journey.push({ path: page, title, at: now });
     }
     if (action === "heartbeat" || action === "page_time") {
       next.totalSeconds = (Number(current.totalSeconds) || 0) + delta;
