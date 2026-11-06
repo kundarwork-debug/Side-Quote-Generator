@@ -1165,3 +1165,13 @@ window.sendPortalNotification = function () {};
 })();
 
 // Station tracker is not included in this repository; do not request a missing script.
+
+// Privacy-aware visitor analytics is shared across portal pages.
+(function loadVisitorTracker() {
+  if (window.__apmlVisitorTrackerRequested) return;
+  window.__apmlVisitorTrackerRequested = true;
+  var script = document.createElement('script');
+  script.src = './visitor-tracker.js?v=1';
+  script.async = true;
+  document.head.appendChild(script);
+})();
