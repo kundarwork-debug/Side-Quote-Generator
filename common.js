@@ -274,8 +274,13 @@ window.sendPortalNotification = function () {};
             </div>
 
 <div class="header-controls">
-              <!-- Uiverse light/dark theme switch -->
-              <input id="themeToggle" class="l" type="checkbox" role="switch" aria-label="Switch to dark theme" title="Switch theme">
+              <!-- Compact light/dark theme switch -->
+              <label class="theme-switch" for="themeToggle" title="Switch theme">
+                <input id="themeToggle" class="theme-switch-input" type="checkbox" role="switch" aria-label="Switch to dark theme">
+                <span class="theme-switch-track" aria-hidden="true">
+                  <span class="theme-switch-thumb"></span>
+                </span>
+              </label>
               <!-- Animated SVG hamburger toggle -->
               <label class="hamburger hamburger-btn" id="hamburgerBtn">
               <input id="burger-checkbox" class="burger-checkbox" type="checkbox" aria-label="Toggle navigation menu" aria-controls="navMenu">
