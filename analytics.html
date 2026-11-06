@@ -432,6 +432,7 @@
     .vi-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.vi-card{padding:20px;min-width:0}.vi-card h3{font-size:15px;margin-bottom:14px}
     .vi-list{list-style:none;display:grid;gap:10px}.vi-list li{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--surface-border);padding-bottom:8px}.vi-list b{color:var(--text-main);white-space:nowrap}.vi-empty{color:var(--text-muted)!important}
     .vi-table-wrap{overflow:auto}.vi-table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px}.vi-table th,.vi-table td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--surface-border);vertical-align:top}.vi-table th{color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}.vi-table td{color:var(--text-secondary)}.vi-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.vi-note{font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:12px}
+    .vi-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.vi-toolbar label{font-size:12px;color:var(--text-muted);font-weight:700}.vi-toolbar select{padding:9px 12px;border:1px solid var(--surface-border);border-radius:10px;background:var(--surface-raised);color:var(--text-main);font:600 12px var(--font-sans)}.vi-chart{min-height:230px}.vi-peak-note{font-size:12px;color:var(--text-muted);margin-top:10px}
     @media(max-width:760px){.vi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vi-columns{grid-template-columns:1fr}.vi-card{padding:15px}.vi-kpi{padding:14px}.vi-kpi strong{font-size:23px}}
 
   </style>
@@ -626,21 +627,25 @@
       <div class="card">
         <div class="vi-head">
           <div><h2 class="card-title" id="visitorIntelligenceTitle"><span class="material-symbols-outlined">travel_explore</span> Visitor intelligence</h2><p class="muted-note">Consent-based visitor sessions · masked IP · approximate location only</p></div>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><span class="muted-note" id="viUpdated">Waiting for visitor data…</span><button type="button" class="btn" id="viExport"><span class="material-symbols-outlined">download</span> Export visitors CSV</button></div>
+          <div class="vi-toolbar"><label for="viRange">Reporting period</label><select id="viRange"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All available (latest 500 sessions)</option></select><span class="muted-note" id="viUpdated">Waiting for visitor data…</span><button type="button" class="btn" id="viExport"><span class="material-symbols-outlined">download</span> Export visitors CSV</button></div>
         </div>
         <div class="vi-grid" aria-live="polite">
           <article class="vi-kpi"><span>Recent sessions (up to 500)</span><strong id="viSessions">—</strong></article>
           <article class="vi-kpi"><span>Online now</span><strong id="viActive">—</strong></article>
-          <article class="vi-kpi"><span>Unique browsers</span><strong id="viReturning">—</strong></article>
+          <article class="vi-kpi"><span>Returning browsers</span><strong id="viReturning">—</strong></article>
           <article class="vi-kpi"><span>Average time per session</span><strong id="viAvgTime">—</strong></article>
         </div>
+      </div>
+      <div class="vi-columns">
+        <section class="vi-card"><h3>Daily visitor sessions</h3><div id="viDailyChart" class="vi-chart" aria-label="Daily visitor sessions chart"></div><p class="vi-peak-note" id="viPeakDay">Busiest day —</p></section>
+        <section class="vi-card"><h3>Peak visiting hours</h3><ul class="vi-list" id="viPeakHours"><li class="vi-empty">Loading…</li></ul><p class="vi-peak-note" id="viPeakSummary">Based on session start time · India time</p></section>
       </div>
       <div class="vi-columns">
         <section class="vi-card"><h3>Visitor locations</h3><ul class="vi-list" id="viCities"><li class="vi-empty">Loading…</li></ul></section>
         <section class="vi-card"><h3>Devices, operating systems &amp; browsers</h3><ul class="vi-list" id="viDevices"><li class="vi-empty">Loading…</li></ul></section>
       </div>
-      <section class="vi-card"><h3>Most visited pages</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Page</th><th>Views</th><th>Time spent</th></tr></thead><tbody id="viPages"><tr><td colspan="3">Loading…</td></tr></tbody></table></div></section>
-      <section class="vi-card" style="margin-top:16px"><h3>Recent visitor sessions</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Started</th><th>Approx. location</th><th>Masked IP</th><th>Device</th><th>Time spent</th><th>Page views</th><th>Journey</th></tr></thead><tbody id="viVisitors"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><p class="vi-note">IP addresses are masked before storage (IPv4 /24, IPv6 /48). Location is approximate and depends on network geolocation. Visitor IDs are random browser identifiers, not real-world identities. Data appears only after a visitor allows analytics.</p></section>
+      <section class="vi-card"><h3>Most visited pages · engagement</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Page</th><th>Views</th><th>Time spent</th></tr></thead><tbody id="viPages"><tr><td colspan="3">Loading…</td></tr></tbody></table></div></section>
+      <section class="vi-card" style="margin-top:16px"><h3>Recent visitor sessions</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Started</th><th>Approx. location</th><th>Masked IP</th><th>Device</th><th>Time spent</th><th>Page views</th><th>Journey</th></tr></thead><tbody id="viVisitors"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><p class="vi-note">IP addresses are masked before storage (IPv4 /24, IPv6 /48). Location is approximate and depends on network geolocation. Visitor IDs are random browser identifiers, not real-world identities. Returning browsers means the same anonymous browser ID had multiple sessions in the selected period. Journey order is exact for sessions recorded after this upgrade; older sessions show an approximate order. Reports use the latest 500 sessions available to this dashboard.</p></section>
     </section>
 
   </main>
@@ -1211,6 +1216,6 @@
     start();
   })();
   </script>
-  <script src="visitor-analytics.js?v=1"></script>
+  <script src="visitor-analytics.js?v=2"></script>
 </body>
 </html>
