@@ -54,16 +54,21 @@
       seconds: Math.max(0, Math.min(45, Number(seconds) || 0))
     };
   }
+  let sendQueue = Promise.resolve();
   function send(action, seconds, keepalive) {
     const data = payload(action, seconds);
     const body = JSON.stringify(data);
     if (keepalive && navigator.sendBeacon) {
       try {
         const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
-        if (navigator.sendBeacon(ENDPOINT, blob)) return;
+        if (navigator.sendBeacon(ENDPOINT, blob)) return Promise.resolve();
       } catch (_) {}
     }
-    fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: !!keepalive, credentials: "same-origin" }).catch(() => {});
+    sendQueue = sendQueue.then(() => fetch(ENDPOINT, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body,
+      keepalive: !!keepalive, credentials: "same-origin"
+    })).catch(() => {});
+    return sendQueue;
   }
   function accountPageTime() {
     const elapsed = Math.floor((Date.now() - pageStarted) / 1000);
@@ -73,8 +78,7 @@
   function startTracking() {
     visitorId = getId("apml-visitor-id");
     sessionId = getSessionId();
-    send("start", 0, false);
-    send("pageview", 0, false);
+    send("start", 0, false).then(() => send("pageview", 0, false));
     heartbeat = window.setInterval(function () {
       const elapsed = Math.floor((Date.now() - pageStarted) / 1000);
       const delta = Math.max(0, Math.min(45, elapsed - sentSeconds));
