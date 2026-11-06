@@ -273,14 +273,18 @@ window.sendPortalNotification = function () {};
 
             </div>
 
-<!-- Animated SVG hamburger toggle -->
-            <label class="hamburger hamburger-btn" id="hamburgerBtn">
+<div class="header-controls">
+              <!-- Uiverse light/dark theme switch -->
+              <input id="themeToggle" class="l" type="checkbox" role="switch" aria-label="Switch to dark theme" title="Switch theme">
+              <!-- Animated SVG hamburger toggle -->
+              <label class="hamburger hamburger-btn" id="hamburgerBtn">
               <input id="burger-checkbox" class="burger-checkbox" type="checkbox" aria-label="Toggle navigation menu" aria-controls="navMenu">
               <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
                 <path class="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
                 <path class="line" d="M7 16 27 16"></path>
               </svg>
-            </label>
+              </label>
+            </div>
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
@@ -325,18 +329,18 @@ window.sendPortalNotification = function () {};
         </header>
       `;
 
-      // Shared light/dark theme control. The preference is applied in the document head before CSS paints.
+      // Shared light/dark theme switch. Keep the saved preference in sync across every page.
       const themeToggle = document.getElementById("themeToggle");
       function syncThemeToggle() {
         if (!themeToggle) return;
         const dark = document.documentElement.getAttribute("data-theme") === "dark";
-        themeToggle.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">' + (dark ? 'light_mode' : 'dark_mode') + '</span>';
+        themeToggle.checked = dark;
         themeToggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
         themeToggle.title = dark ? "Switch to light theme" : "Switch to dark theme";
       }
       syncThemeToggle();
-      themeToggle?.addEventListener("click", () => {
-        const nextTheme = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      themeToggle?.addEventListener("change", () => {
+        const nextTheme = themeToggle.checked ? "dark" : "light";
         document.documentElement.setAttribute("data-theme", nextTheme);
         try { localStorage.setItem("apml-theme", nextTheme); } catch (error) {}
         syncThemeToggle();
