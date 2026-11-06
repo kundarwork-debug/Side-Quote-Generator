@@ -63,7 +63,7 @@
     `;
     document.head.appendChild(style);
     document.body.appendChild(overlay);
-    box.addEventListener("click", function (event) {
+    overlay.addEventListener("click", function (event) {
       const button = event.target.closest("button[data-choice]");
       if (!button) return;
       try { localStorage.setItem(CONSENT_KEY, button.dataset.choice === "yes" ? "yes" : "no"); } catch (_) {}
