@@ -424,7 +424,16 @@
     }
     @media print { .ambient-bg,#header-container,#footer-container,.head-controls,.advanced-tools,.report-actions,.chart-tools,#banner { display:none!important; } body { background:#fff!important; color:#111!important; } main { margin:0!important; padding:12px!important; max-width:none!important; } .card,.kpi { box-shadow:none!important; break-inside:avoid; } }
 
-  </style>
+
+    /* Visitor intelligence */
+    .vi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px 0}
+    .vi-kpi,.vi-card{background:var(--surface-card);border:1px solid var(--surface-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card)}
+    .vi-kpi{padding:18px}.vi-kpi span{display:block;color:var(--text-muted);font-size:12px;font-weight:700}.vi-kpi strong{display:block;margin-top:8px;font-size:27px;letter-spacing:-.04em}
+    .vi-columns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}.vi-card{padding:20px;min-width:0}.vi-card h3{font-size:15px;margin-bottom:14px}
+    .vi-list{list-style:none;display:grid;gap:10px}.vi-list li{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--surface-border);padding-bottom:8px}.vi-list b{color:var(--text-main);white-space:nowrap}.vi-empty{color:var(--text-muted)!important}
+    .vi-table-wrap{overflow:auto}.vi-table{width:100%;border-collapse:collapse;min-width:760px;font-size:12px}.vi-table th,.vi-table td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--surface-border);vertical-align:top}.vi-table th{color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}.vi-table td{color:var(--text-secondary)}.vi-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}.vi-note{font-size:11px;color:var(--text-muted);line-height:1.6;margin-top:12px}
+    @media(max-width:760px){.vi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.vi-columns{grid-template-columns:1fr}.vi-card{padding:15px}.vi-kpi{padding:14px}.vi-kpi strong{font-size:23px}}
+\n  </style>
 
 </head>
 <body>
