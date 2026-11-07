@@ -59,6 +59,14 @@
     document.head.appendChild(manifest);
   }
 
+  // iOS home-screen icon; Android/Chrome uses the PNG entries in manifest.json.
+  if (!document.querySelector('link[rel="apple-touch-icon"]')) {
+    const appleIcon = document.createElement('link');
+    appleIcon.rel = 'apple-touch-icon';
+    appleIcon.href = './icon-192.png';
+    document.head.appendChild(appleIcon);
+  }
+
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches
     || window.navigator.standalone
     || document.referrer.includes('android-app://');
