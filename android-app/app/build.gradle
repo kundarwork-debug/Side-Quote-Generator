@@ -10,8 +10,8 @@ android {
         applicationId 'com.apml.portal'
         minSdk 23
         targetSdk 35
-        versionCode 2
-        versionName '2.0'
+        versionCode 3
+        versionName '2.1'
     }
 
     compileOptions {
@@ -23,5 +23,6 @@ android {
 dependencies {
     implementation 'androidx.activity:activity:1.10.1'
     implementation 'androidx.core:core:1.15.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }
