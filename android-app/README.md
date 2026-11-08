@@ -1,11 +1,27 @@
-# APML Portal Android WebView
+# APML Portal Android App
 
-This Android app opens the live APML Portal at https://apmlportal.vercel.app/index.html.
+A rebuilt Android WebView app for the live APML Portal:
+https://apmlportal.vercel.app/index.html
+
+## App details
+- Application ID: `com.apml.portal`
+- Version: 2.0 (versionCode 2)
+- Minimum Android: 6.0 (API 23)
+- Target Android: API 35
+
+## Included
+- Edge-to-edge Android system bars with safe insets
+- Full-screen portal experience (no duplicate native header or bottom navigation)
+- Pull-to-refresh gesture
+- Android back navigation
+- WebView storage and session cookies for portal/Firebase flows
+- Android file picker support, including multiple file selection
+- Native Downloads handling with download notifications
+- External links handed to their appropriate Android apps
+- Friendly offline/error retry screen
+- Reduced-motion / responsive page compatibility without forcing page heights
 
 ## Build
-The GitHub Actions workflow at .github/workflows/build-apk.yml builds a debug APK and uploads it as the artifact **APML-Portal-Android-APK**. Run it from Actions → Build APML Portal APK → Run workflow.
+The GitHub Actions workflow at `.github/workflows/build-apk.yml` builds the debug APK and publishes it as the `APML-Portal.apk` release asset.
 
-The APK is a WebView wrapper; an internet connection is required for the portal and Firebase-backed features.
-
-
-Latest app update: APML vector logo is used in the native header and launcher icon; Gallery and Drive downloads use Android DownloadManager; Gallery and Drive cards have compact mobile layouts.
+The app displays the live website, so an internet connection is required for portal pages and Firebase-backed features.
