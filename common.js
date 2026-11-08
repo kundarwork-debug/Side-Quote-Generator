@@ -1063,7 +1063,7 @@ window.sendPortalNotification = function () {};
       step();
     }
 
-    const IDLE_MS = 120000, ALERT_MS = 5000, HAPPY_MS = 3000;
+    const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
     const wobnimo = document.getElementById('apmlWobnimo');
     let wobnimoStateTimer = null;
