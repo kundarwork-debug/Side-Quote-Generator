@@ -383,6 +383,25 @@
     html[data-theme="dark"] .min-alert-text { background:#3a2d17;color:#fcd34d; }
     html[data-theme="dark"] .error-alert-box { background:#3b2028;color:#fecaca;border-color:#7f1d1d; }
     html[data-theme="dark"] .table-section th { background:#202c40;color:#cbd5e1; }
+
+    /* Mobile width and content safeguards */
+    .container, .grid, .card, .table-section { min-width:0; }
+    .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .table-section { max-width:100%; }
+    .price-row > *, .card-title > * { min-width:0; }
+    @media (max-width:640px) {
+      .grid { grid-template-columns:minmax(0,1fr); }
+      .card, .table-section { width:100%; }
+      .price-row { flex-wrap:wrap; }
+      .price-label, .price-val { min-width:0; overflow-wrap:anywhere; }
+      .page-title { overflow-wrap:anywhere; }
+    }
+    @media (max-width:380px) {
+      .container { padding-left:12px; padding-right:12px; }
+      .card, .table-section { padding-left:13px; padding-right:13px; }
+      .price-val.total { font-size:23px; }
+    }
+
 </style>
 
 </head>
