@@ -1,6 +1,5 @@
 package com.apml.portal;
 
-import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -213,7 +212,7 @@ public class MainActivity extends ComponentActivity {
             @Override
             public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
                 Uri uri = Uri.parse(origin);
-                callback.invoke(uri.getHost() != null && isTrustedHost(uri.getHost()), false, false);
+                callback.invoke(origin, uri.getHost() != null && isTrustedHost(uri.getHost()), false);
             }
         });
 
