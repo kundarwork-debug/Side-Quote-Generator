@@ -819,6 +819,15 @@ window.sendPortalNotification = function () {};
       document.head.appendChild(lottieScript);
     }
 
+    // Wobnimo is loaded as a lightweight web component (no app build step required).
+    if (!document.querySelector('script[data-apml-wobnimo]')) {
+      const wobnimoScript = document.createElement('script');
+      wobnimoScript.type = 'module';
+      wobnimoScript.src = 'https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js';
+      wobnimoScript.dataset.apmlWobnimo = 'true';
+      document.head.appendChild(wobnimoScript);
+    }
+
     // Create Support FAB Container
     const supportFab = document.createElement('div');
     supportFab.className = 'support-fab';
@@ -841,7 +850,7 @@ window.sendPortalNotification = function () {};
           <span style="position: relative; z-index: 2; display: block; margin: 0; padding: 0;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>
         </div>      
         <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
-          <img src="https://github.com/kundarwork-debug.png" alt="Developer" class="support-avatar">      
+          <wobnimo-mascot id="apmlWobnimo" character="cap" state="idle" aria-label="APML assistant mascot"></wobnimo-mascot>      
         </div>    
       </div>  
     `;
@@ -905,8 +914,8 @@ window.sendPortalNotification = function () {};
       }
       @keyframes blink { 50% { opacity: 0; } }
       .support-btn {
-        width: 64px;
-        height: 64px;
+        width: 136px;
+        height: 136px;
         border-radius: 50%;
         border: 3px solid var(--text-main, #1c1917);
         box-shadow: 4px 4px 0px var(--text-main, #1c1917);
@@ -918,11 +927,27 @@ window.sendPortalNotification = function () {};
         justify-content: center;
         pointer-events: auto;
       }
-      .support-btn img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+      .support-btn wobnimo-mascot {
         display: block;
+        width: 128px;
+        height: 128px;
+        max-width: 100%;
+        max-height: 100%;
+        pointer-events: none;
+      }
+      .support-btn {
+        border: 0;
+        box-shadow: none;
+        overflow: visible;
+        background: transparent;
+      }
+      .support-btn:hover {
+        background: transparent;
+      }
+      @media (max-width: 600px) {
+        .support-fab { right: 14px; bottom: 18px; }
+        .support-btn { width: 108px; height: 108px; }
+        .support-btn wobnimo-mascot { width: 104px; height: 104px; }
       }
       @media (hover: hover) {
         .support-fab:hover .support-btn {
@@ -997,6 +1022,7 @@ window.sendPortalNotification = function () {};
       const myToken = ++typeToken;
       if (!isPin) pinnedShowing = false;
       typeText.textContent = "";
+      setWobnimoState('speaking');
       if (cursor) cursor.style.display = 'inline-block';
       bubble.classList.add('show');
       isTyping = true;
@@ -1010,6 +1036,7 @@ window.sendPortalNotification = function () {};
           typeText.textContent += textToType.charAt(typeIndex);
         } else {
           isTyping = false;
+          setWobnimoState('idle', 2600);
           setTimeout(() => {
             if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
@@ -1031,8 +1058,40 @@ window.sendPortalNotification = function () {};
       step();
     }
 
-    const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
+    const IDLE_MS = 120000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
+    const wobnimo = document.getElementById('apmlWobnimo');
+    let wobnimoStateTimer = null;
+    function setWobnimoState(state, resetAfter) {
+      if (!wobnimo) return;
+      wobnimo.setAttribute('state', state);
+      clearTimeout(wobnimoStateTimer);
+      if (resetAfter) {
+        wobnimoStateTimer = setTimeout(() => {
+          if (!asleep) wobnimo.setAttribute('state', 'idle');
+        }, resetAfter);
+      }
+    }
+    let typingTimer = null;
+    document.addEventListener('input', (event) => {
+      if (!event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+      wake();
+      setWobnimoState('listening');
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => setWobnimoState('idle'), 1400);
+    }, true);
+    document.addEventListener('submit', () => {
+      wake();
+      setWobnimoState('thinking');
+      setTimeout(() => {
+        if (wobnimo && wobnimo.getAttribute('state') === 'thinking') setWobnimoState('working');
+      }, 850);
+      setWobnimoState('working', 12000);
+    }, true);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') setWobnimoState('sleeping');
+      else setWobnimoState('idle');
+    });
     const zzz = document.createElement('div');
     zzz.className = 'support-zzz';
     zzz.setAttribute('aria-hidden', 'true');
@@ -1042,14 +1101,16 @@ window.sendPortalNotification = function () {};
 
     function wake() {
       lastActivity = Date.now();
-      if (!asleep) return;
+      if (!asleep) { setWobnimoState('idle'); return; }
       asleep = false;
+      setWobnimoState('idle');
       if (moodBtn) moodBtn.classList.remove('apml-mood-sleep');
       zzz.classList.remove('show');
     }
     function fallAsleep() {
       if (asleep || alertTimer || happyTimer || !moodBtn) return;
       asleep = true;
+      setWobnimoState('sleeping');
       moodBtn.classList.add('apml-mood-sleep');
       zzz.classList.add('show');
     }
@@ -1067,6 +1128,7 @@ window.sendPortalNotification = function () {};
       clearTimeout(alertTimer);
       moodBtn.classList.remove('apml-mood-happy');
       moodBtn.classList.add('apml-mood-alert');
+      setWobnimoState('error', ALERT_MS);
       alertTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-alert'); alertTimer = null; lastActivity = Date.now(); }, ALERT_MS);
     }
     const happyLines = ['👍 Nice work!', '🎉 All done!', '✅ Done, great job!'];
@@ -1077,6 +1139,7 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.remove('apml-mood-alert');
       clearTimeout(alertTimer); alertTimer = null;
       moodBtn.classList.add('apml-mood-happy');
+      setWobnimoState('celebrating', HAPPY_MS);
       happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
       const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
       playTypewriter(line, false, 4500);
