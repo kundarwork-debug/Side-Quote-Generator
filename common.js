@@ -1175,7 +1175,8 @@ window.sendPortalNotification = function () {};
       moodBtn.classList.remove('apml-mood-alert');
       clearTimeout(alertTimer); alertTimer = null;
       moodBtn.classList.add('apml-mood-happy');
-      setWobnimoState('celebrating', HAPPY_MS);
+      // Keep Wobnimo in its neutral pose; APML's own bounce handles the celebration without the built-in circular ring.
+      setWobnimoState('idle', HAPPY_MS);
       happyTimer = setTimeout(() => { moodBtn.classList.remove('apml-mood-happy'); happyTimer = null; lastActivity = Date.now(); }, HAPPY_MS);
       const line = String(text || happyLines[Math.floor(Math.random() * happyLines.length)]);
       playTypewriter(line, false, 4500);
