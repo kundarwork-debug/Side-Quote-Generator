@@ -1084,9 +1084,13 @@ window.sendPortalNotification = function () {};
       wake();
       setWobnimoState('thinking');
       setTimeout(() => {
-        if (wobnimo && wobnimo.getAttribute('state') === 'thinking') setWobnimoState('working');
+        if (wobnimo && wobnimo.getAttribute('state') === 'thinking') {
+          setWobnimoState('working');
+          setTimeout(() => {
+            if (wobnimo && wobnimo.getAttribute('state') === 'working') setWobnimoState('idle');
+          }, 12000);
+        }
       }, 850);
-      setWobnimoState('working', 12000);
     }, true);
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') setWobnimoState('sleeping');
