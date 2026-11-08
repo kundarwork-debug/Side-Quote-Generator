@@ -73,7 +73,7 @@ jobs:
           echo "ready=true" >> "$GITHUB_OUTPUT"
 
       - name: Publish signed APK and update metadata
-        if: steps.release.outputs.ready == 'true' && github.event_name != 'pull_request'
+        if: steps.release.outputs.ready == 'true' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apml-apk-latest
