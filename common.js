@@ -952,11 +952,10 @@ window.sendPortalNotification = function () {};
         .support-btn { width: 108px; height: 108px; }
         .support-btn wobnimo-mascot { width: 104px; height: 104px; }
       }
-      @media (hover: hover) {
-        .support-fab:hover .support-btn {
-          transform: translateY(-4px);
-          box-shadow: 6px 6px 0px var(--text-main, #1c1917);
-        }
+      /* Keep the mascot stationary on hover; no lift or shadow ring. */
+      .support-fab:hover .support-btn {
+        transform: none !important;
+        box-shadow: none !important;
       }
 
       /* ---- moods ---- */
@@ -1077,6 +1076,29 @@ window.sendPortalNotification = function () {};
           if (!asleep) wobnimo.setAttribute('state', 'idle');
         }, resetAfter);
       }
+    }
+
+    // React once when a desktop pointer approaches the mascot, not on every move.
+    let mascotPointerNearby = false;
+    if (moodBtn && wobnimo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      window.addEventListener('mousemove', (event) => {
+        const rect = moodBtn.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distance = Math.hypot(event.clientX - centerX, event.clientY - centerY);
+        const isNearby = distance <= 155;
+
+        if (!isNearby) {
+          mascotPointerNearby = false;
+          return;
+        }
+        if (!mascotPointerNearby) {
+          mascotPointerNearby = true;
+          if (!isTyping && !asleep && wobnimo.getAttribute('state') === 'idle') {
+            setWobnimoState('surprised', 1400);
+          }
+        }
+      }, { passive: true });
     }
     let typingTimer = null;
     document.addEventListener('input', (event) => {
