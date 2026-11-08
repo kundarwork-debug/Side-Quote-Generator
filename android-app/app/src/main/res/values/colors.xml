@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="apml_splash_background">#F7F8FB</color>
+    <color name="apml_accent">#B91C1C</color>
+    <color name="apml_system_surface">#F7F8FB</color>
+</resources>
