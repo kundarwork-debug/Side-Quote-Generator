@@ -787,53 +787,137 @@
     @media (prefers-reduced-motion:reduce) {
       *, *::before, *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
     }
+    
+    /* Premium minimal homepage hero — scoped to the intro and workspace transition */
+    .hero-center {
+      max-width: 980px;
+      padding: clamp(48px, 7vw, 82px) 24px 42px;
+      gap: 0;
+    }
+    .hero-mark {
+      width: 68px;
+      height: 68px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      border: 1px solid var(--surface-border);
+      border-radius: 20px;
+      background: var(--surface-card);
+      box-shadow: var(--shadow-subtle);
+    }
+    .hero-mark img { width: 44px; height: 44px; object-fit: contain; display: block; }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 18px;
+      color: var(--text-muted);
+      font-size: 11px;
+      line-height: 1.5;
+      font-weight: 800;
+      letter-spacing: .14em;
+    }
+    .hero-eyebrow-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: var(--primary); }
+    .hero-eyebrow-divider { color: var(--text-faint); }
+    .hero-main-title {
+      display: block;
+      max-width: 850px;
+      margin: 0 auto 18px;
+      color: var(--text-main);
+      font-size: clamp(42px, 7vw, 76px);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -.065em;
+    }
+    .hero-main-title span {
+      color: var(--primary);
+      background: none;
+      -webkit-text-fill-color: currentColor;
+    }
+    .hero-main-title span::after { display: none; }
+    .hero-description {
+      max-width: 590px;
+      margin: 0 auto;
+      color: var(--text-secondary);
+      font-size: clamp(15px, 1.8vw, 18px);
+      line-height: 1.75;
+      font-weight: 500;
+    }
+    .hero-primary-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      margin-top: 26px;
+      padding: 0 20px;
+      border: 1px solid var(--primary);
+      border-radius: 12px;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 7px 18px rgba(185, 28, 28, .14);
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .hero-primary-action:hover { transform: translateY(-2px); box-shadow: 0 11px 24px rgba(185, 28, 28, .2); }
+    .hero-primary-action .material-symbols-outlined { font-size: 19px; }
+    .hero-supporting-note {
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .workspace-section {
+      margin-top: 18px;
+      padding-top: 28px;
+      border-top: 1px solid var(--surface-border);
+    }
+    @media (max-width: 560px) {
+      .hero-center { padding: 42px 20px 30px; }
+      .hero-mark { width: 60px; height: 60px; margin-bottom: 18px; border-radius: 17px; }
+      .hero-mark img { width: 39px; height: 39px; }
+      .hero-eyebrow { gap: 7px; font-size: 9px; letter-spacing: .11em; margin-bottom: 16px; }
+      .hero-main-title { font-size: clamp(39px, 11vw, 54px); line-height: 1.08; letter-spacing: -.06em; }
+      .hero-description { font-size: 15px; line-height: 1.65; }
+      .hero-primary-action { width: 100%; max-width: 280px; margin-top: 22px; }
+      .hero-supporting-note { max-width: 290px; }
+      .workspace-section { margin-top: 10px; padding-top: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-primary-action { transition: none; }
+    }
   </style>
 </head>
 <body>
 
   <!-- Ambient Soft Radial Mesh Background -->
   <div class="ambient-bg"></div>
-  <div class="cursor-glow" aria-hidden="true"></div>
 
   <!-- COMMON HEADER PLACEHOLDER -->
   <div id="header-container"></div>
 
   <main>
 
-    <!-- STANDARDIZED RESPONSIVE HERO SECTION (OPTIMIZED FOR SPEED) -->
-    <section class="hero-center">
-      
-      <!-- Logo Stage -->
-      <div class="logo-stage">
-        <div class="logo-halo" aria-hidden="true"></div>
-        <div class="rotating-logo-container">
-          <img src="logo.svg" alt="APML Logo">
-        </div>
+    <!-- PREMIUM MINIMAL INTRO -->
+    <section class="hero-center" aria-labelledby="homeHeroTitle">
+      <div class="hero-mark">
+        <img src="logo.svg" alt="APML logo" width="52" height="52">
       </div>
-
-      <!-- Hero Name -->
-      <div class="hero-brand-name">APML PORTAL</div>
-
-      <!-- Title with Smoke/Blur Animation -->
-      <h1 class="hero-main-title">
-        <span class="word-effect">One</span>
-        <span class="word-effect">Portal</span>
-        <span class="word-effect">for</span>
-        <span class="word-effect gradient-word">All Solutions</span>
-      </h1>
-
-      <!-- Subtitle -->
-      <div class="hero-typing-subtitle">
-        <span class="sub-word-effect">Work</span>
-        <span class="sub-word-effect">Smarter,</span>
-        <span class="sub-word-effect">Move</span>
-        <span class="sub-word-effect">Faster.</span>
-      </div>
-
+      <p class="hero-eyebrow"><span class="hero-eyebrow-dot"></span> APML PORTAL <span class="hero-eyebrow-divider">/</span> OPERATIONS WORKSPACE</p>
+      <h1 class="hero-main-title" id="homeHeroTitle">The workday,<br><span>made simpler.</span></h1>
+      <p class="hero-description">A connected workspace for the tools, information and everyday operations your team relies on.</p>
+      <a class="hero-primary-action" href="#workspace">
+        Explore workspace
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_downward</span>
+      </a>
+      <p class="hero-supporting-note">One place for quotations, directories, rates and shared resources.</p>
     </section>
 
     <!-- OPERATIONS MODULES BENTO GRID -->
-    <section class="workspace-section">
+    <section class="workspace-section" id="workspace">
       
       <div class="section-bar">
         <div class="section-heading">
@@ -1138,35 +1222,6 @@
         document.documentElement.setAttribute('data-theme', event.newValue === 'dark' ? 'dark' : 'light');
       }
     });
-  </script>
-
-  <!-- HERO CURSOR GLOW -->
-  <script>
-    (function () {
-      var glow = document.querySelector('.cursor-glow');
-      var hero = document.querySelector('.hero-center');
-      if (!glow || !hero) return;
-      if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var inView = true, pending = false, x = 0, y = 0;
-      new IntersectionObserver(function (entries) {
-        inView = entries[0].isIntersecting;
-        if (!inView) glow.classList.remove('active');
-      }, { threshold: 0.15 }).observe(hero);
-      function paint() {
-        pending = false;
-        glow.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
-        glow.classList.add('active');
-      }
-      window.addEventListener('pointermove', function (ev) {
-        if (!inView || document.hidden) return;
-        x = ev.clientX; y = ev.clientY;
-        if (!pending) { pending = true; requestAnimationFrame(paint); }
-      }, { passive: true });
-      document.documentElement.addEventListener('mouseleave', function () {
-        glow.classList.remove('active');
-      });
-    })();
   </script>
 
   <!-- TEXT SCRAMBLE EFFECT CONTROLLER -->
