@@ -269,7 +269,7 @@ window.sendPortalNotification = function () {};
     const headerContainer = document.getElementById("header-container");
     if (headerContainer) {
       headerContainer.innerHTML = `
-        <header class="site-header${isHomePage ? " home-scroll-header home-header-hidden" : ""}" id="siteHeader">
+        <header class="site-header" id="siteHeader">
           <div class="header-inner">
             <div style="display: flex; align-items: center; gap: 20px;">
               <a href="index.html" class="site-logo">
@@ -368,16 +368,6 @@ window.sendPortalNotification = function () {};
       const burgerCheckbox = document.getElementById("burger-checkbox");
       const navMenu = document.getElementById("navMenu");
       const siteHeader = document.getElementById("siteHeader");
-
-      // Homepage only: keep the header tucked away at the top, then reveal it
-      // once the visitor scrolls down. Inner pages remain unchanged.
-      if (isHomePage && siteHeader) {
-        const updateHomeHeader = () => {
-          siteHeader.classList.toggle("home-header-hidden", window.scrollY <= 80);
-        };
-        updateHomeHeader();
-        window.addEventListener("scroll", updateHomeHeader, { passive: true });
-      }
 
       function setMenuOpen(isOpen) {
         if (!hamburgerBtn || !burgerCheckbox || !navMenu) return;
