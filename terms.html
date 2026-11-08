@@ -249,6 +249,22 @@
     .btn-back { min-height:44px; }
     .btn-back:focus-visible,.contact-item:focus-visible { outline:3px solid rgba(185,28,28,.35); outline-offset:3px; }
     @media(max-width:600px){ main { padding-left:16px; padding-right:16px; margin-top:96px; margin-bottom:52px; } .policy-card { padding:24px 18px; } .policy-content { gap:23px; } .policy-section p { font-size:14.5px; line-height:1.7; } .back-home-row { gap:14px; flex-wrap:wrap; } }
+
+    /* APML shared visual consistency: Terms */
+    .policy-card,.policy-header,.policy-content,.policy-section{min-width:0}
+    .policy-section p,.policy-section li,.contact-item{overflow-wrap:anywhere;word-break:break-word}
+    .policy-section ul{padding-left:2px}
+    .contact-item{max-width:100%;flex-wrap:wrap}
+    @media(max-width:600px){
+      main{width:100%;padding-left:14px;padding-right:14px}
+      .policy-card{border-radius:18px;padding:22px 17px}
+      .policy-header{margin-bottom:27px;padding-bottom:20px}
+      .policy-section h2{font-size:18px;line-height:1.35}
+      .policy-section li{font-size:14px;line-height:1.65}
+      .back-home-row{align-items:stretch}
+      .btn-back{justify-content:center;max-width:100%}
+    }
+
   </style>
 
 </head>
