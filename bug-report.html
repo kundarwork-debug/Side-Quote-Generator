@@ -259,6 +259,20 @@
     .btn-submit,.btn-back { min-height:48px; }
     .form-input:focus-visible,.form-textarea:focus-visible,.btn-submit:focus-visible,.btn-back:focus-visible { outline:3px solid rgba(185,28,28,.35); outline-offset:2px; }
     @media(max-width:520px){ main { padding-left:16px; padding-right:16px; margin-top:96px; margin-bottom:52px; } .bug-card { padding:24px 18px; } .form-actions-row { gap:12px; flex-wrap:wrap; } }
+
+    /* APML shared visual consistency: Bug Report */
+    main,.bug-card,.bug-header,.form-group{min-width:0}
+    .form-input,.form-textarea{max-width:100%;box-sizing:border-box}
+    .form-actions-row{gap:14px}
+    .success-alert{min-width:0;overflow-wrap:anywhere}
+    @media(max-width:520px){
+      main{width:100%;padding-left:14px;padding-right:14px}
+      .bug-card{border-radius:18px;padding:22px 17px}
+      .form-input,.form-textarea{padding:13px 14px}
+      .form-actions-row{align-items:stretch}
+      .form-actions-row .btn-submit,.form-actions-row .btn-back{justify-content:center}
+    }
+
   </style>
 
 </head>
