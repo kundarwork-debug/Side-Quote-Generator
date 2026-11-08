@@ -2070,12 +2070,14 @@
       });
 
       if (!fileUrl) {
+        if (window.APMLMascot) window.APMLMascot.alert();
         alert("File URL is missing.");
         return;
       }
 
       if (window.ApmNativeDownload && window.ApmNativeDownload.start) {
         window.ApmNativeDownload.start(fileUrl, fileName || 'APML-file');
+        if (window.APMLMascot) window.APMLMascot.happy('Download started successfully!');
         return;
       }
       const saveBlob = (blob) => {
@@ -2096,6 +2098,7 @@
 
       try {
         saveBlob(await fetchBlob(fileUrl));
+        if (window.APMLMascot) window.APMLMascot.happy('Your file is downloaded!');
         return;
       } catch (err) {}
 
@@ -2107,6 +2110,7 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      if (window.APMLMascot) window.APMLMascot.happy('Your download has started!');
     }
 
     async function renderUI() {
