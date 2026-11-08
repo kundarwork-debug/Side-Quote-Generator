@@ -5,281 +5,343 @@ import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
+import android.webkit.GeolocationPermissions;
+import android.webkit.JavascriptInterface;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebSettings;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 public class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final String PORTAL_URL = "https://apmlportal.vercel.app/index.html";
-    private static final int NAVY = Color.rgb(15, 27, 52);
-    private static final int BLUE = Color.rgb(45, 105, 220);
-    private static final int MUTED = Color.rgb(112, 125, 148);
+    private static final int PAGE = Color.rgb(247, 248, 251);
+    private static final int ACCENT = Color.rgb(185, 28, 28);
 
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
+    private SwipeRefreshLayout refreshLayout;
     private ProgressBar progress;
     private TextView errorView;
-    private FrameLayout contentFrame;
+    private FrameLayout root;
 
-    @Override public void onCreate(Bundle state) {
+    @Override
+    protected void onCreate(Bundle state) {
         super.onCreate(state);
-        getWindow().setStatusBarColor(Color.WHITE);
-        getWindow().getDecorView().setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
-        getWindow().setNavigationBarColor(Color.WHITE);
-        buildNativeShell();
+        configureSystemBars();
+        buildAppView();
         configureWebView();
-        if (state == null) webView.loadUrl(PORTAL_URL);
-        else if (webView.restoreState(state) == null) webView.loadUrl(PORTAL_URL);
+        configureBackNavigation();
+
+        if (state == null || webView.restoreState(state) == null) {
+            webView.loadUrl(PORTAL_URL);
+        }
     }
 
-    private void buildNativeShell() {
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setBackgroundColor(Color.WHITE);
+    private void configureSystemBars() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        getWindow().setStatusBarColor(PAGE);
+        getWindow().setNavigationBarColor(PAGE);
+        getWindow().setBackgroundDrawableResource(android.R.color.white);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getWindow().setNavigationBarContrastEnforced(false);
+            getWindow().setStatusBarContrastEnforced(false);
+        }
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        );
+    }
 
-        LinearLayout header = new LinearLayout(this);
-        header.setGravity(Gravity.CENTER_VERTICAL);
-        header.setPadding(dp(18), dp(12), dp(16), dp(12));
-        header.setBackgroundColor(NAVY);
+    private void buildAppView() {
+        root = new FrameLayout(this);
+        root.setBackgroundColor(PAGE);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {
+            Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+            view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+            return windowInsets;
+        });
 
-        ImageView mark = new ImageView(this);
-        mark.setImageResource(R.drawable.ic_launcher);
-        mark.setScaleType(ImageView.ScaleType.FIT_CENTER);
-        header.addView(mark, new LinearLayout.LayoutParams(dp(42), dp(42)));
+        refreshLayout = new SwipeRefreshLayout(this);
+        refreshLayout.setColorSchemeColors(ACCENT);
+        refreshLayout.setProgressBackgroundColorSchemeColor(Color.WHITE);
 
-        LinearLayout brand = new LinearLayout(this);
-        brand.setOrientation(LinearLayout.VERTICAL);
-        brand.setPadding(dp(12), 0, 0, 0);
-        TextView title = new TextView(this);
-        title.setText("APML Portal");
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(17);
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        TextView subtitle = new TextView(this);
-        subtitle.setText("Admin workspace");
-        subtitle.setTextColor(Color.rgb(190, 202, 222));
-        subtitle.setTextSize(11);
-        brand.addView(title);
-        brand.addView(subtitle);
-        header.addView(brand, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        webView = new WebView(this);
+        webView.setBackgroundColor(Color.WHITE);
+        webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        refreshLayout.addView(webView, new SwipeRefreshLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        ));
+        refreshLayout.setOnRefreshListener(() -> webView.reload());
+        refreshLayout.setOnChildScrollUpCallback((parent, child) -> webView != null && webView.getScrollY() > 0);
 
-        TextView refresh = actionText("↻", "Refresh portal");
-        refresh.setTextSize(25);
-        refresh.setTextColor(Color.WHITE);
-        refresh.setOnClickListener(v -> reloadPortal());
-        header.addView(refresh, new LinearLayout.LayoutParams(dp(44), dp(44)));
-        root.addView(header);
+        root.addView(refreshLayout, new FrameLayout.LayoutParams(-1, -1));
 
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setMax(100);
-        progress.setProgressTintList(android.content.res.ColorStateList.valueOf(BLUE));
-        progress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(232, 237, 245)));
-        progress.setIndeterminate(false);
-        root.addView(progress, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(3)));
+        progress.setProgressTintList(android.content.res.ColorStateList.valueOf(ACCENT));
+        progress.setProgressBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.rgb(232, 235, 241)));
+        FrameLayout.LayoutParams progressParams = new FrameLayout.LayoutParams(-1, dp(3), Gravity.TOP);
+        root.addView(progress, progressParams);
 
-        contentFrame = new FrameLayout(this);
-        webView = new WebView(this);
-        contentFrame.addView(webView, new FrameLayout.LayoutParams(-1, -1));
         errorView = new TextView(this);
         errorView.setVisibility(View.GONE);
         errorView.setGravity(Gravity.CENTER);
-        errorView.setTextColor(NAVY);
-        errorView.setTextSize(16);
+        errorView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        errorView.setTextColor(Color.rgb(35, 45, 62));
+        errorView.setTextSize(15);
+        errorView.setLineSpacing(dp(5), 1f);
         errorView.setPadding(dp(32), dp(32), dp(32), dp(32));
-        errorView.setBackgroundColor(Color.WHITE);
-        contentFrame.addView(errorView, new FrameLayout.LayoutParams(-1, -1));
-        root.addView(contentFrame, new LinearLayout.LayoutParams(-1, 0, 1));
+        errorView.setBackgroundColor(PAGE);
+        errorView.setOnClickListener(v -> reloadPortal());
+        root.addView(errorView, new FrameLayout.LayoutParams(-1, -1));
 
         setContentView(root);
-    }
-
-    private TextView actionText(String glyph, String description) {
-        TextView t = new TextView(this);
-        t.setText(glyph);
-        t.setContentDescription(description);
-        t.setGravity(Gravity.CENTER);
-        t.setTextSize(21);
-        t.setTextColor(NAVY);
-        t.setClickable(true);
-        t.setFocusable(true);
-        return t;
-    }
-
-    private View navItem(String glyph, String label, View.OnClickListener listener) {
-        LinearLayout item = new LinearLayout(this);
-        item.setOrientation(LinearLayout.VERTICAL);
-        item.setGravity(Gravity.CENTER);
-        item.setClickable(true);
-        item.setFocusable(true);
-        TextView icon = new TextView(this);
-        icon.setText(glyph);
-        icon.setTextSize(23);
-        icon.setTextColor(BLUE);
-        icon.setGravity(Gravity.CENTER);
-        TextView caption = new TextView(this);
-        caption.setText(label);
-        caption.setTextSize(11);
-        caption.setTextColor(MUTED);
-        caption.setGravity(Gravity.CENTER);
-        item.addView(icon);
-        item.addView(caption);
-        item.setOnClickListener(listener);
-        item.setContentDescription(label);
-        item.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 1));
-        return item;
+        ViewCompat.requestApplyInsets(root);
     }
 
     private void configureWebView() {
-        WebSettings s = webView.getSettings();
-        s.setJavaScriptEnabled(true);
-        s.setDomStorageEnabled(true);
-        s.setDatabaseEnabled(true);
-        s.setAllowFileAccess(true);
-        s.setJavaScriptCanOpenWindowsAutomatically(true);
-        s.setSupportMultipleWindows(false);
-        s.setUseWideViewPort(true);
-        s.setLoadWithOverviewMode(true);
+        WebSettings settings = webView.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setDatabaseEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setSupportMultipleWindows(false);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(false);
+        settings.setLoadsImagesAutomatically(true);
+        settings.setMediaPlaybackRequiresUserGesture(true);
+        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        settings.setTextZoom(100);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            settings.setSafeBrowsingEnabled(true);
+        }
+
+        CookieManager cookies = CookieManager.getInstance();
+        cookies.setAcceptCookie(true);
+        cookies.setAcceptThirdPartyCookies(webView, true);
+
         webView.addJavascriptInterface(new NativeDownloads(), "ApmNativeDownload");
-        CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
         webView.setWebViewClient(new WebViewClient() {
-            @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Uri uri = request.getUrl();
-                String host = uri.getHost() == null ? "" : uri.getHost();
-                if ("apmlportal.vercel.app".equalsIgnoreCase(host) ||
-                    host.endsWith(".firebaseapp.com") || host.endsWith(".googleapis.com") ||
-                    host.endsWith(".gstatic.com") || host.endsWith(".google.com")) return false;
-                try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
-                catch (ActivityNotFoundException ignored) {}
-                return true;
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                return handleNavigation(request.getUrl());
             }
-            @Override public void onPageStarted(WebView view, String url, android.graphics.Bitmap icon) {
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                return handleNavigation(Uri.parse(url));
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 errorView.setVisibility(View.GONE);
                 progress.setVisibility(View.VISIBLE);
-                progress.setProgress(5);
+                progress.setProgress(8);
+                refreshLayout.setRefreshing(false);
             }
-            @Override public void onPageFinished(WebView view, String url) {
-                // Keep the portal responsive inside the phone's available screen width.
-                String responsiveFix = "(function(){"
-                    + "var m=document.querySelector('meta[name=viewport]');"
-                    + "if(!m){m=document.createElement('meta');m.name='viewport';m.content='width=device-width,initial-scale=1';document.head.appendChild(m);}"
-                    + "var s=document.getElementById('apml-android-fit');"
-                    + "if(!s){s=document.createElement('style');s.id='apml-android-fit';document.head.appendChild(s);}"
-                    + "s.textContent='html{width:100%!important;max-width:100%!important;height:auto!important;min-height:100%;overflow-x:hidden!important;overflow-y:auto!important;-webkit-text-size-adjust:100%;}'"
-                    + "+'body{width:100%!important;max-width:100%!important;height:auto!important;min-height:100vh;overflow-x:hidden!important;overflow-y:auto!important;}'"
-                    + "+'body>*{max-width:100%;}'"
-                    + "+'*,*:before,*:after{box-sizing:border-box;}'"
-                    + "+'img,video,canvas,svg,iframe{max-width:100%;}'"
-                    + "+'table{max-width:100%;}'"
-                    + "+'#support-fab,.support-fab,#supportBubble,#supportAvatarBtn{display:none!important;visibility:hidden!important;pointer-events:none!important;}'"
-                    + "+'@media(max-width:768px){main,.container,.page-container,.content,.drive-container,.gallery-container{max-width:100%!important;width:100%!important;} .page-head,.drive-head-bar,.gallery-head-bar{flex-wrap:wrap!important;} .grid,.kpis,.modules-grid{min-width:0!important;} #footer-container,footer,.site-footer{width:100%!important;max-width:100%!important;height:auto!important;min-height:0!important;flex-shrink:0!important;overflow:visible!important;} .sheet-wrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;} .sheet{max-width:100%!important;} }';"
-                    + "})();";
-                view.evaluateJavascript(responsiveFix, null);
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                injectMobileCompatibility();
                 progress.setProgress(100);
-                progress.postDelayed(() -> progress.setVisibility(View.GONE), 250);
+                progress.postDelayed(() -> progress.setVisibility(View.GONE), 180);
+                refreshLayout.setRefreshing(false);
             }
-            @Override public void onReceivedError(WebView view, WebResourceRequest request, android.webkit.WebResourceError error) {
-                if (request.isForMainFrame()) {
-                    progress.setVisibility(View.GONE);
-                    errorView.setText("Unable to connect to APML Portal\n\nCheck your internet connection and try again.\n\nTap here to retry.");
-                    errorView.setVisibility(View.VISIBLE);
-                    errorView.setOnClickListener(v -> reloadPortal());
-                }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (request.isForMainFrame()) showConnectionError();
             }
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
-            @Override public void onProgressChanged(WebView view, int value) {
+            @Override
+            public void onProgressChanged(WebView view, int value) {
                 progress.setProgress(value);
                 if (value >= 100) progress.setVisibility(View.GONE);
                 else progress.setVisibility(View.VISIBLE);
             }
-            @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
+
+            @Override
+            public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = callback;
-                Intent intent = params.createIntent();
-                try { startActivityForResult(intent, FILE_CHOOSER_REQUEST); }
-                catch (ActivityNotFoundException e) {
+                Intent chooser = params.createIntent();
+                if (params.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE) {
+                    chooser.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                }
+                try {
+                    startActivityForResult(chooser, FILE_CHOOSER_REQUEST);
+                    return true;
+                } catch (ActivityNotFoundException error) {
                     fileCallback = null;
-                    Toast.makeText(MainActivity.this, "No file picker available", Toast.LENGTH_SHORT).show();
+                    callback.onReceiveValue(null);
+                    Toast.makeText(MainActivity.this, "No file picker is available on this device.", Toast.LENGTH_LONG).show();
                     return false;
                 }
-                return true;
+            }
+
+            @Override
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+                Uri uri = Uri.parse(origin);
+                callback.invoke(uri.getHost() != null && isTrustedHost(uri.getHost()), false, false);
             }
         });
 
-        webView.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) -> {
-            try {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                request.setMimeType(mimeType);
-                request.addRequestHeader("User-Agent", userAgent);
-                String cookie = CookieManager.getInstance().getCookie(url);
-                if (cookie != null) request.addRequestHeader("Cookie", cookie);
-                request.setTitle("APML Portal download");
-                request.setDescription("Downloading file…");
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "APML-" + System.currentTimeMillis());
-                ((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(request);
-                Toast.makeText(this, "Download started", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) { Toast.makeText(this, "Unable to download this file", Toast.LENGTH_LONG).show(); }
-        });
+        webView.setDownloadListener((url, userAgent, contentDisposition, mimeType, contentLength) ->
+            enqueueDownload(url, userAgent, contentDisposition, mimeType)
+        );
+    }
+
+    private boolean handleNavigation(Uri uri) {
+        String scheme = uri.getScheme() == null ? "" : uri.getScheme().toLowerCase();
+        if ("http".equals(scheme) || "https".equals(scheme)) {
+            String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
+            if (isTrustedHost(host)) return false;
+        }
+
+        try {
+            Intent intent;
+            if ("intent".equals(scheme)) {
+                intent = Intent.parseUri(uri.toString(), Intent.URI_INTENT_SCHEME);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                    return true;
+                }
+                String fallback = intent.getStringExtra("browser_fallback_url");
+                if (fallback != null) startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fallback)));
+                return true;
+            }
+            intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        } catch (Exception ignored) {
+            Toast.makeText(this, "No app is available to open this link.", Toast.LENGTH_SHORT).show();
+        }
+        return true;
+    }
+
+    private boolean isTrustedHost(String host) {
+        return host.equals("apmlportal.vercel.app")
+            || host.equals("accounts.google.com")
+            || host.equals("google.com")
+            || host.endsWith(".google.com")
+            || host.endsWith(".googleapis.com")
+            || host.endsWith(".gstatic.com")
+            || host.endsWith(".googleusercontent.com")
+            || host.endsWith(".firebaseapp.com")
+            || host.endsWith(".firebaseio.com")
+            || host.endsWith(".web.app")
+            || host.endsWith(".vercel.app");
+    }
+
+    private void injectMobileCompatibility() {
+        String script = "(function(){"
+            + "var m=document.querySelector('meta[name=viewport]');"
+            + "if(!m){m=document.createElement('meta');m.name='viewport';m.content='width=device-width,initial-scale=1,viewport-fit=cover';document.head.appendChild(m);}"
+            + "var s=document.getElementById('apml-android-shell');"
+            + "if(!s){s=document.createElement('style');s.id='apml-android-shell';document.head.appendChild(s);}"
+            + "s.textContent='html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}img,video,canvas,svg{max-width:100%;} .sheet-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;} #support-fab,.support-fab,#supportBubble,#supportAvatarBtn{display:none!important;visibility:hidden!important;pointer-events:none!important;}';"
+            + "})();";
+        webView.evaluateJavascript(script, null);
+    }
+
+    private void enqueueDownload(String url, String userAgent, String contentDisposition, String mimeType) {
+        try {
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.setMimeType(mimeType);
+            if (userAgent != null) request.addRequestHeader("User-Agent", userAgent);
+            String cookie = CookieManager.getInstance().getCookie(url);
+            if (cookie != null) request.addRequestHeader("Cookie", cookie);
+            String fileName = URLUtil.guessFileName(url, contentDisposition, mimeType);
+            fileName = fileName.replaceAll("[\\\\/:*?\"<>|]", "_");
+            request.setTitle(fileName);
+            request.setDescription("Downloading from APML Portal");
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            request.setAllowedOverMetered(true);
+            request.setAllowedOverRoaming(false);
+            DownloadManager manager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+            if (manager == null) throw new IllegalStateException("Download service unavailable");
+            manager.enqueue(request);
+            Toast.makeText(this, "Download started — check Downloads.", Toast.LENGTH_LONG).show();
+        } catch (Exception error) {
+            Toast.makeText(this, "Unable to start this download.", Toast.LENGTH_LONG).show();
+        }
     }
 
     private final class NativeDownloads {
         @JavascriptInterface
         public void start(String url, String fileName) {
             runOnUiThread(() -> {
-                try {
-                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-                    request.addRequestHeader("User-Agent", webView.getSettings().getUserAgentString());
-                    String cookie = CookieManager.getInstance().getCookie(url);
-                    if (cookie != null) request.addRequestHeader("Cookie", cookie);
-                    String safeName = (fileName == null || fileName.trim().isEmpty()) ? "APML-" + System.currentTimeMillis() : fileName;
-                    request.setTitle(safeName);
-                    request.setDescription("Downloading from APML Portal");
-                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, safeName);
-                    request.setAllowedOverMetered(true);
-                    request.setAllowedOverRoaming(false);
-                    ((DownloadManager)getSystemService(DOWNLOAD_SERVICE)).enqueue(request);
-                    Toast.makeText(MainActivity.this, "Download started - check Downloads", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    Toast.makeText(MainActivity.this, "Download failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Uri uri = Uri.parse(url);
+                if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getHost() == null || !isTrustedHost(uri.getHost())) {
+                    Toast.makeText(MainActivity.this, "Blocked an untrusted download link.", Toast.LENGTH_LONG).show();
+                    return;
                 }
+                enqueueDownload(url, webView.getSettings().getUserAgentString(), fileName, null);
             });
         }
     }
 
-    private void reloadPortal() {
-        errorView.setVisibility(View.GONE);
-        webView.reload();
+    private void showConnectionError() {
+        progress.setVisibility(View.GONE);
+        refreshLayout.setRefreshing(false);
+        errorView.setText("Unable to connect to APML Portal\n\nCheck your internet connection, then tap here to retry.");
+        errorView.setVisibility(View.VISIBLE);
     }
 
-    private int dp(int value) { return (int)(value * getResources().getDisplayMetrics().density + 0.5f); }
+    private void reloadPortal() {
+        errorView.setVisibility(View.GONE);
+        webView.loadUrl(PORTAL_URL);
+    }
 
-    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    private void configureBackNavigation() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (webView != null && webView.canGoBack()) {
+                    webView.goBack();
+                } else {
+                    finish();
+                }
+            }
+        });
+    }
+
+    private int dp(int value) {
+        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_CHOOSER_REQUEST && fileCallback != null) {
             Uri[] results = WebChromeClient.FileChooserParams.parseResult(resultCode, data);
@@ -288,17 +350,25 @@ public class MainActivity extends Activity {
         }
     }
 
-    @Override protected void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-        if (webView != null) webView.saveState(out);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (webView != null) webView.saveState(outState);
     }
-    @Override public void onBackPressed() {
-        if (webView != null && webView.canGoBack()) webView.goBack();
-        else super.onBackPressed();
-    }
-    @Override protected void onDestroy() {
-        if (fileCallback != null) fileCallback.onReceiveValue(null);
-        if (webView != null) webView.destroy();
+
+    @Override
+    protected void onDestroy() {
+        if (fileCallback != null) {
+            fileCallback.onReceiveValue(null);
+            fileCallback = null;
+        }
+        if (webView != null) {
+            webView.stopLoading();
+            webView.setWebChromeClient(null);
+            webView.setWebViewClient(null);
+            webView.destroy();
+            webView = null;
+        }
         super.onDestroy();
     }
 }
