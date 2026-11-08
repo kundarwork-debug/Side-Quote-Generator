@@ -65,6 +65,31 @@
     .health-foot strong{color:var(--health-text)}
     @media(max-width:700px){main{padding:25px 15px 48px}.service-grid,.health-bottom{grid-template-columns:1fr}.overall{align-items:flex-start;padding:17px}.status-pill{margin-left:auto}.health-head{align-items:flex-start}.health-actions{width:100%}.health-btn{flex:1;justify-content:center}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+    /* APML shared visual consistency: System Health */
+    main,.health-head,.overall,.health-bottom,.info-card{min-width:0}
+    .health-head > div:first-child{min-width:0}
+    .health-head h1{overflow-wrap:anywhere}
+    .health-actions #refresh-note{white-space:normal}
+    @media(max-width:700px){
+      main{padding:24px 14px 44px}
+      .overall{gap:12px;flex-wrap:wrap}
+      .overall-copy{flex:1 1 calc(100% - 64px)}
+      .status-pill{margin-left:60px}
+      .health-actions{align-items:stretch}
+      .health-actions #refresh-note{width:100%}
+      .health-btn{min-height:44px}
+      .service,.info-card{padding:17px}
+      .service-name{overflow-wrap:anywhere}
+      .info-row{align-items:flex-start}
+      .info-row b{max-width:58%;overflow-wrap:anywhere}
+    }
+    @media(max-width:360px){
+      .health-actions{flex-direction:column}
+      .health-btn{width:100%}
+      .service-meta{align-items:flex-start;flex-wrap:wrap}
+    }
+
   </style>
 </head>
 <body>
