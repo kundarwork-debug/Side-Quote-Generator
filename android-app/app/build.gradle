@@ -8,6 +8,10 @@ android {
     namespace 'com.apml.portal'
     compileSdk 35
 
+    buildFeatures {
+        buildConfig true
+    }
+
     defaultConfig {
         applicationId 'com.apml.portal'
         minSdk 23
