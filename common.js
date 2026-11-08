@@ -1120,6 +1120,10 @@ window.sendPortalNotification = function () {};
         }
       }, 850);
     }, true);
+    // Native form validation failures should trigger the mascot's error reaction.
+    document.addEventListener('invalid', () => {
+      if (window.APMLMascot) window.APMLMascot.alert();
+    }, true);
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'hidden') setWobnimoState('sleeping');
       else setWobnimoState('idle');
