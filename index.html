@@ -898,6 +898,30 @@
     }
     .hero-primary-action:hover { transform: translateY(-2px); box-shadow: 0 11px 24px rgba(185, 28, 28, .2); }
     .hero-primary-action .material-symbols-outlined { font-size: 19px; }
+    .hero-download-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 46px;
+      margin-top: 12px;
+      padding: 0 18px;
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      background: var(--surface-card);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: var(--shadow-subtle);
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .hero-download-action:hover {
+      transform: translateY(-2px);
+      border-color: rgba(185, 28, 28, .4);
+      box-shadow: var(--shadow-hover);
+    }
+    .hero-download-action .material-symbols-outlined { color: var(--primary); font-size: 19px; }
     .hero-supporting-note {
       margin-top: 14px;
       color: var(--text-muted);
@@ -1074,6 +1098,11 @@
       <a class="hero-primary-action" href="#workspace">
         Explore workspace
         <span class="material-symbols-outlined" aria-hidden="true">arrow_downward</span>
+      </a>
+      <a class="hero-download-action" href="https://github.com/kundarwork-debug/Side-Quote-Generator/releases/latest/download/APML-Portal.apk" aria-label="Download APML Portal Android app APK">
+        <span class="material-symbols-outlined" aria-hidden="true">android</span>
+        Download Android App
+        <span class="material-symbols-outlined" aria-hidden="true">download</span>
       </a>
       <p class="hero-supporting-note hero-copy-reveal">One portal for all solutions.</p>
     </section>
