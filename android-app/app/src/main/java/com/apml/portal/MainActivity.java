@@ -31,6 +31,7 @@ import android.widget.Toast;
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -51,6 +52,7 @@ public class MainActivity extends ComponentActivity {
 
     @Override
     protected void onCreate(Bundle state) {
+        SplashScreen.installSplashScreen(this);
         super.onCreate(state);
         configureSystemBars();
         buildAppView();
@@ -148,6 +150,7 @@ public class MainActivity extends ComponentActivity {
         cookies.setAcceptThirdPartyCookies(webView, true);
 
         webView.addJavascriptInterface(new NativeDownloads(), "ApmNativeDownload");
+        webView.addJavascriptInterface(new NativeShare(), "ApmNativeShare");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -269,6 +272,8 @@ public class MainActivity extends ComponentActivity {
             + "var s=document.getElementById('apml-android-shell');"
             + "if(!s){s=document.createElement('style');s.id='apml-android-shell';document.head.appendChild(s);}"
             + "s.textContent='html,body{max-width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%;}img,video,canvas,svg{max-width:100%;} .sheet-wrap{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;} #support-fab,.support-fab,#supportBubble,#supportAvatarBtn{display:none!important;visibility:hidden!important;pointer-events:none!important;}';"
+            + "if(!navigator.share && window.ApmNativeShare){navigator.share=function(data){return new Promise(function(resolve,reject){try{window.ApmNativeShare.share((data&&data.title)||'APML Portal',(data&&data.text)||'',(data&&data.url)||location.href);resolve();}catch(e){reject(e);}});};}"
+            + "if(!navigator.canShare){navigator.canShare=function(){return !!window.ApmNativeShare;};}"
             + "})();";
         webView.evaluateJavascript(script, null);
     }
@@ -307,6 +312,25 @@ public class MainActivity extends ComponentActivity {
                     return;
                 }
                 enqueueDownload(url, webView.getSettings().getUserAgentString(), fileName, null);
+            });
+        }
+    }
+
+    private final class NativeShare {
+        @JavascriptInterface
+        public void share(String title, String message, String pageUrl) {
+            runOnUiThread(() -> {
+                StringBuilder payload = new StringBuilder();
+                if (message != null && !message.trim().isEmpty()) payload.append(message.trim());
+                if (pageUrl != null && !pageUrl.trim().isEmpty()) {
+                    if (payload.length() > 0) payload.append("\n");
+                    payload.append(pageUrl.trim());
+                }
+                if (payload.length() == 0) payload.append("Explore APML Portal: ").append(PORTAL_URL);
+                Intent send = new Intent(Intent.ACTION_SEND);
+                send.setType("text/plain");
+                send.putExtra(Intent.EXTRA_TEXT, payload.toString());
+                startActivity(Intent.createChooser(send, "Share with"));
             });
         }
     }
