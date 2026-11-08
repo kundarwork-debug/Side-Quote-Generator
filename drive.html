@@ -1261,7 +1261,40 @@
       .btn-delete-file { min-width: 34px; min-height: 34px; }
     }
 
-  </style>
+  
+    /* Final compact-screen refinements: keep file cards readable without page overflow. */
+    @media (max-width: 600px) {
+      .drive-files-grid,
+      .folders-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+      .grid-preview-box { height: 132px; }
+      .grid-card-body { padding: 11px 12px; }
+      .file-name { font-size: 12px; }
+      .file-details-row { gap: 6px; flex-wrap: wrap; }
+      .grid-card-footer {
+        padding: 0 10px 12px;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+      .btn-download-file {
+        flex: 1 1 100%;
+        justify-content: center;
+        min-width: 0;
+      }
+      .card-actions-admin { justify-content: flex-end; width: 100%; }
+      .folder-card { min-width: 0; padding: 12px; gap: 8px; }
+      .folder-card-name { white-space: normal; overflow-wrap: anywhere; }
+      .drive-action-buttons { width: 100%; }
+      .drive-action-buttons button { flex: 1 1 auto; justify-content: center; }
+    }
+    @media (max-width: 359px) {
+      .drive-files-grid,
+      .folders-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+ 
+</style>
 </head>
 <body>
 
