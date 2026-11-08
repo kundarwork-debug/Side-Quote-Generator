@@ -2206,6 +2206,7 @@
       await recordInteraction(firebaseKey, 'downloadsCount');
       
       if (!fileUrl) {
+        if (window.APMLMascot) window.APMLMascot.alert();
         alert("File URL is missing.");
         if (btn) {
           btn.disabled = false;
@@ -2235,6 +2236,7 @@
       const saveName = fileName || (isVideo ? 'apml-video.mp4' : 'apml-image.jpg');
       if (window.ApmNativeDownload && window.ApmNativeDownload.start) {
         window.ApmNativeDownload.start(fileUrl, saveName);
+        if (window.APMLMascot) window.APMLMascot.happy('Media download started!');
         logDailyActivity('media');
         if (btn) { btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">download</span> Download'; }
         return;
@@ -2275,6 +2277,10 @@
         }
 
         logDailyActivity('media');
+        if (window.APMLMascot) window.APMLMascot.happy(isVideo ? 'Video download started!' : 'Photo download started!');
+      } catch (downloadError) {
+        if (window.APMLMascot) window.APMLMascot.alert();
+        throw downloadError;
       } finally {
         if (btn) {
           btn.disabled = false;
