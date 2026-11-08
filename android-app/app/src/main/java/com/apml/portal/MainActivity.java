@@ -1,12 +1,16 @@
 package com.apml.portal;
 
 import android.app.DownloadManager;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.view.Gravity;
 import android.view.View;
@@ -28,6 +32,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
@@ -42,6 +55,11 @@ public class MainActivity extends ComponentActivity {
     private static final String PORTAL_URL = "https://apmlportal.vercel.app/index.html";
     private static final int PAGE = Color.rgb(247, 248, 251);
     private static final int ACCENT = Color.rgb(185, 28, 28);
+    private static final String RELEASE_METADATA_URL = "https://github.com/kundarwork-debug/Side-Quote-Generator/releases/latest/download/version.json";
+    private static final String APK_DOWNLOAD_URL = "https://github.com/kundarwork-debug/Side-Quote-Generator/releases/latest/download/APML-Portal.apk";
+    private static final long UPDATE_CHECK_INTERVAL = 6L * 60L * 60L * 1000L;
+    private final ExecutorService updateExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     private WebView webView;
     private ValueCallback<Uri[]> fileCallback;
@@ -333,6 +351,61 @@ public class MainActivity extends ComponentActivity {
                 startActivity(Intent.createChooser(send, "Share with"));
             });
         }
+    }
+
+
+    private void checkForAppUpdate() {
+        SharedPreferences prefs = getSharedPreferences("apml_app_updates", MODE_PRIVATE);
+        long lastCheck = prefs.getLong("last_check", 0L);
+        if (System.currentTimeMillis() - lastCheck < UPDATE_CHECK_INTERVAL) return;
+        prefs.edit().putLong("last_check", System.currentTimeMillis()).apply();
+
+        updateExecutor.execute(() -> {
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) new URL(RELEASE_METADATA_URL).openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(8000);
+                connection.setReadTimeout(8000);
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("User-Agent", "APML-Portal-Android");
+                int status = connection.getResponseCode();
+                if (status != HttpURLConnection.HTTP_OK) return;
+
+                StringBuilder body = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) body.append(line);
+                }
+                JSONObject metadata = new JSONObject(body.toString());
+                int latestVersion = metadata.optInt("versionCode", 0);
+                String latestName = metadata.optString("versionName", "");
+                String downloadUrl = metadata.optString("downloadUrl", APK_DOWNLOAD_URL);
+                String notes = metadata.optString("releaseNotes", "Performance improvements and updates.");
+
+                if (latestVersion > BuildConfig.VERSION_CODE) {
+                    mainHandler.post(() -> {
+                        if (isFinishing() || isDestroyed()) return;
+                        new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("APML Portal update available")
+                            .setMessage("Version " + latestName + " is ready.\n\n" + notes + "\n\nDownload the update and approve installation when Android asks.")
+                            .setNegativeButton("Later", (dialog, which) -> dialog.dismiss())
+                            .setPositiveButton("Download update", (dialog, which) -> {
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(downloadUrl)));
+                                } catch (ActivityNotFoundException error) {
+                                    Toast.makeText(MainActivity.this, "No browser is available to download the update.", Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .show();
+                    });
+                }
+            } catch (Exception ignored) {
+                // Update checks are optional; a network/API failure must never affect portal loading.
+            } finally {
+                if (connection != null) connection.disconnect();
+            }
+        });
     }
 
     private void showConnectionError() {
