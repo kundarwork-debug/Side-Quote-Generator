@@ -788,6 +788,40 @@
       *, *::before, *::after { scroll-behavior:auto!important; animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:.01ms!important; }
     }
     
+    /* Premium hero motion: segmented fade-in-blur reveal */
+    .hero-main-title .hero-word {
+      display: inline-block;
+      color: var(--text-main);
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(12px);
+      animation: heroFadeBlurIn 1.1s cubic-bezier(.16, 1, .3, 1) forwards;
+      will-change: opacity, filter, transform;
+    }
+    .hero-main-title .hero-word:nth-of-type(1) { animation-delay: .15s; }
+    .hero-main-title .hero-word:nth-of-type(2) { animation-delay: .45s; }
+    .hero-main-title .hero-accent { color: var(--primary); }
+    .hero-copy-reveal {
+      opacity: 0;
+      filter: blur(8px);
+      transform: translateY(9px);
+      animation: heroFadeBlurIn 1.1s cubic-bezier(.16, 1, .3, 1) .85s forwards;
+    }
+    .hero-eyebrow.hero-copy-reveal { animation-delay: .05s; }
+    .hero-supporting-note.hero-copy-reveal { animation-delay: 1.15s; }
+    @keyframes heroFadeBlurIn {
+      to { opacity: 1; filter: blur(0); transform: translateY(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-main-title .hero-word,
+      .hero-copy-reveal {
+        opacity: 1;
+        filter: none;
+        transform: none;
+        animation: none;
+      }
+    }
+
     /* Premium minimal homepage hero — scoped to the intro and workspace transition */
     .hero-center {
       max-width: 980px;
@@ -903,17 +937,23 @@
 
     <!-- PREMIUM MINIMAL INTRO -->
     <section class="hero-center" aria-labelledby="homeHeroTitle">
-      <div class="hero-mark">
-        <img src="logo.svg" alt="APML logo" width="52" height="52">
+      <div class="logo-stage" aria-hidden="true">
+        <div class="logo-halo"></div>
+        <div class="rotating-logo-container">
+          <img src="logo.svg" alt="">
+        </div>
       </div>
-      <p class="hero-eyebrow"><span class="hero-eyebrow-dot"></span> APML PORTAL <span class="hero-eyebrow-divider">/</span> OPERATIONS WORKSPACE</p>
-      <h1 class="hero-main-title" id="homeHeroTitle">The workday,<br><span>made simpler.</span></h1>
-      <p class="hero-description">A connected workspace for the tools, information and everyday operations your team relies on.</p>
+      <p class="hero-eyebrow hero-copy-reveal"><span class="hero-eyebrow-dot"></span> APML PORTAL <span class="hero-eyebrow-divider">/</span> OPERATIONS WORKSPACE</p>
+      <h1 class="hero-main-title" id="homeHeroTitle" aria-label="The workday, made simpler.">
+        <span class="hero-word">The workday,</span><br>
+        <span class="hero-word hero-accent">made simpler.</span>
+      </h1>
+      <p class="hero-description hero-copy-reveal">A connected workspace for the tools, information and everyday operations your team relies on.</p>
       <a class="hero-primary-action" href="#workspace">
         Explore workspace
         <span class="material-symbols-outlined" aria-hidden="true">arrow_downward</span>
       </a>
-      <p class="hero-supporting-note">One place for quotations, directories, rates and shared resources.</p>
+      <p class="hero-supporting-note hero-copy-reveal">One place for quotations, directories, rates and shared resources.</p>
     </section>
 
     <!-- OPERATIONS MODULES BENTO GRID -->
