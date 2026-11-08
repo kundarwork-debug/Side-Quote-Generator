@@ -478,6 +478,26 @@
     html[data-theme="dark"] .min-alert { background:#123126;color:#a7f3d0; }
     html[data-theme="dark"] tr.highlight-matrix { background:rgba(127,29,29,.22); }
     html[data-theme="dark"] table.rate-matrix td { border-color:var(--surface-border); }
+
+    /* Mobile width and content safeguards */
+    .calculator-shell, .calc-grid, .calc-card, .matrix-section, .terms-card { min-width:0; width:100%; }
+    .calc-grid { grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); }
+    .matrix-section { overflow:hidden; }
+    .matrix-table-scroll { max-width:100%; }
+    .breakdown-row > *, .addon-item > *, .total-highlight-box > * { min-width:0; }
+    @media (max-width:768px) {
+      .calc-grid { grid-template-columns:minmax(0,1fr); }
+      .calc-header, .calc-card, .matrix-section, .terms-card { min-width:0; }
+      .breakdown-row { flex-wrap:wrap; }
+      .breakdown-row strong { overflow-wrap:anywhere; }
+      .total-amount { max-width:100%; overflow-wrap:anywhere; }
+    }
+    @media (max-width:380px) {
+      .calculator-shell { padding-left:12px; padding-right:12px; }
+      .calc-card, .matrix-section, .terms-card { padding-left:13px; padding-right:13px; }
+      .addon-counter-input { max-width:88px; }
+    }
+
 </style>
 
 </head>
