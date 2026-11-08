@@ -2,16 +2,40 @@ plugins {
     id 'com.android.application'
 }
 
+def releaseKeystore = file(System.getenv("ANDROID_KEYSTORE_PATH") ?: "release-key.jks")
+
 android {
     namespace 'com.apml.portal'
     compileSdk 35
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
         applicationId 'com.apml.portal'
         minSdk 23
         targetSdk 35
-        versionCode 3
-        versionName '2.1'
+        versionCode 4
+        versionName '2.2'
+    }
+
+    signingConfigs {
+        release {
+            if (releaseKeystore.exists()) {
+                storeFile releaseKeystore
+                storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
     }
 
     compileOptions {

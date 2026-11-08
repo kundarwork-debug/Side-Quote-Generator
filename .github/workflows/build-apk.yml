@@ -16,36 +16,77 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build debug APK
+
+      - name: Build debug APK for validation
         working-directory: android-app
         run: gradle --no-daemon assembleDebug
-      - name: Upload APK
+
+      - name: Upload validation APK
         uses: actions/upload-artifact@v4
         with:
-          name: APML-Portal-Android-APK
+          name: APML-Portal-Android-debug-validation
           path: android-app/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 14
 
-      - name: Prepare public APK filename
-        run: cp android-app/app/build/outputs/apk/debug/app-debug.apk android-app/app/build/outputs/apk/debug/APML-Portal.apk
-      - name: Publish APK download
+      - name: Build signed release APK when signing secrets are configured
+        id: release
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Signing secrets are not configured. Debug validation APK was built; public release was not replaced."
+            exit 0
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android-app/release-key.jks
+          export ANDROID_KEYSTORE_PATH="$GITHUB_WORKSPACE/android-app/release-key.jks"
+          cd android-app
+          gradle --no-daemon assembleRelease
+          cd ..
+          mkdir -p release
+          cp android-app/app/build/outputs/apk/release/app-release.apk release/APML-Portal.apk
+          VERSION_CODE=$(sed -n "s/.*versionCode \\([0-9][0-9]*\\).*/\\1/p" android-app/app/build.gradle | head -n 1)
+          VERSION_NAME=$(sed -n "s/.*versionName '\\([^']*\\)'.*/\\1/p" android-app/app/build.gradle | head -n 1)
+          cat > release/version.json <<EOF
+          {
+            "versionCode": $VERSION_CODE,
+            "versionName": "$VERSION_NAME",
+            "downloadUrl": "https://github.com/kundarwork-debug/Side-Quote-Generator/releases/latest/download/APML-Portal.apk",
+            "releaseNotes": "Native app improvements, smoother sharing, and automatic update notifications."
+          }
+          EOF
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Publish signed APK and update metadata
+        if: steps.release.outputs.ready == 'true' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: apml-apk-latest
           name: APML Portal Android App
           body: |
-            Latest installable APML Portal Android app.
+            Latest signed APML Portal Android app.
             Download **APML-Portal.apk** and install it on your Android device.
-          files: android-app/app/build/outputs/apk/debug/APML-Portal.apk
+          files: |
+            release/APML-Portal.apk
+            release/version.json
           overwrite_files: true
           make_latest: true
+
+      - name: Remove temporary signing key
+        if: always()
+        run: rm -f android-app/release-key.jks
