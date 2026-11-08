@@ -1229,6 +1229,28 @@
     html[data-theme="dark"] .filter-item-wrapper.active,html[data-theme="dark"] .filter-item-wrapper.drag-over {
       background:var(--primary)!important;color:#fff!important;
     }
+
+    /* Compact mobile gallery: preserve the two-column browsing layout safely. */
+    @media (max-width: 480px) {
+      .gallery-container { min-width: 0; max-width: 100%; }
+      .media-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+      .media-card { min-width: 0; }
+      .media-preview-wrap { min-width: 0; }
+      .media-info { min-width: 0; }
+      .media-info > * { max-width: 100%; overflow-wrap: anywhere; }
+      .card-actions-row { display: flex; min-width: 0; gap: 6px; }
+      .btn-download { min-width: 0; padding-left: 7px; padding-right: 7px; }
+      .btn-delete { flex: 0 0 36px; }
+      .pagination-bar { max-width: 100%; min-width: 0; }
+      .pagination-pages-row { max-width: 100%; flex-wrap: wrap; }
+      .filter-item-wrapper { max-width: 100%; }
+      .filter-btn-text { overflow-wrap: anywhere; }
+    }
+    @media (max-width: 359px) {
+      .media-grid { grid-template-columns: minmax(0, 1fr) !important; }
+      .media-preview-wrap { aspect-ratio: 16 / 10; }
+    }
+ 
 </style>
 
 </head>
