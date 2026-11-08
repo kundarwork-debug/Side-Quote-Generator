@@ -29,6 +29,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.ComponentActivity;
 import androidx.activity.OnBackPressedCallback;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -36,7 +37,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ComponentActivity {
     private static final int FILE_CHOOSER_REQUEST = 1001;
     private static final String PORTAL_URL = "https://apmlportal.vercel.app/index.html";
     private static final int PAGE = Color.rgb(247, 248, 251);
