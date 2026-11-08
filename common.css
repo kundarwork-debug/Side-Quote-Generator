@@ -1035,3 +1035,140 @@ html body.apml-directory-page button#adminToggleBtn {
 @media (prefers-reduced-motion: reduce) {
   .theme-switch-track, .theme-switch-thumb { transition-duration: 0.01ms !important; }
 }
+
+
+/* =========================================================
+   APML SHARED MOBILE CONSISTENCY PASS
+   Header, navigation, footer and admin control safeguards.
+   ========================================================= */
+.site-header,
+.site-header .header-inner,
+.site-header .header-controls,
+.site-header .site-logo,
+.site-footer-extended,
+.site-footer-extended * {
+  box-sizing: border-box;
+}
+.site-header .header-inner {
+  min-width: 0;
+}
+.site-header .header-controls {
+  min-width: 0;
+}
+.site-header .site-logo {
+  min-width: 0;
+}
+.site-header .logo-text {
+  overflow-wrap: anywhere;
+}
+.nav-menu {
+  right: max(14px, env(safe-area-inset-right));
+  width: min(280px, calc(100vw - 28px));
+  max-height: calc(100dvh - 82px);
+}
+.site-footer-extended {
+  min-width: 0;
+  overflow: hidden;
+}
+.footer-grid-container,
+.footer-brand-col,
+.footer-links-columns,
+.footer-link-col,
+.footer-bottom-bar {
+  min-width: 0;
+}
+.footer-brand-desc,
+.footer-item-link,
+.footer-developer-tag,
+.footer-bottom-bar > span {
+  overflow-wrap: anywhere;
+}
+#adminToggleBtn {
+  aspect-ratio: 1 / 1 !important;
+  flex: 0 0 42px !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+#adminToggleBtn > *,
+#adminToggleBtn svg {
+  flex-shrink: 0 !important;
+}
+@media (max-width: 768px) {
+  .site-header .header-inner {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 12px;
+  }
+  .site-header .header-controls {
+    gap: 10px;
+  }
+  .nav-menu {
+    top: calc(60px + 8px);
+    right: 14px;
+  }
+  .site-footer-extended {
+    padding: 34px 20px 22px;
+  }
+  .footer-grid-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-bottom: 24px;
+  }
+  .footer-links-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 16px;
+  }
+  .footer-bottom-bar {
+    align-items: flex-start;
+    gap: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .site-header .header-inner {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .site-header .logo-text {
+    font-size: 16px;
+  }
+  .site-header .logo-badge {
+    width: 32px;
+    height: 32px;
+  }
+  .site-header .header-controls {
+    gap: 8px;
+  }
+  .hamburger {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
+  }
+  .nav-menu {
+    right: 10px;
+    width: min(300px, calc(100vw - 20px));
+  }
+  .site-footer-extended {
+    padding: 30px 16px 20px;
+  }
+  .footer-links-columns {
+    gap: 18px 12px;
+  }
+  .footer-item-link {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .footer-about-pill {
+    max-width: 100%;
+  }
+}
+@media (max-width: 350px) {
+  .site-header .logo-text {
+    font-size: 14px;
+  }
+  .site-header .header-inner {
+    gap: 8px;
+  }
+  .footer-links-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
