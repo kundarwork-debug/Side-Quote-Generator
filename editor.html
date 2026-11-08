@@ -1960,6 +1960,7 @@ function saveBlobAsFile(blob, filename) {
 
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   if (!shared.custName.trim() || !shared.fromCity.trim() || !shared.toCity.trim()) {
+    if (window.APMLMascot) window.APMLMascot.alert();
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -1972,6 +1973,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const d = state[active];
   const { grand } = computeTotals(d);
   if (grand <= 0) {
+    if (window.APMLMascot) window.APMLMascot.alert();
     Swal.fire({
       icon: "error",
       title: "Oops...",
@@ -2060,6 +2062,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     marks.built = performance.now();
 
     saveBlobAsFile(pdfBlob, filename);
+    if (window.APMLMascot) window.APMLMascot.happy('PDF downloaded successfully!');
 
     try {
       if (window.APMNotify) {
@@ -2091,6 +2094,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
   } catch (err) {
     console.error(err);
+    if (window.APMLMascot) window.APMLMascot.alert();
     status.textContent = 'Something went wrong generating the PDF. Please try again.';
     restorePreview();
   } finally {
