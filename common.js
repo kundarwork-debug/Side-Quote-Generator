@@ -881,6 +881,9 @@ window.sendPortalNotification = function () {};
         pointer-events: inherit;
       }
       .support-msg-bubble {
+        position: relative;
+        top: 8px;
+        z-index: 2;
         background-color: #ffffff;
         color: var(--text-main, #1c1917);
         border: 2px solid var(--text-main, #1c1917);
