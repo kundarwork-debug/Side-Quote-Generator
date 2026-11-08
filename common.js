@@ -1036,10 +1036,13 @@ window.sendPortalNotification = function () {};
       function step() {
         if (myToken !== typeToken) return;
         if (typeIndex < textToType.length) {
+          // Keep the mascot in its speaking animation for the entire
+          // typewriter reveal, even if another short-lived state timer fires.
+          setWobnimoState('speaking');
           typeText.textContent += textToType.charAt(typeIndex);
         } else {
           isTyping = false;
-          setWobnimoState('idle', 2600);
+          setWobnimoState('idle');
           setTimeout(() => {
             if (myToken === typeToken && cursor) cursor.style.display = 'none';
           }, 1500);
