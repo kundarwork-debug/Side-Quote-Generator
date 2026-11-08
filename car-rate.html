@@ -102,6 +102,22 @@
       html[data-theme="dark"] .suggestion-cat,html[data-theme="dark"] th { background:#202c40;color:#cbd5e1; }
       html[data-theme="dark"] .suggestion-item,html[data-theme="dark"] td { border-color:#334155;color:var(--text-main); }
       html[data-theme="dark"] .price-row { border-color:#334155; }
+
+      /* Mobile layout safeguards */
+      .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .grid > *, .card, .table-section { min-width:0; }
+      @media(max-width:700px) {
+        .grid { grid-template-columns:minmax(0,1fr); }
+        .price-row { min-width:0; flex-wrap:wrap; }
+        .price-label, .price-val { min-width:0; overflow-wrap:anywhere; }
+        .calc-title { overflow-wrap:anywhere; }
+      }
+      @media(max-width:380px) {
+        .container { padding-left:12px; padding-right:12px; }
+        .card,.table-section { padding-left:13px; padding-right:13px; }
+        .price-val.total { font-size:24px; }
+      }
+
 </style>
 
 </head>
