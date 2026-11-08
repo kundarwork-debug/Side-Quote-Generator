@@ -1143,9 +1143,14 @@ window.sendPortalNotification = function () {};
   window.addEventListener('popstate', () => {
     const navMenu = document.getElementById("navMenu");
     const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const burgerCheckbox = document.getElementById("burger-checkbox");
     if (navMenu && navMenu.classList.contains('open')) {
       navMenu.classList.remove('open');
-      if (hamburgerBtn) hamburgerBtn.classList.remove('is-active');
+      if (hamburgerBtn) {
+        hamburgerBtn.classList.remove('is-active');
+        hamburgerBtn.setAttribute("aria-expanded", "false");
+      }
+      if (burgerCheckbox) burgerCheckbox.checked = false;
     }
   });
 })();
