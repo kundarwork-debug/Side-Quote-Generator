@@ -1172,3 +1172,42 @@ html body.apml-directory-page button#adminToggleBtn {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+
+/* =========================================================
+   APML DARK FOOTER REFINEMENT
+   Keep the footer visually continuous with the page surface.
+   ========================================================= */
+html[data-theme="dark"] .site-footer-extended {
+  background: var(--bg-base, #0b1120) !important;
+  color: var(--text-main, #f8fafc) !important;
+  border-top-color: var(--surface-border, #334155) !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-grid-container,
+html[data-theme="dark"] .site-footer-extended .footer-links-columns {
+  background: transparent !important;
+  border-color: var(--surface-border, #334155) !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-grid-container {
+  border-bottom-color: var(--surface-border, #334155) !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-col-title,
+html[data-theme="dark"] .site-footer-extended .footer-title-text,
+html[data-theme="dark"] .site-footer-extended .footer-item-link,
+html[data-theme="dark"] .site-footer-extended .footer-brand-desc,
+html[data-theme="dark"] .site-footer-extended .footer-developer-tag,
+html[data-theme="dark"] .site-footer-extended .footer-bottom-bar {
+  color: #cbd5e1 !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-about-pill {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-about-pill span {
+  color: #f8fafc !important;
+}
+html[data-theme="dark"] .site-footer-extended .footer-about-pill:hover {
+  background: #27364b !important;
+  border-color: #64748b !important;
+}
