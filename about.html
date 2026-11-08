@@ -111,6 +111,24 @@
     html[data-theme="dark"] .redirect-countdown{color:#b6c2d1}
     html[data-theme="dark"] .about-btn-light:hover{box-shadow:0 8px 20px rgba(0,0,0,.2)}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+    /* APML shared visual consistency: About */
+    body{min-height:100vh;display:flex;flex-direction:column}
+    .about-shell{min-width:0}
+    .about-container,.about-hero,.focus-grid,.project-card,.about-bottom{min-width:0}
+    .hero-copy,.project-card-copy{min-width:0}
+    .hero-copy h1,.section-intro h2,.project-card h3{overflow-wrap:anywhere}
+    .project-card p,.focus-card p{overflow-wrap:anywhere}
+    @media(max-width:520px){
+      .hero-copy h1{font-size:clamp(36px,10vw,48px);line-height:1.04}
+      .hero-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .about-btn{min-width:0;white-space:normal;text-align:center}
+      .about-bottom{gap:18px}
+      .about-bottom .about-btn{white-space:normal}
+    }
+    html[data-theme="dark"] body{background:var(--bg-base,#0b1120);color:var(--text-main,#f1f5f9)}
+    @media(prefers-reduced-motion:reduce){.art-orbit{animation:none}}
+
   </style>
 </head>
 <body>
