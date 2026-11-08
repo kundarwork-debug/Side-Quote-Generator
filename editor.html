@@ -1064,9 +1064,29 @@
   }
 
   @media (max-width: 380px) {
+    .app,
+    .panel,
+    .stage {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
     .panel { padding-left: 13px !important; padding-right: 13px !important; }
+    .brand-row { gap: 8px; flex-wrap: wrap; align-items: center; }
+    .brand-row h1 { font-size: 19px; }
+    .brand-row > span { margin-left: auto; font-size: 11px; padding: 4px 9px; }
     .row2 { gap: 8px; }
     .field input, .field textarea { padding-left: 11px; padding-right: 11px; }
+
+    /* Keep the full-size A4 sheet scrollable inside the preview area. */
+    .stage {
+      max-width: 100vw;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
