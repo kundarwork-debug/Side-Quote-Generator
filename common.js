@@ -1157,28 +1157,6 @@ window.sendPortalNotification = function () {};
       }, { passive: true });
     }
 
-    // React once when a desktop pointer approaches the mascot, not on every move.
-    let mascotPointerNearby = false;
-    if (moodBtn && wobnimo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      window.addEventListener('mousemove', (event) => {
-        const rect = moodBtn.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.hypot(event.clientX - centerX, event.clientY - centerY);
-        const isNearby = distance <= 155;
-
-        if (!isNearby) {
-          mascotPointerNearby = false;
-          return;
-        }
-        if (!mascotPointerNearby) {
-          mascotPointerNearby = true;
-          if (!isTyping && !asleep && mascotDirections && mascotReactions && mascotReactions.style.opacity !== '1') {
-            setWobnimoState('surprised', 1400);
-          }
-        }
-      }, { passive: true });
-    }
     let typingTimer = null;
     document.addEventListener('input', (event) => {
       if (!event.target.matches('input, textarea, select, [contenteditable="true"]')) return;
