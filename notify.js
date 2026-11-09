@@ -221,13 +221,7 @@
     annAvatarMark();
     var m = window.APMLMascot;
     if (annNow) {
-      // first time this device sees this announcement: bounce and glow red to catch the eye
-      try {
-        if (m && typeof m.alert === 'function' && localStorage.getItem('apml_ann_alerted') !== annNow.id) {
-          localStorage.setItem('apml_ann_alerted', annNow.id);
-          m.alert();
-        }
-      } catch (e) {}
+      // The small notification dot is the visual cue; keep the mascot itself calm.
       if (m && typeof m.pin === 'function') {
         if (annPinned !== annNow.id) { m.pin(annNow.text); annPinned = annNow.id; }
         else m.pin(annNow.text);               // harmless if it is already showing; brings it back if something replaced it
@@ -257,8 +251,9 @@
     if (!ANNOUNCE.enabled) return;
     try {
       var st = document.createElement('style');
-      st.textContent = '.support-btn.apml-announce{animation:apmlPing 1.8s ease-in-out infinite}' +
-        '@keyframes apmlPing{0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.55)}50%{box-shadow:0 0 0 12px rgba(185,28,28,0)}}';
+      st.textContent = '.support-btn{position:relative}' +
+        '.support-btn.apml-announce::after{content:"";position:absolute;top:12px;right:12px;width:11px;height:11px;border-radius:50%;background:#dc2626;border:2px solid #fff;box-sizing:content-box;pointer-events:none}' +
+        '@media(max-width:600px){.support-btn.apml-announce::after{top:9px;right:9px;width:9px;height:9px}}';
       document.head.appendChild(st);
     } catch (e) {}
     annPoll();
