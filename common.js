@@ -962,6 +962,7 @@ window.sendPortalNotification = function () {};
       .support-msg-bubble {
         position: relative;
         top: 20px;
+        margin-right: 12px; /* shift the announcement bubble slightly left of the mascot */
         z-index: 2;
         background-color: #ffffff;
         color: var(--text-main, #1c1917);
@@ -1038,13 +1039,15 @@ window.sendPortalNotification = function () {};
         box-shadow: none;
         overflow: visible;
         background: transparent;
+        margin-right: -10px; /* move the mascot slightly closer to the screen edge */
       }
       .support-btn:hover {
         background: transparent;
       }
       @media (max-width: 600px) {
         .support-fab { right: 14px; bottom: 18px; }
-        .support-btn { width: 108px; height: 108px; }
+        .support-msg-bubble { margin-right: 8px; }
+        .support-btn { width: 108px; height: 108px; margin-right: -6px; }
         .support-mascot { width: 104px; height: 104px; }
       }
       /* Keep the mascot stationary on hover; no lift or shadow ring. */
