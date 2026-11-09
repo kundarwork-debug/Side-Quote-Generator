@@ -76,8 +76,10 @@ class APMLDirectory {
     
     if (!items || items.length === 0) {
       this.container.innerHTML = `
-        <div class="directory-empty-state" style="text-align: center; padding: 40px; color: #78716c; font-weight: 600;">
-          No matching records found.
+        <div class="apml-empty-state directory-empty-state" role="status">
+          <span class="apml-empty-state__icon" aria-hidden="true"><span class="material-symbols-outlined">person_search</span></span>
+          <h3 class="apml-empty-state__title">No matching contacts</h3>
+          <p class="apml-empty-state__description">Try a different search term or check the selected contact view.</p>
         </div>`;
       return;
     }
