@@ -534,17 +534,13 @@ window.sendPortalNotification = function () {};
           .footer-truck-animation {
             display: block;
             flex: 0 0 auto;
-            width: 54px;
-            height: 38px;
+            width: 76px;
+            height: 54px;
             pointer-events: none;
           }
           @media (max-width: 600px) {
-            .footer-copyright-group {
-              gap: 5px;
-            }
             .footer-truck-animation {
-              width: 42px;
-              height: 30px;
+              display: none !important;
             }
           }
           .site-footer-extended {
