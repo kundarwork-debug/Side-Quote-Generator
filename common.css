@@ -1292,3 +1292,89 @@ button, input, textarea, select {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* =========================================================
+   APML PORTAL — RESTRAINED SHARED MICRO-INTERACTIONS
+   Feedback only; no layout movement or changes to page logic.
+   ========================================================= */
+@media (hover: hover) and (pointer: fine) {
+  :where(
+    .card,
+    .panel,
+    .content-card,
+    .info-card,
+    .feature-card,
+    .surface-card,
+    .stat-card,
+    .kpi,
+    .table-section
+  ) {
+    transition:
+      box-shadow var(--apml-transition),
+      border-color var(--apml-transition),
+      background-color var(--apml-transition);
+  }
+
+  :where(
+    .card,
+    .panel,
+    .content-card,
+    .info-card,
+    .feature-card,
+    .surface-card,
+    .stat-card,
+    .kpi,
+    .table-section
+  ):hover {
+    box-shadow: var(--apml-shadow-raised);
+    border-color: color-mix(in srgb, var(--apml-color-brand) 18%, var(--apml-color-border));
+  }
+
+  :where(button, [role="button"], .btn, .button) {
+    transition:
+      box-shadow var(--apml-transition),
+      border-color var(--apml-transition),
+      background-color var(--apml-transition),
+      color var(--apml-transition),
+      filter var(--apml-transition);
+  }
+
+  :where(a:not(.site-logo), .footer-item-link) {
+    transition: color var(--apml-transition);
+  }
+}
+
+/* A restrained press response, without shifting surrounding content. */
+:where(button, [role="button"], .btn, .button):not(:disabled):active {
+  filter: brightness(0.97);
+}
+
+/* Keep disabled controls visually stable and avoid implying interactivity. */
+:where(button, [role="button"], .btn, .button):disabled {
+  cursor: not-allowed;
+}
+
+/* Avoid hover/press effects on touch-first devices. */
+@media (hover: none), (pointer: coarse) {
+  :where(
+    .card,
+    .panel,
+    .content-card,
+    .info-card,
+    .feature-card,
+    .surface-card,
+    .stat-card,
+    .kpi,
+    .table-section
+  ):hover {
+    box-shadow: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(button, [role="button"], .btn, .button, a, .card, .panel, .content-card,
+    .info-card, .feature-card, .surface-card, .stat-card, .kpi, .table-section) {
+    transition: none !important;
+  }
+}
