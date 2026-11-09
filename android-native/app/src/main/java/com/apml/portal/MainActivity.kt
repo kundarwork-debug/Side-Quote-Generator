@@ -202,6 +202,10 @@ private fun ModuleCard(module: PortalModule, onClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ModulePreview(module: PortalModule?, onBack: () -> Unit) {
+    if (module?.route == "lite" || module?.route == "car-rate" || module?.route == "local-rate") {
+        NativeCalculatorScreen(module.route, onBack)
+        return
+    }
     var note by remember { mutableStateOf("This module is part of the native migration plan.") }
     Scaffold(
         containerColor = Page,
