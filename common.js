@@ -1098,10 +1098,15 @@ window.sendPortalNotification = function () {};
       mascotReactions.style.backgroundPosition = ((i % 3) * 50) + '% ' + (Math.floor(i / 3) * 50) + '%';
       mascotReactions.style.opacity = '1';
       mascotDirections.style.opacity = '0';
-      mascotReactionTimer = setTimeout(() => {
-        mascotReactions.style.opacity = '0';
-        mascotDirections.style.opacity = '1';
-      }, duration);
+      // A zero duration keeps the reaction visible until another state replaces it.
+      if (duration > 0) {
+        mascotReactionTimer = setTimeout(() => {
+          mascotReactions.style.opacity = '0';
+          mascotDirections.style.opacity = '1';
+        }, duration);
+      } else {
+        mascotReactionTimer = null;
+      }
     }
     function setWobnimoState(state, resetAfter) {
       if (!wobnimo) return;
@@ -1117,7 +1122,7 @@ window.sendPortalNotification = function () {};
       };
       const [direction, reaction] = states[state] || states.idle;
       showSupportDirection(direction);
-      if (reaction) showSupportReaction(reaction, resetAfter || 1300);
+      if (reaction) showSupportReaction(reaction, state === 'sleeping' ? 0 : (resetAfter || 1300));
       else {
         clearTimeout(mascotReactionTimer);
         if (mascotReactions) mascotReactions.style.opacity = '0';
