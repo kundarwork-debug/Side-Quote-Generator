@@ -1216,7 +1216,9 @@ window.sendPortalNotification = function () {};
 
     function wake() {
       lastActivity = Date.now();
-      if (!asleep) { setWobnimoState('idle'); return; }
+      // Ordinary mouse movement must not reset the gaze to centre.
+      // Pointer tracking updates the eyes independently on every move.
+      if (!asleep) return;
       asleep = false;
       setWobnimoState('idle');
       if (moodBtn) moodBtn.classList.remove('apml-mood-sleep');
