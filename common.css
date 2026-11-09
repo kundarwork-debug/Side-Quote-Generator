@@ -1378,3 +1378,53 @@ button, input, textarea, select {
     transition: none !important;
   }
 }
+
+
+/* =========================================================
+   APML PORTAL — HUMAN, HELPFUL EMPTY STATES
+   Shared presentation for genuinely empty and no-result views.
+   ========================================================= */
+.apml-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 180px;
+  padding: 30px 22px;
+  text-align: center;
+  color: var(--apml-color-text-secondary);
+  background: var(--apml-color-surface);
+  border: 1px dashed var(--apml-color-border);
+  border-radius: var(--apml-radius-lg);
+}
+.apml-empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 3px;
+  color: var(--apml-color-brand);
+  background: var(--apml-color-brand-soft);
+  border-radius: 14px;
+}
+.apml-empty-state__icon .material-symbols-outlined {
+  font-size: 23px;
+}
+.apml-empty-state__title {
+  margin: 0;
+  color: var(--apml-color-text);
+  font-size: 14px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+.apml-empty-state__description {
+  max-width: 390px;
+  margin: 0;
+  color: var(--apml-color-text-muted);
+  font-size: 12.5px;
+  font-weight: 450;
+  line-height: 1.65;
+}
