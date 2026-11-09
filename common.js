@@ -569,6 +569,26 @@ window.sendPortalNotification = function () {};
             flex-direction: row !important;
             align-items: center !important;
           }
+          @media (max-width: 768px) {
+            #footer-container .site-footer-extended .footer-grid-container {
+              grid-template-columns: minmax(0, 1fr) !important;
+            }
+            #footer-container .site-footer-extended .footer-links-columns {
+              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+            #footer-container .site-footer-extended .footer-bottom-bar {
+              align-items: flex-start !important;
+            }
+          }
+          @media (max-width: 480px) {
+            #footer-container .site-footer-extended .footer-links-columns {
+              grid-template-columns: minmax(0, 1fr) !important;
+            }
+            #footer-container .site-footer-extended .footer-bottom-bar {
+              flex-direction: column !important;
+              align-items: flex-start !important;
+            }
+          }
           .footer-copyright-group {
             display: inline-flex;
             align-items: center;
