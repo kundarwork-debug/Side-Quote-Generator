@@ -2308,7 +2308,13 @@
       }
 
       if (!filteredItems.length) {
-        grid.innerHTML = `<div class="state-msg">No media files found in this category.</div>`;
+        const isTrashView = currentActiveFolder === 'deleted';
+        grid.innerHTML = `
+          <div class="apml-empty-state" role="status">
+            <span class="apml-empty-state__icon" aria-hidden="true"><span class="material-symbols-outlined">${isTrashView ? 'delete_outline' : 'photo_library'}</span></span>
+            <h3 class="apml-empty-state__title">${isTrashView ? 'Your trash is clear' : 'Nothing here just yet'}</h3>
+            <p class="apml-empty-state__description">${isTrashView ? 'Deleted media will appear here when something is moved to the trash.' : 'Images and videos added to this collection will appear here.'}</p>
+          </div>`;
         paginationBar.style.display = 'none';
         return;
       }
