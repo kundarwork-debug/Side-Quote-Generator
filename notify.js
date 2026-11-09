@@ -214,7 +214,19 @@
 
   function annAvatarMark() {
     var b = document.getElementById('supportAvatarBtn');
-    if (b) b.classList.toggle('apml-announce', !!annNow);
+    if (!b) return;
+    b.classList.toggle('apml-announce', !!annNow);
+    b.style.position = 'relative';
+    var dot = b.querySelector('.apml-announcement-dot');
+    if (annNow && !dot) {
+      dot = document.createElement('span');
+      dot.className = 'apml-announcement-dot';
+      dot.setAttribute('aria-label', 'New announcement');
+      dot.setAttribute('role', 'img');
+      b.appendChild(dot);
+    } else if (!annNow && dot) {
+      dot.remove();
+    }
   }
   // pin it in the avatar's bubble (the avatar is built a moment after the page opens, so wait for it)
   function annApply() {
@@ -251,9 +263,9 @@
     if (!ANNOUNCE.enabled) return;
     try {
       var st = document.createElement('style');
-      st.textContent = '.support-btn{position:relative}' +
-        '.support-btn.apml-announce::after{content:"";position:absolute;top:12px;right:12px;width:11px;height:11px;border-radius:50%;background:#dc2626;border:2px solid #fff;box-sizing:content-box;pointer-events:none}' +
-        '@media(max-width:600px){.support-btn.apml-announce::after{top:9px;right:9px;width:9px;height:9px}}';
+      st.textContent = '#supportAvatarBtn{position:relative!important;overflow:visible!important}' +
+        '#supportAvatarBtn .apml-announcement-dot{position:absolute!important;z-index:9999!important;top:10px!important;right:10px!important;width:13px!important;height:13px!important;min-width:13px!important;min-height:13px!important;border-radius:50%!important;background:#dc2626!important;border:3px solid #fff!important;box-shadow:0 1px 5px rgba(0,0,0,.35)!important;display:block!important;opacity:1!important;visibility:visible!important;pointer-events:none!important}' +
+        '@media(max-width:600px){#supportAvatarBtn .apml-announcement-dot{top:7px!important;right:7px!important;width:12px!important;height:12px!important;min-width:12px!important;min-height:12px!important}}';
       document.head.appendChild(st);
     } catch (e) {}
     annPoll();
