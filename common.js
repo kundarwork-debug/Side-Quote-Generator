@@ -819,15 +819,6 @@ window.sendPortalNotification = function () {};
       document.head.appendChild(lottieScript);
     }
 
-    // Wobnimo is loaded as a lightweight web component (no app build step required).
-    if (!document.querySelector('script[data-apml-wobnimo]')) {
-      const wobnimoScript = document.createElement('script');
-      wobnimoScript.type = 'module';
-      wobnimoScript.src = 'https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js';
-      wobnimoScript.dataset.apmlWobnimo = 'true';
-      document.head.appendChild(wobnimoScript);
-    }
-
     // Create Support FAB Container
     const supportFab = document.createElement('div');
     supportFab.className = 'support-fab';
@@ -850,7 +841,10 @@ window.sendPortalNotification = function () {};
           <span style="position: relative; z-index: 2; display: block; margin: 0; padding: 0;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>
         </div>      
         <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
-          <wobnimo-mascot id="apmlWobnimo" character="cap" state="idle" aria-label="APML assistant mascot"></wobnimo-mascot>      
+          <span class="support-mascot" id="apmlWobnimo" role="img" aria-label="APML assistant mascot">
+            <span class="support-mascot-sprite support-mascot-directions"></span>
+            <span class="support-mascot-sprite support-mascot-reactions"></span>
+          </span>      
         </div>    
       </div>  
     `;
@@ -930,13 +924,29 @@ window.sendPortalNotification = function () {};
         justify-content: center;
         pointer-events: auto;
       }
-      .support-btn wobnimo-mascot {
+      .support-mascot {
+        position: relative;
         display: block;
         width: 128px;
         height: 128px;
         max-width: 100%;
         max-height: 100%;
         pointer-events: none;
+      }
+      .support-mascot-sprite {
+        position: absolute;
+        inset: 0;
+        display: block;
+        background-size: 300% 300%;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+      }
+      .support-mascot-directions {
+        background-image: url("https://koboyo.com/page-mascot/mascots/beard-directions.webp");
+      }
+      .support-mascot-reactions {
+        background-image: url("https://koboyo.com/page-mascot/mascots/beard-reactions.webp");
+        opacity: 0;
       }
       .support-btn {
         border: 0;
@@ -950,7 +960,7 @@ window.sendPortalNotification = function () {};
       @media (max-width: 600px) {
         .support-fab { right: 14px; bottom: 18px; }
         .support-btn { width: 108px; height: 108px; }
-        .support-btn wobnimo-mascot { width: 104px; height: 104px; }
+        .support-mascot { width: 104px; height: 104px; }
       }
       /* Keep the mascot stationary on hover; no lift or shadow ring. */
       .support-fab:hover .support-btn {
@@ -1066,16 +1076,79 @@ window.sendPortalNotification = function () {};
     const IDLE_MS = 15000, ALERT_MS = 5000, HAPPY_MS = 3000;
     const moodBtn = document.getElementById('supportAvatarBtn');
     const wobnimo = document.getElementById('apmlWobnimo');
+    const mascotDirections = wobnimo && wobnimo.querySelector('.support-mascot-directions');
+    const mascotReactions = wobnimo && wobnimo.querySelector('.support-mascot-reactions');
+    const mascotDirectionNames = ['up-left','up','up-right','left','center','right','down-left','down','down-right'];
+    const mascotReactionNames = ['blink','heart','sparkle','surprised','starry','blush','sleepy','dizzy','delighted'];
     let wobnimoStateTimer = null;
+    let mascotReactionTimer = null;
+    let mascotBoopCount = 0;
+    let mascotLastBoop = 0;
+
+    function showSupportDirection(name) {
+      if (!mascotDirections) return;
+      const i = mascotDirectionNames.indexOf(name);
+      mascotDirections.style.backgroundPosition = ((i % 3) * 50) + '% ' + (Math.floor(i / 3) * 50) + '%';
+    }
+    function showSupportReaction(name, duration = 1200) {
+      if (!mascotDirections || !mascotReactions) return;
+      const i = mascotReactionNames.indexOf(name);
+      if (i < 0) return;
+      clearTimeout(mascotReactionTimer);
+      mascotReactions.style.backgroundPosition = ((i % 3) * 50) + '% ' + (Math.floor(i / 3) * 50) + '%';
+      mascotReactions.style.opacity = '1';
+      mascotDirections.style.opacity = '0';
+      mascotReactionTimer = setTimeout(() => {
+        mascotReactions.style.opacity = '0';
+        mascotDirections.style.opacity = '1';
+      }, duration);
+    }
     function setWobnimoState(state, resetAfter) {
       if (!wobnimo) return;
-      wobnimo.setAttribute('state', state);
+      const states = {
+        idle: ['center', null],
+        speaking: ['center', 'delighted'],
+        listening: ['center', 'surprised'],
+        thinking: ['center', 'blink'],
+        working: ['center', 'starry'],
+        sleeping: ['center', 'sleepy'],
+        error: ['center', 'surprised'],
+        surprised: ['center', 'surprised']
+      };
+      const [direction, reaction] = states[state] || states.idle;
+      showSupportDirection(direction);
+      if (reaction) showSupportReaction(reaction, resetAfter || 1300);
+      else {
+        clearTimeout(mascotReactionTimer);
+        if (mascotReactions) mascotReactions.style.opacity = '0';
+        if (mascotDirections) mascotDirections.style.opacity = '1';
+      }
       clearTimeout(wobnimoStateTimer);
       if (resetAfter) {
         wobnimoStateTimer = setTimeout(() => {
-          if (!asleep) wobnimo.setAttribute('state', 'idle');
+          if (!asleep) setWobnimoState('idle');
         }, resetAfter);
       }
+    }
+    function playSupportBoop() {
+      const now = Date.now();
+      mascotBoopCount = now - mascotLastBoop < 1600 ? mascotBoopCount + 1 : 1;
+      mascotLastBoop = now;
+      const reaction = mascotBoopCount >= 4 ? 'dizzy' : ['heart','sparkle','delighted'][(mascotBoopCount - 1) % 3];
+      if (mascotBoopCount >= 4) mascotBoopCount = 0;
+      showSupportReaction(reaction, 900);
+    }
+    if (moodBtn && wobnimo && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const sectors = ['right','down-right','down','down-left','left','up-left','up','up-right'];
+      const sectorSize = Math.PI * 2 / sectors.length;
+      window.addEventListener('pointermove', event => {
+        const rect = moodBtn.getBoundingClientRect();
+        const dx = event.clientX - (rect.left + rect.width / 2);
+        const dy = event.clientY - (rect.top + rect.height / 2);
+        if (Math.hypot(dx, dy) < 70) { showSupportDirection('center'); return; }
+        const sector = (Math.round(Math.atan2(dy, dx) / sectorSize) + sectors.length) % sectors.length;
+        if (!mascotReactions || mascotReactions.style.opacity !== '1') showSupportDirection(sectors[sector]);
+      }, { passive: true });
     }
 
     // React once when a desktop pointer approaches the mascot, not on every move.
@@ -1094,7 +1167,7 @@ window.sendPortalNotification = function () {};
         }
         if (!mascotPointerNearby) {
           mascotPointerNearby = true;
-          if (!isTyping && !asleep && wobnimo.getAttribute('state') === 'idle') {
+          if (!isTyping && !asleep && mascotDirections && mascotReactions && mascotReactions.style.opacity !== '1') {
             setWobnimoState('surprised', 1400);
           }
         }
@@ -1112,10 +1185,10 @@ window.sendPortalNotification = function () {};
       wake();
       setWobnimoState('thinking');
       setTimeout(() => {
-        if (wobnimo && wobnimo.getAttribute('state') === 'thinking') {
+        if (wobnimo && mascotReactions && mascotReactions.style.opacity === '1') {
           setWobnimoState('working');
           setTimeout(() => {
-            if (wobnimo && wobnimo.getAttribute('state') === 'working') setWobnimoState('idle');
+            if (wobnimo && mascotReactions && mascotReactions.style.opacity === '1') setWobnimoState('idle');
           }, 12000);
         }
       }, 850);
@@ -1222,8 +1295,9 @@ window.sendPortalNotification = function () {};
       avatarBtn.addEventListener('click', (e) => {
         e.preventDefault();
         if (isTyping) return;
-        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); return; }
+        if (pinnedText) { playTypewriter(pinnedText, true, 0, true); playSupportBoop(); return; }
 
+        playSupportBoop();
         tipIndex = (Math.floor(tipIndex) + 1) % tipsArray.length;
         playTypewriter(tipsArray[tipIndex], isIndexPage);
       });
