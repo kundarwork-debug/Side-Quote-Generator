@@ -973,7 +973,7 @@ window.sendPortalNotification = function () {};
       .support-zzz { position: absolute; right: 74px; bottom: 14px; font-size: 20px; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
       .support-zzz.show { opacity: 1; animation: apmlZzz 2.4s ease-in-out infinite; }
       @keyframes apmlZzz { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(6deg); } }
-      .support-btn.apml-mood-alert { animation: apmlBounce 0.55s ease-in-out infinite, apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
+      .support-btn.apml-mood-alert { animation: apmlGlow 1.1s ease-out infinite !important; border-color: #dc2626; }
       @keyframes apmlBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
       @keyframes apmlGlow {
         0% { box-shadow: 4px 4px 0 var(--text-main, #1c1917), 0 0 0 0 rgba(220, 38, 38, 0.65); }
