@@ -367,158 +367,244 @@
       border-radius: var(--radius-pill);
     }
 
-    /* CLEAN, CONSISTENT MODULE GRID */
+    /* BENTO GRID MODULES LAYOUT */
     .modules-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
       width: 100%;
     }
 
-    .module-group-label {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin: 14px 0 2px;
-      padding-bottom: 9px;
-      border-bottom: 1px solid var(--surface-border);
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .module-group-label:first-child { margin-top: 0; }
-    .module-group-label span:last-child {
-      color: var(--text-faint);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      letter-spacing: .06em;
-    }
-
     .module-card {
-      min-width: 0;
-      min-height: 166px;
-      padding: 19px 18px 17px;
+      background: var(--surface-card) !important;
+      border: 1.5px solid var(--surface-border);
+      border-radius: var(--radius-xl);
+      padding: 24px 20px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: var(--shadow-subtle);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 22px;
-      background: var(--surface-card) !important;
-      border: 1px solid var(--surface-border);
-      border-radius: 18px;
-      color: inherit;
-      text-decoration: none;
-      box-shadow: var(--shadow-subtle);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+      cursor: pointer;
       position: relative;
       overflow: hidden;
-      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
-      cursor: pointer;
+      grid-column: span 4;
+    }
+
+    .module-card.bento-wide {
+      grid-column: span 6;
+    }
+
+    @media (max-width: 1100px) {
+      .module-card {
+        grid-column: span 6 !important;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .module-card, .module-card.bento-wide {
+        grid-column: span 12 !important;
+      }
     }
 
     .module-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(185, 28, 28, .28);
+      transform: translateY(-4px);
+      border-color: rgba(185, 28, 28, 0.35);
       box-shadow: var(--shadow-hover);
     }
 
-    .module-card:focus-visible {
-      outline: 3px solid rgba(185, 28, 28, .28);
-      outline-offset: 3px;
-    }
-
-    .module-card-top {
+    .card-head {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
+      margin-bottom: 14px;
     }
 
     .card-icon-pill {
-      width: 40px;
-      height: 40px;
-      flex: 0 0 40px;
-      display: grid;
-      place-items: center;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      color: var(--primary);
       background: var(--primary-soft);
-      border: 1px solid rgba(185, 28, 28, .09);
-      transition: background .22s ease, color .22s ease;
-    }
-
-    .card-icon-pill .material-symbols-outlined { font-size: 21px; }
-
-    .module-card-arrow {
-      color: var(--text-faint);
-      font-size: 19px;
-      transition: color .22s ease, transform .22s ease;
+      border: 1px solid rgba(185, 28, 28, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: all 0.3s ease;
     }
 
     .module-card:hover .card-icon-pill {
-      color: #fff;
       background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 8px 20px rgba(185, 28, 28, 0.25);
     }
 
-    .module-card:hover .module-card-arrow {
-      color: var(--primary);
-      transform: translate(2px, -2px);
+    .status-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
     }
 
-    .module-card-copy { min-width: 0; }
+    .badge-core, .badge-sync {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #9A3412;
+      background: #FFEDD5;
+      border: 1px solid #FED7AA;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+    }
+
+    html[data-theme="dark"] .badge-core, 
+    html[data-theme="dark"] .badge-sync {
+      color: #fb923c;
+      background: rgba(251, 146, 60, 0.15);
+      border-color: rgba(251, 146, 60, 0.3);
+    }
 
     .card-title {
-      margin: 0 0 5px;
+      font-size: 17px;
+      font-weight: 800;
       color: var(--text-main);
-      font-size: 15px;
-      font-weight: 750;
-      line-height: 1.35;
-      letter-spacing: -.025em;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
     }
 
     .card-description {
-      margin: 0;
+      font-size: 13px;
       color: var(--text-muted);
-      font-size: 12px;
-      line-height: 1.45;
+      line-height: 1.5;
+      margin-bottom: 16px;
     }
 
-    @media (max-width: 1050px) {
-      .modules-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tags-flow {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 16px;
     }
 
-    @media (max-width: 560px) {
-      .workspace-section { padding-left: 16px; padding-right: 16px; }
-      .modules-grid { gap: 10px; }
-      .module-card {
-        min-height: 150px;
-        padding: 15px 13px 14px;
-        gap: 17px;
-        border-radius: 15px;
-      }
-      .card-icon-pill {
-        width: 35px;
-        height: 35px;
-        flex-basis: 35px;
-        border-radius: 10px;
-      }
-      .card-icon-pill .material-symbols-outlined { font-size: 19px; }
-      .card-title { font-size: 13px; }
-      .card-description { font-size: 11px; line-height: 1.4; }
-      .module-group-label { margin-top: 10px; }
+    .micro-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      color: var(--text-secondary);
     }
 
-    @media (max-width: 360px) {
-      .modules-grid { grid-template-columns: 1fr; }
-      .module-card { min-height: 132px; }
-      .card-title { font-size: 15px; }
-      .card-description { font-size: 12px; }
+    .card-footer-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 14px;
+      border-top: 1px solid var(--surface-border);
+      font-size: 13px;
+      font-weight: 700;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .module-card, .module-card-arrow, .card-icon-pill { transition: none; }
-      .module-card:hover { transform: none; }
+    .card-footer-cta.interactive {
+      color: var(--primary);
+    }
+
+    .card-footer-cta.static {
+      color: var(--text-muted);
+    }
+
+    /* Theme-Adapted Uiverse Button Styling (by nathAd17) */
+    .card-footer-cta button {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      align-items: center;
+      margin: 0;
+      box-shadow: 0 4px 12px rgba(185, 28, 28, 0.1);
+      font-size: 13.5px;
+      background: var(--surface-card);
+      backdrop-filter: blur(12px);
+      font-weight: 600;
+      isolation: isolate;
+      border-color: var(--surface-border);
+      color: var(--primary);
+      position: relative;
+      z-index: 10;
+      padding: 6px 14px;
+      overflow: hidden;
+      border: 1.5px solid rgba(185, 28, 28, 0.2);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .card-footer-cta button::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+      top: 0;
+      bottom: 0;
+      left: -100%;
+      border-radius: 9999px;
+      background: var(--primary);
+      z-index: -10;
+      aspect-ratio: 1;
+    }
+
+    .module-card:hover .card-footer-cta button::before,
+    .card-footer-cta button:hover::before {
+      left: 0;
+      width: 100%;
+      transform: scale(1.5);
+      transition-duration: 0.7s;
+    }
+
+    .module-card:hover .card-footer-cta button,
+    .card-footer-cta button:hover {
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .card-footer-cta button svg {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      justify-content: flex-end;
+      color: var(--primary);
+      transition: all 0.3s linear;
+      border-radius: 50%;
+      border: 1px solid rgba(185, 28, 28, 0.3);
+      padding: 4px;
+      transform: rotate(45deg);
+    }
+
+    .card-footer-cta button svg path {
+      fill: var(--primary);
+      transition: fill 0.3s ease;
+    }
+
+    .module-card:hover .card-footer-cta button svg,
+    .card-footer-cta button:hover svg {
+      transform: rotate(90deg);
+      background: #ffffff;
+      color: var(--primary);
+      border: none;
+      padding: 4px;
+    }
+
+    .module-card:hover .card-footer-cta button svg path,
+    .card-footer-cta button:hover svg path {
+      fill: var(--primary);
     }
 
     .telemetry-section {
@@ -1253,88 +1339,233 @@
       </div>
 
       <div class="modules-grid" id="modulesGrid">
-        <div class="module-group-label"><span>Operations</span><span>04</span></div>
-        <a href="editor.html" class="module-card" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">edit_note</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
+        
+        <!-- 1. QUOTATION (BENTO WIDE) -->
+        <a href="editor.html" class="module-card bento-wide" data-category="quotation" data-tags="quotation invoice estimate drafting exact maxcare pdf studio">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">edit_note</span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span class="status-tag">Documentation</span>
+                <span class="badge-core">Core Tool</span>
+              </div>
+            </div>
             <h2 class="card-title">Quotation Drafting Studio</h2>
-            <p class="card-description">Prepare and export quotations.</p>
+            <p class="card-description">Create official quotations with line items, automated freight formulas, GST insurance, and real-time A4 preview.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">A4 PDF Export</span>
+              <span class="micro-tag">Freight Matrix</span>
+              <span class="micro-tag">Local Save</span>
+              <span class="micro-tag">GST Calculation</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
-        <a href="APML-Lite.html" class="module-card" data-category="rates" data-tags="apml lite calculator volume cft rate pricing cube floor">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">inventory_2</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
-            <h2 class="card-title">APML Lite Rate Calculator</h2>
-            <p class="card-description">Volume-based shifting estimates.</p>
-          </div>
-        </a>
-        <a href="car-rate.html" class="module-card" data-category="rates car" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">directions_car</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
-            <h2 class="card-title">Car Rate Calculator</h2>
-            <p class="card-description">Vehicle transport estimates.</p>
-          </div>
-        </a>
-        <a href="local-rate.html" class="module-card" data-category="rates" data-tags="local shifting intra-city rate sop budget minimum moving city">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">local_shipping</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
-            <h2 class="card-title">APML Local Rate</h2>
-            <p class="card-description">Local shifting estimates.</p>
-          </div>
-        </a>
-        <div class="module-group-label"><span>Resources</span><span>04</span></div>
-        <a href="drive.html" class="module-card" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">cloud</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
+
+        <!-- 2. CLOUD DRIVE (BENTO WIDE) -->
+        <a href="drive.html" class="module-card bento-wide" data-category="storage drive" data-tags="cloud drive catbox folders upload manager files recovery">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">cloud</span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span class="status-tag">Storage Hub</span>
+                <span class="badge-sync">Cloud Drive</span>
+              </div>
+            </div>
             <h2 class="card-title">APML Cloud Drive</h2>
-            <p class="card-description">Your files, organised in one place.</p>
+            <p class="card-description">Organize assets into custom folders and manage documents, media, and web files seamlessly via Cloudinary links.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Direct Links</span>
+              <span class="micro-tag">Folder Tree</span>
+              <span class="micro-tag">Blob Download</span>
+              <span class="micro-tag">Trash Recovery</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
+
+        <!-- 3. GALLERY -->
         <a href="gallery.html" class="module-card" data-category="quotation" data-tags="gallery packing video standards bike car fleet photos packaging">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">photo_library</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">photo_library</span>
+              </div>
+              <span class="status-tag">Media Assets</span>
+            </div>
             <h2 class="card-title">Packing Standards Gallery</h2>
-            <p class="card-description">Visual packing and handling references.</p>
+            <p class="card-description">Visual packaging standards and operational video references with live download counters.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Fleet Logistics</span>
+              <span class="micro-tag">Cloud Sync</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
+
+        <!-- 4. HUB DETAILS (UPDATED TO directory.html) -->
         <a href="directory.html" class="module-card" data-category="hubs directories" data-tags="hub branches nationwide hod contact phone maps directory pan-india">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">location_city</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">location_city</span>
+              </div>
+              <span class="status-tag">Directory</span>
+            </div>
             <h2 class="card-title">Hub &amp; Branch Directory</h2>
-            <p class="card-description">Find branches and hub contacts.</p>
+            <p class="card-description">Instant lookup for nationwide warehouse hubs and branch HOD direct contacts.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Pan-India Hubs</span>
+              <span class="micro-tag">Map Pins</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
+
+        <!-- 5. FIELD OFFICER -->
         <a href="field-officer.html" class="module-card" data-category="directories" data-tags="field officer wcro mumbai pune survey whatsapp contact directory">
-          <div class="module-card-top">
-            <span class="card-icon-pill" aria-hidden="true"><span class="material-symbols-outlined">badge</span></span>
-            <span class="module-card-arrow material-symbols-outlined" aria-hidden="true">north_east</span>
-          </div>
-          <div class="module-card-copy">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">badge</span>
+              </div>
+              <span class="status-tag">Directory</span>
+            </div>
             <h2 class="card-title">Field Officer Directory WCRO</h2>
-            <p class="card-description">Connect with WCRO field officers.</p>
+            <p class="card-description">Western Central Regional Office field officers with direct WhatsApp contact numbers.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">WCRO Region</span>
+              <span class="micro-tag">WhatsApp</span>
+            </div>
+          </div>
+          <div class="card-footer-cta static">
+            <span>Live Web Module</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
           </div>
         </a>
+
+        <!-- 6. APML LITE RATE CALCULATOR -->
+        <a href="APML-Lite.html" class="module-card" data-category="rates" data-tags="apml lite calculator volume cft rate pricing cube floor">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">inventory_2</span>
+              </div>
+              <span class="status-tag">Volume Pricing</span>
+            </div>
+            <h2 class="card-title">APML Lite Rate Calculator</h2>
+            <p class="card-description">Instant CFT volume calculator with floor constraints and a 450 CFT limit ceiling.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">450 CFT Limit</span>
+              <span class="micro-tag">Base Floor</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
+          </div>
+        </a>
+
+        <!-- 7. CAR RATE CALCULATOR -->
+        <a href="car-rate.html" class="module-card" data-category="rates car" data-tags="car transport vehicle carrier freight slabs km calculator automotive">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">directions_car</span>
+              </div>
+              <span class="status-tag">Vehicle Freight</span>
+            </div>
+            <h2 class="card-title">Car Rate Calculator</h2>
+            <p class="card-description">Automated vehicle transport rate estimation with 600 KM baseline formulas.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Model Detection</span>
+              <span class="micro-tag">600 KM Base</span>
+            </div>
+          </div>
+          <div class="card-footer-cta interactive">
+            <span style="display: inline-flex; align-items: center; gap: 6px;"><span class="material-symbols-outlined" style="font-size: 16px; color: var(--primary);">auto_awesome</span> Interactive Tool</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
+          </div>
+        </a>
+
+        <!-- 8. LOCAL RATE -->
+        <a href="local-rate.html" class="module-card" data-category="rates" data-tags="local shifting intra-city rate sop budget minimum moving city">
+          <div>
+            <div class="card-head">
+              <div class="card-icon-pill">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <span class="status-tag">Local Shifting</span>
+            </div>
+            <h2 class="card-title">APML Local Rate</h2>
+            <p class="card-description">Intra-city relocation rate calculation engine with SOP budget rates and CFT limits.</p>
+            <div class="tags-flow">
+              <span class="micro-tag">Intra-City</span>
+              <span class="micro-tag">SOP Guidelines</span>
+            </div>
+          </div>
+          <div class="card-footer-cta static">
+            <span>Live Web Module</span>
+            <button type="submit">
+              Launch
+              <svg viewBox="0 0 16 19" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 18C7 18.5523 7.44772 19 8 19C8.55228 19 9 18.5523 9 18H7ZM8.70711 0.292893C8.31658 -0.0976311 7.68342 -0.0976311 7.29289 0.292893L0.928932 6.65685C0.538408 7.04738 0.538408 7.68054 0.928932 8.07107C1.31946 8.46159 1.95262 8.46159 2.34315 8.07107L8 2.41421L13.6569 8.07107C14.0474 8.46159 14.6805 8.46159 15.0711 8.07107C15.4616 7.68054 15.4616 7.04738 15.0711 6.65685L8.70711 0.292893ZM9 18L9 1H7L7 18H9Z"></path>
+              </svg>
+            </button>
+          </div>
+        </a>
+
       </div>
     </section>
 
