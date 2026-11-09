@@ -402,15 +402,6 @@ window.sendPortalNotification = function () {};
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
       footerContainer.innerHTML = `
-        <div class="footer-truck-animation" aria-hidden="true">
-          <lottie-player
-            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
-            background="transparent"
-            speed="1"
-            loop
-            autoplay>
-          </lottie-player>
-        </div>
         <footer class="site-footer-extended">
           <div class="footer-grid-container">
             
@@ -457,7 +448,18 @@ window.sendPortalNotification = function () {};
           </div>
 
           <div class="footer-bottom-bar">
-            <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+            <div class="footer-copyright-group">
+              <lottie-player
+                class="footer-truck-animation"
+                src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
+                background="transparent"
+                speed="1"
+                loop
+                autoplay
+                aria-hidden="true">
+              </lottie-player>
+              <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+            </div>
             
             <div style="display: flex; align-items: center; gap: 16px;">
               <a href="about.html" class="footer-about-pill">
@@ -523,29 +525,26 @@ window.sendPortalNotification = function () {};
 
         <style>
           /* EXTENDED STRETCHED FOOTER STYLING */
-          .footer-truck-animation {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
+          .footer-copyright-group {
+            display: inline-flex;
             align-items: center;
-            height: 104px;
-            margin: 0 auto -54px;
+            gap: 7px;
+            min-width: 0;
+          }
+          .footer-truck-animation {
+            display: block;
+            flex: 0 0 auto;
+            width: 54px;
+            height: 38px;
             pointer-events: none;
           }
-          .footer-truck-animation lottie-player {
-            display: block;
-            width: 128px;
-            height: 104px;
-          }
           @media (max-width: 600px) {
-            .footer-truck-animation {
-              height: 88px;
-              margin-bottom: -42px;
+            .footer-copyright-group {
+              gap: 5px;
             }
-            .footer-truck-animation lottie-player {
-              width: 108px;
-              height: 88px;
+            .footer-truck-animation {
+              width: 42px;
+              height: 30px;
             }
           }
           .site-footer-extended {
