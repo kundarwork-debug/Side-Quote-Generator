@@ -48,6 +48,7 @@
       .grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-bottom:20px; align-items:stretch; }
       .card,.table-section { min-width:0; background:var(--surface); border:1px solid var(--surface-border); border-radius:var(--radius-xl); padding:24px; box-shadow:var(--shadow-sm); transition:var(--transition-m3); }
       .card:hover,.table-section:hover { box-shadow:var(--shadow-md); }
+      .car-rate-3d-icon { width:42px; height:42px; object-fit:contain; flex:none; margin-right:8px; filter:drop-shadow(0 4px 6px rgba(120,70,50,.14)); }
       .card-title { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:20px; color:var(--text-main); font-size:14px; font-weight:800; letter-spacing:-.01em; }
       .badge { display:inline-flex; align-items:center; gap:5px; max-width:65%; padding:6px 10px; border-radius:999px; border:1px solid rgba(185,28,28,.16); background:var(--primary-soft); color:var(--primary); font-size:10px; font-weight:800; text-transform:none; }
       .input-group { position:relative; margin-bottom:18px; }
@@ -129,7 +130,7 @@
         <div class="grid">
             <div class="card">
                 <div class="card-title">
-                    <span>Vehicle Details</span>
+                    <span style="display:flex;align-items:center;gap:8px;"><img class="car-rate-3d-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/map-pin-dynamic-color.png" alt="" aria-hidden="true" loading="lazy" decoding="async">Vehicle Details</span>
                     <span class="badge" id="detectedBadge">
                         <span class="material-symbols-outlined" style="font-size: 14px;">flag</span>
                         <span>India Cars Search Active</span>
