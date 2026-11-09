@@ -932,6 +932,9 @@ window.sendPortalNotification = function () {};
         max-width: 100%;
         max-height: 100%;
         pointer-events: none;
+        transform: translate3d(0, 0, 0);
+        transition: transform 180ms cubic-bezier(.2,.75,.25,1);
+        will-change: transform;
       }
       .support-mascot-sprite {
         position: absolute;
@@ -1145,9 +1148,25 @@ window.sendPortalNotification = function () {};
         const rect = moodBtn.getBoundingClientRect();
         const dx = event.clientX - (rect.left + rect.width / 2);
         const dy = event.clientY - (rect.top + rect.height / 2);
+
+        // Let the mascot lean gently toward the pointer while staying anchored
+        // to its floating button. The small travel distance keeps it easy to click.
+        const followX = Math.max(-10, Math.min(10, dx / 90 * 10));
+        const followY = Math.max(-10, Math.min(10, dy / 90 * 10));
+        const tilt = Math.max(-3, Math.min(3, dx / 180 * 3));
+        if (wobnimo) {
+          wobnimo.style.transform = `translate3d(${followX.toFixed(1)}px, ${followY.toFixed(1)}px, 0) rotate(${tilt.toFixed(1)}deg)`;
+        }
+
         if (Math.hypot(dx, dy) < 70) { showSupportDirection('center'); return; }
         const sector = (Math.round(Math.atan2(dy, dx) / sectorSize) + sectors.length) % sectors.length;
         if (!mascotReactions || mascotReactions.style.opacity !== '1') showSupportDirection(sectors[sector]);
+      }, { passive: true });
+
+      window.addEventListener('pointerout', event => {
+        if (event.relatedTarget) return;
+        if (wobnimo) wobnimo.style.transform = 'translate3d(0, 0, 0) rotate(0deg)';
+        showSupportDirection('center');
       }, { passive: true });
     }
 
