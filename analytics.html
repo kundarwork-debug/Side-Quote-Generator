@@ -439,6 +439,28 @@
   .page-head .apml-3d-page-icon{display:block;width:68px;height:68px;object-fit:contain;margin:0 0 6px;filter:drop-shadow(0 7px 9px rgba(120,70,50,.14));}@media(max-width:600px){.page-head .apml-3d-page-icon{width:58px;height:58px;}}
   </style>
 
+
+<style id="apml-compact-3d-header">
+  .page-head { margin-bottom: 18px; gap: 14px; }
+  .page-head > div:first-child {
+    display: grid; grid-template-columns: 44px minmax(0,1fr);
+    column-gap: 10px; align-items: start;
+  }
+  .page-head .apml-3d-page-icon {
+    grid-column: 1; grid-row: 1 / span 3;
+    width: 42px; height: 42px; margin: 0;
+  }
+  .page-head .eyebrow { grid-column: 2; margin: 0 0 5px; }
+  .page-head h1 { grid-column: 2; }
+  .page-head p { grid-column: 2; margin-top: 5px; }
+  @media(max-width:600px) {
+    .page-head { margin-bottom: 14px; }
+    .page-head > div:first-child { grid-template-columns: 36px minmax(0,1fr); column-gap: 8px; }
+    .page-head .apml-3d-page-icon { width: 34px; height: 34px; }
+    .page-head p { font-size: 13px; }
+  }
+</style>
+
 </head>
 <body>
 
