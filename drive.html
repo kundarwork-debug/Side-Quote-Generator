@@ -2368,7 +2368,12 @@
         });
 
       } else if (currentFolders.length === 0) {
-        filesContainerWrapper.innerHTML = `<div class="state-msg">This folder is empty. Create a subfolder or upload files above.</div>`;
+        filesContainerWrapper.innerHTML = `
+          <div class="apml-empty-state" role="status">
+            <span class="apml-empty-state__icon" aria-hidden="true"><span class="material-symbols-outlined">folder_open</span></span>
+            <h3 class="apml-empty-state__title">A little room to get started</h3>
+            <p class="apml-empty-state__description">This folder is empty. Create a subfolder or upload a file, and it will be waiting here next time.</p>
+          </div>`;
       } else {
         filesContainerWrapper.innerHTML = ``;
       }
