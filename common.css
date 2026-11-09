@@ -1211,3 +1211,84 @@ html[data-theme="dark"] .site-footer-extended .footer-about-pill:hover {
   background: #27364b !important;
   border-color: #64748b !important;
 }
+
+
+/* =========================================================
+   APML PORTAL — SHARED VISUAL LANGUAGE FOUNDATION
+   A conservative shared baseline for inner pages. Existing page
+   layouts and component-specific styles remain in control.
+   ========================================================= */
+:root {
+  /* Bridge legacy Material tokens to the APML brand system. */
+  --md-sys-color-primary: var(--apml-color-brand);
+  --md-sys-color-primary-container: var(--apml-color-brand-soft);
+  --md-sys-color-on-primary-container: var(--apml-color-brand-hover);
+  --md-sys-color-surface: var(--apml-color-page);
+  --md-sys-color-surface-container-lowest: var(--apml-color-surface);
+  --md-sys-color-surface-container-low: var(--apml-color-surface-subtle);
+  --md-sys-color-outline-variant: var(--apml-color-border);
+  --md-sys-color-on-surface: var(--apml-color-text);
+  --md-sys-color-on-surface-variant: var(--apml-color-text-muted);
+  --md-sys-shape-corner-small: var(--apml-radius-sm);
+  --md-sys-shape-corner-medium: var(--apml-radius-md);
+  --md-elevation-1: var(--apml-shadow-soft);
+  --md-elevation-2: var(--apml-shadow-raised);
+}
+
+html[data-theme="dark"] {
+  --md-sys-color-primary: var(--apml-color-brand);
+  --md-sys-color-primary-container: var(--apml-color-brand-soft);
+  --md-sys-color-on-primary-container: #ffd8da;
+  --md-sys-color-surface: var(--apml-color-page);
+  --md-sys-color-surface-container-lowest: var(--apml-color-surface);
+  --md-sys-color-surface-container-low: var(--apml-color-surface-subtle);
+  --md-sys-color-outline-variant: var(--apml-color-border);
+  --md-sys-color-on-surface: var(--apml-color-text);
+  --md-sys-color-on-surface-variant: var(--apml-color-text-muted);
+}
+
+/* Shared typography defaults; page-specific typography can still override. */
+body {
+  font-family: var(--apml-font-sans);
+  color: var(--apml-color-text);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select {
+  font-family: inherit;
+}
+
+/* Common content surfaces share the same restrained shape and elevation. */
+.card,
+.panel,
+.content-card,
+.info-card,
+.feature-card,
+.surface-card,
+.stat-card,
+.kpi,
+.table-section,
+.quick-pricing-card,
+.policy-card,
+.bug-card {
+  border-radius: var(--apml-radius-lg);
+  border-color: var(--apml-color-border);
+  box-shadow: var(--apml-shadow-soft);
+}
+
+/* Consistent keyboard focus without changing normal resting appearance. */
+:where(a, button, input, textarea, select, summary, [role="button"], [tabindex]):focus-visible {
+  outline: 2px solid var(--apml-color-brand);
+  outline-offset: 3px;
+  box-shadow: var(--apml-shadow-focus);
+}
+
+/* Keep browser motion preferences respected throughout the portal. */
+@media (prefers-reduced-motion: reduce) {
+  :where(*, *::before, *::after) {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
