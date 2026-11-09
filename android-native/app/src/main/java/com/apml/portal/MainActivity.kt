@@ -202,6 +202,10 @@ private fun ModuleCard(module: PortalModule, onClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ModulePreview(module: PortalModule?, onBack: () -> Unit) {
+    if (module?.route == "quotation") {
+        NativeQuotationScreen(onBack)
+        return
+    }
     if (module?.route == "lite" || module?.route == "car-rate" || module?.route == "local-rate") {
         NativeCalculatorScreen(module.route, onBack)
         return
