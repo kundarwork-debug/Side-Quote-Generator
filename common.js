@@ -402,6 +402,15 @@ window.sendPortalNotification = function () {};
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
       footerContainer.innerHTML = `
+        <div class="footer-truck-animation" aria-hidden="true">
+          <lottie-player
+            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
+            background="transparent"
+            speed="1"
+            loop
+            autoplay>
+          </lottie-player>
+        </div>
         <footer class="site-footer-extended">
           <div class="footer-grid-container">
             
@@ -514,6 +523,31 @@ window.sendPortalNotification = function () {};
 
         <style>
           /* EXTENDED STRETCHED FOOTER STYLING */
+          .footer-truck-animation {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 104px;
+            margin: 0 auto -54px;
+            pointer-events: none;
+          }
+          .footer-truck-animation lottie-player {
+            display: block;
+            width: 128px;
+            height: 104px;
+          }
+          @media (max-width: 600px) {
+            .footer-truck-animation {
+              height: 88px;
+              margin-bottom: -42px;
+            }
+            .footer-truck-animation lottie-player {
+              width: 108px;
+              height: 88px;
+            }
+          }
           .site-footer-extended {
             background: var(--md-sys-color-surface-container-low, #f7ede6);
             border-top: 1px solid var(--md-sys-color-outline-variant, #ede4de);
@@ -830,14 +864,6 @@ window.sendPortalNotification = function () {};
     supportFab.innerHTML = `
       <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0px;">      
         <div class="support-msg-bubble" id="supportBubble" style="position: relative;">
-          <lottie-player
-            src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
-            background="transparent"
-            speed="1"
-            style="position: absolute; width: 75px; height: 75px; top: -52px; left: 50%; transform: translateX(-50%); z-index: 1; pointer-events: none;"
-            loop
-            autoplay>
-          </lottie-player>
           <span style="position: relative; z-index: 2; display: block; margin: 0; padding: 0;"><span id="typewriter-text"></span><span class="cursor" id="typeCursor">|</span></span>
         </div>      
         <div class="support-btn" id="supportAvatarBtn" title="Click for a new message!" style="cursor: pointer;">        
