@@ -192,8 +192,10 @@ fun NativeQuotationScreen(onBack: () -> Unit) {
 
 @Composable
 private fun QuoteSection(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Card { Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp), content = content) }
-    Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        Card { Column(Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp), content = content) }
+    }
 }
 
 @Composable
