@@ -1253,7 +1253,41 @@
       .hero-primary-action .material-symbols-outlined { transition: none; }
     }
 
-  </style>
+  
+    /* Interactive page-mascot hero replacement */
+    .mascot-stage { isolation: isolate; }
+    .apml-hero-mascot {
+      position: relative; z-index: 2; display: block; flex: 0 0 auto;
+      width: 118px; height: 118px; padding: 0; border: 0;
+      background: transparent; appearance: none; cursor: pointer;
+      user-select: none; -webkit-tap-highlight-color: transparent;
+    }
+    .mascot-squash { position: relative; display: block; width: 100%; height: 100%; transform-origin: 50% 78%; }
+    .mascot-sprite {
+      position: absolute; inset: 0; display: block;
+      background-size: 300% 300%; background-repeat: no-repeat;
+      background-position: 50% 50%;
+    }
+    .mascot-directions {
+      background-image: url("https://koboyo.com/page-mascot/mascots/gearbot-directions.webp");
+    }
+    .mascot-reactions {
+      background-image: url("https://koboyo.com/page-mascot/mascots/gearbot-reactions.webp");
+      opacity: 0;
+    }
+    .apml-hero-mascot:focus-visible { outline: 3px solid var(--primary); outline-offset: 7px; border-radius: 50%; }
+    @media (min-width: 768px) {
+      .apml-hero-mascot { width: 138px; height: 138px; }
+    }
+    @media (max-width: 480px) {
+      .mascot-stage { width: 104px; height: 104px; margin-bottom: 16px; }
+      .apml-hero-mascot { width: 108px; height: 108px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .mascot-stage, .logo-halo { animation: none !important; }
+    }
+
+</style>
 </head>
 <body>
 
@@ -1267,11 +1301,14 @@
 
     <!-- PREMIUM MINIMAL INTRO -->
     <section class="hero-center" aria-labelledby="homeHeroTitle">
-      <div class="logo-stage" aria-hidden="true">
+      <div class="logo-stage mascot-stage">
         <div class="logo-halo"></div>
-        <div class="rotating-logo-container">
-          <img src="logo.svg" alt="">
-        </div>
+        <button class="apml-hero-mascot" id="apmlHeroMascot" type="button" aria-label="Interact with the APML Portal mascot">
+          <span class="mascot-squash">
+            <span class="mascot-sprite mascot-directions" aria-hidden="true"></span>
+            <span class="mascot-sprite mascot-reactions" aria-hidden="true"></span>
+          </span>
+        </button>
       </div>
       <p class="hero-eyebrow hero-copy-reveal"><span class="hero-eyebrow-dot"></span> APML PORTAL</p>
       <h1 class="hero-main-title" id="homeHeroTitle" aria-label="The workday, made simpler.">
@@ -1584,6 +1621,74 @@
 
   <!-- COMMON FOOTER PLACEHOLDER -->
   <div id="footer-container"></div>
+
+
+  <!-- Lightweight vanilla-JS adaptation of page-mascot for this non-React site -->
+  <script>
+    (() => {
+      const button = document.getElementById('apmlHeroMascot');
+      if (!button) return;
+      const directions = button.querySelector('.mascot-directions');
+      const reactions = button.querySelector('.mascot-reactions');
+      const squash = button.querySelector('.mascot-squash');
+      const names = ['up-left','up','up-right','left','center','right','down-left','down','down-right'];
+      const clockwise = ['right','down-right','down','down-left','left','up-left','up','up-right'];
+      const sectorSize = Math.PI * 2 / clockwise.length;
+      let currentSector = -1;
+      let reactionTimer = null;
+      let resetTimer = null;
+      let lastBoop = 0;
+      let boopCount = 0;
+
+      function showDirection(name) {
+        const index = names.indexOf(name);
+        directions.style.backgroundPosition = ((index % 3) * 50) + '% ' + (Math.floor(index / 3) * 50) + '%';
+      }
+      function aim(x, y) {
+        const box = button.getBoundingClientRect();
+        const dx = x - (box.left + box.width / 2);
+        const dy = y - (box.top + box.height / 2);
+        if (Math.hypot(dx, dy) < 70) {
+          currentSector = -1; showDirection('center'); return;
+        }
+        const angle = Math.atan2(dy, dx);
+        const next = (Math.round(angle / sectorSize) + clockwise.length) % clockwise.length;
+        if (next !== currentSector) { currentSector = next; showDirection(clockwise[next]); }
+      }
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        window.addEventListener('pointermove', event => aim(event.clientX, event.clientY), { passive: true });
+        window.addEventListener('scroll', () => {
+          // Re-evaluate against the latest pointer after the page moves.
+          if (window.__apmlMascotPointer) aim(window.__apmlMascotPointer.x, window.__apmlMascotPointer.y);
+        }, { passive: true });
+        window.addEventListener('pointermove', event => {
+          window.__apmlMascotPointer = { x: event.clientX, y: event.clientY };
+        }, { passive: true });
+      }
+      button.addEventListener('click', () => {
+        clearTimeout(reactionTimer); clearTimeout(resetTimer);
+        const now = Date.now();
+        boopCount = now - lastBoop < 1600 ? boopCount + 1 : 1;
+        lastBoop = now;
+        const reactionNames = ['blink','heart','sparkle','surprised','wink','bashful','sleepy','dizzy','delighted'];
+        const reaction = boopCount >= 4 ? 'dizzy' : ['heart','sparkle','delighted'][(boopCount - 1) % 3];
+        if (boopCount >= 4) boopCount = 0;
+        const index = reactionNames.indexOf(reaction);
+        reactions.style.backgroundPosition = ((index % 3) * 50) + '% ' + (Math.floor(index / 3) * 50) + '%';
+        reactions.style.opacity = '1'; directions.style.opacity = '0';
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && squash.animate) {
+          squash.animate([
+            { transform: 'scale(1,1)' }, { transform: 'scale(1.10,.86)', offset: .18 },
+            { transform: 'scale(.95,1.08)', offset: .45 }, { transform: 'scale(1.03,.97)', offset: .72 },
+            { transform: 'scale(1,1)' }
+          ], { duration: 420, easing: 'ease-in-out' });
+        }
+        reactionTimer = setTimeout(() => {
+          reactions.style.opacity = '0'; directions.style.opacity = '1';
+        }, 560);
+      });
+    })();
+  </script>
 
   <!-- YOUR COMMON JS -->
   <script src="common.js?v=22.7"></script>
