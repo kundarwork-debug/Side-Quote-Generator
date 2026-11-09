@@ -1269,10 +1269,10 @@
       background-position: 50% 50%;
     }
     .mascot-directions {
-      background-image: url("https://koboyo.com/page-mascot/mascots/gearbot-directions.webp");
+      background-image: url("https://koboyo.com/page-mascot/mascots/beard-directions.webp");
     }
     .mascot-reactions {
-      background-image: url("https://koboyo.com/page-mascot/mascots/gearbot-reactions.webp");
+      background-image: url("https://koboyo.com/page-mascot/mascots/beard-reactions.webp");
       opacity: 0;
     }
     .apml-hero-mascot:focus-visible { outline: 3px solid var(--primary); outline-offset: 7px; border-radius: 50%; }
@@ -1670,7 +1670,7 @@
         const now = Date.now();
         boopCount = now - lastBoop < 1600 ? boopCount + 1 : 1;
         lastBoop = now;
-        const reactionNames = ['blink','heart','sparkle','surprised','wink','bashful','sleepy','dizzy','delighted'];
+        const reactionNames = ['blink','heart','sparkle','surprised','starry','blush','sleepy','dizzy','delighted'];
         const reaction = boopCount >= 4 ? 'dizzy' : ['heart','sparkle','delighted'][(boopCount - 1) % 3];
         if (boopCount >= 4) boopCount = 0;
         const index = reactionNames.indexOf(reaction);
