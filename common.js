@@ -882,7 +882,7 @@ window.sendPortalNotification = function () {};
       }
       .support-msg-bubble {
         position: relative;
-        top: 14px;
+        top: 20px;
         z-index: 2;
         background-color: #ffffff;
         color: var(--text-main, #1c1917);
