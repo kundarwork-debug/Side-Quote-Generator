@@ -458,7 +458,7 @@ window.sendPortalNotification = function () {};
                 autoplay
                 aria-hidden="true">
               </lottie-player>
-              <span>&copy; ${currentYear} APML Portal. All rights reserved.</span>
+              <span>© ${currentYear} APML Portal. All rights reserved.</span>
             </div>
             
             <div style="display: flex; align-items: center; gap: 16px;">
@@ -525,6 +525,50 @@ window.sendPortalNotification = function () {};
 
         <style>
           /* EXTENDED STRETCHED FOOTER STYLING */
+          /* Keep this shared footer isolated from page-specific legacy footer rules. */
+          #footer-container .site-footer-extended {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+          }
+          #footer-container .site-footer-extended .footer-grid-container {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1.5fr) minmax(0, 3fr) !important;
+          }
+          #footer-container .site-footer-extended .footer-brand-col {
+            display: flex !important;
+            flex-direction: column !important;
+          }
+          #footer-container .site-footer-extended .footer-links-columns {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          }
+          #footer-container .site-footer-extended .footer-link-col {
+            display: flex !important;
+            flex-direction: column !important;
+          }
+          #footer-container .site-footer-extended .footer-bottom-bar {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+          #footer-container .site-footer-extended .footer-copyright-group {
+            display: inline-flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            flex-wrap: nowrap !important;
+            gap: 7px !important;
+          }
+          #footer-container .site-footer-extended .footer-copyright-group > span {
+            display: inline-block !important;
+            white-space: normal !important;
+          }
+          #footer-container .site-footer-extended .footer-about-pill {
+            display: inline-flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+          }
           .footer-copyright-group {
             display: inline-flex;
             align-items: center;
