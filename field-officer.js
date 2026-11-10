@@ -8,6 +8,9 @@ class APMLFieldOfficerDirectory {
     this.container = document.getElementById(containerId);
     this.searchInput = document.getElementById(searchInputId);
     this.allData = [];
+    this.activeData = [];
+    this.deletedData = [];
+    this.searchIndex = new WeakMap();
     this.showDeleted = false; // Admin toggle state
 
     if (this.searchInput) {
@@ -17,22 +20,25 @@ class APMLFieldOfficerDirectory {
 
   setData(dataArray) {
     this.allData = Array.isArray(dataArray) ? dataArray : [];
-    this.render(this.getFilteredAndSortedData(this.allData));
+    this.activeData = [];
+    this.deletedData = [];
+
+    this.allData.forEach(item => {
+      if (!item || typeof item !== 'object') return;
+      const isDeleted = item.isDeleted === true || item.isDeleted === 'true' || item.isDeleted === 1;
+      const searchableText = ['name', 'branch', 'apmCode', 'designation', 'role', 'mobile', 'status']
+        .map(field => String(item[field] == null ? '' : item[field]).toLowerCase())
+        .join(' ');
+      this.searchIndex.set(item, searchableText);
+      (isDeleted ? this.deletedData : this.activeData).push(item);
+    });
+
+    this.filterData(this.searchInput ? this.searchInput.value : '');
   }
 
-  getFilteredAndSortedData(data) {
-    let pool = data;
-    if (!this.showDeleted) {
-      pool = data.filter(item => item.isDeleted !== true && item.isDeleted !== 'true' && item.isDeleted !== 1);
-    } else {
-      // Sort deleted contacts to the bottom
-      pool = [...data].sort((a, b) => {
-        const aDel = a.isDeleted === true || a.isDeleted === 'true' || a.isDeleted === 1 ? 1 : 0;
-        const bDel = b.isDeleted === true || b.isDeleted === 'true' || b.isDeleted === 1 ? 1 : 0;
-        return aDel - bDel; // 0 (active) comes before 1 (deleted)
-      });
-    }
-    return pool;
+  getFilteredAndSortedData() {
+    // Keep active records first; deleted records are appended only in admin view.
+    return this.showDeleted ? this.activeData.concat(this.deletedData) : this.activeData;
   }
 
   toggleAdminView(show) {
@@ -43,13 +49,10 @@ class APMLFieldOfficerDirectory {
 
   filterData(query) {
     const q = String(query || '').toLowerCase().trim();
-    let pool = this.getFilteredAndSortedData(this.allData);
+    let pool = this.getFilteredAndSortedData();
 
     if (q) {
-      pool = pool.filter(item => {
-        return ['name', 'branch', 'apmCode', 'designation', 'role', 'mobile', 'status']
-          .some(field => String(item[field] == null ? '' : item[field]).toLowerCase().includes(q));
-      });
+      pool = pool.filter(item => (this.searchIndex.get(item) || '').includes(q));
     }
     this.render(pool);
   }
