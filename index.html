@@ -32,8 +32,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- COUNTUP.JS CDN -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
 
   <style>
     :root {
@@ -1651,126 +1649,134 @@
     });
   </script>
 
-  <!-- FIREBASE REALTIME PRESENCE & SCROLL-TRIGGERED COUNTUP.JS ANIMATIONS -->
-  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
+  <!-- Load live telemetry only when the section is near the viewport. -->
   <script>
-    window.addEventListener('DOMContentLoaded', function initHomepageTelemetry() {
-    let userCountUp = null;
-    let pdfCountUp = null;
-    let mediaCountUp = null;
-
-    let targetData = {
-      liveUserCount: 0,
-      totalPdfDownloads: 0,
-      totalMediaDownloads: 0
-    };
-
-    let hasBeenViewed = false;
-
-    function runCountUpAnimations() {
-      if (!window.countUp || !window.countUp.CountUp) return;
-
-      if (!userCountUp) {
-        userCountUp = new window.countUp.CountUp('liveUserCount', targetData.liveUserCount, { duration: 1.5, useGrouping: true });
-      } else {
-        userCountUp.update(targetData.liveUserCount);
-      }
-      userCountUp.reset();
-      userCountUp.start();
-
-      if (!pdfCountUp) {
-        pdfCountUp = new window.countUp.CountUp('totalPdfDownloads', targetData.totalPdfDownloads, { duration: 1.5, useGrouping: true });
-      } else {
-        pdfCountUp.update(targetData.totalPdfDownloads);
-      }
-      pdfCountUp.reset();
-      pdfCountUp.start();
-
-      if (!mediaCountUp) {
-        mediaCountUp = new window.countUp.CountUp('totalMediaDownloads', targetData.totalMediaDownloads, { duration: 1.5, useGrouping: true });
-      } else {
-        mediaCountUp.update(targetData.totalMediaDownloads);
-      }
-      mediaCountUp.reset();
-      mediaCountUp.start();
-    }
-
-    try {
-      const firebaseConfig = {
-        apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
-        authDomain: "apml-portal.firebaseapp.com",
-        databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
-        projectId: "apml-portal",
-        storageBucket: "apml-portal.firebasestorage.app",
-        messagingSenderId: "479017159240",
-        appId: "1:479017159240:web:0853422718e6195b74a67d",
-        measurementId: "G-4H1HT31DYB"
-      };
-
-      if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-      }
-      const db = firebase.database();
-
-      const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
-      const myPresenceRef = db.ref("presence/" + userSessionId);
-      const allPresenceRef = db.ref("presence");
-
-      db.ref(".info/connected").on("value", (snap) => {
-        if (snap.val() === true) {
-          myPresenceRef.onDisconnect().remove();
-          myPresenceRef.set({ online: true, timestamp: Date.now() });
-        }
-      });
-
-      allPresenceRef.on("value", (snap) => {
-        targetData.liveUserCount = snap.numChildren() || 1;
-        if (hasBeenViewed) {
-          if (userCountUp) userCountUp.update(targetData.liveUserCount);
-          else document.getElementById("liveUserCount").innerText = targetData.liveUserCount.toLocaleString('en-IN');
-        }
-      });
-
-      db.ref("analytics/totalPdfDownloads").on("value", (snap) => {
-        const val = snap.val();
-        if (val !== null && val !== undefined) {
-          targetData.totalPdfDownloads = Number(val);
-          if (hasBeenViewed) {
-            if (pdfCountUp) pdfCountUp.update(targetData.totalPdfDownloads);
-            else document.getElementById("totalPdfDownloads").innerText = targetData.totalPdfDownloads.toLocaleString('en-IN');
-          }
-        }
-      });
-
-      db.ref("analytics/totalMediaDownloads").on("value", (snap) => {
-        const val = snap.val();
-        if (val !== null && val !== undefined) {
-          targetData.totalMediaDownloads = Number(val);
-          if (hasBeenViewed) {
-            if (mediaCountUp) mediaCountUp.update(targetData.totalMediaDownloads);
-            else document.getElementById("totalMediaDownloads").innerText = targetData.totalMediaDownloads.toLocaleString('en-IN');
-          }
-        }
-      });
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            hasBeenViewed = true;
-            runCountUpAnimations();
-          }
-        });
-      }, { threshold: 0.25 });
-
+    (() => {
       const telemetryCard = document.querySelector('.telemetry-card');
-      if (telemetryCard) observer.observe(telemetryCard);
-
-    } catch (err) {
-      console.warn("Live presence counters offline.", err);
-    }
-    });
+      if (!telemetryCard) return;
+      const scriptPromises = new Map();
+      function loadScript(src) {
+        if (scriptPromises.has(src)) return scriptPromises.get(src);
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script');
+          script.src = src; script.async = true;
+          script.onload = resolve;
+          script.onerror = () => reject(new Error('Unable to load ' + src));
+          document.head.appendChild(script);
+        });
+        scriptPromises.set(src, promise);
+        return promise;
+      }
+      async function initHomepageTelemetry() {
+        let userCountUp = null, pdfCountUp = null, mediaCountUp = null;
+        const targetData = { liveUserCount: 0, totalPdfDownloads: 0, totalMediaDownloads: 0 };
+        let hasBeenViewed = false;
+        function setCount(id, value) {
+          const element = document.getElementById(id);
+          if (element) element.textContent = Number(value || 0).toLocaleString('en-IN');
+        }
+        function runCountUpAnimations() {
+          const CountUp = window.countUp && window.countUp.CountUp;
+          if (!CountUp) {
+            setCount('liveUserCount', targetData.liveUserCount);
+            setCount('totalPdfDownloads', targetData.totalPdfDownloads);
+            setCount('totalMediaDownloads', targetData.totalMediaDownloads);
+            return;
+          }
+          if (!userCountUp) userCountUp = new CountUp('liveUserCount', targetData.liveUserCount, { duration: 1.2, useGrouping: true });
+          else userCountUp.update(targetData.liveUserCount);
+          userCountUp.reset(); userCountUp.start();
+          if (!pdfCountUp) pdfCountUp = new CountUp('totalPdfDownloads', targetData.totalPdfDownloads, { duration: 1.2, useGrouping: true });
+          else pdfCountUp.update(targetData.totalPdfDownloads);
+          pdfCountUp.reset(); pdfCountUp.start();
+          if (!mediaCountUp) mediaCountUp = new CountUp('totalMediaDownloads', targetData.totalMediaDownloads, { duration: 1.2, useGrouping: true });
+          else mediaCountUp.update(targetData.totalMediaDownloads);
+          mediaCountUp.reset(); mediaCountUp.start();
+        }
+        try {
+          await loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js');
+          await loadScript('https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js');
+        } catch (error) {
+          console.warn('Live presence counters offline.', error);
+          return;
+        }
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js')
+          .then(() => { if (hasBeenViewed) runCountUpAnimations(); })
+          .catch(() => {
+            if (hasBeenViewed) {
+              setCount('liveUserCount', targetData.liveUserCount);
+              setCount('totalPdfDownloads', targetData.totalPdfDownloads);
+              setCount('totalMediaDownloads', targetData.totalMediaDownloads);
+            }
+          });
+        try {
+          const firebaseConfig = {
+            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+            authDomain: "apml-portal.firebaseapp.com",
+            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+            projectId: "apml-portal",
+            storageBucket: "apml-portal.firebasestorage.app",
+            messagingSenderId: "479017159240",
+            appId: "1:479017159240:web:0853422718e6195b74a67d",
+            measurementId: "G-4H1HT31DYB"
+          };
+          if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+          const db = firebase.database();
+          const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
+          const myPresenceRef = db.ref("presence/" + userSessionId);
+          db.ref(".info/connected").on("value", snap => {
+            if (snap.val() === true) {
+              myPresenceRef.onDisconnect().remove();
+              myPresenceRef.set({ online: true, timestamp: Date.now() });
+            }
+          });
+          db.ref("presence").on("value", snap => {
+            targetData.liveUserCount = snap.numChildren() || 1;
+            if (hasBeenViewed) {
+              if (userCountUp) userCountUp.update(targetData.liveUserCount);
+              else setCount('liveUserCount', targetData.liveUserCount);
+            }
+          });
+          db.ref("analytics/totalPdfDownloads").on("value", snap => {
+            const value = snap.val();
+            if (value !== null && value !== undefined) {
+              targetData.totalPdfDownloads = Number(value) || 0;
+              if (hasBeenViewed) {
+                if (pdfCountUp) pdfCountUp.update(targetData.totalPdfDownloads);
+                else setCount('totalPdfDownloads', targetData.totalPdfDownloads);
+              }
+            }
+          });
+          db.ref("analytics/totalMediaDownloads").on("value", snap => {
+            const value = snap.val();
+            if (value !== null && value !== undefined) {
+              targetData.totalMediaDownloads = Number(value) || 0;
+              if (hasBeenViewed) {
+                if (mediaCountUp) mediaCountUp.update(targetData.totalMediaDownloads);
+                else setCount('totalMediaDownloads', targetData.totalMediaDownloads);
+              }
+            }
+          });
+          const countObserver = new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting)) {
+              hasBeenViewed = true;
+              runCountUpAnimations();
+              countObserver.disconnect();
+            }
+          }, { threshold: 0.2 });
+          countObserver.observe(telemetryCard);
+        } catch (error) {
+          console.warn('Live presence counters offline.', error);
+        }
+      }
+      const loadObserver = new IntersectionObserver(entries => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          loadObserver.disconnect();
+          initHomepageTelemetry();
+        }
+      }, { rootMargin: '320px 0px', threshold: 0 });
+      loadObserver.observe(telemetryCard);
+    })();
   </script>
 </body>
 </html>
