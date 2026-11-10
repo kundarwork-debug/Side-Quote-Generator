@@ -1182,7 +1182,7 @@
     $('downloadPdfBtn').addEventListener('click', async function () {
       if (!state.last) { showBanner('info', 'There is nothing to export yet. Wait for the numbers to load.', false); return; }
       var button = this;
-      var originalLabel = button.textContent;
+      var originalMarkup = button.innerHTML;
       button.disabled = true;
       button.textContent = 'Preparing PDF…';
       try {
@@ -1224,7 +1224,7 @@
         showBanner('error', 'PDF export could not load. Please check your connection and try again.', false);
       } finally {
         button.disabled = false;
-        button.textContent = originalLabel;
+        button.innerHTML = originalMarkup;
       }
     });
 
