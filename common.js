@@ -537,66 +537,6 @@ window.sendPortalNotification = function () {};
 
           </div>
 
-          <div class="footer-miniature" role="img" aria-label="Animated miniature APML operations scene: a team member processes documents while a delivery truck moves past">
-            <div class="footer-miniature-copy">
-              <span class="footer-miniature-kicker">A little work in motion</span>
-              <span class="footer-miniature-caption">Every detail, moving together.</span>
-            </div>
-            <svg class="footer-miniature-art" viewBox="0 0 520 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <path d="M8 126H512" class="mini-ground"/>
-              <g class="mini-cloud mini-cloud-one"><path d="M0 17c0-7 6-12 13-12 3-7 13-7 17 0 8-1 13 5 13 12z"/></g>
-              <g class="mini-cloud mini-cloud-two"><path d="M0 13c0-6 5-10 11-10 3-6 11-5 14 0 7-1 11 4 11 10z"/></g>
-              <g class="mini-office">
-                <rect x="26" y="48" width="156" height="76" rx="8" class="mini-building"/>
-                <rect x="39" y="60" width="54" height="45" rx="4" class="mini-window"/>
-                <path d="M66 60v45M39 82h54" class="mini-window-line"/>
-                <rect x="107" y="60" width="61" height="64" rx="3" class="mini-door"/>
-                <circle cx="158" cy="93" r="2" class="mini-door-knob"/>
-                <path d="M20 48h168" class="mini-roof"/>
-                <rect x="48" y="35" width="111" height="15" rx="4" class="mini-sign"/>
-                <text x="103.5" y="45.5" text-anchor="middle" class="mini-sign-text">APML PORTAL</text>
-              </g>
-              <g class="mini-desk">
-                <path d="M215 93h112l-7 7h-98z" class="mini-desk-top"/>
-                <path d="M226 100v25m84-25v25" class="mini-desk-leg"/>
-                <rect x="243" y="68" width="45" height="26" rx="3" class="mini-screen"/>
-                <path d="M248 75h34m-34 6h24m-24 6h29" class="mini-screen-line"/>
-                <rect x="294" y="80" width="15" height="13" rx="2" class="mini-paper"/>
-                <path d="M297 84h9m-9 4h7" class="mini-paper-line"/>
-              </g>
-              <g class="mini-worker">
-                <circle cx="266" cy="49" r="11" class="mini-skin"/>
-                <path d="M255 47c1-12 21-16 24-2-5-3-9-5-15-4-2 3-5 5-9 6z" class="mini-hair"/>
-                <path d="M251 63q15-10 30 0l8 24h-46z" class="mini-shirt"/>
-                <path d="M254 70l-13 13m33-13 11 11" class="mini-arm"/>
-                <path d="M241 83l-8 6m52-5 9 5" class="mini-hand"/>
-                <path d="M257 87v7m16-7v7" class="mini-shirt-detail"/>
-              </g>
-              <g class="mini-paper-stack">
-                <rect x="198" y="88" width="19" height="5" rx="1" class="mini-paper"/>
-                <rect x="201" y="83" width="19" height="5" rx="1" class="mini-paper"/>
-                <path d="M205 85h11m-11 2h8" class="mini-paper-line"/>
-              </g>
-              <g class="mini-plant">
-                <path d="M354 124v-20m0 11c-15-1-16-12-15-16 10 0 16 6 15 16m0-5c1-13 9-17 16-17 1 10-5 17-16 17" class="mini-leaf"/>
-                <path d="M343 116h23l-3 10h-17z" class="mini-pot"/>
-              </g>
-              <g class="mini-truck">
-                <path d="M383 85h69v32h-69z" class="mini-truck-box"/>
-                <path d="M452 96h23l17 16v5h-40z" class="mini-truck-cab"/>
-                <path d="M461 100h10l10 10h-20z" class="mini-truck-glass"/>
-                <path d="M394 94h46m-46 7h35" class="mini-truck-mark"/>
-                <circle cx="402" cy="119" r="8" class="mini-wheel"/>
-                <circle cx="402" cy="119" r="3" class="mini-wheel-hub"/>
-                <circle cx="471" cy="119" r="8" class="mini-wheel"/>
-                <circle cx="471" cy="119" r="3" class="mini-wheel-hub"/>
-                <path d="M377 126h112" class="mini-shadow"/>
-              </g>
-              <g class="mini-spark mini-spark-one"><path d="M0-6V6M-6 0H6"/></g>
-              <g class="mini-spark mini-spark-two"><path d="M0-5V5M-5 0H5"/></g>
-            </svg>
-          </div>
-
           <div class="footer-bottom-bar">
             <div class="footer-copyright-group">
               <lottie-player
@@ -674,72 +614,6 @@ window.sendPortalNotification = function () {};
         </footer>
 
         <style>
-          /* APML FOOTER MINIATURE — lightweight, self-contained SVG scene */
-          #footer-container .footer-miniature {
-            display:flex; align-items:center; justify-content:space-between; gap:24px;
-            min-height:142px; margin:24px 0 18px; padding:14px 22px 8px;
-            overflow:hidden; border:1px solid var(--apml-color-border, #e7e1d8);
-            border-radius:16px; background:color-mix(in srgb, var(--apml-color-surface, #fff) 78%, transparent);
-          }
-          #footer-container .footer-miniature-copy { display:flex; flex:0 0 185px; flex-direction:column; gap:5px; position:relative; z-index:1; }
-          #footer-container .footer-miniature-kicker { color:var(--apml-color-brand, #b91c1c); font-size:10px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; }
-          #footer-container .footer-miniature-caption { color:var(--apml-color-text-muted, #78716c); font-size:12px; line-height:1.5; }
-          #footer-container .footer-miniature-art { display:block; width:min(100%, 520px); height:132px; flex:1 1 420px; overflow:visible; }
-          #footer-container .mini-ground, #footer-container .mini-shadow { fill:none; stroke:var(--apml-color-border, #e7e1d8); stroke-width:2; stroke-linecap:round; }
-          #footer-container .mini-building { fill:var(--apml-color-surface-subtle, #f5f1eb); stroke:var(--apml-color-border, #ded6cc); stroke-width:1.5; }
-          #footer-container .mini-window { fill:#dbeafe; stroke:#b7cce4; stroke-width:1; }
-          #footer-container .mini-window-line { fill:none; stroke:#b7cce4; stroke-width:1.2; }
-          #footer-container .mini-door { fill:#c9a98a; }
-          #footer-container .mini-door-knob { fill:#f6e4bd; }
-          #footer-container .mini-roof { stroke:var(--apml-color-brand, #b91c1c); stroke-width:4; stroke-linecap:round; }
-          #footer-container .mini-sign { fill:var(--apml-color-brand, #b91c1c); }
-          #footer-container .mini-sign-text { fill:#fff; font:700 7px Arial,sans-serif; letter-spacing:1px; }
-          #footer-container .mini-desk-top { fill:#b98c69; }
-          #footer-container .mini-desk-leg { stroke:#8b6a50; stroke-width:3; stroke-linecap:round; }
-          #footer-container .mini-screen { fill:#29394c; stroke:#172536; stroke-width:1.5; }
-          #footer-container .mini-screen-line { stroke:#8fc7d9; stroke-width:1.5; stroke-linecap:round; }
-          #footer-container .mini-paper { fill:#fffdf8; stroke:#d6cfc4; stroke-width:.8; }
-          #footer-container .mini-paper-line { stroke:#b7a99a; stroke-width:1; }
-          #footer-container .mini-skin { fill:#d9a17c; }
-          #footer-container .mini-hair { fill:#49352e; }
-          #footer-container .mini-shirt { fill:#b91c1c; }
-          #footer-container .mini-arm { fill:none; stroke:#b91c1c; stroke-width:7; stroke-linecap:round; }
-          #footer-container .mini-hand { fill:none; stroke:#d9a17c; stroke-width:4; stroke-linecap:round; }
-          #footer-container .mini-shirt-detail { stroke:#f5c5c5; stroke-width:1.4; stroke-linecap:round; }
-          #footer-container .mini-leaf { fill:none; stroke:#4f8a62; stroke-width:4; stroke-linecap:round; }
-          #footer-container .mini-pot { fill:#d49a76; }
-          #footer-container .mini-truck { animation:apmlMiniTruck 12s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
-          #footer-container .mini-truck-box { fill:#f2c14e; stroke:#bd8e2f; stroke-width:1.5; }
-          #footer-container .mini-truck-cab { fill:#b91c1c; stroke:#8f1717; stroke-width:1.5; }
-          #footer-container .mini-truck-glass { fill:#d9edf4; }
-          #footer-container .mini-truck-mark { stroke:#fff3d6; stroke-width:2; stroke-linecap:round; }
-          #footer-container .mini-wheel { fill:#334155; }
-          #footer-container .mini-wheel-hub { fill:#dbe2e8; }
-          #footer-container .mini-cloud { fill:var(--apml-color-border, #e7e1d8); opacity:.65; animation:apmlMiniCloud 18s linear infinite; }
-          #footer-container .mini-cloud-one { transform:translate(190px, 25px); }
-          #footer-container .mini-cloud-two { transform:translate(320px, 13px); animation-delay:-9s; }
-          #footer-container .mini-spark { fill:none; stroke:#d69a2d; stroke-width:1.7; stroke-linecap:round; animation:apmlMiniSpark 2.8s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
-          #footer-container .mini-spark-one { transform:translate(333px, 52px); }
-          #footer-container .mini-spark-two { transform:translate(185px, 70px); animation-delay:1.3s; }
-          @keyframes apmlMiniTruck { 0%,12%,100% { transform:translateX(0); } 48%,65% { transform:translateX(-12px); } }
-          @keyframes apmlMiniCloud { 0% { translate:0 0; } 50% { translate:8px -3px; } 100% { translate:0 0; } }
-          @keyframes apmlMiniSpark { 0%,100% { opacity:.2; scale:.65; } 50% { opacity:1; scale:1.15; } }
-          @media(max-width:700px) {
-            #footer-container .footer-miniature { min-height:116px; margin:20px 0 16px; padding:10px 12px 4px; gap:4px; }
-            #footer-container .footer-miniature-copy { flex:0 0 112px; }
-            #footer-container .footer-miniature-kicker { font-size:9px; letter-spacing:.08em; }
-            #footer-container .footer-miniature-caption { font-size:10px; }
-            #footer-container .footer-miniature-art { height:105px; min-width:0; }
-          }
-          @media(max-width:390px) {
-            #footer-container .footer-miniature { flex-direction:column; align-items:flex-start; gap:0; padding-top:12px; }
-            #footer-container .footer-miniature-copy { flex:auto; }
-            #footer-container .footer-miniature-art { width:100%; height:105px; flex:auto; align-self:center; }
-          }
-          @media(prefers-reduced-motion:reduce) {
-            #footer-container .mini-truck, #footer-container .mini-cloud, #footer-container .mini-spark { animation:none !important; }
-          }
-
           /* EXTENDED STRETCHED FOOTER STYLING */
           /* Keep this shared footer isolated from page-specific legacy footer rules. */
           #footer-container .site-footer-extended {
