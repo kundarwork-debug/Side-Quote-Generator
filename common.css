@@ -1432,7 +1432,7 @@ button, input, textarea, select {
 
 /* =========================================================
    APML ORIGINAL EMPTY-STATE ARTWORK
-   Locally stored SVGs; decorative only and safe for offline use.
+   Self-hosted SVGs; decorative only and independent of third-party CDNs.
    ========================================================= */
 .apml-empty-state {
   min-height: 260px;
