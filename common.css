@@ -1545,3 +1545,34 @@ button, input, textarea, select {
     font-size: 12px;
   }
 }
+
+/* Quotation Editor uses a compact inline title row rather than a stacked hero. */
+.brand-title-wrap:has(> .brand-title-icon) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.brand-title-wrap > .brand-title-icon {
+  width: 36px !important;
+  height: 36px !important;
+  flex: 0 0 36px;
+  object-fit: contain;
+  margin: 0 !important;
+  filter: drop-shadow(0 5px 7px rgba(120, 70, 50, .12));
+}
+.brand-title-wrap > h1 {
+  margin: 0 !important;
+  font-size: clamp(22px, 2.7vw, 29px) !important;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+}
+@media (max-width: 600px) {
+  .brand-title-wrap { gap: 8px; }
+  .brand-title-wrap > .brand-title-icon {
+    width: 30px !important;
+    height: 30px !important;
+    flex-basis: 30px;
+  }
+  .brand-title-wrap > h1 { font-size: 21px !important; }
+}
