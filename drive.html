@@ -536,6 +536,8 @@
       display: block;
     }
 
+    .grid-preview-box .drive-preview-image { background: #1e293b; }
+
     .preview-placeholder-doc { background: #f8fafc; }
     .preview-placeholder-excel { background: #f0fdf4; }
     .preview-placeholder-pdf { background: #fff1f2; }
@@ -2213,7 +2215,7 @@
 
         let filesHtml = `
           <div class="drive-files-grid">
-            ${currentFiles.map(file => {
+            ${currentFiles.map((file, imageIndex) => {
               const isImage = isImageFile(file.name, file.fileId);
               const isVideo = isVideoFile(file.name, file.fileId);
               
@@ -2225,12 +2227,12 @@
               const themeClass = getThumbnailThemeClass(file.name, file.fileId);
               const iconColorStyle = getThumbnailIconColor(file.name, file.fileId);
 
-              const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 400) : file.fileId;
+              const optimizedThumbUrl = isImage ? getOptimizedUrl(file.fileId, 360) : file.fileId;
               const fullResUrl = isImage ? getOptimizedUrl(file.fileId, 1200) : file.fileId;
 
               let previewHtml = '';
               if (isImage) {
-                previewHtml = `<img class="lozad" data-src="${optimizedThumbUrl}" alt="${file.name}" decoding="async" onload="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')">`;
+                previewHtml = `<img class="drive-preview-image" src="${optimizedThumbUrl}" alt="${file.name}" loading="${imageIndex < 4 ? 'eager' : 'lazy'}" fetchpriority="${imageIndex < 4 ? 'high' : 'auto'}" decoding="async" onload="hideCardLoader('${file.key}')" onerror="handleImagePreviewError('${file.key}', this)">`;
               } else if (isVideo) {
                 previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
               } else {
@@ -2376,16 +2378,6 @@
           }
         }
 
-        if (typeof lozad !== 'undefined') {
-          const observer = lozad('.lozad', { loaded: function(el) {} });
-          observer.observe();
-        } else {
-          // Keep image previews working even if the lazy-load CDN is unavailable.
-          filesContainerWrapper.querySelectorAll('img.lozad[data-src]').forEach(img => {
-            img.src = img.dataset.src;
-            img.removeAttribute('data-src');
-          });
-        }
 
         currentFiles.forEach(file => {
           const isImage = isImageFile(file.name, file.fileId);
@@ -2510,6 +2502,14 @@
       if (loader) {
         loader.classList.add('fade-out');
       }
+    }
+    function handleImagePreviewError(key, image) {
+      hideCardLoader(key);
+      if (!image || !image.parentElement) return;
+      const placeholder = document.createElement('div');
+      placeholder.className = 'grid-preview-placeholder';
+      placeholder.innerHTML = '<span class="material-symbols-outlined">broken_image</span><span class="ext-badge">Preview unavailable</span>';
+      image.replaceWith(placeholder);
     }
 
     function openVideoLightbox(firebaseKey, videoUrl) {
