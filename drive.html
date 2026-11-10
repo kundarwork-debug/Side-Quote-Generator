@@ -1953,13 +1953,8 @@
         });
       }
 
-      const foldersSignature = JSON.stringify(currentFolders.map(folder => [
-        folder.key, folder.name, folder.parentId, !!folder.isVirtualTrash
-      ]));
-      if (foldersSignature !== lastRenderedFoldersSignature) {
-        lastRenderedFoldersSignature = foldersSignature;
-        if (currentFolders.length > 0) {
-          foldersSectionWrapper.style.display = 'block';
+      if (currentFolders.length > 0) {
+        foldersSectionWrapper.style.display = 'block';
         foldersGrid.innerHTML = currentFolders.map(folder => {
           if (folder.isVirtualTrash) {
             return `
@@ -1989,10 +1984,9 @@
             </div>
           `;
         }).join('');
-        } else {
-          foldersSectionWrapper.style.display = 'none';
-          foldersGrid.innerHTML = '';
-        }
+      } else {
+        foldersSectionWrapper.style.display = 'none';
+        foldersGrid.innerHTML = '';
       }
 
       const itemsPerPage = getDynamicItemsPerPage();
