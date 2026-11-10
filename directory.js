@@ -24,6 +24,7 @@ class APMLDirectory {
     this.container = document.getElementById(containerId);
     this.searchInput = document.getElementById(searchInputId);
     this.allData = [];
+    this.searchIndex = new WeakMap();
     this.showDeleted = false; // Admin toggle state
 
     if (this.searchInput) {
@@ -33,6 +34,12 @@ class APMLDirectory {
 
   setData(dataArray) {
     this.allData = Array.isArray(dataArray) ? dataArray : [];
+    this.searchIndex = new WeakMap();
+    this.allData.forEach(item => {
+      if (item && typeof item === 'object') {
+        this.searchIndex.set(item, Object.values(item).map(value => String(value ?? '')).join(' ').toLowerCase());
+      }
+    });
     this.render(this.getFilteredAndSortedData(this.allData));
   }
 
@@ -63,9 +70,8 @@ class APMLDirectory {
 
     if (q) {
       pool = pool.filter(item => {
-        return Object.values(item).some(val => 
-          String(val).toLowerCase().includes(q)
-        );
+        const indexedText = item && this.searchIndex.get(item);
+        return (indexedText || Object.values(item).map(value => String(value ?? '')).join(' ').toLowerCase()).includes(q);
       });
     }
     this.render(pool);
