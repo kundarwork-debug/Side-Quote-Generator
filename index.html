@@ -1700,15 +1700,6 @@
           console.warn('Live presence counters offline.', error);
           return;
         }
-        loadScript('https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js')
-          .then(() => { if (hasBeenViewed) runCountUpAnimations(); })
-          .catch(() => {
-            if (hasBeenViewed) {
-              setCount('liveUserCount', targetData.liveUserCount);
-              setCount('totalPdfDownloads', targetData.totalPdfDownloads);
-              setCount('totalMediaDownloads', targetData.totalMediaDownloads);
-            }
-          });
         try {
           const firebaseConfig = {
             apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
@@ -1760,8 +1751,14 @@
           const countObserver = new IntersectionObserver(entries => {
             if (entries.some(entry => entry.isIntersecting)) {
               hasBeenViewed = true;
-              runCountUpAnimations();
               countObserver.disconnect();
+              loadScript('https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js')
+                .then(runCountUpAnimations)
+                .catch(() => {
+                  setCount('liveUserCount', targetData.liveUserCount);
+                  setCount('totalPdfDownloads', targetData.totalPdfDownloads);
+                  setCount('totalMediaDownloads', targetData.totalMediaDownloads);
+                });
             }
           }, { threshold: 0.2 });
           countObserver.observe(telemetryCard);
@@ -1769,13 +1766,11 @@
           console.warn('Live presence counters offline.', error);
         }
       }
-      const loadObserver = new IntersectionObserver(entries => {
-        if (entries.some(entry => entry.isIntersecting)) {
-          loadObserver.disconnect();
-          initHomepageTelemetry();
-        }
-      }, { rootMargin: '320px 0px', threshold: 0 });
-      loadObserver.observe(telemetryCard);
+      // Start presence tracking for every homepage visit after the first paint;
+      // only the animation library waits until the telemetry card is actually viewed.
+      const startTelemetry = () => initHomepageTelemetry();
+      if ('requestIdleCallback' in window) requestIdleCallback(startTelemetry, { timeout: 1200 });
+      else setTimeout(startTelemetry, 80);
     })();
   </script>
 </body>
