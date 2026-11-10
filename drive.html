@@ -80,10 +80,9 @@
     }
 
     body {
-      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
-                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
-                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
-      background-attachment: fixed;
+      background: var(--apml-color-page, #f7f5f0) !important;
+      background-image: none !important;
+      background-attachment: initial;
       color: var(--text-main);
       min-height: 100%;
       display: flex;
@@ -94,14 +93,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
+    body::before { display: none !important; }
 
     /* LIGHT THEME TRUCK LOADING SCREEN STYLES (MATCHING DIRECTORY.HTML) */
     #pageLoadingOverlay {
