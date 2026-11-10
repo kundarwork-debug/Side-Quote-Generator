@@ -1428,3 +1428,28 @@ button, input, textarea, select {
   font-weight: 450;
   line-height: 1.65;
 }
+
+
+/* =========================================================
+   APML ORIGINAL EMPTY-STATE ARTWORK
+   Locally stored SVGs; decorative only and safe for offline use.
+   ========================================================= */
+.apml-empty-state {
+  min-height: 260px;
+  gap: 10px;
+}
+.apml-empty-state__art {
+  display: block;
+  width: clamp(132px, 26vw, 174px);
+  height: auto;
+  max-height: 122px;
+  object-fit: contain;
+  margin: 0 auto 2px;
+}
+.apml-empty-state__icon:has(+ .apml-empty-state__title) {
+  /* Retain the compact icon treatment for empty states not yet illustrated. */
+}
+@media (max-width: 600px) {
+  .apml-empty-state { min-height: 230px; padding: 24px 16px; }
+  .apml-empty-state__art { width: 148px; max-height: 108px; }
+}
