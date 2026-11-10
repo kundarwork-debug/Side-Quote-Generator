@@ -10,6 +10,7 @@
   const isHomePage = !currentPage || currentPage === 'index.html' || currentPage === 'index';
   const isAnalyticsPage = currentPage === 'analytics.html' || currentPage === 'analytics';
   const isEditorPage = currentPage === 'editor.html' || currentPage === 'editor';
+  const isGalleryPage = currentPage === 'gallery.html' || currentPage === 'gallery';
   // The editor opens directly; its PDF-generation truck remains available.
   if (isHomePage || isAnalyticsPage || isEditorPage) return;
 
@@ -21,7 +22,8 @@
     playerScript.async = true;
     document.head.appendChild(playerScript);
   }
-  if (document.getElementById('pageLoadingOverlay')) return;
+  // Gallery renders its media feed immediately; keep the footer animation but skip a blocking page overlay.
+  if (isGalleryPage || document.getElementById('pageLoadingOverlay')) return;
 
   const style = document.createElement('style');
   style.id = 'apml-shared-page-loader-style';
@@ -98,7 +100,7 @@
 // =========================================================
 (function loadSortableJS() {
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
-  if (currentPage === 'analytics.html' || currentPage === 'analytics' || currentPage === 'editor.html' || currentPage === 'editor') return;
+  if (currentPage === 'analytics.html' || currentPage === 'analytics' || currentPage === 'editor.html' || currentPage === 'editor' || currentPage === 'gallery.html' || currentPage === 'gallery') return;
   if (window.Sortable) {
     window.APMLSortableReady = Promise.resolve(window.Sortable);
     return;
