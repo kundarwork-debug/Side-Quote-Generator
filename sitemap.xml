@@ -1,38 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/index.html</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://apmlportal.vercel.app/</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/editor.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://apmlportal.vercel.app/APML-Lite.html</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/gallery.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://apmlportal.vercel.app/car-rate.html</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/hub-details.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://apmlportal.vercel.app/local-rate.html</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/APML-Lite.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://apmlportal.vercel.app/about.html</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/car-rate.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://apmlportal.vercel.app/privacy.html</loc>
   </url>
   <url>
-    <loc>https://kundarwork-debug.github.io/Side-Quote-Generator/local-rate.html</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://apmlportal.vercel.app/terms.html</loc>
   </url>
 </urlset>
