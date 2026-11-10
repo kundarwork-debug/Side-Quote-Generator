@@ -542,7 +542,7 @@ window.sendPortalNotification = function () {};
 
           <div class="footer-bottom-bar">
             <div class="footer-copyright-group">
-              ${isHomePage ? '' : `<lottie-player class="footer-truck-animation" src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>`}
+              <lottie-player class="footer-truck-animation" src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>
               <span>© ${currentYear} APML Portal. All rights reserved.</span>
             </div>
             
@@ -990,7 +990,7 @@ window.sendPortalNotification = function () {};
     let tipIndex = Math.floor(Math.random() * tipsArray.length);
 
     // The homepage has no Lottie artwork; keep the player off its critical path.
-    if (!isIndexPage && !document.querySelector('script[src*="lottie-player"]')) {
+    if (!document.querySelector('script[src*="lottie-player"]')) {
       const lottieScript = document.createElement('script');
       lottieScript.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
       lottieScript.async = true;
