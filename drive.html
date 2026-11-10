@@ -25,15 +25,16 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <!-- SWEETALERT2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <!-- SIMPLELIGHTBOX CSS -->
+  <!-- SIMPLELIGHTBOX -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
 
   <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -1246,24 +1247,6 @@
 </head>
 <body>
 
-  <!-- LIGHT THEME TRUCK ANIMATION LOADING OVERLAY (MATCHING DIRECTORY.HTML) -->
-  <div id="pageLoadingOverlay">
-    <div class="loader-card-box">
-      <div class="loader footer-truck-loader">
-        <lottie-player
-          class="page-loading-truck"
-          src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
-          background="transparent"
-          speed="1"
-          loop
-          autoplay
-          aria-hidden="true">
-        </lottie-player>
-      </div>
-      <div class="loading-label">Loading Cloud Drive...</div>
-    </div>
-  </div>
-
   <div id="header-container"></div>
 
   <!-- LIGHTBOX PREVIEW MODAL FOR VIDEOS -->
@@ -1353,14 +1336,8 @@
 
   <div id="footer-container"></div>
 
-  <script src="notify.js?v=1"></script>
-  <script src="common.js?v=23.0"></script>
-
-  <!-- SIMPLELIGHTBOX JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
-
-  <!-- LOZAD.JS FOR LAZY LOADING -->
-  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+  <script defer src="notify.js?v=1"></script>
+  <script defer src="common.js?v=23.0"></script>
 
   <script>
     const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
@@ -1403,7 +1380,15 @@
     let liveFiles = [];
     let currentPage = 1;
     let lightbox = null;
-    const ITEMS_PER_PAGE = 16;
+    let lastRenderedFoldersSignature = '';
+    let lastRenderedFilesSignature = '';
+    let videoPreviewObserver = null;
+
+    function getDynamicItemsPerPage() {
+      const width = window.innerWidth || document.documentElement.clientWidth;
+      const columns = width <= 600 ? 1 : width <= 1100 ? 2 : 4;
+      return Math.max(16, columns * 5);
+    }
 
     const CACHE_KEY_FOLDERS = 'apml_catbox_link_folders_v1';
     const CACHE_KEY_FILES = 'apml_catbox_link_files_v1';
@@ -1412,16 +1397,6 @@
       if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
       return originalUrl.replace('/upload/', `/upload/f_auto,q_auto,w_${width},c_limit/`);
     }
-
-    function hidePageLoader() {
-      const overlay = document.getElementById('pageLoadingOverlay');
-      if (overlay && !overlay.classList.contains('hide')) {
-        overlay.classList.add('hide');
-        setTimeout(() => { overlay.style.display = 'none'; }, 400);
-      }
-    }
-
-    setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
       return isAdminMode;
@@ -1496,7 +1471,6 @@
       try {
         liveFolders = JSON.parse(cachedFolders);
         renderUI();
-        hidePageLoader();
       } catch (e) {}
     }
 
@@ -1505,7 +1479,6 @@
       try {
         liveFiles = JSON.parse(cachedFiles);
         renderUI();
-        hidePageLoader();
       } catch (e) {}
     }
 
@@ -1519,7 +1492,6 @@
       }
       try { localStorage.setItem(CACHE_KEY_FOLDERS, JSON.stringify(liveFolders)); } catch(e){}
       renderUI();
-      hidePageLoader();
     });
 
     driveFilesRef.on('value', (snapshot) => {
@@ -1532,7 +1504,6 @@
       }
       try { localStorage.setItem(CACHE_KEY_FILES, JSON.stringify(liveFiles)); } catch(e){}
       renderUI();
-      hidePageLoader();
     });
 
     function navigateToFolder(folderId) {
@@ -1982,8 +1953,13 @@
         });
       }
 
-      if (currentFolders.length > 0) {
-        foldersSectionWrapper.style.display = 'block';
+      const foldersSignature = JSON.stringify(currentFolders.map(folder => [
+        folder.key, folder.name, folder.parentId, !!folder.isVirtualTrash
+      ]));
+      if (foldersSignature !== lastRenderedFoldersSignature) {
+        lastRenderedFoldersSignature = foldersSignature;
+        if (currentFolders.length > 0) {
+          foldersSectionWrapper.style.display = 'block';
         foldersGrid.innerHTML = currentFolders.map(folder => {
           if (folder.isVirtualTrash) {
             return `
@@ -2013,15 +1989,27 @@
             </div>
           `;
         }).join('');
-      } else {
-        foldersSectionWrapper.style.display = 'none';
-        foldersGrid.innerHTML = '';
+        } else {
+          foldersSectionWrapper.style.display = 'none';
+          foldersGrid.innerHTML = '';
+        }
       }
 
-      const totalPages = Math.ceil(rawFiles.length / ITEMS_PER_PAGE) || 1;
+      const itemsPerPage = getDynamicItemsPerPage();
+      const totalPages = Math.ceil(rawFiles.length / itemsPerPage) || 1;
       if (currentPage > totalPages) currentPage = totalPages;
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const currentFiles = rawFiles.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const currentFiles = rawFiles.slice(startIndex, startIndex + itemsPerPage);
+
+      const filesSignature = JSON.stringify({
+        folder: currentParentId,
+        page: currentPage,
+        pageSize: itemsPerPage,
+        admin: isAdminMode,
+        files: currentFiles.map(file => [file.key, file.name, file.fileId, file.timestamp, file.size, file.parentId])
+      });
+      if (filesSignature === lastRenderedFilesSignature) return;
+      lastRenderedFilesSignature = filesSignature;
 
       if (rawFiles.length > 0) {
         const isDeletedFolder = currentParentId === 'deleted';
@@ -2045,9 +2033,9 @@
 
               let previewHtml = '';
               if (isImage) {
-                previewHtml = `<img class="drive-preview-image" src="${optimizedThumbUrl}" alt="${file.name}" loading="${imageIndex < 4 ? 'eager' : 'lazy'}" fetchpriority="${imageIndex < 4 ? 'high' : 'auto'}" decoding="async" onload="hideCardLoader('${file.key}')" onerror="handleImagePreviewError('${file.key}', this)">`;
+                previewHtml = `<img class="drive-preview-image" src="${optimizedThumbUrl}" alt="${file.name}" loading="${imageIndex < 2 ? 'eager' : 'lazy'}" fetchpriority="${imageIndex < 2 ? 'high' : 'low'}" decoding="async" onload="hideCardLoader('${file.key}')" onerror="handleImagePreviewError('${file.key}', this)">`;
               } else if (isVideo) {
-                previewHtml = `<video src="${file.fileId}" muted preload="metadata" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
+                previewHtml = `<video data-src="${file.fileId}" muted playsinline preload="none" onloadeddata="hideCardLoader('${file.key}')" onerror="hideCardLoader('${file.key}')"></video>`;
               } else {
                 previewHtml = `
                   <div class="grid-preview-placeholder ${themeClass}">
@@ -2174,6 +2162,28 @@
         }
 
         filesContainerWrapper.innerHTML = filesHtml;
+
+        // Load video metadata only when a preview approaches the viewport.
+        if (videoPreviewObserver) videoPreviewObserver.disconnect();
+        const lazyVideos = filesContainerWrapper.querySelectorAll('video[data-src]');
+        if ('IntersectionObserver' in window) {
+          videoPreviewObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
+              const video = entry.target;
+              video.src = video.dataset.src;
+              video.removeAttribute('data-src');
+              video.load();
+              observer.unobserve(video);
+            });
+          }, { rootMargin: '300px 0px' });
+          lazyVideos.forEach(video => videoPreviewObserver.observe(video));
+        } else {
+          lazyVideos.forEach(video => {
+            video.src = video.dataset.src;
+            video.removeAttribute('data-src');
+          });
+        }
 
         // Initialize media helpers only after the new cards exist in the DOM.
         // Previously both helpers ran before insertion, leaving lazy images unrequested
@@ -2341,9 +2351,19 @@
       }
     }
 
+    let resizeRenderTimer = null;
+    let lastResponsivePageSize = getDynamicItemsPerPage();
     window.addEventListener('resize', () => {
-      renderUI();
-    });
+      clearTimeout(resizeRenderTimer);
+      resizeRenderTimer = setTimeout(() => {
+        const nextPageSize = getDynamicItemsPerPage();
+        if (nextPageSize === lastResponsivePageSize) return;
+        lastResponsivePageSize = nextPageSize;
+        currentPage = 1;
+        lastRenderedFilesSignature = '';
+        renderUI();
+      }, 180);
+    }, { passive: true });
 
     document.addEventListener('DOMContentLoaded', () => {
       loadFolderState();
