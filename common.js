@@ -8,7 +8,8 @@
   // decorative full-screen loader or load the Lottie player just for that.
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
   const isHomePage = !currentPage || currentPage === 'index.html' || currentPage === 'index';
-  if (isHomePage) return;
+  const isAnalyticsPage = currentPage === 'analytics.html' || currentPage === 'analytics';
+  if (isHomePage || isAnalyticsPage) return;
 
   const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
 
@@ -94,6 +95,8 @@
 // Pages can await window.APMLSortableReady before creating sortable lists.
 // =========================================================
 (function loadSortableJS() {
+  const currentPage = window.location.pathname.split('/').pop().toLowerCase();
+  if (currentPage === 'analytics.html' || currentPage === 'analytics') return;
   if (window.Sortable) {
     window.APMLSortableReady = Promise.resolve(window.Sortable);
     return;
