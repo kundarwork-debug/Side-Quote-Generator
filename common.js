@@ -9,7 +9,9 @@
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
   const isHomePage = !currentPage || currentPage === 'index.html' || currentPage === 'index';
   const isAnalyticsPage = currentPage === 'analytics.html' || currentPage === 'analytics';
-  if (isHomePage || isAnalyticsPage) return;
+  const isEditorPage = currentPage === 'editor.html' || currentPage === 'editor';
+  // The editor opens directly; its PDF-generation truck remains available.
+  if (isHomePage || isAnalyticsPage || isEditorPage) return;
 
   const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
 
@@ -96,7 +98,7 @@
 // =========================================================
 (function loadSortableJS() {
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
-  if (currentPage === 'analytics.html' || currentPage === 'analytics') return;
+  if (currentPage === 'analytics.html' || currentPage === 'analytics' || currentPage === 'editor.html' || currentPage === 'editor') return;
   if (window.Sortable) {
     window.APMLSortableReady = Promise.resolve(window.Sortable);
     return;
