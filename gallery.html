@@ -26,15 +26,12 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <!-- SWEETALERT2 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <!-- SIMPLELIGHTBOX CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css" />
 
   <!-- FIREBASE SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <style>
     :root {
@@ -1206,18 +1203,6 @@
 </head>
 <body>
 
-  <!-- FOOTER LOTTIE TRUCK LOADING OVERLAY -->
-  <div id="pageLoadingOverlay">
-    <div class="loader-card-box">
-      <div class="loader footer-truck-loader">
-        <lottie-player class="page-loading-truck"
-          src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
-          background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>
-      </div>
-      <div class="loading-label">Loading Gallery...</div>
-    </div>
-  </div>
-
   <div id="header-container"></div>
 
   <!-- MEDIA LIGHTBOX MODAL VIEWER FOR VIDEOS -->
@@ -1315,13 +1300,13 @@
   <div id="footer-container"></div>
 
   <script src="notify.js?v=1"></script>
-  <script src="common.js?v=23.0"></script>
+  <script src="common.js?v=23.4"></script>
 
-  <!-- SIMPLELIGHTBOX JS -->
+  <!-- LIGHTBOX + FIREBASE: loaded after the page markup to avoid blocking the head -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
-
-  <!-- LOZAD.JS FOR LAZY LOADING -->
-  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <script>
     const CLOUDINARY_CLOUD_NAME = 'wbrmw2pm';
@@ -1380,6 +1365,8 @@
     let liveMediaItems = [];
     let currentPage = 1;
     let lightbox = null;
+    let lastRenderedMediaSignature = "";
+    let videoPreviewObserver = null;
 
     function getOptimizedUrl(originalUrl, width = 800) {
       if (!originalUrl || !originalUrl.includes('cloudinary.com')) return originalUrl;
@@ -1391,16 +1378,6 @@
     }
 
     const CACHE_KEY_MEDIA = 'apml_ranked_gallery_cache_v2';
-
-    function hidePageLoader() {
-      const overlay = document.getElementById('pageLoadingOverlay');
-      if (overlay && !overlay.classList.contains('hide')) {
-        overlay.classList.add('hide');
-        setTimeout(() => { overlay.style.display = 'none'; }, 400);
-      }
-    }
-
-    setTimeout(hidePageLoader, 1500);
 
     function isCurrentUserAdmin() {
       return isAdminMode;
@@ -1856,9 +1833,9 @@
       try {
         liveMediaItems = JSON.parse(cachedMedia);
         sortMediaItems();
+        lastRenderedMediaSignature = getMediaSignature(liveMediaItems);
         updateGalleryStats(liveMediaItems);
         renderGallery();
-        hidePageLoader();
       } catch (e) {}
     }
 
@@ -1879,8 +1856,11 @@
       } catch (e) {}
 
       updateGalleryStats(liveMediaItems);
-      renderGallery();
-      hidePageLoader();
+      const nextSignature = getMediaSignature(liveMediaItems);
+      if (nextSignature !== lastRenderedMediaSignature) {
+        lastRenderedMediaSignature = nextSignature;
+        renderGallery();
+      }
     });
 
     function sortMediaItems() {
@@ -1892,6 +1872,39 @@
         }
         return (b.timestamp || 0) - (a.timestamp || 0);
       });
+    }
+
+    // Counter-only Firebase updates should not rebuild the entire media grid.
+    function getMediaSignature(items) {
+      return JSON.stringify(items.map(item => [item.key, item.url, item.folder, item.name, item.size, item.isVideo]));
+    }
+
+    function observeVideoPreviews() {
+      const videos = document.querySelectorAll('.media-grid video[data-src]');
+      const loadPreview = (video) => {
+        if (!video || video.dataset.loaded === 'true') return;
+        video.dataset.loaded = 'true';
+        video.src = video.dataset.src;
+        video.preload = 'metadata';
+        video.load();
+      };
+
+      if (!('IntersectionObserver' in window)) {
+        videos.forEach(loadPreview);
+        return;
+      }
+
+      if (!videoPreviewObserver) {
+        videoPreviewObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            loadPreview(entry.target);
+            videoPreviewObserver.unobserve(entry.target);
+          });
+        }, { rootMargin: '180px 0px' });
+      }
+
+      videos.forEach(video => videoPreviewObserver.observe(video));
     }
 
     async function recordInteraction(firebaseKey, metricField) {
@@ -2173,14 +2186,14 @@
                 <div class="card-loading-overlay" id="card-loader-${item.key}">
                   <div class="card-spinner"></div>
                 </div>
-                <video id="media-el-${item.key}" src="${item.url}" class="w-full h-full object-cover" preload="metadata" muted playsinline onloadeddata="hideCardLoader('${item.key}')"></video>
+                <video id="media-el-${item.key}" data-src="${item.url}" class="w-full h-full object-cover" preload="none" muted playsinline onloadeddata="hideCardLoader('${item.key}')"></video>
               </div>
             ` : `
               <a href="${fullResUrl}" class="media-preview-wrap simple-lightbox-item" id="preview-wrap-${item.key}" title="${item.name || 'APML Media Asset'}" onclick="recordInteraction('${item.key}', 'viewsCount')">
                 <div class="card-loading-overlay" id="card-loader-${item.key}">
                   <div class="card-spinner"></div>
                 </div>
-                <img id="media-el-${item.key}" class="lozad w-full h-full object-cover" data-src="${optimizedThumbUrl}" alt="${item.name || 'APML Image'}" decoding="async" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">
+                <img id="media-el-${item.key}" class="w-full h-full object-cover" src="${optimizedThumbUrl}" alt="${item.name || 'APML Image'}" loading="lazy" fetchpriority="low" decoding="async" onload="hideCardLoader('${item.key}')" onerror="hideCardLoader('${item.key}')">
               </a>
             `}
             <div class="media-info">
@@ -2215,12 +2228,7 @@
         lightbox.refresh();
       }
 
-      if (typeof lozad !== 'undefined') {
-        const observer = lozad('.lozad', {
-          loaded: function(el) {}
-        });
-        observer.observe();
-      }
+      observeVideoPreviews();
 
       if (totalPages > 1) {
         paginationBar.style.display = 'flex';
@@ -2291,10 +2299,6 @@
         loader.classList.add('fade-out');
       }
     }
-
-    window.addEventListener('resize', () => {
-      renderGallery();
-    });
 
     document.addEventListener('DOMContentLoaded', () => {
       loadFolderState();
