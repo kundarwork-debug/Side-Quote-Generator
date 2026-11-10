@@ -542,15 +542,7 @@ window.sendPortalNotification = function () {};
 
           <div class="footer-bottom-bar">
             <div class="footer-copyright-group">
-              <lottie-player
-                class="footer-truck-animation"
-                src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
-                background="transparent"
-                speed="1"
-                loop
-                autoplay
-                aria-hidden="true">
-              </lottie-player>
+              ${isHomePage ? '' : `<lottie-player class="footer-truck-animation" src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>`}
               <span>© ${currentYear} APML Portal. All rights reserved.</span>
             </div>
             
