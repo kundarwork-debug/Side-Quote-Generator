@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="common.css?v=23.0">
 
     <!-- SweetAlert2 Library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -501,10 +501,10 @@
 
     <div id="footer-container"></div>
 
-    <!-- SheetJS: browser-side Excel parsing; files are not sent to a third-party service -->\n    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>\n\n    <!-- Firebase SDKs -->
+    <!-- SheetJS is loaded only when an authorized admin selects an import file. -->\n\n    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
 
     <!-- Initialize Firebase -->
     <script>
@@ -525,10 +525,27 @@
     </script>
 
     <!-- Core Scripts -->
-    <script src="common.js?v=23.0"></script>
-    <script src="directory.js?v=3"></script>
+    <script src="common.js?v=23.2"></script>
+    <script src="directory.js?v=4"></script>
 
     <script>
+        function loadDirectoryScript(src) {
+            if (!window.__apmlDirectoryScriptPromises) window.__apmlDirectoryScriptPromises = {};
+            if (window.__apmlDirectoryScriptPromises[src]) return window.__apmlDirectoryScriptPromises[src];
+            window.__apmlDirectoryScriptPromises[src] = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => {
+                    delete window.__apmlDirectoryScriptPromises[src];
+                    reject(new Error('Unable to load required library.'));
+                };
+                document.head.appendChild(script);
+            });
+            return window.__apmlDirectoryScriptPromises[src];
+        }
+
         const db = firebase.database();
         const directoryRef = db.ref('directory');
 
@@ -576,6 +593,12 @@
 
         // Admin View Toggle with Google Login & Email Restriction
         function toggleAdminMode() {
+            if (!firebase.auth) {
+                loadDirectoryScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js')
+                    .then(() => toggleAdminMode())
+                    .catch(error => Swal.fire('Admin sign-in unavailable', error.message, 'error'));
+                return;
+            }
             if (!isAdminMode) {
                 const provider = new firebase.auth.GoogleAuthProvider();
                 firebase.auth().signInWithPopup(provider)
@@ -707,9 +730,13 @@
                 return;
             }
             if (!window.XLSX) {
-                Swal.fire('Excel reader unavailable', 'Please refresh the page and try again.', 'error');
-                event.target.value = '';
-                return;
+                try {
+                    await loadDirectoryScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+                } catch (loadError) {
+                    Swal.fire('Excel reader unavailable', 'Please check your connection and try again.', 'error');
+                    event.target.value = '';
+                    return;
+                }
             }
             try {
                 const buffer = await file.arrayBuffer();
