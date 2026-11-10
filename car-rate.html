@@ -38,6 +38,7 @@
       .material-symbols-outlined { font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; vertical-align:middle; }
       .ambient-mesh { position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:0; background:radial-gradient(circle at 12% 16%,rgba(185,28,28,.05),transparent 45%),radial-gradient(circle at 88% 84%,rgba(225,29,72,.04),transparent 40%); }
       main { position:relative; z-index:1; width:100%; flex:1; padding:84px 0 50px; }
+      .car-rate-page-hero { max-width:1100px; margin:0 auto 18px; padding:0 20px; }
       .container { width:100%; max-width:1100px; margin:0 auto; padding:20px; }
       #header-container + .container { padding-top:104px; }
       .calc-header { text-align:center; margin:0 auto 24px; max-width:760px; }
@@ -78,6 +79,7 @@
       input:focus-visible,select:focus-visible,.suggestion-item:focus-visible { outline:3px solid rgba(185,28,28,.24); outline-offset:2px; }
       @media(max-width:700px) {
         main { padding-top:76px; }
+        .car-rate-page-hero { padding:0 14px; }
         .container { padding:18px 14px 34px; }
         #header-container + .container { padding-top:92px; }
         .grid { grid-template-columns:1fr; gap:14px; }
@@ -139,6 +141,14 @@
 <body>
 
     <div id="header-container"></div>
+
+    <main>
+      <div class="car-rate-page-hero">
+        <img class="apml-3d-page-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/map-pin-dynamic-color.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+        <span class="eyebrow">VEHICLE TRANSPORT</span>
+        <h1>Vehicle Transport Calculator</h1>
+        <p>Estimate car transportation charges by vehicle category and travel distance.</p>
+      </div>
 
     <div class="container">
         <div class="grid">
@@ -232,6 +242,7 @@
             </table>
         </div>
     </div>
+    </main>
 
     <div id="footer-container"></div>
 
