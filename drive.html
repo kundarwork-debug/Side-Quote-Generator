@@ -1935,7 +1935,7 @@
         currentFolders = liveFolders.filter(f => f.parentId === 'deleted');
         rawFiles = liveFiles.filter(f => f.parentId === 'deleted');
       } else {
-        currentFolders = liveFolders.filter(f => f.parentId === currentParentId && f.parentId !== 'deleted');
+        currentFolders = liveFolders.filter(f => (f.parentId || 'root') === currentParentId && f.parentId !== 'deleted');
         rawFiles = liveFiles.filter(f => (f.parentId || 'root') === currentParentId && f.parentId !== 'deleted');
       }
 
