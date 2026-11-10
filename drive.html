@@ -2005,6 +2005,7 @@
         folder: currentParentId,
         page: currentPage,
         pageSize: itemsPerPage,
+        totalFiles: rawFiles.length,
         admin: isAdminMode,
         files: currentFiles.map(file => [file.key, file.name, file.fileId, file.timestamp, file.size, file.parentId])
       });
@@ -2173,6 +2174,7 @@
               const video = entry.target;
               video.src = video.dataset.src;
               video.removeAttribute('data-src');
+              video.preload = 'metadata';
               video.load();
               observer.unobserve(video);
             });
