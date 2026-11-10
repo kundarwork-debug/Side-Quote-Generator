@@ -1453,3 +1453,95 @@ button, input, textarea, select {
   .apml-empty-state { min-height: 230px; padding: 24px 16px; }
   .apml-empty-state__art { width: 148px; max-height: 108px; }
 }
+
+/* =========================================================
+   APML SHARED PAGE HERO
+   One compact, consistent heading system for internal pages.
+   Homepage mascot hero intentionally remains independent.
+   ========================================================= */
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 13px;
+  row-gap: 5px;
+  width: 100%;
+  min-width: 0;
+  text-align: left;
+  margin-bottom: 18px;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > img.apml-3d-page-icon {
+  grid-column: 1;
+  grid-row: 1 / span 8;
+  align-self: start;
+  display: block;
+  width: 42px !important;
+  height: 42px !important;
+  max-width: 100%;
+  object-fit: contain;
+  margin: 1px 0 0 !important;
+  filter: drop-shadow(0 5px 7px rgba(120, 70, 50, .12));
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :not(img.apml-3d-page-icon) {
+  grid-column: 2;
+  min-width: 0;
+  text-align: left;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :is(h1, h2, .page-title, .drive-title) {
+  margin: 0 !important;
+  color: var(--apml-color-text, #292524);
+  font-size: clamp(23px, 2.8vw, 30px) !important;
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :is(.header-badge, .eyebrow) {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 0 1px !important;
+  padding: 4px 10px;
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: .075em;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :is(p, .drive-sub-row) {
+  margin: 1px 0 0 !important;
+  color: var(--apml-color-text-muted, #78716c);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > .status-badge {
+  justify-self: start;
+  margin: 3px 0 0 !important;
+}
+
+:where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > .drive-stats-pills {
+  justify-self: start;
+  margin-top: 3px;
+}
+
+@media (max-width: 600px) {
+  :where(main) :is(div, header, section):has(> img.apml-3d-page-icon) {
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 9px;
+    row-gap: 4px;
+    margin-bottom: 14px;
+  }
+  :where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > img.apml-3d-page-icon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  :where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :is(h1, h2, .page-title, .drive-title) {
+    font-size: clamp(20px, 5.4vw, 25px) !important;
+  }
+  :where(main) :is(div, header, section):has(> img.apml-3d-page-icon) > :is(p, .drive-sub-row) {
+    font-size: 12px;
+  }
+}
