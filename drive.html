@@ -2302,22 +2302,6 @@
           </div>
         `;
 
-        if (!lightbox) {
-          lightbox = new SimpleLightbox('.simple-lightbox-item', {
-            captionsData: 'title',
-            captionDelay: 200,
-            animationSpeed: 250,
-            fadeSpeed: 250
-          });
-        } else {
-          lightbox.refresh();
-        }
-
-        if (typeof lozad !== 'undefined') {
-          const observer = lozad('.lozad', { loaded: function(el) {} });
-          observer.observe();
-        }
-
         if (totalPages > 1) {
           filesHtml += `
             <div class="pagination-bar">
@@ -2375,6 +2359,33 @@
         }
 
         filesContainerWrapper.innerHTML = filesHtml;
+
+        // Initialize media helpers only after the new cards exist in the DOM.
+        // Previously both helpers ran before insertion, leaving lazy images unrequested
+        // and the lightbox without the current page's image links.
+        if (typeof SimpleLightbox !== 'undefined') {
+          if (!lightbox) {
+            lightbox = new SimpleLightbox('.simple-lightbox-item', {
+              captionsData: 'title',
+              captionDelay: 200,
+              animationSpeed: 250,
+              fadeSpeed: 250
+            });
+          } else {
+            lightbox.refresh();
+          }
+        }
+
+        if (typeof lozad !== 'undefined') {
+          const observer = lozad('.lozad', { loaded: function(el) {} });
+          observer.observe();
+        } else {
+          // Keep image previews working even if the lazy-load CDN is unavailable.
+          filesContainerWrapper.querySelectorAll('img.lozad[data-src]').forEach(img => {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          });
+        }
 
         currentFiles.forEach(file => {
           const isImage = isImageFile(file.name, file.fileId);
