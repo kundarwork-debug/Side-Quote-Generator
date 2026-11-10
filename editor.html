@@ -25,7 +25,7 @@
 <link rel="icon" type="image/svg+xml" href="logo.svg?v=18.0">
 <link rel="manifest" href="./manifest.json">
 
-<link rel="stylesheet" href="common.css?v=18.0">
+<link rel="stylesheet" href="common.css?v=23.0">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1042,7 +1042,7 @@
 
 <div id="header-container"></div>
 
-<div class="app" id="appView">
+<main class="app" id="appView">
   <div class="panel">
     <div class="brand-row">
       <div class="brand-title-wrap">
@@ -1053,8 +1053,8 @@
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" data-company="exact" id="tabExact">Exact Container<br>Logistics</button>
-      <button class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
+      <button type="button" class="tab-btn active" data-company="exact" id="tabExact">Exact Container<br>Logistics</button>
+      <button type="button" class="tab-btn" data-company="maxcare" id="tabMaxcare">Maxcare Packers<br>&amp; Movers</button>
     </div>
 
     <!-- HIGHLIGHTED CUSTOMER & DETAILS CARD -->
@@ -1092,7 +1092,7 @@
           <label style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
           <div style="display:flex; gap:8px;">
             <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1; border-color: rgba(185, 28, 28, 0.35); background: #ffffff;">
-            <button id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
+            <button type="button" id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
           </div>
         </div>
 
@@ -1109,7 +1109,7 @@
       </div>
 
       <div id="costRows"></div>
-      <button class="add-btn" id="addCostRow">
+      <button type="button" class="add-btn" id="addCostRow">
         <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
         <span>Add cost item</span>
       </button>
@@ -1120,7 +1120,7 @@
     <div class="field-group" id="termsGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 16px;">gavel</span> Terms &amp; conditions</h2>
       <div id="termRows"></div>
-      <button class="add-btn" id="addTermRow">
+      <button type="button" class="add-btn" id="addTermRow">
         <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
         <span>Add term</span>
       </button>
@@ -1135,10 +1135,10 @@
       </div>
     </div>
 
-    <button class="reset-btn" id="resetBtn">Reset template to default</button>
+    <button type="button" class="reset-btn" id="resetBtn">Reset template to default</button>
 
     <div class="download-bar">
-      <button class="download-btn" id="downloadBtn" data-company="exact">
+      <button type="button" class="download-btn" id="downloadBtn" data-company="exact">
         <div class="button-content">
           <div class="svg-container">
             <svg
@@ -1169,7 +1169,7 @@
       </div>
     </div>
   </div>
-</div>
+</main>
 
 <div id="footer-container"></div>
 
@@ -1460,7 +1460,7 @@ function renderForm(){
     row.innerHTML = `
       <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
       <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
-      <button class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+      <button type="button" class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
     `;
     costWrap.appendChild(row);
   });
@@ -1472,7 +1472,7 @@ function renderForm(){
     row.className = 'term-row';
     row.innerHTML = `
       <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
-      <button class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+      <button type="button" class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
     `;
     termWrap.appendChild(row);
   });
@@ -1908,6 +1908,6 @@ renderAll();
 </script>
 
 <script src="notify.js?v=1"></script>
-<script src="common.js?v=22.7"></script>
+<script src="common.js?v=23.0"></script>
 </body>
 </html>
