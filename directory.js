@@ -77,7 +77,7 @@ class APMLDirectory {
     if (!items || items.length === 0) {
       this.container.innerHTML = `
         <div class="apml-empty-state directory-empty-state" role="status">
-          <span class="apml-empty-state__icon" aria-hidden="true"><span class="material-symbols-outlined">person_search</span></span>
+          <img class="apml-empty-state__art" src="assets/empty-states/directory.svg" alt="A contact card with a magnifying glass." width="320" height="220" loading="lazy" decoding="async">
           <h3 class="apml-empty-state__title">No matching contacts</h3>
           <p class="apml-empty-state__description">Try a different search term or check the selected contact view.</p>
         </div>`;
