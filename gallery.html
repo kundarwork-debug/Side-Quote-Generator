@@ -1310,7 +1310,11 @@
     }
 
     function getDynamicItemsPerPage() {
-      return 16;
+      // Keep roughly five rows available on larger screens, while never
+      // reducing the existing 16-item page size on smaller layouts.
+      const width = window.innerWidth || document.documentElement.clientWidth;
+      const columns = width <= 359 ? 1 : width <= 760 ? 2 : width <= 1100 ? 3 : 4;
+      return Math.max(16, columns * 5);
     }
 
     const CACHE_KEY_MEDIA = 'apml_ranked_gallery_cache_v2';
