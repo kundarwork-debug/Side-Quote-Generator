@@ -64,7 +64,7 @@
 
     body {
       /* Match the shared APML page canvas instead of using a page-specific gradient. */
-      background: var(--bg-base) !important;
+      background: var(--apml-color-page, #f7f5f0) !important;
       background-image: none !important;
       background-attachment: initial;
       color: var(--text-main);
@@ -456,8 +456,8 @@
       --text-main:#f1f5f9; --text-muted:#a8b4c5;
       --shadow-sm:0 2px 8px rgba(0,0,0,.18); --shadow-md:0 12px 30px rgba(0,0,0,.25);
     }
-    html[data-theme="dark"] body { background:radial-gradient(circle at 85% 10%,rgba(248,113,113,.10) 0%,transparent 55%),linear-gradient(135deg,#0b1220 0%,#111827 100%); }
-    html[data-theme="dark"] body::before { background:radial-gradient(circle at 50% 50%,transparent 30%,rgba(3,7,18,.35) 100%); }
+    html[data-theme="dark"] body { background:var(--apml-color-page,#10141d) !important; background-image:none !important; }
+    html[data-theme="dark"] body::before { display:none !important; }
     html[data-theme="dark"] .form-input,html[data-theme="dark"] .addon-item { background:#202c40;color:var(--text-main);border-color:var(--surface-border); }
     html[data-theme="dark"] .min-alert { background:#123126;color:#a7f3d0; }
     html[data-theme="dark"] tr.highlight-matrix { background:rgba(127,29,29,.22); }
