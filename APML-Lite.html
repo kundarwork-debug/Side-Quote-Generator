@@ -52,11 +52,9 @@
     }
 
     body {
-      background:
-        radial-gradient(circle at 12% 8%, rgba(59, 130, 246, 0.10) 0%, transparent 42%),
-        radial-gradient(circle at 90% 88%, rgba(14, 165, 233, 0.08) 0%, transparent 44%),
-        linear-gradient(135deg, #edf3f8 0%, #e5edf4 100%);
-      background-attachment: fixed;
+      background: var(--apml-color-page, #f7f5f0) !important;
+      background-image: none !important;
+      background-attachment: initial;
       color: var(--md-sys-color-on-surface);
       display: flex;
       flex-direction: column;
@@ -64,10 +62,8 @@
     }
 
     html[data-theme="dark"] body {
-      background:
-        radial-gradient(circle at 12% 8%, rgba(59, 130, 246, 0.12) 0%, transparent 42%),
-        radial-gradient(circle at 90% 88%, rgba(14, 165, 233, 0.08) 0%, transparent 44%),
-        linear-gradient(135deg, #0b1422 0%, #111d2c 100%);
+      background: var(--apml-color-page, #10141d) !important;
+      background-image: none !important;
     }
 
     .material-symbols-outlined {
