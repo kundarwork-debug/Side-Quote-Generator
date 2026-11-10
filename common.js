@@ -1,4 +1,88 @@
 // =========================================================
+// SHARED APML PAGE LOADER — footer Lottie truck animation
+// Applies to every page using common.js. Pages with their own
+// data-aware overlay retain their existing dismissal callbacks.
+// =========================================================
+(function initSharedPageLoader() {
+  const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
+
+  if (!document.querySelector('script[src*="lottie-player"]')) {
+    const playerScript = document.createElement('script');
+    playerScript.src = 'https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js';
+    playerScript.async = true;
+    document.head.appendChild(playerScript);
+  }
+  if (document.getElementById('pageLoadingOverlay')) return;
+
+  const style = document.createElement('style');
+  style.id = 'apml-shared-page-loader-style';
+  style.textContent = `
+    #pageLoadingOverlay.apml-shared-page-loader {
+      position:fixed; inset:0; z-index:999999; display:flex;
+      align-items:center; justify-content:center; padding:20px;
+      background:rgba(253,248,245,.48);
+      -webkit-backdrop-filter:blur(12px) saturate(115%);
+      backdrop-filter:blur(12px) saturate(115%);
+      opacity:1; visibility:visible; transition:opacity .35s ease,visibility .35s ease;
+    }
+    #pageLoadingOverlay.apml-shared-page-loader.hide { opacity:0; visibility:hidden; pointer-events:none; }
+    #pageLoadingOverlay .loader-card-box {
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      padding:2rem 2.5rem; border-radius:1.25rem;
+      background:rgba(255,255,255,.78);
+      -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
+      border:1.5px solid rgba(255,255,255,.72);
+      box-shadow:0 18px 48px rgba(45,35,30,.12);
+    }
+    #pageLoadingOverlay .footer-truck-loader {
+      width:220px; height:112px; display:flex; align-items:center; justify-content:center;
+    }
+    #pageLoadingOverlay .page-loading-truck { display:block; width:210px; height:112px; background:transparent; }
+    #pageLoadingOverlay .loading-label {
+      font:700 14px var(--font-sans,'Plus Jakarta Sans',sans-serif);
+      color:var(--text-muted,#78716c); letter-spacing:.05em;
+      text-transform:uppercase; text-align:center;
+    }
+    @media(max-width:480px) {
+      #pageLoadingOverlay .loader-card-box { padding:1.5rem 1.4rem; }
+      #pageLoadingOverlay .footer-truck-loader,
+      #pageLoadingOverlay .page-loading-truck { width:190px; height:102px; }
+    }
+    @media(prefers-reduced-motion:reduce) { #pageLoadingOverlay.apml-shared-page-loader { transition:none; } }
+  `;
+  (document.head || document.documentElement).appendChild(style);
+
+  const overlay=document.createElement('div');
+  overlay.id='pageLoadingOverlay';
+  overlay.className='apml-shared-page-loader';
+  overlay.setAttribute('role','status');
+  overlay.setAttribute('aria-live','polite');
+  overlay.innerHTML=`
+    <div class="loader-card-box">
+      <div class="footer-truck-loader">
+        <lottie-player class="page-loading-truck" src="${truckAnimation}"
+          background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>
+      </div>
+      <div class="loading-label">Loading APML Portal...</div>
+    </div>`;
+  if(document.body) document.body.insertBefore(overlay,document.body.firstChild);
+  else document.addEventListener('DOMContentLoaded',()=>document.body.insertBefore(overlay,document.body.firstChild),{once:true});
+
+  let dismissed=false;
+  const dismiss=()=>{
+    if(dismissed)return;
+    dismissed=true;
+    window.setTimeout(()=>{
+      overlay.classList.add('hide');
+      window.setTimeout(()=>overlay.remove(),450);
+    },250);
+  };
+  if(document.readyState==='complete') window.setTimeout(dismiss,500);
+  else window.addEventListener('load',dismiss,{once:true});
+  window.setTimeout(dismiss,12000);
+})();
+
+// =========================================================
 // SORTABLEJS - SHARED DRAG-AND-DROP LIBRARY
 // Available on every page that loads common.js.
 // Pages can await window.APMLSortableReady before creating sortable lists.
