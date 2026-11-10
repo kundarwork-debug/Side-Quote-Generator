@@ -11,7 +11,8 @@
   const isAnalyticsPage = currentPage === 'analytics.html' || currentPage === 'analytics';
   const isEditorPage = currentPage === 'editor.html' || currentPage === 'editor';
   const isGalleryPage = currentPage === 'gallery.html' || currentPage === 'gallery';
-  // The editor opens directly; its PDF-generation truck remains available.
+  const isDrivePage = currentPage === 'drive.html' || currentPage === 'drive';
+  // These pages open directly; feature-specific animations (PDF/footer) remain available.
   if (isHomePage || isAnalyticsPage || isEditorPage) return;
 
   const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
@@ -23,7 +24,7 @@
     document.head.appendChild(playerScript);
   }
   // Gallery renders its media feed immediately; keep the footer animation but skip a blocking page overlay.
-  if (isGalleryPage || document.getElementById('pageLoadingOverlay')) return;
+  if (isGalleryPage || isDrivePage || document.getElementById('pageLoadingOverlay')) return;
 
   const style = document.createElement('style');
   style.id = 'apml-shared-page-loader-style';
@@ -100,7 +101,7 @@
 // =========================================================
 (function loadSortableJS() {
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
-  if (currentPage === 'analytics.html' || currentPage === 'analytics' || currentPage === 'editor.html' || currentPage === 'editor' || currentPage === 'gallery.html' || currentPage === 'gallery') return;
+  if (currentPage === 'analytics.html' || currentPage === 'analytics' || currentPage === 'editor.html' || currentPage === 'editor' || currentPage === 'gallery.html' || currentPage === 'gallery' || currentPage === 'drive.html' || currentPage === 'drive') return;
   if (window.Sortable) {
     window.APMLSortableReady = Promise.resolve(window.Sortable);
     return;
