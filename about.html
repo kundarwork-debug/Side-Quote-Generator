@@ -129,6 +129,39 @@
     html[data-theme="dark"] body{background:var(--bg-base,#0b1120);color:var(--text-main,#f1f5f9)}
     @media(prefers-reduced-motion:reduce){.art-orbit{animation:none}}
 
+
+    /* Repository architecture diagram */
+    .repo-map-shell{position:relative;margin-top:26px;padding:26px;border:1px solid var(--about-line);border-radius:24px;background:rgba(255,255,255,.78);box-shadow:0 12px 34px rgba(73,46,34,.045);overflow:hidden}
+    .repo-map-root{position:relative;z-index:1;width:min(440px,100%);margin:0 auto 42px;padding:17px 19px;display:flex;align-items:center;gap:13px;border:1px solid rgba(185,28,28,.24);border-radius:17px;background:linear-gradient(135deg,#fff,#fff5f1);box-shadow:0 10px 26px rgba(185,28,28,.08)}
+    .repo-map-root:after{content:"";position:absolute;top:100%;left:50%;height:42px;border-left:1.5px solid #d8aaa2}
+    .repo-map-root-icon{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border-radius:14px;background:#fce8e4;color:var(--about-red)}
+    .repo-map-root-icon .material-symbols-outlined{font-size:25px}
+    .repo-map-root-copy{min-width:0;flex:1}
+    .repo-map-root-copy strong{display:block;font:700 15px 'Space Grotesk',sans-serif;overflow-wrap:anywhere}
+    .repo-map-root-copy small{display:block;margin-top:4px;color:var(--about-muted);font-size:11px}
+    .repo-map-root-link{flex:0 0 auto;color:var(--about-red);font-size:11px;font-weight:800;text-decoration:none}
+    .repo-map-root-link:hover{text-decoration:underline}
+    .repo-map-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .repo-map-grid:before{content:"";position:absolute;top:-22px;left:16.66%;right:16.66%;border-top:1.5px solid #d8aaa2}
+    .repo-map-card{position:relative;min-width:0;padding:19px 17px;border:1px solid var(--about-line);border-radius:17px;background:var(--about-card);box-shadow:0 6px 18px rgba(73,46,34,.035)}
+    .repo-map-card:before{content:"";position:absolute;left:50%;bottom:100%;height:22px;border-left:1.5px solid #d8aaa2}
+    .repo-map-card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .repo-map-icon{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;border-radius:11px;background:#fff0eb;color:var(--about-red)}
+    .repo-map-icon .material-symbols-outlined{font-size:19px}
+    .repo-map-card h3{margin:0;font:700 14px 'Space Grotesk',sans-serif}
+    .repo-map-card p{margin:0 0 12px;color:var(--about-muted);font-size:11.5px;line-height:1.65}
+    .repo-map-files{display:flex;flex-wrap:wrap;gap:6px}
+    .repo-map-files code{max-width:100%;padding:5px 7px;border:1px solid #f0e6e1;border-radius:7px;background:#fbf7f4;color:#675a54;font:600 10px 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+    .repo-map-foot{margin:16px 2px 0;color:var(--about-muted);font-size:11px;line-height:1.6;text-align:center}
+    html[data-theme="dark"] .repo-map-shell{background:#111c2d;border-color:#334155;box-shadow:0 12px 34px rgba(0,0,0,.14)}
+    html[data-theme="dark"] .repo-map-root{background:linear-gradient(135deg,#1d2a3d,#2a202b);border-color:#70434a}
+    html[data-theme="dark"] .repo-map-root-icon,html[data-theme="dark"] .repo-map-icon{background:#3a2630;color:#fca5a5}
+    html[data-theme="dark"] .repo-map-root-copy strong,html[data-theme="dark"] .repo-map-card h3{color:#f1f5f9}
+    html[data-theme="dark"] .repo-map-card{background:#172235;border-color:#334155;box-shadow:none}
+    html[data-theme="dark"] .repo-map-files code{background:#202d40;border-color:#3a485d;color:#d6dce5}
+    html[data-theme="dark"] .repo-map-root:after,html[data-theme="dark"] .repo-map-grid:before,html[data-theme="dark"] .repo-map-card:before{border-color:#80565a}
+    @media(max-width:800px){.repo-map-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.repo-map-grid:before{left:25%;right:25%}}
+    @media(max-width:520px){.repo-map-shell{padding:17px 13px}.repo-map-root{gap:9px;padding:13px;margin-bottom:30px}.repo-map-root:after{height:30px}.repo-map-root-copy strong{font-size:12px}.repo-map-root-copy small{font-size:9px}.repo-map-root-link{font-size:10px}.repo-map-grid{grid-template-columns:1fr;gap:12px}.repo-map-grid:before{display:none}.repo-map-card{padding:16px}.repo-map-card:before{left:22px;bottom:100%;height:12px}.repo-map-card:first-child:before{height:0}}
   </style>
 </head>
 <body>
@@ -166,6 +199,53 @@
           <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">smart_toy</span></div><h3>AI &amp; Automation</h3><p>Exploring ways to reduce repetitive work and make everyday processes smarter.</p></article>
           <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">language</span></div><h3>Web Experiences</h3><p>Building clean, responsive websites and tools designed around real user needs.</p></article>
           <article class="focus-card"><div class="focus-icon"><span class="material-symbols-outlined">rocket_launch</span></div><h3>Product Building</h3><p>Taking ideas from a first concept to useful digital products and SaaS-style experiences.</p></article>
+        </div>
+      </section>
+
+      <section aria-labelledby="repoMapTitle">
+        <div class="section-intro">
+          <div><div class="section-kicker">Behind the scenes</div><h2 id="repoMapTitle">A look inside the repository.</h2></div>
+          <p>How the main parts of APML Portal are grouped and work together—from the pages you use to shared code and supporting services.</p>
+        </div>
+        <div class="repo-map-shell">
+          <div class="repo-map-root">
+            <span class="repo-map-root-icon"><span class="material-symbols-outlined">account_tree</span></span>
+            <span class="repo-map-root-copy"><strong>Side-Quote-Generator</strong><small>APML Portal · GitHub repository</small></span>
+            <a class="repo-map-root-link" href="https://github.com/kundarwork-debug/Side-Quote-Generator" target="_blank" rel="noopener noreferrer">View repo ↗</a>
+          </div>
+          <div class="repo-map-grid">
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">web</span></span><h3>Web pages</h3></div>
+              <p>The screens and tools people interact with across the portal.</p>
+              <div class="repo-map-files"><code>index.html</code><code>editor.html</code><code>drive.html</code><code>gallery.html</code><code>analytics.html</code><code>…more pages</code></div>
+            </article>
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">layers</span></span><h3>Shared experience</h3></div>
+              <p>Reusable styling, navigation, footer and common interactions.</p>
+              <div class="repo-map-files"><code>common.css</code><code>common.js</code><code>header.html</code><code>footer.html</code></div>
+            </article>
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">cloud_sync</span></span><h3>API &amp; tracking</h3></div>
+              <p>Small server-side endpoints supporting visitor tracking and system health.</p>
+              <div class="repo-map-files"><code>api/visitor.js</code><code>api/system-health.js</code><code>visitor-tracker.js</code></div>
+            </article>
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">perm_media</span></span><h3>Assets &amp; PWA</h3></div>
+              <p>Visual resources, app identity and installable web-app configuration.</p>
+              <div class="repo-map-files"><code>assets/</code><code>logo.svg</code><code>manifest.json</code><code>sw.js</code></div>
+            </article>
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">phone_android</span></span><h3>Android app</h3></div>
+              <p>The Android application project maintained alongside the web portal.</p>
+              <div class="repo-map-files"><code>android-app/</code></div>
+            </article>
+            <article class="repo-map-card">
+              <div class="repo-map-card-head"><span class="repo-map-icon"><span class="material-symbols-outlined">shield</span></span><h3>Site support</h3></div>
+              <p>Project configuration, notifications and site information pages.</p>
+              <div class="repo-map-files"><code>.github/</code><code>notify.js</code><code>privacy.html</code><code>terms.html</code></div>
+            </article>
+          </div>
+          <p class="repo-map-foot">A simplified repository map based on the current project structure—not a live dependency or deployment diagram.</p>
         </div>
       </section>
 
