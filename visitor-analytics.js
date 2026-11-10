@@ -12,12 +12,26 @@
   const esc = value => String(value == null ? "" : value).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
   const rangeSelect = $("viRange");
   let allSessions = [], chart = null, filtered = [];
+  const sessionsById = new Map();
+  let renderTimer = null;
+  function scheduleRender() {
+    if (renderTimer) clearTimeout(renderTimer);
+    renderTimer = setTimeout(function () { renderTimer = null; render(); }, 250);
+  }
+  function updateActiveCount() {
+    const now = Date.now();
+    const active = filtered.reduce((count, session) => count + (now - Number(session.lastSeen || 0) < 60000 ? 1 : 0), 0);
+    const activeNode = $("viActive");
+    if (activeNode) activeNode.textContent = fmt(active);
+  }
   const withinRange = (s, range, now) => {
     if (range === "all") return true;
     const days = Number(range) || 7;
     return Number(s.startedAt) >= now - days * 86400000;
   };
-  const toDay = timestamp => new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(timestamp));
+  const dayFormatter = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"});
+  const hourFormatter = new Intl.DateTimeFormat("en-GB", {timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23"});
+  const toDay = timestamp => dayFormatter.format(new Date(timestamp));
   const hourLabel = h => String(h).padStart(2,"0") + ":00";
   function chartDaily(sessions) {
     const counts = {};
@@ -28,7 +42,7 @@
     const el = $("viDailyChart");
     if (!el || !window.ApexCharts) return;
     const options = {
-      chart:{type:"area",height:230,toolbar:{show:false},fontFamily:"inherit",animations:{enabled:true}},
+      chart:{type:"area",height:230,toolbar:{show:false},fontFamily:"inherit",animations:{enabled:!window.matchMedia("(prefers-reduced-motion: reduce)").matches}},
       series:[{name:"Sessions",data:values}],
       xaxis:{categories:labels,labels:{style:{colors:"var(--text-muted)"}}},
       yaxis:{min:0,forceNiceScale:true,labels:{formatter:v=>Math.round(v)}},
@@ -38,7 +52,7 @@
       tooltip:{y:{formatter:v=>fmt(v)+" sessions"}},noData:{text:"No sessions in this period"}
     };
     if (!chart) { chart = new ApexCharts(el,options); chart.render(); }
-    else chart.updateOptions(options,true,true);
+    else chart.updateOptions(options,false,false);
   }
   function render() {
     const now=Date.now(), range=rangeSelect ? rangeSelect.value : "7";
@@ -61,7 +75,7 @@
       cities[city]=(cities[city]||0)+1;
       const d=[s.device,s.os,s.browser].filter(Boolean).join(" · ")||"Unknown";
       devices[d]=(devices[d]||0)+1;
-      const h=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23"}).format(new Date(Number(s.startedAt)))); hours[h]++;
+      const h=Number(hourFormatter.format(new Date(Number(s.startedAt)))); hours[h]++;
       const day=toDay(s.startedAt); days[day]=(days[day]||0)+1;
       Object.values(s.pages||{}).forEach(p=>{
         const key=p.path||"/";
@@ -97,13 +111,26 @@
   }
   function init(){
     if(typeof firebase==="undefined"||!firebase.apps.length){$("viUpdated").textContent="Firebase is not initialized";return;}
-    firebase.database().ref("analytics/visitor_sessions").limitToLast(500).on("value",snap=>{
-      allSessions=Object.values(snap.val()||{}).filter(x=>x&&x.startedAt);
-      render();
-    },err=>{$("viUpdated").textContent="Visitor data unavailable: "+(err.code||"database access denied");});
+    const sessionsRef = firebase.database().ref("analytics/visitor_sessions").limitToLast(500);
+    const handleSession = snap => {
+      const session = snap.val();
+      if (session && session.startedAt) sessionsById.set(snap.key, session);
+      else sessionsById.delete(snap.key);
+      allSessions = Array.from(sessionsById.values());
+      scheduleRender();
+    };
+    const handleRemoved = snap => {
+      sessionsById.delete(snap.key);
+      allSessions = Array.from(sessionsById.values());
+      scheduleRender();
+    };
+    const handleError = err => { $("viUpdated").textContent = "Visitor data unavailable: " + (err.code || "database access denied"); };
+    sessionsRef.on("child_added", handleSession, handleError);
+    sessionsRef.on("child_changed", handleSession, handleError);
+    sessionsRef.on("child_removed", handleRemoved, handleError);
     if(rangeSelect) rangeSelect.addEventListener("change",render);
     $("viExport").addEventListener("click",exportCsv);
-    window.setInterval(()=>{if(allSessions.length)render();},15000);
+    window.setInterval(()=>{if(allSessions.length && document.visibilityState === "visible") updateActiveCount();},30000);
   }
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init,{once:true});else init();
 })();
