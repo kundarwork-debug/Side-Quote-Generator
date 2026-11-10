@@ -283,6 +283,10 @@
       text-align: center; padding: 20px; background: var(--surface-card); border-radius: var(--radius-lg);
     }
     .empty .material-symbols-outlined { font-size: 44px; color: var(--text-faint); }
+    .empty[hidden] { display: none !important; }
+    .apml-analytics-empty .apml-empty-state__art { width: 154px; max-height: 112px; margin: 0 auto 4px; }
+    .apml-analytics-empty b { margin-top: 0; }
+    @media (max-width: 600px) { .apml-analytics-empty .apml-empty-state__art { width: 140px; } }
     .empty b { font-size: 16px; }
     .empty span.msg { font-size: 13.5px; color: var(--text-muted); max-width: 420px; line-height: 1.5; }
 
@@ -584,8 +588,8 @@
 
       <div class="canvas-wrap">
         <div id="trendChart" role="img" aria-label="Trend chart"></div>
-        <div class="empty" id="chartEmpty" hidden>
-          <span class="material-symbols-outlined">query_stats</span>
+        <div class="empty apml-analytics-empty" id="chartEmpty" hidden>
+          <img class="apml-empty-state__art" src="assets/empty-states/analytics.svg" alt="An analytics dashboard with a rising chart and magnifying glass." width="320" height="220" loading="lazy" decoding="async">
           <b>No activity recorded in this period</b>
           <span class="msg">Counting starts with the next visit, PDF or download. Days with nothing to show stay at zero.</span>
         </div>
