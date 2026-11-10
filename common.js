@@ -989,8 +989,8 @@ window.sendPortalNotification = function () {};
     const tipsArray = pageTips[currentPage] || defaultTips;
     let tipIndex = Math.floor(Math.random() * tipsArray.length);
 
-    // Inject Lottie player script if not already present
-    if (!document.querySelector('script[src*="lottie-player"]')) {
+    // The homepage has no Lottie artwork; keep the player off its critical path.
+    if (!isIndexPage && !document.querySelector('script[src*="lottie-player"]')) {
       const lottieScript = document.createElement('script');
       lottieScript.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
       lottieScript.async = true;
