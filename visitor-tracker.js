@@ -58,9 +58,22 @@
     overlay.addEventListener("click", function (event) {
       const button = event.target.closest("button[data-choice]");
       if (!button) return;
-      try { localStorage.setItem(CONSENT_KEY, button.dataset.choice === "yes" ? "yes" : "no"); } catch (_) {}
+      if (button.dataset.choice === "yes") {
+        try {
+          localStorage.setItem(CONSENT_KEY, "yes");
+          sessionStorage.removeItem("apml-analytics-consent-dismissed");
+        } catch (_) {}
+        overlay.remove();
+        startTracking();
+        return;
+      }
+      // Declining dismisses the prompt for this browsing session only.
+      // It is not stored as a permanent consent decision.
+      try {
+        localStorage.removeItem(CONSENT_KEY);
+        sessionStorage.setItem("apml-analytics-consent-dismissed", "yes");
+      } catch (_) {}
       overlay.remove();
-      if (button.dataset.choice === "yes") startTracking();
     });
   }
 
@@ -113,9 +126,18 @@
 
   function init() {
     let consent = null;
-    try { consent = localStorage.getItem(CONSENT_KEY); } catch (_) {}
+    let dismissedThisSession = false;
+    try {
+      consent = localStorage.getItem(CONSENT_KEY);
+      dismissedThisSession = sessionStorage.getItem("apml-analytics-consent-dismissed") === "yes";
+      // Clear legacy permanent declines so these visitors can be asked again.
+      if (consent === "no") {
+        localStorage.removeItem(CONSENT_KEY);
+        consent = null;
+      }
+    } catch (_) {}
     if (consent === "yes") startTracking();
-    else if (consent !== "no") showConsent();
+    else if (!dismissedThisSession) showConsent();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
