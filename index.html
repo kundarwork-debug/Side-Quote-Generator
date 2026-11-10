@@ -33,7 +33,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
   <!-- COUNTUP.JS CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.8.0/countUp.umd.js"></script>
 
   <style>
     :root {
@@ -1525,7 +1525,6 @@
       const sectorSize = Math.PI * 2 / clockwise.length;
       let currentSector = -1;
       let reactionTimer = null;
-      let resetTimer = null;
       let lastBoop = 0;
       let boopCount = 0;
 
@@ -1545,17 +1544,17 @@
         if (next !== currentSector) { currentSector = next; showDirection(clockwise[next]); }
       }
       if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        window.addEventListener('pointermove', event => aim(event.clientX, event.clientY), { passive: true });
-        window.addEventListener('scroll', () => {
-          // Re-evaluate against the latest pointer after the page moves.
-          if (window.__apmlMascotPointer) aim(window.__apmlMascotPointer.x, window.__apmlMascotPointer.y);
-        }, { passive: true });
         window.addEventListener('pointermove', event => {
           window.__apmlMascotPointer = { x: event.clientX, y: event.clientY };
+          aim(event.clientX, event.clientY);
+        }, { passive: true });
+        window.addEventListener('scroll', () => {
+          const pointer = window.__apmlMascotPointer;
+          if (pointer) aim(pointer.x, pointer.y);
         }, { passive: true });
       }
       button.addEventListener('click', () => {
-        clearTimeout(reactionTimer); clearTimeout(resetTimer);
+        clearTimeout(reactionTimer);
         const now = Date.now();
         boopCount = now - lastBoop < 1600 ? boopCount + 1 : 1;
         lastBoop = now;
@@ -1580,7 +1579,7 @@
   </script>
 
   <!-- YOUR COMMON JS -->
-  <script src="common.js?v=23.0"></script>
+  <script src="common.js?v=23.2"></script>
 
   <!-- Keep this page in sync with the shared APML theme preference -->
   <script>
@@ -1653,10 +1652,11 @@
   </script>
 
   <!-- FIREBASE REALTIME PRESENCE & SCROLL-TRIGGERED COUNTUP.JS ANIMATIONS -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
+    window.addEventListener('DOMContentLoaded', function initHomepageTelemetry() {
     let userCountUp = null;
     let pdfCountUp = null;
     let mediaCountUp = null;
@@ -1764,16 +1764,13 @@
         });
       }, { threshold: 0.25 });
 
-      window.addEventListener('DOMContentLoaded', () => {
-        const telemetryCard = document.querySelector('.telemetry-card');
-        if (telemetryCard) {
-          observer.observe(telemetryCard);
-        }
-      });
+      const telemetryCard = document.querySelector('.telemetry-card');
+      if (telemetryCard) observer.observe(telemetryCard);
 
     } catch (err) {
       console.warn("Live presence counters offline.", err);
     }
+    });
   </script>
 </body>
 </html>
