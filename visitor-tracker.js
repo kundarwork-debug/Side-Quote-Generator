@@ -86,7 +86,7 @@
         <button class="apml-privacy-close" type="button" aria-label="Close privacy choices">×</button>
         <div class="apml-privacy-mark" aria-hidden="true">✓</div>
         <p class="apml-privacy-eyebrow">YOUR PRIVACY MATTERS</p>
-        <h2 id="apml-privacy-title">Cookies 🍪</h2>
+        <h2 id="apml-privacy-title">Cookies &amp; Choices 🍪</h2>
         <p class="apml-privacy-copy" id="apml-privacy-copy">APML Portal uses essential browser storage to remember settings and keep features working. With your permission, optional analytics helps us understand page visits and improve the portal.</p>
         <div class="apml-privacy-options">
           <div class="apml-privacy-option">
