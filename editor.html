@@ -33,14 +33,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
 <!-- SWEETALERT2 CDN & CSS -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
 <style>
   /* =========================================================
@@ -1258,13 +1255,20 @@ const firebaseConfig = {
   measurementId: "G-4H1HT31DYB"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const db = firebase.database();
+let db = null;
+// Deferred Firebase scripts execute before DOMContentLoaded. Initialise after
+// they are ready so they never block the editor's initial HTML rendering.
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof firebase === 'undefined' || !firebase.database) {
+    console.error('Firebase failed to load; cloud quotation features are unavailable.');
+    return;
+  }
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+}, { once: true });
 
 function incrementPdfDownloadCount() {
-  if (typeof db !== "undefined") {
+  if (db) {
     db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
       return (currentCount || 0) + 1;
     });
@@ -1748,6 +1752,29 @@ const PDF_JPEG_QUALITY = 0.9;
 
 const nextPaint = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
+function loadPdfScript(src, marker, ready) {
+  if (ready()) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    let script = document.querySelector(`script[data-apml-pdf-lib="${marker}"]`);
+    if (!script) {
+      script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.dataset.apmlPdfLib = marker;
+      document.head.appendChild(script);
+    }
+    script.addEventListener('load', () => ready() ? resolve() : reject(new Error(`PDF library failed to initialise: ${marker}`)), { once: true });
+    script.addEventListener('error', () => reject(new Error(`Unable to load PDF library: ${marker}`)), { once: true });
+  });
+}
+
+async function ensurePdfLibraries() {
+  await Promise.all([
+    loadPdfScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js', 'html2canvas', () => typeof window.html2canvas === 'function'),
+    loadPdfScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'jspdf', () => !!(window.jspdf && window.jspdf.jsPDF))
+  ]);
+}
+
 function saveBlobAsFile(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1811,6 +1838,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
   const marks = { start: performance.now() };
   try {
+    await ensurePdfLibraries();
     stage.style.setProperty('display', 'block', 'important');
     node.style.width = '794px';
     node.style.minHeight = '1123px';
@@ -1909,6 +1937,6 @@ renderAll();
 </script>
 
 <script src="notify.js?v=1"></script>
-<script src="common.js?v=23.0"></script>
+<script src="common.js?v=23.3"></script>
 </body>
 </html>
