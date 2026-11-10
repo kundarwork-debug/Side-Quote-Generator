@@ -4,6 +4,12 @@
 // data-aware overlay retain their existing dismissal callbacks.
 // =========================================================
 (function initSharedPageLoader() {
+  // The homepage is designed to open immediately; do not block it with a
+  // decorative full-screen loader or load the Lottie player just for that.
+  const currentPage = window.location.pathname.split('/').pop().toLowerCase();
+  const isHomePage = !currentPage || currentPage === 'index.html' || currentPage === 'index';
+  if (isHomePage) return;
+
   const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
 
   if (!document.querySelector('script[src*="lottie-player"]')) {
