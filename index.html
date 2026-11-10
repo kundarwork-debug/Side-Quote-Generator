@@ -158,51 +158,9 @@
       }
     }
 
-    .rotating-logo-container {
-      width: 80px;
-      height: 80px;
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: smoothRotate 28s linear infinite;
-      filter: drop-shadow(0 4px 14px rgba(185, 28, 28, 0.15));
-    }
-
-    @media (min-width: 768px) {
-      .rotating-logo-container {
-        width: 96px;
-        height: 96px;
-      }
-    }
-
-    .rotating-logo-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    @keyframes smoothRotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
+    
 
     /* HERO NAME STYLING */
-    .hero-brand-name {
-      font-size: clamp(14px, 2vw, 18px);
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.25em;
-      color: var(--primary);
-      margin-bottom: 12px;
-      opacity: 0;
-      filter: blur(10px);
-      transform: translateY(10px);
-      animation: wordBlurIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: 0.1s;
-    }
 
     .hero-main-title {
       font-size: clamp(34px, 6vw, 64px);
@@ -216,57 +174,6 @@
       justify-content: center;
       gap: 0.25em;
     }
-
-    .word-effect {
-      display: inline-block;
-      opacity: 0;
-      filter: blur(12px);
-      transform: translateY(12px);
-      animation: wordBlurIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .word-effect:nth-child(1) { animation-delay: 0.25s; }
-    .word-effect:nth-child(2) { animation-delay: 0.35s; }
-    .word-effect:nth-child(3) { animation-delay: 0.45s; }
-    .word-effect:nth-child(4) { animation-delay: 0.55s; }
-
-    @keyframes wordBlurIn {
-      to {
-        opacity: 1;
-        filter: blur(0px);
-        transform: translateY(0);
-      }
-    }
-
-    .hero-main-title span.gradient-word {
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-typing-subtitle {
-      font-size: clamp(16px, 2.2vw, 22px);
-      font-weight: 500;
-      color: var(--text-secondary);
-      letter-spacing: -0.01em;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 36px;
-      gap: 0.25em;
-    }
-
-    .sub-word-effect {
-      display: inline-block;
-      opacity: 0;
-      filter: blur(10px);
-      transform: translateY(10px);
-      animation: wordBlurIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      animation-delay: 0.7s;
-    }
-    .sub-word-effect:nth-child(2) { animation-delay: 0.85s; }
-    .sub-word-effect:nth-child(3) { animation-delay: 1.0s; }
 
     .logo-stage {
       position: relative;
@@ -295,40 +202,6 @@
     }
     @keyframes stageIn { from { opacity: 0; transform: scale(0.82); } to { opacity: 1; transform: scale(1); } }
     @keyframes haloBreathe { from { opacity: 0.55; transform: scale(0.94); } to { opacity: 1; transform: scale(1.08); } }
-
-    .hero-main-title span.gradient-word { position: relative; }
-    .gradient-word::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -0.04em;
-      height: 0.06em;
-      min-height: 3px;
-      border-radius: 2px;
-      background: var(--primary-gradient);
-      transform: scaleX(0);
-      transform-origin: left center;
-      animation: underlineDraw 1s cubic-bezier(0.65, 0, 0.35, 1) 1.2s forwards;
-    }
-    @keyframes underlineDraw { to { transform: scaleX(1); } }
-
-    .cursor-glow {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 560px;
-      height: 560px;
-      margin: -280px 0 0 -280px;
-      border-radius: 50%;
-      pointer-events: none !important;
-      z-index: 0;
-      opacity: 0;
-      background: radial-gradient(circle, rgba(185, 28, 28, 0.07) 0%, rgba(185, 28, 28, 0) 62%);
-      transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform, opacity;
-    }
-    .cursor-glow.active { opacity: 1; }
 
     .workspace-section {
       max-width: 1360px;
@@ -828,18 +701,6 @@
       padding: clamp(48px, 7vw, 82px) 24px 42px;
       gap: 0;
     }
-    .hero-mark {
-      width: 68px;
-      height: 68px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 22px;
-      border: 1px solid var(--surface-border);
-      border-radius: 20px;
-      background: var(--surface-card);
-      box-shadow: var(--shadow-subtle);
-    }
-    .hero-mark img { width: 44px; height: 44px; object-fit: contain; display: block; }
     .hero-eyebrow {
       display: flex;
       align-items: center;
@@ -898,30 +759,6 @@
     }
     .hero-primary-action:hover { transform: translateY(-2px); box-shadow: 0 11px 24px rgba(185, 28, 28, .2); }
     .hero-primary-action .material-symbols-outlined { font-size: 19px; }
-    .hero-download-action {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 9px;
-      min-height: 46px;
-      margin-top: 12px;
-      padding: 0 18px;
-      border: 1px solid var(--surface-border);
-      border-radius: 12px;
-      background: var(--surface-card);
-      color: var(--text-main);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      box-shadow: var(--shadow-subtle);
-      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
-    }
-    .hero-download-action:hover {
-      transform: translateY(-2px);
-      border-color: rgba(185, 28, 28, .4);
-      box-shadow: var(--shadow-hover);
-    }
-    .hero-download-action .material-symbols-outlined { color: var(--primary); font-size: 19px; }
     .hero-supporting-note {
       margin-top: 14px;
       color: var(--text-muted);
@@ -935,8 +772,6 @@
     }
     @media (max-width: 560px) {
       .hero-center { padding: 42px 20px 30px; }
-      .hero-mark { width: 60px; height: 60px; margin-bottom: 18px; border-radius: 17px; }
-      .hero-mark img { width: 39px; height: 39px; }
       .hero-eyebrow { gap: 7px; font-size: 9px; letter-spacing: .11em; margin-bottom: 16px; }
       .hero-main-title { font-size: clamp(39px, 11vw, 54px); line-height: 1.08; letter-spacing: -.06em; }
       .hero-description { font-size: 15px; line-height: 1.65; }
@@ -947,7 +782,6 @@
     @media (prefers-reduced-motion: reduce) {
       .hero-primary-action { transition: none; }
     }
-
 
     /* =========================================================
        APML HOMEPAGE MOBILE FINISHING PASS
@@ -1096,17 +930,6 @@
       margin-bottom: 25px;
       animation: stageIn .8s cubic-bezier(.16, 1, .3, 1) both;
     }
-    .rotating-logo-container {
-      width: 68px;
-      height: 68px;
-      padding: 12px;
-      border: 1px solid var(--surface-border);
-      border-radius: 22px;
-      background: var(--surface-card);
-      box-shadow: 0 12px 32px rgba(28, 25, 23, .07);
-      animation: none;
-      filter: none;
-    }
     .logo-halo {
       inset: -18px;
       opacity: .75;
@@ -1212,11 +1035,6 @@
         width: 76px;
         height: 76px;
         margin-bottom: 20px;
-      }
-      .rotating-logo-container {
-        width: 62px;
-        height: 62px;
-        border-radius: 19px;
       }
       .hero-main-title {
         font-size: clamp(39px, 10.5vw, 58px);
@@ -1693,7 +1511,6 @@
 
   <!-- COMMON FOOTER PLACEHOLDER -->
   <div id="footer-container"></div>
-
 
   <!-- Lightweight vanilla-JS adaptation of page-mascot for this non-React site -->
   <script>
