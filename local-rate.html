@@ -63,10 +63,10 @@
     }
 
     body {
-      background: radial-gradient(circle at 85% 10%, rgba(194, 29, 29, 0.12) 0%, transparent 55%),
-                  radial-gradient(circle at 10% 85%, rgba(153, 27, 27, 0.08) 0%, transparent 50%),
-                  linear-gradient(135deg, #F2ECE4 0%, #EAE2D8 100%);
-      background-attachment: fixed;
+      /* Match the shared APML page canvas instead of using a page-specific gradient. */
+      background: var(--bg-base) !important;
+      background-image: none !important;
+      background-attachment: initial;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
@@ -76,28 +76,10 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(234, 226, 216, 0.45) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
+    body::before { display: none !important; }
 
     /* Ambient Background Mesh */
-    .ambient-mesh {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 0;
-      background: 
-        radial-gradient(circle at 12% 16%, rgba(185, 28, 28, 0.05) 0%, transparent 45%),
-        radial-gradient(circle at 88% 84%, rgba(225, 29, 72, 0.04) 0%, transparent 40%);
-    }
+    .ambient-mesh { display: none !important; }
 
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
