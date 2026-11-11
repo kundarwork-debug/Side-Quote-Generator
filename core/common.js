@@ -1507,7 +1507,11 @@ window.sendPortalNotification = function () {};
   var base = '';
   var tags = document.getElementsByTagName('script');
   for (var i = 0; i < tags.length; i++) {
-    if (/common\.js(\?|$)/.test(tags[i].src)) { base = tags[i].src.replace(/common\.js.*$/, ''); break; }
+    if (/common\.js(\?|$)/.test(tags[i].src)) {
+      // common.js now lives one directory below the site root; load notify.js from the root.
+      base = new URL('../', tags[i].src).href;
+      break;
+    }
   }
   var s = document.createElement('script');
   s.src = base + 'notify.js?v=7';
