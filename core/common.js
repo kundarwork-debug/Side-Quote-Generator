@@ -1508,17 +1508,10 @@ window.sendPortalNotification = function () {};
 // ---------------------------------------------------------------------
 (function loadNotify() {
   if (window.APMNotify) return;
-  var base = '';
-  var tags = document.getElementsByTagName('script');
-  for (var i = 0; i < tags.length; i++) {
-    if (/common\.js(\?|$)/.test(tags[i].src)) {
-      // common.js now lives one directory below the site root; load notify.js from the root.
-      base = new URL('../', tags[i].src).href;
-      break;
-    }
-  }
   var s = document.createElement('script');
-  s.src = base + 'notify.js?v=7';
+  // Always load the shared Telegram notifier from the site root, regardless
+  // of whether common.js is used by a root page or a page inside /modules.
+  s.src = new URL('/notify.js?v=8', window.location.origin).href;
   s.async = true;
   document.head.appendChild(s);
 })();
