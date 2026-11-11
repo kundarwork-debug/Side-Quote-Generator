@@ -1141,7 +1141,12 @@
     }
     @media (max-width: 480px) {
       .mascot-stage { width: 104px; height: 104px; margin-bottom: 16px; }
-      .apml-hero-mascot { width: 108px; height: 108px; }
+      .apml-hero-mascot {
+        width: 108px;
+        height: 108px;
+        margin-inline: auto;
+        transform: none;
+      }
     }
     @media (prefers-reduced-motion: reduce) {
       .mascot-stage, .logo-halo { animation: none !important; }
