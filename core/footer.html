@@ -1,0 +1,276 @@
+<footer class="site-footer">
+  <div class="footer-grid-layout">
+    <!-- Left Column: Brand & Enterprise Info -->
+    <div class="footer-left-col">
+      <div class="footer-brand-group">
+        <div class="footer-logo-box">
+          <img src="logo.svg" alt="APML Hub" class="rotating-logo" style="width: 26px; height: 26px; display: block; object-fit: contain;">
+        </div>
+        <div>
+          <div class="footer-title">APML<span style="color: var(--primary, #c21d1d);"> Portal</span></div>
+          <div class="footer-subtitle">Enterprise Operations &amp; Nationwide Moving Hub</div>
+        </div>
+      </div>
+      <p class="footer-desc">
+        APML Portal is an unofficial enterprise operations workspace to simplify quotation drafting, directory lookups, and packing logistics standards.
+      </p>
+    </div>
+
+    <!-- Right Column: Navigation Links -->
+    <div class="footer-right-col">
+      <div class="footer-links-heading">Links</div>
+      <div class="footer-links-list">
+        <a href="policy/privacy.html">Privacy Policy</a>
+        <a href="policy/terms.html">Terms &amp; Conditions</a>
+        <a href="policy/bug-report.html" style="color: var(--primary, #c21d1d); font-weight: 700;">Report a Bug</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-mobile-links" aria-label="Footer navigation">
+    <div class="footer-mobile-link-group">
+      <div class="footer-links-heading">Resources</div>
+      <div class="footer-links-list">
+        <a href="modules/directory.html">Directory</a>
+        <a href="modules/drive.html">Cloud Drive</a>
+        <a href="modules/gallery.html">Gallery</a>
+        <a href="modules/car-rate.html">Car Rate Calculator</a>
+        <a href="modules/local-rate.html">Local Rate Calculator</a>
+        <a href="modules/field-officer.html">Field Officer</a>
+      </div>
+    </div>
+    <div class="footer-mobile-link-group">
+      <div class="footer-links-heading">Legal</div>
+      <div class="footer-links-list">
+        <a href="policy/privacy.html">Privacy Policy</a>
+        <a href="policy/terms.html">Terms &amp; Conditions</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-divider"></div>
+
+  <div class="footer-bottom-row">
+    <div class="footer-copyright">
+      © 2026 APML Portal. Unofficial operations workspace.
+    </div>
+    
+    <div class="footer-actions-group">
+      <a href="about.html" class="footer-author-pill" style="text-decoration: none;" title="About Developer">
+        <img src="https://github.com/kundarwork-debug.png" alt="Prasad" class="footer-avatar">
+        <span>Prasad Kundar</span>
+      </a>
+      <button type="button" class="footer-scroll-top-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
+        <span class="material-symbols-outlined" style="font-size: 20px;">arrow_upward</span>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    width: 100%;
+    margin: 60px 0 0 0;
+    padding: 44px 48px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    color: var(--text-muted, #736b66);
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.45);
+    border-top: 1.5px solid rgba(225, 212, 204, 0.85);
+    box-sizing: border-box;
+  }
+
+  @keyframes spinLogo {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .rotating-logo {
+    animation: spinLogo 12s linear infinite;
+  }
+
+  .footer-grid-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+    width: 100%;
+  }
+
+  .footer-left-col {
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .footer-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .footer-logo-box {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(194, 29, 29, 0.08);
+    border: 1.5px solid rgba(194, 29, 29, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary, #c21d1d);
+  }
+
+  .footer-title {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main, #141210);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .footer-subtitle {
+    font-size: 13px;
+    color: var(--text-muted, #736b66);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .footer-desc {
+    font-size: 14px;
+    color: var(--text-muted, #736b66);
+    line-height: 1.6;
+  }
+
+  .footer-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links-heading {
+    font-family: var(--font-display, 'Space Grotesk', sans-serif);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main, #141210);
+    margin-bottom: 4px;
+  }
+
+  .footer-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-links-list a {
+    color: var(--text-muted, #736b66);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.15s ease;
+  }
+
+  .footer-links-list a:hover {
+    color: var(--primary, #c21d1d);
+  }
+
+  .footer-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-author-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid rgba(225, 212, 204, 0.85);
+    padding: 6px 16px 6px 6px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary, #3d3835);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+  }
+
+  .footer-author-pill:hover {
+    border-color: var(--primary, #c21d1d);
+    color: var(--primary, #c21d1d);
+    transform: translateY(-2px);
+  }
+
+  .footer-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .footer-scroll-top-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid rgba(225, 212, 204, 0.85);
+    color: var(--text-main, #141210);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.2s ease;
+  }
+
+  .footer-scroll-top-btn:hover {
+    background: var(--primary, #c21d1d);
+    color: #ffffff;
+    border-color: var(--primary, #c21d1d);
+    transform: translateY(-2px);
+  }
+
+  .footer-mobile-links { display: none; }\n\n  .footer-divider {
+    width: 100%;
+    height: 1px;
+    background: rgba(225, 212, 204, 0.85);
+  }
+
+  .footer-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    width: 100%;
+  }
+
+  .footer-copyright {
+    color: var(--text-muted, #736b66);
+  }
+
+  @media (max-width: 768px) {
+    .site-footer { width: 100%; max-width: 100%; padding: 22px 16px; margin-top: 28px; gap: 0; overflow: visible; }
+    .footer-left-col, .footer-right-col, .footer-divider, .footer-bottom-row { display: none !important; }
+    .footer-mobile-links { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+    .footer-mobile-link-group { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+    .footer-mobile-link-group .footer-links-list { gap: 10px; }
+    .footer-mobile-link-group .footer-links-list a { font-size: 13px; }
+    .footer-grid-layout, .footer-bottom-row { width: 100%; flex-direction: column; align-items: flex-start; gap: 18px; }
+    .footer-left-col, .footer-right-col { width: 100%; max-width: 100%; min-width: 0; }
+    .footer-brand-group { flex-wrap: wrap; }
+    .footer-subtitle, .footer-desc, .footer-copyright { overflow-wrap: anywhere; }
+    .footer-actions-group { flex-wrap: wrap; }
+  }
+  @media (max-width: 420px) {
+    .site-footer { padding-left: 14px; padding-right: 14px; }\n    .footer-mobile-links { gap: 14px; }
+    .footer-author-pill { max-width: 100%; }
+  }
+</style>
