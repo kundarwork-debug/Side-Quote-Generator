@@ -1565,13 +1565,14 @@
       }
 
       function updateDifficulty() {
+        const previousLevel = level;
         const newLevel = Math.floor(score / 250) + 1;
         if (newLevel > level) {
           level = newLevel;
           if (levelEl) levelEl.textContent = level;
           showToast(`Level ${level} • Threat level increased`);
           resetSpawnTimer();
-          if (level > 1 && level % 5 === 0) spawnBoss();
+          if (Math.floor(level / 5) > Math.floor(previousLevel / 5)) spawnBoss();
         }
       }
 
