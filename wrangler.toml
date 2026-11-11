@@ -1,0 +1,11 @@
+name = "apml-drive-api"
+main = "cloudflare/worker.js"
+compatibility_date = "2026-11-11"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "ANNOUNCE_KV"
+id = "67a645649ab941668956f159f890147e"
+
+[triggers]
+crons = ["0 * * * *"]
