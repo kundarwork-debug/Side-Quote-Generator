@@ -1,3 +1,4 @@
+// Cloudflare Git deployment trigger — no runtime behavior change.
 // apml-drive-api — Cloudflare Worker
 
 // Secrets to add in Cloudflare (Settings > Variables and Secrets):
