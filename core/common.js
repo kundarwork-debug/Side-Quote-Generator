@@ -1,11 +1,7 @@
 // =========================================================
-// SHARED APML PAGE LOADER — footer Lottie truck animation
-// Applies to every page using common.js. Pages with their own
-// data-aware overlay retain their existing dismissal callbacks.
+// SHARED APML PAGE LOADER — lightweight CSS spinner
 // =========================================================
 (function initSharedPageLoader() {
-  // The homepage is designed to open immediately; do not block it with a
-  // decorative full-screen loader or load the Lottie player just for that.
   const currentPage = window.location.pathname.split('/').pop().toLowerCase();
   const isHomePage = !currentPage || currentPage === 'index.html' || currentPage === 'index';
   const isAnalyticsPage = currentPage === 'analytics.html' || currentPage === 'analytics';
@@ -14,57 +10,35 @@
   const isDrivePage = currentPage === 'drive.html' || currentPage === 'drive';
   const isDirectoryPage = currentPage === 'directory.html' || currentPage === 'directory';
   const isFieldOfficerPage = currentPage === 'field-officer.html' || currentPage === 'field-officer';
-  // Keep the footer Lottie available, but do not block pages outside the approved loader list.
   if (isHomePage || isAnalyticsPage || isEditorPage) return;
-
-  const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
-
-  if (!document.querySelector('script[src*="lottie-player"]')) {
-    const playerScript = document.createElement('script');
-    playerScript.src = 'https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js';
-    playerScript.async = true;
-    document.head.appendChild(playerScript);
-  }
-  // Only Field Officer, Drive, Gallery, and Directory retain the full-page truck loader.
-  // If a page already contains its own data-aware overlay, leave that implementation untouched.
   const keepPageLoader = isDirectoryPage || isFieldOfficerPage || isDrivePage || isGalleryPage;
   if (!keepPageLoader || document.getElementById('pageLoadingOverlay')) return;
+
+  const pageCopy = isDrivePage
+    ? ['files','folders','documents','uploads','files']
+    : isGalleryPage
+      ? ['images','media','standards','albums','images']
+      : isDirectoryPage
+        ? ['contacts','records','branches','details','contacts']
+        : ['officers','records','branches','details','officers'];
 
   const style = document.createElement('style');
   style.id = 'apml-shared-page-loader-style';
   style.textContent = `
-    #pageLoadingOverlay.apml-shared-page-loader {
-      position:fixed; inset:0; z-index:999999; display:flex;
-      align-items:center; justify-content:center; padding:20px;
-      background:rgba(253,248,245,.48);
-      -webkit-backdrop-filter:blur(12px) saturate(115%);
-      backdrop-filter:blur(12px) saturate(115%);
-      opacity:1; visibility:visible; transition:opacity .35s ease,visibility .35s ease;
-    }
+    #pageLoadingOverlay.apml-shared-page-loader { position:fixed; inset:0; z-index:999999; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(253,248,245,.48); -webkit-backdrop-filter:blur(12px) saturate(115%); backdrop-filter:blur(12px) saturate(115%); opacity:1; visibility:visible; transition:opacity .35s ease,visibility .35s ease; }
     #pageLoadingOverlay.apml-shared-page-loader.hide { opacity:0; visibility:hidden; pointer-events:none; }
-    #pageLoadingOverlay .loader-card-box {
-      display:flex; flex-direction:column; align-items:center; gap:16px;
-      padding:2rem 2.5rem; border-radius:1.25rem;
-      background:rgba(255,255,255,.78);
-      -webkit-backdrop-filter:blur(16px); backdrop-filter:blur(16px);
-      border:1.5px solid rgba(255,255,255,.72);
-      box-shadow:0 18px 48px rgba(45,35,30,.12);
-    }
-    #pageLoadingOverlay .footer-truck-loader {
-      width:220px; height:112px; display:flex; align-items:center; justify-content:center;
-    }
-    #pageLoadingOverlay .page-loading-truck { display:block; width:210px; height:112px; background:transparent; }
-    #pageLoadingOverlay .loading-label {
-      font:700 14px var(--font-sans,'Plus Jakarta Sans',sans-serif);
-      color:var(--text-muted,#78716c); letter-spacing:.05em;
-      text-transform:uppercase; text-align:center;
-    }
-    @media(max-width:480px) {
-      #pageLoadingOverlay .loader-card-box { padding:1.5rem 1.4rem; }
-      #pageLoadingOverlay .footer-truck-loader,
-      #pageLoadingOverlay .page-loading-truck { width:190px; height:102px; }
-    }
-    @media(prefers-reduced-motion:reduce) { #pageLoadingOverlay.apml-shared-page-loader { transition:none; } }
+    #pageLoadingOverlay .loader-card-box { display:flex; flex-direction:column; align-items:center; padding:1.5rem 2rem; border-radius:1.25rem; background:rgba(255,255,255,.82); border:1px solid rgba(255,255,255,.78); box-shadow:0 18px 48px rgba(45,35,30,.12); }
+    #pageLoadingOverlay .spinnerContainer { display:flex; flex-direction:column; align-items:center; }
+    #pageLoadingOverlay .spinner { width:56px; height:56px; display:grid; border:4px solid transparent; border-radius:50%; border-right-color:var(--primary,#b4232c); animation:apml-tri-spinner 1s infinite linear; }
+    #pageLoadingOverlay .spinner::before,#pageLoadingOverlay .spinner::after { content:""; grid-area:1/1; margin:2px; border:inherit; border-radius:50%; animation:apml-tri-spinner 2s infinite; }
+    #pageLoadingOverlay .spinner::after { margin:8px; animation-duration:3s; }
+    @keyframes apml-tri-spinner { to { transform:rotate(1turn); } }
+    #pageLoadingOverlay .loader { color:var(--text-main,#4a4a4a); font-family:var(--font-sans,'Plus Jakarta Sans',sans-serif); font-weight:600; font-size:22px; box-sizing:content-box; height:40px; padding:8px 10px; display:flex; border-radius:8px; }
+    #pageLoadingOverlay .words { overflow:hidden; color:var(--primary,#b4232c); }
+    #pageLoadingOverlay .word { display:block; height:100%; padding-left:6px; animation:apml-cycle-words 5s infinite; }
+    @keyframes apml-cycle-words { 10%{transform:translateY(-105%)} 25%{transform:translateY(-100%)} 35%{transform:translateY(-205%)} 50%{transform:translateY(-200%)} 60%{transform:translateY(-305%)} 75%{transform:translateY(-300%)} 85%{transform:translateY(-405%)} 100%{transform:translateY(-400%)} }
+    @media(max-width:480px) { #pageLoadingOverlay .loader-card-box { padding:1.35rem 1.5rem; } #pageLoadingOverlay .loader { font-size:20px; } }
+    @media(prefers-reduced-motion:reduce) { #pageLoadingOverlay .spinner,#pageLoadingOverlay .spinner::before,#pageLoadingOverlay .spinner::after,#pageLoadingOverlay .word { animation:none; } #pageLoadingOverlay.apml-shared-page-loader { transition:none; } }
   `;
   (document.head || document.documentElement).appendChild(style);
 
@@ -74,13 +48,10 @@
   overlay.setAttribute('role','status');
   overlay.setAttribute('aria-live','polite');
   overlay.innerHTML=`
-    <div class="loader-card-box">
-      <div class="footer-truck-loader">
-        <lottie-player class="page-loading-truck" src="${truckAnimation}"
-          background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>
-      </div>
-      <div class="loading-label">Loading APML Portal...</div>
-    </div>`;
+    <div class="loader-card-box"><div class="spinnerContainer">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="loader"><p>loading</p><div class="words">${pageCopy.map(word => `<span class="word">${word}</span>`).join('')}</div></div>
+    </div></div>`;
   if(document.body) document.body.insertBefore(overlay,document.body.firstChild);
   else document.addEventListener('DOMContentLoaded',()=>document.body.insertBefore(overlay,document.body.firstChild),{once:true});
 
@@ -88,10 +59,7 @@
   const dismiss=()=>{
     if(dismissed)return;
     dismissed=true;
-    window.setTimeout(()=>{
-      overlay.classList.add('hide');
-      window.setTimeout(()=>overlay.remove(),450);
-    },250);
+    window.setTimeout(()=>{ overlay.classList.add('hide'); window.setTimeout(()=>overlay.remove(),450); },250);
   };
   if(document.readyState==='complete') window.setTimeout(dismiss,500);
   else window.addEventListener('load',dismiss,{once:true});
@@ -557,7 +525,7 @@ window.sendPortalNotification = function () {};
 
           <div class="footer-bottom-bar">
             <div class="footer-copyright-group">
-              <lottie-player class="footer-truck-animation" src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json" background="transparent" speed="1" loop autoplay aria-hidden="true"></lottie-player>
+
               <span>© ${currentYear} APML Portal. All rights reserved.</span>
             </div>
             
@@ -694,18 +662,6 @@ window.sendPortalNotification = function () {};
             align-items: center;
             gap: 7px;
             min-width: 0;
-          }
-          .footer-truck-animation {
-            display: block;
-            flex: 0 0 auto;
-            width: 76px;
-            height: 54px;
-            pointer-events: none;
-          }
-          @media (max-width: 600px) {
-            .footer-truck-animation {
-              display: none !important;
-            }
           }
           .site-footer-extended {
             background: var(--md-sys-color-surface-container-low, #f7ede6);
@@ -1003,14 +959,6 @@ window.sendPortalNotification = function () {};
 
     const tipsArray = pageTips[currentPage] || defaultTips;
     let tipIndex = Math.floor(Math.random() * tipsArray.length);
-
-    // The homepage has no Lottie artwork; keep the player off its critical path.
-    if (!document.querySelector('script[src*="lottie-player"]')) {
-      const lottieScript = document.createElement('script');
-      lottieScript.src = "https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js";
-      lottieScript.async = true;
-      document.head.appendChild(lottieScript);
-    }
 
     // Create Support FAB Container
     const supportFab = document.createElement('div');
