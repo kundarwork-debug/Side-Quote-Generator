@@ -36,7 +36,7 @@ The portal brings together contact and branch information, operational tools, qu
 ## Quick Links
 
 - **[Open APML Portal](https://apmlportal.vercel.app/)**
-- [Analytics Dashboard](https://apmlportal.vercel.app/analytics.html)
+- [Analytics Dashboard](https://apmlportal.vercel.app/modules/analytics.html)
 - [Directory](https://apmlportal.vercel.app/modules/directory.html)
 - [Quotation Editor](https://apmlportal.vercel.app/editor.html)
 - [Media Gallery](https://apmlportal.vercel.app/gallery.html)
@@ -68,7 +68,7 @@ The project is built primarily with:
 ├── common.js              # Shared site functionality
 ├── header.html            # Shared header
 ├── footer.html            # Shared footer
-├── analytics.html         # Analytics dashboard
+├── modules/analytics.html # Analytics dashboard\n├── modules/visitor-analytics.js # Analytics visitor reports
 ├── modules/directory.html         # Directory management
 ├── drive.html             # Cloud Drive
 ├── gallery.html           # Media gallery
