@@ -25,11 +25,10 @@
     playerScript.async = true;
     document.head.appendChild(playerScript);
   }
-  // Only these four data-heavy pages retain a full-page loading screen.
-  // Directory and Field Officer provide their own data-aware overlays; Drive has its own overlay.
-  // Gallery keeps its existing media-loading experience without a second shared overlay.
+  // Only Field Officer, Drive, Gallery, and Directory retain the full-page truck loader.
+  // If a page already contains its own data-aware overlay, leave that implementation untouched.
   const keepPageLoader = isDirectoryPage || isFieldOfficerPage || isDrivePage || isGalleryPage;
-  if (!keepPageLoader || isGalleryPage || isDrivePage || document.getElementById('pageLoadingOverlay')) return;
+  if (!keepPageLoader || document.getElementById('pageLoadingOverlay')) return;
 
   const style = document.createElement('style');
   style.id = 'apml-shared-page-loader-style';
