@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="../">
+  <script>(function(){var t='light';try{var s=localStorage.getItem('apml-theme');if(s==='dark'||s==='light')t=s;}catch(e){}document.documentElement.setAttribute('data-theme',t);})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>APML Portal — System Health</title>
+  <meta name="description" content="Live operational status of APML Portal services.">
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.4">
+  <link rel="stylesheet" href="common.css?v=23.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <style>
+    :root{--health-bg:var(--apml-color-page,#f7f5f0);--health-card:#fff;--health-border:#e4ddd5;--health-text:#1c1917;--health-muted:#78716c;--health-green:#047857;--health-red:#b91c1c;--health-amber:#b45309}
+    html[data-theme="dark"]{--health-bg:var(--apml-color-page,#10141d);--health-card:#0f172a;--health-border:#1e293b;--health-text:#f8fafc;--health-muted:#94a3b8;--health-green:#34d399;--health-red:#f87171;--health-amber:#fbbf24}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--health-bg);color:var(--health-text);font-family:'Plus Jakarta Sans',sans-serif}
+    #header-container{position:sticky!important;top:0;z-index:1000}
+    main{width:min(1180px,100%);margin:0 auto;padding:34px 24px 70px;flex:1}
+    .health-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:25px}
+    .health-kicker{display:inline-flex;align-items:center;gap:7px;padding:6px 11px;border-radius:99px;background:rgba(185,28,28,.08);color:var(--health-red);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-size:clamp(27px,4vw,37px);letter-spacing:-.04em;margin:12px 0 7px;font-weight:800}
+    .health-head p{margin:0;color:var(--health-muted);font-size:14px;line-height:1.6}
+    .health-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .health-btn{border:1px solid var(--health-border);background:var(--health-card);color:var(--health-text);border-radius:12px;padding:11px 15px;font:700 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+    .health-btn.primary{background:#a91f2b;border-color:#a91f2b;color:#fff}
+    .health-btn:disabled{opacity:.6;cursor:wait}
+    .overall{display:flex;align-items:center;gap:15px;padding:20px 22px;border:1px solid var(--health-border);border-radius:20px;background:var(--health-card);margin-bottom:18px;box-shadow:0 8px 28px rgba(28,25,23,.045)}
+    .overall-icon{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:rgba(4,120,87,.1);color:var(--health-green);flex:none}
+    .overall-icon .material-symbols-outlined{font-size:26px}
+    .overall[data-status="degraded"] .overall-icon{background:rgba(180,83,9,.1);color:var(--health-amber)}
+    .overall[data-status="offline"] .overall-icon{background:rgba(185,28,28,.1);color:var(--health-red)}
+    .overall-copy{min-width:0;flex:1}
+    .overall-copy strong{display:block;font-size:16px;font-weight:800}
+    .overall-copy span{display:block;margin-top:4px;color:var(--health-muted);font-size:12px;line-height:1.5}
+    .status-pill{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:7px 10px;border-radius:99px;background:rgba(4,120,87,.1);color:var(--health-green);white-space:nowrap}
+    .overall[data-status="degraded"] .status-pill{background:rgba(180,83,9,.1);color:var(--health-amber)}
+    .overall[data-status="offline"] .status-pill{background:rgba(185,28,28,.1);color:var(--health-red)}
+    .service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .service{background:var(--health-card);border:1px solid var(--health-border);border-radius:18px;padding:19px;min-width:0;box-shadow:0 7px 24px rgba(28,25,23,.035)}
+    .service-top{display:flex;align-items:center;gap:12px}
+    .service-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:rgba(120,113,108,.1);color:var(--health-muted);flex:none}
+    .service-icon .material-symbols-outlined{font-size:21px}
+    .service-name{font-size:14px;font-weight:800;flex:1;min-width:0}
+    .dot{width:9px;height:9px;border-radius:50%;background:#a8a29e;flex:none}
+    .service[data-status="operational"] .dot{background:var(--health-green);box-shadow:0 0 0 4px rgba(4,120,87,.1)}
+    .service[data-status="degraded"] .dot{background:var(--health-amber)}
+    .service[data-status="offline"] .dot{background:var(--health-red)}
+    .service-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;padding-top:13px;border-top:1px solid var(--health-border);color:var(--health-muted);font-size:11px}
+    .service-meta b{font:700 11px 'JetBrains Mono',monospace;color:var(--health-text)}
+    .service-message{margin-top:9px;color:var(--health-muted);font-size:11px;line-height:1.5;min-height:16px}
+    .health-bottom{display:grid;grid-template-columns:1.2fr .8fr;gap:15px;margin-top:16px}
+    .info-card{border:1px solid var(--health-border);border-radius:18px;background:var(--health-card);padding:20px}
+    .info-card h2{margin:0 0 14px;font-size:14px;font-weight:800}
+    .info-row{display:flex;justify-content:space-between;gap:14px;padding:9px 0;border-bottom:1px solid var(--health-border);font-size:12px}
+    .info-row:last-child{border:0;padding-bottom:0}
+    .info-row span{color:var(--health-muted)}
+    .info-row b{text-align:right;font:600 11px 'JetBrains Mono',monospace;overflow-wrap:anywhere}
+    .latency-history{height:54px;display:flex;align-items:flex-end;gap:5px;margin-top:10px}
+    .latency-history i{flex:1;min-width:3px;height:5px;border-radius:4px 4px 2px 2px;background:#b91c1c;opacity:.75}
+    .latency-caption{font-size:11px;color:var(--health-muted);margin-top:8px}
+    .health-foot{margin-top:17px;color:var(--health-muted);font-size:11px;line-height:1.6}
+    .health-foot strong{color:var(--health-text)}
+    @media(max-width:700px){main{padding:25px 15px 48px}.service-grid,.health-bottom{grid-template-columns:1fr}.overall{align-items:flex-start;padding:17px}.status-pill{margin-left:auto}.health-head{align-items:flex-start}.health-actions{width:100%}.health-btn{flex:1;justify-content:center}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+    /* APML shared visual consistency: System Health */
+    main,.health-head,.overall,.health-bottom,.info-card{min-width:0}
+    .health-head > div:first-child{min-width:0}
+    .health-head h1{overflow-wrap:anywhere}
+    .health-actions #refresh-note{white-space:normal}
+    @media(max-width:700px){
+      main{padding:24px 14px 44px}
+      .overall{gap:12px;flex-wrap:wrap}
+      .overall-copy{flex:1 1 calc(100% - 64px)}
+      .status-pill{margin-left:60px}
+      .health-actions{align-items:stretch}
+      .health-actions #refresh-note{width:100%}
+      .health-btn{min-height:44px}
+      .service,.info-card{padding:17px}
+      .service-name{overflow-wrap:anywhere}
+      .info-row{align-items:flex-start}
+      .info-row b{max-width:58%;overflow-wrap:anywhere}
+    }
+    @media(max-width:360px){
+      .health-actions{flex-direction:column}
+      .health-btn{width:100%}
+      .service-meta{align-items:flex-start;flex-wrap:wrap}
+    }
+
+  </style>
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+  <div id="header-container"></div>
+  <main>
+    <header class="health-head">
+      <div>
+        <span class="health-kicker"><span class="material-symbols-outlined">monitor_heart</span> Operations</span>
+        <h1>System health</h1>
+        <p>A live overview of the portal, API and connected infrastructure.</p>
+      </div>
+      <div class="health-actions">
+        <span id="refresh-note" style="font-size:11px;color:var(--health-muted)">Auto-refresh · 30 sec</span>
+        <button class="health-btn primary" id="refresh-btn" type="button"><span class="material-symbols-outlined">refresh</span> Refresh now</button>
+      </div>
+    </header>
+
+    <section class="overall" id="overall" data-status="checking" aria-live="polite">
+      <div class="overall-icon"><span class="material-symbols-outlined" id="overall-icon">hourglass_top</span></div>
+      <div class="overall-copy"><strong id="overall-title">Checking systems…</strong><span id="overall-copy">Collecting the latest service responses.</span></div>
+      <span class="status-pill" id="overall-pill">Checking</span>
+    </section>
+
+    <section class="service-grid" aria-label="Service status">
+      <article class="service" id="service-portal" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">language</span></div><div class="service-name">Portal frontend</div><i class="dot"></i></div><div class="service-meta"><span>Status</span><b class="service-state">Checking</b></div><div class="service-message">Testing this page and shared assets.</div></article>
+      <article class="service" id="service-api" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">dns</span></div><div class="service-name">Vercel API</div><i class="dot"></i></div><div class="service-meta"><span>Response time</span><b class="service-state">—</b></div><div class="service-message">Checking serverless function availability.</div></article>
+      <article class="service" id="service-firebase" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">database</span></div><div class="service-name">Firebase database</div><i class="dot"></i></div><div class="service-meta"><span>Response time</span><b class="service-state">—</b></div><div class="service-message">Checking the portal analytics read path.</div></article>
+      <article class="service" id="service-browser" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">wifi</span></div><div class="service-name">Browser connection</div><i class="dot"></i></div><div class="service-meta"><span>Connection</span><b class="service-state">Checking</b></div><div class="service-message">Checking whether this device is online.</div></article>
+      <article class="service" id="service-assets" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">inventory_2</span></div><div class="service-name">Core portal assets</div><i class="dot"></i></div><div class="service-meta"><span>Response time</span><b class="service-state">—</b></div><div class="service-message">Testing common CSS, JavaScript and visitor tracker.</div></article>
+      <article class="service" id="service-pwa" data-status="checking"><div class="service-top"><div class="service-icon"><span class="material-symbols-outlined">install_mobile</span></div><div class="service-name">PWA service worker</div><i class="dot"></i></div><div class="service-meta"><span>State</span><b class="service-state">Checking</b></div><div class="service-message">Checking registration and active controller.</div></article>
+    </section>
+
+    <section class="health-bottom">
+      <article class="info-card"><h2>Response history</h2><div class="latency-history" id="latency-history" aria-label="Recent API response times"></div><div class="latency-caption" id="latency-caption">Waiting for the first check.</div></article>
+      <article class="info-card"><h2>Runtime details</h2><div class="info-row"><span>Last checked</span><b id="last-checked">—</b></div><div class="info-row"><span>Page uptime</span><b id="page-uptime">0s</b></div><div class="info-row"><span>Browser</span><b id="browser-name">—</b></div><div class="info-row"><span>Service refresh</span><b>30 seconds</b></div></article>
+    </section>
+    <p class="health-foot"><strong>Monitoring scope:</strong> These checks report availability from this browser's point of view. Firebase status verifies the analytics daily-log read path only. This page does not inspect server CPU, memory, private credentials or employee data. A green status is not a guarantee that every portal feature is working.</p>
+  </main>
+  <div id="footer-container"></div>
+  <script src="common.js?v=23.0"></script>
+  <script>
+  (function(){
+    'use strict';
+    var started=Date.now(), history=[], timer=null, busy=false;
+    var $=function(id){return document.getElementById(id);};
+    function setService(id,status,value,message){
+      var el=$('service-'+id);if(!el)return;
+      el.dataset.status=status;
+      el.querySelector('.service-state').textContent=value;
+      el.querySelector('.service-message').textContent=message||'';
+    }
+    function statusName(s){return s==='operational'?'Operational':s==='degraded'?'Degraded':s==='offline'?'Offline':'Checking';}
+    function duration(ms){var sec=Math.floor(ms/1000);if(sec<60)return sec+'s';var min=Math.floor(sec/60);if(min<60)return min+'m '+(sec%60)+'s';return Math.floor(min/60)+'h '+(min%60)+'m';}
+    function renderHistory(ms){
+      history.push(ms);if(history.length>24)history.shift();
+      var host=$('latency-history');host.textContent='';
+      var max=Math.max.apply(null,history.concat([1]));
+      history.forEach(function(v){var bar=document.createElement('i');bar.style.height=Math.max(5,Math.round(v/max*52))+'px';bar.title=v+' ms';host.appendChild(bar);});
+      $('latency-caption').textContent='Latest API response: '+ms+' ms · '+history.length+' checks in this session';
+    }
+    async function checkAsset(path){
+      var t=performance.now();var response=await fetch(path,{method:'HEAD',cache:'no-store',credentials:'same-origin'});
+      return {ok:response.ok,ms:Math.round(performance.now()-t)};
+    }
+    async function refresh(){
+      if(busy)return;busy=true;$('refresh-btn').disabled=true;$('refresh-note').textContent='Checking…';
+      setService('portal','checking','Checking','Testing this page and shared assets.');
+      try{
+        var apiStart=performance.now();
+        var response=await fetch('/api/system-health?ts='+Date.now(),{cache:'no-store',credentials:'same-origin'});
+        var apiMs=Math.round(performance.now()-apiStart);
+        if(!response.ok)throw new Error('Health endpoint returned HTTP '+response.status);
+        var data=await response.json();
+        setService('api','operational',apiMs+' ms','Health endpoint responded successfully.');
+        var db=(data.checks||[]).find(function(x){return x.id==='firebase';});
+        if(db)setService('firebase',db.status,db.latencyMs+' ms',db.message||'Analytics daily-log read path responded.');
+        renderHistory(apiMs);
+        var paths=['/common.css','/common.js','/visitor-tracker.js'];
+        var assets=await Promise.all(paths.map(async function(path){try{return await checkAsset(path);}catch(e){return {ok:false,ms:0};}}));
+        var failed=assets.filter(function(x){return !x.ok;}).length;
+        setService('assets',failed?'degraded':'operational',failed?failed+' failed':'All available',failed?failed+' of '+paths.length+' core assets could not be reached.':'All tested shared assets responded.');
+        var overall=data.overall==='degraded'||failed?'degraded':'operational';
+        if(!navigator.onLine)overall='offline';
+        $('overall').dataset.status=overall;
+        $('overall-icon').textContent=overall==='operational'?'check_circle':overall==='degraded'?'warning':'cloud_off';
+        $('overall-title').textContent=overall==='operational'?'All monitored systems operational':overall==='degraded'?'Some services need attention':'Connection unavailable';
+        $('overall-copy').textContent=overall==='operational'?'The portal and monitored backend checks are responding normally.':'One or more checks did not complete successfully. Review the service cards below.';
+        $('overall-pill').textContent=statusName(overall);
+      }catch(error){
+        setService('api','offline','Unavailable',error.message||'Health endpoint could not be reached.');
+        setService('firebase','degraded','Not checked','The backend health endpoint did not return a result.');
+        setService('assets','degraded','Not checked','Could not complete the full asset check.');
+        var online=navigator.onLine;
+        var overall=online?'degraded':'offline';
+        $('overall').dataset.status=overall;$('overall-icon').textContent=online?'warning':'cloud_off';
+        $('overall-title').textContent=online?'Health check unavailable':'Device is offline';
+        $('overall-copy').textContent=error.message||'Unable to reach the health endpoint.';
+        $('overall-pill').textContent=statusName(overall);
+      }
+      var browser=navigator.userAgent;
+      $('browser-name').textContent=/Edg\//.test(browser)?'Edge':/Chrome\//.test(browser)?'Chrome':/Firefox\//.test(browser)?'Firefox':/Safari\//.test(browser)?'Safari':'Browser';
+      $('last-checked').textContent=new Date().toLocaleTimeString('en-IN');
+      $('refresh-note').textContent='Auto-refresh · 30 sec';
+      $('refresh-btn').disabled=false;busy=false;
+    }
+    function localChecks(){
+      setService('browser',navigator.onLine?'operational':'offline',navigator.onLine?'Online':'Offline',navigator.onLine?'Browser reports an active network connection.':'Browser reports no network connection.');
+      if(!('serviceWorker' in navigator)){setService('pwa','degraded','Unsupported','This browser does not support service workers.');return;}
+      navigator.serviceWorker.getRegistration().then(function(reg){
+        if(!reg){setService('pwa','degraded','Not registered','No service worker is registered for this portal scope.');return;}
+        var active=reg.active||reg.waiting||reg.installing;
+        setService('pwa',reg.active?'operational':'degraded',reg.active?'Active':active?'Installing':'Registered',reg.active?'An active service worker controls or is ready for this portal.':'A service worker registration exists but is not active yet.');
+      }).catch(function(){setService('pwa','degraded','Unavailable','Could not read service worker registration.');});
+    }
+    $('refresh-btn').addEventListener('click',refresh);
+    window.addEventListener('online',localChecks);window.addEventListener('offline',localChecks);
+    localChecks();refresh();timer=window.setInterval(function(){localChecks();refresh();},30000);
+    window.addEventListener('pagehide',function(){if(timer)clearInterval(timer);});
+    window.setInterval(function(){$('page-uptime').textContent=duration(Date.now()-started);},1000);
+  })();
+  </script>
+</body>
+</html>
