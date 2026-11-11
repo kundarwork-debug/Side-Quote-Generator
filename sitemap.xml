@@ -16,9 +16,9 @@
     <loc>https://apmlportal.vercel.app/about.html</loc>
   </url>
   <url>
-    <loc>https://apmlportal.vercel.app/privacy.html</loc>
+    <loc>https://apmlportal.vercel.app/policy/privacy.html</loc>
   </url>
   <url>
-    <loc>https://apmlportal.vercel.app/terms.html</loc>
+    <loc>https://apmlportal.vercel.app/policy/terms.html</loc>
   </url>
 </urlset>
