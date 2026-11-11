@@ -169,7 +169,7 @@
         var db=(data.checks||[]).find(function(x){return x.id==='firebase';});
         if(db)setService('firebase',db.status,db.latencyMs+' ms',db.message||'Analytics daily-log read path responded.');
         renderHistory(apiMs);
-        var paths=['/core/common.css','/core/common.js','/visitor-tracker.js'];
+        var paths=['/core/common.css','/core/common.js','/core/visitor-tracker.js'];
         var assets=await Promise.all(paths.map(async function(path){try{return await checkAsset(path);}catch(e){return {ok:false,ms:0};}}));
         var failed=assets.filter(function(x){return !x.ok;}).length;
         setService('assets',failed?'degraded':'operational',failed?failed+' failed':'All available',failed?failed+' of '+paths.length+' core assets could not be reached.':'All tested shared assets responded.');
