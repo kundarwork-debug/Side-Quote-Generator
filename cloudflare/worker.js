@@ -1870,7 +1870,7 @@ export default {
       return json({
         ok: true,
         service: 'APML Drive API',
-        version: '2026-11-11-routing-hardening',
+        version: '2026-11-11-telegram-safety',
         routes: {
           announcement: true,
           maintenance: true,
