@@ -427,7 +427,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
               </a>
-              <a href="car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
+              <a href="modules/car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
               </a>
