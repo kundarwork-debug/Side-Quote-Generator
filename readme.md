@@ -73,7 +73,7 @@ The project is built primarily with:
 ├── core/common.js              # Shared site functionality
 ├── core/header.html            # Shared header
 ├── core/footer.html            # Shared footer
-├── modules/analytics.html # Analytics dashboard\n├── modules/visitor-analytics.js # Analytics visitor reports
+├── modules/analytics.html # Analytics dashboard\n├── core/visitor-analytics.js # Analytics visitor reports\n├── core/visitor-tracker.js   # Consent-based visitor tracking
 ├── modules/directory.html         # Directory management
 ├── modules/drive.html    # Cloud Drive
 ├── modules/gallery.html  # Media gallery
