@@ -39,7 +39,7 @@ The portal brings together contact and branch information, operational tools, qu
 - [Analytics Dashboard](https://apmlportal.vercel.app/modules/analytics.html)
 - [Directory](https://apmlportal.vercel.app/modules/directory.html)
 - [Quotation Editor](https://apmlportal.vercel.app/modules/editor.html)
-- [Media Gallery](https://apmlportal.vercel.app/gallery.html)
+- [Media Gallery](https://apmlportal.vercel.app/modules/gallery.html)
 - [Cloud Drive](https://apmlportal.vercel.app/modules/drive.html)
 - [Field Officer](https://apmlportal.vercel.app/modules/field-officer.html)
 - [APML Lite](https://apmlportal.vercel.app/APML-Lite.html)
@@ -71,7 +71,7 @@ The project is built primarily with:
 ├── modules/analytics.html # Analytics dashboard\n├── modules/visitor-analytics.js # Analytics visitor reports
 ├── modules/directory.html         # Directory management
 ├── modules/drive.html    # Cloud Drive
-├── gallery.html           # Media gallery
+├── modules/gallery.html  # Media gallery
 ├── modules/editor.html   # Quotation editor
 ├── modules/field-officer.html # Field Officer workspace\n├── modules/field-officer.js   # Field Officer logic
 ├── car-rate.html          # Car rate utility
