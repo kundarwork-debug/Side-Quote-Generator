@@ -291,6 +291,7 @@ function tgOriginAllowed(request) {
 async function tgSendMessage(env, chatId, payload) {
   if (!env.TELEGRAM_BOT_TOKEN || !chatId) return { ok: false, status: 503, data: { description: 'Telegram is not configured' } };
   const kv = env.ANNOUNCE_KV, now = Date.now();
+  if (!kv) return { ok: false, status: 503, data: { description: 'Telegram safety storage is not configured; message not sent' } };
   // KV is shared across Worker isolates, unlike module memory. It is eventually
   // consistent, so this is a conservative best-effort guard, not an atomic queue.
   if (kv) {
@@ -643,7 +644,7 @@ async function sendPriorityErrorAlert(env, command, error) {
   if(Date.now()-last<5*60*1000)return;
   await env.ANNOUNCE_KV.put(key,String(Date.now()),{expirationTtl:600});
   await tgSendMessage(env,env.TELEGRAM_CHAT_ID,{
-    text:'🚨 <b>HIGH PRIORITY — APML error</b>\\n'+tgEsc(command||'system')+': '+tgEsc(message),
+    text:'🚨 <b>HIGH PRIORITY — APML error</b>\n'+tgEsc(command||'system')+': '+tgEsc(message),
     parse_mode:'HTML',disable_web_page_preview:true
   });
 }
@@ -727,12 +728,12 @@ async function tgReply(env, chatId, replyTo, text) {
   for (let i = 0; i < value.length; i += 3900) chunks.push(value.slice(i, i + 3900));
 
   for (let i = 0; i < chunks.length; i++) {
-
-    await tgSendMessage(env,chatId,{
+    if (i > 0) await new Promise(resolve => setTimeout(resolve, CONFIG.TELEGRAM_MIN_GAP_MS));
+    const sent = await tgSendMessage(env,chatId,{
       text:chunks[i],
       ...(i===0&&replyTo?{reply_to_message_id:replyTo,allow_sending_without_reply:true}:{})
     });
-
+    if (!sent.ok) return;
   }
 
 }
