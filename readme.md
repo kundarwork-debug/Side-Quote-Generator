@@ -65,10 +65,10 @@ The project is built primarily with:
 ```text
 .
 ├── index.html             # Portal home page
-├── common.css             # Shared styles
-├── common.js              # Shared site functionality
-├── header.html            # Shared header
-├── footer.html            # Shared footer
+├── core/common.css             # Shared styles
+├── core/common.js              # Shared site functionality
+├── core/header.html            # Shared header
+├── core/footer.html            # Shared footer
 ├── modules/analytics.html # Analytics dashboard\n├── modules/visitor-analytics.js # Analytics visitor reports
 ├── modules/directory.html         # Directory management
 ├── modules/drive.html    # Cloud Drive
