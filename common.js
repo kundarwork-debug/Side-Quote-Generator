@@ -435,7 +435,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>APML Local Rate</span>
               </a>
-              <a href="system-health.html" class="nav-link ${currentPage === 'system-health.html' ? 'active' : ''}">
+              <a href="modules/system-health.html" class="nav-link ${currentPage === 'system-health.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">monitor_heart</span>
                 <span>System Health</span>
               </a>
