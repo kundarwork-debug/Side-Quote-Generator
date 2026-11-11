@@ -855,29 +855,53 @@
         document.addEventListener('DOMContentLoaded', () => {
             officerHelper = new APMLFieldOfficerDirectory('officerResultsContainer', 'officerSearchInput');
 
+            let initialOfficerLoadHandled = false;
+            const officerLoadTimeout = window.setTimeout(() => {
+                if (initialOfficerLoadHandled) return;
+                initialOfficerLoadHandled = true;
+                const container = document.getElementById('officerResultsContainer');
+                if (container) container.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">The officer directory is taking too long to respond. Please check your connection and refresh.</div>';
+                const overlay = document.getElementById('pageLoadingOverlay');
+                if (overlay) { overlay.classList.add('hide'); window.setTimeout(() => overlay.remove(), 450); }
+            }, 15000);
+
             officersRef.on('value', (snapshot) => {
+                initialOfficerLoadHandled = true;
+                window.clearTimeout(officerLoadTimeout);
                 const data = snapshot.val();
-                
+
                 if (!data || Object.keys(data).length === 0) {
                     const updates = {};
                     initialExcelOfficers.forEach((officer, index) => {
                         const newKey = officersRef.push().key;
                         updates[newKey] = { ...officer, timestamp: Date.now() + index, isDeleted: false };
                     });
-                    officersRef.update(updates).catch(err => console.error("Seeding error:", err));
+                    officersRef.update(updates).catch(err => {
+                        console.error("Field officer seed failed:", err);
+                        const container = document.getElementById('officerResultsContainer');
+                        if (container) container.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">The directory is empty and could not be initialized. Check database write permissions.</div>';
+                        const overlay = document.getElementById('pageLoadingOverlay');
+                        if (overlay) { overlay.classList.add('hide'); window.setTimeout(() => overlay.remove(), 450); }
+                    });
                     return;
                 }
 
                 loadedOfficerData = Object.entries(data).map(([key, value]) => ({ ...(value || {}), id: key }));
-                document.getElementById('recordCount').innerText = loadedOfficerData.filter(i => !i.isDeleted).length;
-
+                const count = document.getElementById('recordCount');
+                if (count) count.innerText = loadedOfficerData.filter(i => !i.isDeleted).length;
                 officerHelper.setData(loadedOfficerData);
+                const overlay = document.getElementById('pageLoadingOverlay');
+                if (overlay) { overlay.classList.add('hide'); window.setTimeout(() => overlay.remove(), 450); }
             }, (error) => {
+                initialOfficerLoadHandled = true;
+                window.clearTimeout(officerLoadTimeout);
                 console.error("Field officer directory sync failed:", error);
                 const container = document.getElementById('officerResultsContainer');
                 if (container) {
-                    container.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">Unable to load the live directory. Check your connection and refresh the page.</div>';
+                    container.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">Unable to load the live directory. Check your connection or database access, then refresh.</div>';
                 }
+                const overlay = document.getElementById('pageLoadingOverlay');
+                if (overlay) { overlay.classList.add('hide'); window.setTimeout(() => overlay.remove(), 450); }
             });
         });
 
