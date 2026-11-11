@@ -45,6 +45,7 @@ The portal brings together contact and branch information, operational tools, qu
 - [APML Lite](https://apmlportal.vercel.app/APML-Lite.html)
 - [Car Rate Calculator](https://apmlportal.vercel.app/car-rate.html)
 - [Local Rate Tools](https://apmlportal.vercel.app/local-rate.html)
+- [System Health](https://apmlportal.vercel.app/modules/system-health.html)
 - [Support APML Portal](https://kundarwork-debug.github.io/sponsor/support.html)
 
 ## Technology
@@ -72,6 +73,7 @@ The project is built primarily with:
 ├── modules/directory.html         # Directory management
 ├── modules/drive.html    # Cloud Drive
 ├── modules/gallery.html  # Media gallery
+├── modules/system-health.html # System health dashboard
 ├── modules/editor.html   # Quotation editor
 ├── modules/field-officer.html # Field Officer workspace\n├── modules/field-officer.js   # Field Officer logic
 ├── car-rate.html          # Car rate utility
