@@ -567,19 +567,39 @@
         document.addEventListener('DOMContentLoaded', () => {
             directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
 
+            let initialDirectoryLoadHandled = false;
+            const directoryLoadTimeout = window.setTimeout(() => {
+                if (initialDirectoryLoadHandled) return;
+                initialDirectoryLoadHandled = true;
+                const results = document.getElementById('masterResultsContainer');
+                if (results) results.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">The directory is taking too long to respond. Please check your connection and refresh.</div>';
+                hideLoadingOverlay();
+            }, 15000);
+
             directoryRef.on('value', (snapshot) => {
+                initialDirectoryLoadHandled = true;
+                window.clearTimeout(directoryLoadTimeout);
                 const data = snapshot.val();
-                
+
                 if (!data || Object.keys(data).length === 0) {
-                    document.getElementById('recordCount').innerText = "0";
+                    const count = document.getElementById('recordCount');
+                    if (count) count.innerText = "0";
                     hideLoadingOverlay();
                     return;
                 }
 
                 loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-                document.getElementById('recordCount').innerText = loadedMasterData.filter(i => !i.isDeleted).length;
+                const count = document.getElementById('recordCount');
+                if (count) count.innerText = loadedMasterData.filter(i => !i.isDeleted).length;
 
                 directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
+            }, (error) => {
+                initialDirectoryLoadHandled = true;
+                window.clearTimeout(directoryLoadTimeout);
+                console.error("Hub directory sync failed:", error);
+                const results = document.getElementById('masterResultsContainer');
+                if (results) results.innerHTML = '<div class="directory-loading-state directory-error-state" role="alert">Unable to load the Hub Directory. Check your connection or database access, then refresh.</div>';
                 hideLoadingOverlay();
             });
         });
