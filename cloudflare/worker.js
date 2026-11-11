@@ -1644,6 +1644,8 @@ async function handleTelegramWebhook(request, env, ctx) {
 
       await sendAnalyticsCsv(env, msg.chat.id);
 
+      await new Promise(resolve => setTimeout(resolve, CONFIG.TELEGRAM_MIN_GAP_MS));
+
       await reply('📄 Analytics CSV export prepared.');
 
       return ok();
