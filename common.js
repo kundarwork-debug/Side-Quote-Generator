@@ -415,7 +415,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">cloud</span>
                 <span>Cloud Drive</span>
               </a>
-              <a href="directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
+              <a href="modules/directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">location_city</span>
                 <span>Hub &amp; Branch Directory</span>
               </a>
@@ -531,7 +531,7 @@ window.sendPortalNotification = function () {};
 
               <div class="footer-link-col">
                 <div class="footer-col-title">Directories</div>
-                <a href="directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
+                <a href="modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
                 <a href="field-officer.html" class="footer-item-link">Field Officer WCRO</a>
               </div>
 
