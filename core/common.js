@@ -174,6 +174,11 @@
     || document.referrer.includes('android-app://');
   if (isStandalone) return;
 
+  // Show the install suggestion on phones only; never on desktop or tablets.
+  const userAgent = navigator.userAgent || '';
+  const isPhone = /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|BlackBerry|Opera Mini/i.test(userAgent);
+  if (!isPhone) return;
+
   let deferredInstallPrompt = null;
   let dismissedUntil = 0;
   try {
@@ -278,7 +283,7 @@
 
   // Give the page time to load before showing the install suggestion.
   window.addEventListener('load', () => {
-    window.setTimeout(showPromo, 3500);
+    window.setTimeout(showPromo, 5000);
   }, { once: true });
 })();
  
