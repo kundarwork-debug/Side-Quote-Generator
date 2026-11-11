@@ -532,7 +532,7 @@ window.sendPortalNotification = function () {};
               <div class="footer-link-col">
                 <div class="footer-col-title">Directories</div>
                 <a href="modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
-                <a href="field-officer.html" class="footer-item-link">Field Officer WCRO</a>
+                <a href="modules/field-officer.html" class="footer-item-link">Field Officer WCRO</a>
               </div>
 
               <div class="footer-link-col">
