@@ -765,7 +765,7 @@ function parseTgCommand(text) {
 
   if (/^(\/)?(cancel|stop)$/i.test(t)) return { cmd: 'cancel', rest: '' };
 
-  const m = t.match(/^\/([A-Za-z]+)(?:@\w+)?(?:\s+([\s\S]\*))?$/);
+  const m = t.match(/^\/([A-Za-z]+)(?:@\w+)?(?:\s+([\s\S]*))?$/);
 
   if (!m) return null;
 
@@ -777,7 +777,7 @@ function parseTgCommand(text) {
 
 function parseDuration(rest) {
 
-  const m = rest.match(/^(\d{1,3})\s?(m|min|mins|h|hr|hrs|hour|hours)\b\s\*([\s\S]\*)$/i);
+  const m = rest.match(/^(\d{1,3})\s?(m|min|mins|h|hr|hrs|hour|hours)\b\s+([\s\S]*)$/i);
 
   if (!m) return { hours: CONFIG.ANNOUNCE_DEFAULT_HOURS, text: rest };
 
