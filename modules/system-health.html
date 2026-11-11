@@ -8,7 +8,7 @@
   <title>APML Portal — System Health</title>
   <meta name="description" content="Live operational status of APML Portal services.">
   <link rel="icon" type="image/svg+xml" href="logo.svg?v=22.4">
-  <link rel="stylesheet" href="common.css?v=23.0">
+  <link rel="stylesheet" href="core/common.css?v=23.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -131,7 +131,7 @@
     <p class="health-foot"><strong>Monitoring scope:</strong> These checks report availability from this browser's point of view. Firebase status verifies the analytics daily-log read path only. This page does not inspect server CPU, memory, private credentials or employee data. A green status is not a guarantee that every portal feature is working.</p>
   </main>
   <div id="footer-container"></div>
-  <script src="common.js?v=23.0"></script>
+  <script src="core/common.js?v=23.0"></script>
   <script>
   (function(){
     'use strict';
@@ -169,7 +169,7 @@
         var db=(data.checks||[]).find(function(x){return x.id==='firebase';});
         if(db)setService('firebase',db.status,db.latencyMs+' ms',db.message||'Analytics daily-log read path responded.');
         renderHistory(apiMs);
-        var paths=['/common.css','/common.js','/visitor-tracker.js'];
+        var paths=['/core/common.css','/core/common.js','/visitor-tracker.js'];
         var assets=await Promise.all(paths.map(async function(path){try{return await checkAsset(path);}catch(e){return {ok:false,ms:0};}}));
         var failed=assets.filter(function(x){return !x.ok;}).length;
         setService('assets',failed?'degraded':'operational',failed?failed+' failed':'All available',failed?failed+' of '+paths.length+' core assets could not be reached.':'All tested shared assets responded.');
