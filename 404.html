@@ -2033,6 +2033,10 @@
           const distToCenter = Math.hypot(a.x - coreX, a.y - coreY);
           if (distToCenter < a.radius + coreHitRadius) {
             createExplosion(a.x, a.y);
+            if (a.boss) {
+              bossActive = false;
+              showToast("BOSS BREACHED THE CORE • Resume defense!");
+            }
             asteroids.splice(i, 1);
             deductLife("Center Station Breached! A Fire Comet slammed into the core!");
             continue;
@@ -2063,6 +2067,10 @@
           }
 
           if (a.x < -90 || a.x > canvas.width + 90 || a.y < -90 || a.y > canvas.height + 90) {
+            if (a.boss) {
+              bossActive = false;
+              showToast("BOSS LOST IN DEEP SPACE • Threat wave resumed");
+            }
             asteroids.splice(i, 1);
             deductLife("Defense Failed! A Fire Comet slipped past containment!");
           }
