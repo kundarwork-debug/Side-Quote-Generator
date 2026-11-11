@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="logo.svg" alt="APML Portal logo" width="120">
-
 # APML Portal
 
 **A connected workspace for everyday operations.**
