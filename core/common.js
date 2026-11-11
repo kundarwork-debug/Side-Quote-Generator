@@ -12,7 +12,9 @@
   const isEditorPage = currentPage === 'editor.html' || currentPage === 'editor';
   const isGalleryPage = currentPage === 'gallery.html' || currentPage === 'gallery';
   const isDrivePage = currentPage === 'drive.html' || currentPage === 'drive';
-  // These pages open directly; feature-specific animations (PDF/footer) remain available.
+  const isDirectoryPage = currentPage === 'directory.html' || currentPage === 'directory';
+  const isFieldOfficerPage = currentPage === 'field-officer.html' || currentPage === 'field-officer';
+  // Keep the footer Lottie available, but do not block pages outside the approved loader list.
   if (isHomePage || isAnalyticsPage || isEditorPage) return;
 
   const truckAnimation = 'https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json';
@@ -23,8 +25,11 @@
     playerScript.async = true;
     document.head.appendChild(playerScript);
   }
-  // Gallery renders its media feed immediately; keep the footer animation but skip a blocking page overlay.
-  if (isGalleryPage || isDrivePage || document.getElementById('pageLoadingOverlay')) return;
+  // Only these four data-heavy pages retain a full-page loading screen.
+  // Directory and Field Officer provide their own data-aware overlays; Drive has its own overlay.
+  // Gallery keeps its existing media-loading experience without a second shared overlay.
+  const keepPageLoader = isDirectoryPage || isFieldOfficerPage || isDrivePage || isGalleryPage;
+  if (!keepPageLoader || isGalleryPage || isDrivePage || document.getElementById('pageLoadingOverlay')) return;
 
   const style = document.createElement('style');
   style.id = 'apml-shared-page-loader-style';
