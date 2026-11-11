@@ -643,22 +643,6 @@
       }
     }
 
-    /* 3D visual accents for homepage operational telemetry */
-    .telemetry-3d-icon {
-      width: 42px;
-      height: 42px;
-      object-fit: contain;
-      display: block;
-      flex: 0 0 auto;
-      filter: drop-shadow(0 5px 8px rgba(28, 25, 23, 0.10));
-    }
-    .telemetry-heading-icon { width: 34px; height: 34px; }
-    .telemetry-stat-item { gap: 8px; }
-    @media (max-width: 560px) {
-      .telemetry-3d-icon { width: 38px; height: 38px; }
-      .telemetry-heading-icon { width: 30px; height: 30px; }
-    }
-
     /* Keyboard and touch polish; keep the existing homepage layout and cards intact */
     .module-card:focus-visible, a:focus-visible, button:focus-visible {
       outline: 3px solid color-mix(in srgb, var(--primary) 48%, transparent);
@@ -1485,7 +1469,7 @@
         <div class="telemetry-header">
           <div class="telemetry-title-group">
             <h3 class="telemetry-main-title" id="scrambleTitle">
-              <img class="telemetry-3d-icon telemetry-heading-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/activity-dynamic-color.png" alt="" loading="lazy" decoding="async">
+              <span class="material-symbols-outlined" style="color: var(--primary);">ecg_heart</span>
               <span data-value="OPERATIONAL TELEMETRY & IMPACT">OPERATIONAL TELEMETRY & IMPACT</span>
             </h3>
             <p class="telemetry-sub-title">Live enterprise statistics across Western Central Regional Office &amp; Nationwide Hubs (Click to view analytics)</p>
@@ -1500,7 +1484,6 @@
         <div class="telemetry-stats-grid">
 
           <div class="telemetry-stat-item">
-            <img class="telemetry-3d-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/users-dynamic-color.png" alt="" loading="lazy" decoding="async">
             <div class="telemetry-stat-label">Live Active Personnel</div>
             <div class="telemetry-stat-value">
               <span id="liveUserCount">0</span> 
@@ -1512,14 +1495,12 @@
           </div>
 
           <div class="telemetry-stat-item">
-            <img class="telemetry-3d-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/file-dynamic-color.png" alt="" loading="lazy" decoding="async">
             <div class="telemetry-stat-label">PDF Quotations Drafted</div>
             <div class="telemetry-stat-value"><span id="totalPdfDownloads">0</span>+</div>
             <div class="telemetry-stat-sub">Exact Container &amp; Maxcare</div>
           </div>
 
           <div class="telemetry-stat-item">
-            <img class="telemetry-3d-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/cloud-dynamic-color.png" alt="" loading="lazy" decoding="async">
             <div class="telemetry-stat-label">Cloud Files &amp; Media Downloads</div>
             <div class="telemetry-stat-value"><span id="totalMediaDownloads">0</span>+</div>
             <div class="telemetry-stat-sub">Drive &amp; gallery archives</div>
