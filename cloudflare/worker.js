@@ -35,7 +35,11 @@ const CONFIG = {
 
   ],
 
-  TELEGRAM_MAX_PER_MINUTE: 15,
+  TELEGRAM_MAX_PER_MINUTE: 8,
+
+  TELEGRAM_MIN_GAP_MS: 1200,
+
+  TELEGRAM_COMMAND_COOLDOWN_MS: 3000,
 
   VISITOR_LOCATION: 'region',
 
@@ -263,7 +267,6 @@ async function trimQuotations(env) {
 
 const TG_EMOJI = { pdf: '🧾', drive: '📥', gallery: '🖼️', visit: '🟢', bug: '🚨', error: '🧯' };
 
-const tgRecent = [];
 
 function tgClean(v, max) {
 
@@ -285,19 +288,46 @@ function tgOriginAllowed(request) {
 
 }
 
-function tgAllowedNow() {
-
-  const now = Date.now();
-
-  while (tgRecent.length && now - tgRecent[0] > 60000) tgRecent.shift();
-
-  if (tgRecent.length >= CONFIG.TELEGRAM_MAX_PER_MINUTE) return false;
-
-  tgRecent.push(now);
-
-  return true;
-
+async function tgSendMessage(env, chatId, payload) {
+  if (!env.TELEGRAM_BOT_TOKEN || !chatId) return { ok: false, status: 503, data: { description: 'Telegram is not configured' } };
+  const kv = env.ANNOUNCE_KV, now = Date.now();
+  // KV is shared across Worker isolates, unlike module memory. It is eventually
+  // consistent, so this is a conservative best-effort guard, not an atomic queue.
+  if (kv) {
+    try {
+      const pausedUntil = Number(await kv.get('telegram_global_pause_until') || 0);
+      if (pausedUntil > now) return { ok:false,status:429,data:{description:'Telegram paused after rate limit',parameters:{retry_after:Math.ceil((pausedUntil-now)/1000)}} };
+      const lastSent = Number(await kv.get('telegram_last_send_at') || 0);
+      const gap = CONFIG.TELEGRAM_MIN_GAP_MS - (now-lastSent);
+      if (gap > 0) return { ok:false,status:429,data:{description:'Telegram pacing limit',parameters:{retry_after:Math.ceil(gap/1000)}} };
+      const minuteKey='telegram_send_minute:'+Math.floor(now/60000);
+      const count=Number(await kv.get(minuteKey)||0);
+      if(count>=CONFIG.TELEGRAM_MAX_PER_MINUTE) return {ok:false,status:429,data:{description:'Telegram safety limit reached',parameters:{retry_after:60-Math.floor((now%60000)/1000)}}};
+      await kv.put('telegram_last_send_at',String(now),{expirationTtl:120});
+      await kv.put(minuteKey,String(count+1),{expirationTtl:120});
+    } catch(error) {
+      console.error('Telegram safety guard unavailable:',error);
+      return {ok:false,status:503,data:{description:'Telegram safety storage unavailable; not sent'}};
+    }
+  }
+  let response,data;
+  try {
+    response=await fetch('https://api.telegram.org/bot'+env.TELEGRAM_BOT_TOKEN+'/sendMessage',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:chatId,...payload})
+    });
+    data=await response.json().catch(()=>({}));
+  } catch(error) {
+    return {ok:false,status:502,data:{description:'Telegram network request failed'}};
+  }
+  if(response.status===429||(data&&data.error_code===429)) {
+    const retryAfter=Math.max(5,Math.min(3600,Number(data.parameters&&data.parameters.retry_after)||30));
+    if(kv) try { await kv.put('telegram_global_pause_until',String(Date.now()+retryAfter*1000),{expirationTtl:retryAfter+30}); }
+    catch(error) { console.error('Could not persist Telegram retry pause:',error); }
+  }
+  return {ok:response.ok&&!!data.ok,status:response.status,data};
 }
+
 
 function tgTime() {
 
@@ -606,31 +636,16 @@ async function handleAdminNotifications(request, env) {
 }
 
 async function sendPriorityErrorAlert(env, command, error) {
-
   if (!env.TELEGRAM_BOT_TOKEN || !env.TELEGRAM_CHAT_ID || !env.ANNOUNCE_KV) return;
-
-  const message = String(error && error.message || error || 'Unknown error').slice(0, 350);
-
-  const key = 'error_alert_cooldown:' + String(command || 'system').replace(/[^a-z0-9\_-]/gi, '\_').slice(0, 40);
-
-  const last = Number(await env.ANNOUNCE_KV.get(key) || 0);
-
-  if (Date.now() - last < 5 * 60 * 1000) return;
-
-  await env.ANNOUNCE_KV.put(key, String(Date.now()), { expirationTtl: 600 });
-
-  try {
-
-    await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-
-      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: '🚨 <b>HIGH PRIORITY — APML error</b>\n' + tgEsc(command || 'system') + ': ' + tgEsc(message), parse_mode: 'HTML', disable_web_page_preview: true })
-
-    });
-
-  } catch (e) {}
-
+  const message=String(error&&error.message||error||'Unknown error').slice(0,350);
+  const key='error_alert_cooldown:'+String(command||'system').replace(/[^a-z0-9_\\-]/gi,'_').slice(0,40);
+  const last=Number(await env.ANNOUNCE_KV.get(key)||0);
+  if(Date.now()-last<5*60*1000)return;
+  await env.ANNOUNCE_KV.put(key,String(Date.now()),{expirationTtl:600});
+  await tgSendMessage(env,env.TELEGRAM_CHAT_ID,{
+    text:'🚨 <b>HIGH PRIORITY — APML error</b>\\n'+tgEsc(command||'system')+': '+tgEsc(message),
+    parse_mode:'HTML',disable_web_page_preview:true
+  });
 }
 
 async function handleNotify(request, env) {
@@ -655,7 +670,7 @@ async function handleNotify(request, env) {
 
   } catch (e) { return json({ ok: false, error: 'Bad request' }, 400); }
 
-  if (!tgAllowedNow()) return json({ ok: false, error: 'Slow down', retry_after: 20 }, 429);
+  // Shared KV pacing and rate checks run immediately before each Telegram send.
 
   const hasDownload = Array.isArray(body && body.items)
 
@@ -691,33 +706,13 @@ async function handleNotify(request, env) {
 
   const priorityPrefix = notifiedItems.some(x => x && ['bug', 'error'].includes(x.type)) ? '🚨 <b>HIGH PRIORITY</b>\n' : '';
 
-  const res = await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-    method: 'POST',
-
-    headers: { 'Content-Type': 'application/json' },
-
-    body: JSON.stringify({
-
-      chat_id: env.TELEGRAM_CHAT_ID,
-
-      text: priorityPrefix + tgMessage(body, tgPlace(request), stats),
-
-      parse_mode: 'HTML',
-
-      disable_web_page_preview: true,
-
-    }),
-
+  const sent=await tgSendMessage(env,env.TELEGRAM_CHAT_ID,{
+    text:priorityPrefix+tgMessage(body,tgPlace(request),stats),
+    parse_mode:'HTML',disable_web_page_preview:true
   });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (res.ok && data.ok) return json({ ok: true });
-
-  const wait = data.parameters && data.parameters.retry_after;
-
-  return json({ ok: false, error: String(data.description || 'Telegram error').slice(0, 200), retry_after: wait }, res.status === 429 ? 429 : 502);
+  if(sent.ok)return json({ok:true});
+  const wait=sent.data&&sent.data.parameters&&sent.data.parameters.retry_after;
+  return json({ok:false,error:String(sent.data&&sent.data.description||'Telegram error').slice(0,200),retry_after:wait},sent.status===429?429:sent.status===503?503:502);
 
 }
 
@@ -733,27 +728,10 @@ async function tgReply(env, chatId, replyTo, text) {
 
   for (let i = 0; i < chunks.length; i++) {
 
-    try {
-
-      await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-        method: 'POST',
-
-        headers: { 'Content-Type': 'application/json' },
-
-        body: JSON.stringify({
-
-          chat_id: chatId,
-
-          text: chunks[i],
-
-          ...(i === 0 && replyTo ? { reply_to_message_id: replyTo, allow_sending_without_reply: true } : {})
-
-        }),
-
-      });
-
-    } catch (e) {}
+    await tgSendMessage(env,chatId,{
+      text:chunks[i],
+      ...(i===0&&replyTo?{reply_to_message_id:replyTo,allow_sending_without_reply:true}:{})
+    });
 
   }
 
@@ -1341,9 +1319,16 @@ async function handleTelegramWebhook(request, env, ctx) {
 
   try { update = await request.json(); } catch { return ok(); }
 
-  const msg = update && update.message;
-
-  if (!msg || typeof msg.text !== 'string' || !msg.chat) return ok();
+  const msg=update&&update.message;
+  if(!msg||typeof msg.text!=='string'||!msg.chat)return ok();
+  // Ignore webhook redeliveries so retries cannot repeat a command.
+  if(env.ANNOUNCE_KV&&update.update_id!=null){
+    const updateKey='telegram_update_seen:'+String(update.update_id);
+    try{
+      if(await env.ANNOUNCE_KV.get(updateKey))return ok();
+      await env.ANNOUNCE_KV.put(updateKey,'1',{expirationTtl:86400});
+    }catch(error){console.error('Telegram update dedupe storage unavailable:',error);return ok();}
+  }
 
   if (String(msg.chat.id) !== String(env.TELEGRAM_CHAT_ID || '')) return ok();
 
@@ -1365,20 +1350,16 @@ async function handleTelegramWebhook(request, env, ctx) {
 
   // Admin commands are deliberately disabled until an explicit Telegram user-ID allowlist is configured.
 
-  if (!allowed.length) {
-
-    await reply('⚠️ Admin commands are locked. Configure TELEGRAM_ADMIN_IDS in Cloudflare with your Telegram numeric user ID(s), comma-separated.');
-
-    return ok();
-
-  }
-
-  if (!allowed.includes(senderId)) {
-
-    await reply('⛔ This Telegram account is not on the APML admin allowlist.');
-
-    return ok();
-
+  // Do not reply to unknown users or when the admin allowlist is unset.
+  if(!allowed.length||!allowed.includes(senderId))return ok();
+  // Suppress rapid repeated admin commands instead of replying to every tap.
+  if(env.ANNOUNCE_KV){
+    const commandKey='telegram_command_cooldown:'+senderId;
+    try{
+      const last=Number(await env.ANNOUNCE_KV.get(commandKey)||0);
+      if(Date.now()-last<CONFIG.TELEGRAM_COMMAND_COOLDOWN_MS)return ok();
+      await env.ANNOUNCE_KV.put(commandKey,String(Date.now()),{expirationTtl:15});
+    }catch(error){console.error('Telegram command cooldown storage unavailable:',error);return ok();}
   }
 
   try {
@@ -1813,25 +1794,9 @@ async function sendHourlyAnalyticsSummary(env) {
 
     '🕒 ' + tgTime();
 
-  await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-    method: 'POST',
-
-    headers: { 'Content-Type': 'application/json' },
-
-    body: JSON.stringify({
-
-      chat_id: env.TELEGRAM_CHAT_ID,
-
-      text: message,
-
-      parse_mode: 'HTML',
-
-      disable_web_page_preview: true,
-
-    }),
-
-  }).catch(() => {});
+  await tgSendMessage(env,env.TELEGRAM_CHAT_ID,{
+    text:message,parse_mode:'HTML',disable_web_page_preview:true
+  });
 
 }
 
