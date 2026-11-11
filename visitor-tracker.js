@@ -197,6 +197,17 @@
     });
   }
 
+  // Allow the dedicated policy page to reopen the consent dialog on demand.
+  window.apmlReviewPrivacyChoices = function () {
+    try {
+      localStorage.removeItem(PRIVACY_KEY);
+      localStorage.removeItem(CONSENT_KEY);
+      sessionStorage.removeItem("apml-privacy-dismissed");
+      sessionStorage.removeItem("apml-analytics-consent-dismissed");
+    } catch (_) {}
+    window.location.reload();
+  };
+
   function init() {
     let privacyChoice = null;
     let dismissed = false;
