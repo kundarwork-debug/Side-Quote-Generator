@@ -1576,3 +1576,31 @@ button, input, textarea, select {
   }
   .brand-title-wrap > h1 { font-size: 21px !important; }
 }
+
+/* =========================================================
+   MOBILE TOUCH TARGET REFINEMENT
+   Keep the shared header comfortable to use on narrow phones.
+   ========================================================= */
+@media (max-width: 480px) {
+  .site-header .hamburger {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+  }
+
+  .site-header .theme-switch {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .nav-menu {
+    max-width: calc(100vw - 20px);
+  }
+
+  .nav-link {
+    min-height: 44px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
