@@ -1108,10 +1108,27 @@ async function sendAnalyticsCsv(env, chatId) {
 
   form.append('document', new Blob([csv], { type: 'text/csv;charset=utf-8' }), name);
 
-  const response = await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendDocument', { method: 'POST', body: form });
+  // File uploads use the same shared KV safety limits as sendMessage.
+  const kv = env.ANNOUNCE_KV;
+  if (!kv) throw new Error('Telegram safety storage is not configured; CSV was not sent.');
+  const now = Date.now();
+  const pausedUntil = Number(await kv.get('telegram_global_pause_until') || 0);
+  if (pausedUntil > now) throw new Error('Telegram is temporarily paused after a rate-limit response.');
+  const lastSent = Number(await kv.get('telegram_last_send_at') || 0);
+  if (CONFIG.TELEGRAM_MIN_GAP_MS - (now - lastSent) > 0) throw new Error('Telegram pacing limit; try the export again shortly.');
+  const minuteKey = 'telegram_send_minute:' + Math.floor(now / 60000);
+  const count = Number(await kv.get(minuteKey) || 0);
+  if (count >= CONFIG.TELEGRAM_MAX_PER_MINUTE) throw new Error('Telegram safety limit reached; try the export next minute.');
+  await kv.put('telegram_last_send_at', String(now), { expirationTtl: 120 });
+  await kv.put(minuteKey, String(count + 1), { expirationTtl: 120 });
 
+  const response = await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendDocument', { method: 'POST', body: form });
   const body = await response.json().catch(() => ({}));
 
+  if (response.status === 429 || (body && body.error_code === 429)) {
+    const retryAfter = Math.max(5, Math.min(3600, Number(body.parameters && body.parameters.retry_after) || 30));
+    await kv.put('telegram_global_pause_until', String(Date.now() + retryAfter * 1000), { expirationTtl: retryAfter + 30 });
+  }
   if (!response.ok || !body.ok) throw new Error(body.description || 'Telegram CSV upload failed.');
 
 }
