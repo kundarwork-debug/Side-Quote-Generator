@@ -492,7 +492,7 @@ const ADMIN_NOTIFICATIONS_KEY = 'admin_notifications';
 
 function notificationPriority(type) {
 
-  if (type === 'bug' || type === 'error' || type === 'scheduled_backup_failed') return 'high';
+  if (type === 'bug' || type === 'error') return 'high';
 
   if (type === 'visit') return 'low';
 
@@ -798,7 +798,7 @@ function leftText(ms) {
 
 // -----------------------------------------------------------------------------
 
-// APML COMPLETE ADMIN BOT — reporting, file inventory, maintenance and backup
+// APML COMPLETE ADMIN BOT — reporting, file inventory and maintenance
 
 // -----------------------------------------------------------------------------
 
@@ -869,10 +869,6 @@ const ADMIN_HELP_TEXT =
   '/maintenance off — disable maintenance screen\n' +
 
   '/alerts on|off — hourly summary alerts\n' +
-
-  '/backup — export Firebase to Google Drive\n' +
-
-  '/backup status — latest backup details\n' +
 
   '/help — show this menu';
 
@@ -1146,8 +1142,6 @@ async function buildHealthReport(env) {
 
   const kv = !!env.ANNOUNCE_KV;
 
-  const googleConfigured = !!(env.APML_GOOGLE_SERVICE_ACCOUNT_JSON && env.APML_GOOGLE_DRIVE_FOLDER_ID);
-
   const cloudinaryConfigured = !!(env.CLOUDINARY_API_KEY && env.CLOUDINARY_API_SECRET);
 
   const telegramConfigured = !!(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID && env.TELEGRAM_WEBHOOK_SECRET);
@@ -1157,8 +1151,6 @@ async function buildHealthReport(env) {
     'Firebase RTDB read: ' + (firebase.ok ? 'OK' : 'FAILED') + '\n' +
 
     'Telegram secrets: ' + (telegramConfigured ? 'configured' : 'missing') + '\n' +
-
-    'Google Drive backup: ' + (googleConfigured ? 'configured' : 'not configured') + '\n' +
 
     'Cloudinary credentials: ' + (cloudinaryConfigured ? 'configured' : 'missing') + '\n' +
 
@@ -1329,206 +1321,6 @@ async function searchPortalFiles(query) {
       (i + 1) + '. [' + m.source + '] ' + tgClean(m.name, 120) + (m.url ? '\n   ' + tgClean(m.url, 220) : '')).join('\n')
 
     : 'No matching Drive or Gallery records found.';
-
-}
-
-function base64UrlEncode(value) {
-
-  const bytes = typeof value === 'string' ? new TextEncoder().encode(value) : new Uint8Array(value);
-
-  let binary = '';
-
-  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-
-  return btoa(binary).replace(/\\+/g, '-').replace(/\//g, '\_').replace(/=+$/g, '');
-
-}
-
-function pemToArrayBuffer(pem) {
-
-  const body = String(pem).replace(/-----BEGIN PRIVATE KEY-----/g, '').replace(/-----END PRIVATE KEY-----/g, '').replace(/\s+/g, '');
-
-  const binary = atob(body);
-
-  const bytes = new Uint8Array(binary.length);
-
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-
-  return bytes.buffer;
-
-}
-
-async function getGoogleAccessToken(serviceAccount) {
-
-  const tokenUrl = 'https://oauth2.googleapis.com/token';
-
-  const now = Math.floor(Date.now() / 1000);
-
-  const header = base64UrlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-
-  const claims = base64UrlEncode(JSON.stringify({
-
-    iss: serviceAccount.client_email,
-
-    scope: 'https://www.googleapis.com/auth/firebase.database https://www.googleapis.com/auth/drive.file',
-
-    aud: tokenUrl,
-
-    iat: now,
-
-    exp: now + 3600
-
-  }));
-
-  const unsigned = header + '.' + claims;
-
-  const key = await crypto.subtle.importKey(
-
-    'pkcs8', pemToArrayBuffer(serviceAccount.private_key),
-
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']
-
-  );
-
-  const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(unsigned));
-
-  const assertion = unsigned + '.' + base64UrlEncode(signature);
-
-  const response = await fetch(tokenUrl, {
-
-    method: 'POST',
-
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-
-    body: new URLSearchParams({
-
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-
-      assertion
-
-    })
-
-  });
-
-  const body = await response.json().catch(() => ({}));
-
-  if (!response.ok || !body.access_token) throw new Error('Google OAuth failed: ' + (body.error_description || body.error || response.status));
-
-  return body.access_token;
-
-}
-
-async function createGoogleDriveBackup(env) {
-
-  if (!env.APML_GOOGLE_SERVICE_ACCOUNT_JSON || !env.APML_GOOGLE_DRIVE_FOLDER_ID) {
-
-    throw new Error('Google Drive backup is not configured. Add APML_GOOGLE_SERVICE_ACCOUNT_JSON and APML_GOOGLE_DRIVE_FOLDER_ID.');
-
-  }
-
-  let serviceAccount;
-
-  try { serviceAccount = JSON.parse(env.APML_GOOGLE_SERVICE_ACCOUNT_JSON); }
-
-  catch { throw new Error('APML_GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON.'); }
-
-  if (!serviceAccount.client_email || !serviceAccount.private_key) throw new Error('Service account JSON is missing client_email or private_key.');
-
-  const accessToken = await getGoogleAccessToken(serviceAccount);
-
-  const firebaseUrl = CONFIG.FIREBASE_DB_URL + '/.json?format=export&access_token=' + encodeURIComponent(accessToken);
-
-  const exportResponse = await fetch(firebaseUrl, { headers: { Accept: 'application/json' } });
-
-  if (!exportResponse.ok) {
-
-    const detail = (await exportResponse.text()).slice(0, 300);
-
-    throw new Error('Firebase export failed (' + exportResponse.status + '). Check service-account database access and RTDB rules. ' + detail);
-
-  }
-
-  const database = await exportResponse.json();
-
-  const jsonText = JSON.stringify(database);
-
-  const sizeBytes = new TextEncoder().encode(jsonText).byteLength;
-
-  const maxBytes = Math.max(1024 * 1024, Number(env.APML_BACKUP_MAX_BYTES) || 20 * 1024 * 1024);
-
-  if (sizeBytes > maxBytes) throw new Error('Firebase export is ' + sizeBytes + ' bytes, above the Worker backup limit of ' + maxBytes + '. Use a streamed backup job for this database size.');
-
-  const stamp = new Date().toLocaleString('en-CA', {
-
-    timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit',
-
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-
-  }).replace(/[,: ]/g, '-');
-
-  const name = 'APML_Backup\_' + stamp + '\_IST.json';
-
-  const boundary = 'apml_backup\_' + Date.now().toString(36);
-
-  const metadata = {
-
-    name,
-
-    mimeType: 'application/json',
-
-    parents: [String(env.APML_GOOGLE_DRIVE_FOLDER_ID)],
-
-    description: 'Automated APML Portal Firebase Realtime Database export. Created by the APML Cloudflare Worker.'
-
-  };
-
-  const multipart =
-
-    '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' +
-
-    JSON.stringify(metadata) + '\r\n--' + boundary +
-
-    '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' +
-
-    jsonText + '\r\n--' + boundary + '--';
-
-  const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,webViewLink,size,createdTime', {
-
-    method: 'POST',
-
-    headers: {
-
-      Authorization: 'Bearer ' + accessToken,
-
-      'Content-Type': 'multipart/related; boundary=' + boundary
-
-    },
-
-    body: multipart
-
-  });
-
-  const uploaded = await uploadResponse.json().catch(() => ({}));
-
-  if (!uploadResponse.ok || !uploaded.id) throw new Error('Google Drive upload failed: ' + (uploaded.error && uploaded.error.message || uploadResponse.status));
-
-  const record = {
-
-    id: uploaded.id,
-
-    name: uploaded.name || name,
-
-    webViewLink: uploaded.webViewLink || '',
-
-    sizeBytes,
-
-    createdAt: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST'
-
-  };
-
-  if (env.ANNOUNCE_KV) await env.ANNOUNCE_KV.put('last_backup', JSON.stringify(record));
-
-  return record;
 
 }
 
@@ -1938,52 +1730,6 @@ async function handleTelegramWebhook(request, env, ctx) {
 
     }
 
-    if (command.cmd === 'backup') {
-
-      if (command.rest.trim().toLowerCase() === 'status') {
-
-        const last = env.ANNOUNCE_KV ? JSON.parse((await env.ANNOUNCE_KV.get('last_backup')) || 'null') : null;
-
-        await reply(last
-
-          ? '☁️ Last Google Drive backup\nFile: ' + last.name + '\nCreated: ' + last.createdAt + '\nSize: ' + tgNum(last.sizeBytes || 0) + ' bytes\nDrive file ID: ' + last.id
-
-          : 'No successful Google Drive backup is recorded yet.');
-
-        return ok();
-
-      }
-
-      await reply('⏳ Starting Firebase export and Google Drive upload. I will send another message when it finishes.');
-
-      const backupTask = (async () => {
-
-        try {
-
-          const result = await createGoogleDriveBackup(env);
-
-          await reply('✅ Backup uploaded to Google Drive\nFile: ' + result.name + '\nSize: ' + tgNum(result.sizeBytes) + ' bytes\nDrive file ID: ' + result.id);
-
-          await logAdminActivity(env, 'backup', result.name, senderId);
-
-        } catch (error) {
-
-          await logAdminError(env, 'backup', error);
-
-          await reply('❌ Backup failed: ' + String(error && error.message || error).slice(0, 500));
-
-        }
-
-      })();
-
-      if (ctx && typeof ctx.waitUntil === 'function') ctx.waitUntil(backupTask);
-
-      else await backupTask;
-
-      return ok();
-
-    }
-
     if (command.cmd === 'alerts') {
 
       if (!env.ANNOUNCE_KV) { await reply('KV storage is required for alert preferences.'); return ok(); }
@@ -2251,62 +1997,6 @@ export default {
   async scheduled(event, env, ctx) {
 
     ctx.waitUntil(sendHourlyAnalyticsSummary(env));
-
-    // Add a Cloudflare Cron trigger of 30 18 * * * for a daily midnight-IST Drive backup.
-
-    if (event && event.cron === '30 18 * * \*') {
-
-      ctx.waitUntil((async () => {
-
-        try {
-
-          const result = await createGoogleDriveBackup(env);
-
-          await logAdminActivity(env, 'scheduled_backup', result.name, 'cron');
-
-          if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-
-            await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-              method: 'POST',
-
-              headers: { 'Content-Type': 'application/json' },
-
-              body: JSON.stringify({
-
-                chat_id: env.TELEGRAM_CHAT_ID,
-
-                text: '✅ Scheduled Google Drive backup completed\n' + result.name + '\n' + tgNum(result.sizeBytes) + ' bytes'
-
-              })
-
-            });
-
-          }
-
-        } catch (error) {
-
-          await logAdminError(env, 'scheduled_backup', error);
-
-          if (env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID) {
-
-            await fetch('https://api.telegram.org/bot' + env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-
-              method: 'POST',
-
-              headers: { 'Content-Type': 'application/json' },
-
-              body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text: '❌ Scheduled APML backup failed: ' + String(error.message || error).slice(0, 500) })
-
-            });
-
-          }
-
-        }
-
-      })());
-
-    }
 
   },
 
