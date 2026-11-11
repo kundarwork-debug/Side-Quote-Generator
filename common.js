@@ -419,7 +419,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">location_city</span>
                 <span>Hub &amp; Branch Directory</span>
               </a>
-              <a href="field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
+              <a href="modules/field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">badge</span>
                 <span>Field Officer Directory WCRO</span>
               </a>
