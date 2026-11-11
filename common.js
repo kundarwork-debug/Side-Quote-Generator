@@ -537,10 +537,10 @@ window.sendPortalNotification = function () {};
 
               <div class="footer-link-col">
                 <div class="footer-col-title">Resources &amp; Legal</div>
-                <a href="terms.html" class="footer-item-link">Terms &amp; Conditions</a>
-                <a href="privacy.html" class="footer-item-link">Privacy Policy</a>
+                <a href="policy/terms.html" class="footer-item-link">Terms &amp; Conditions</a>
+                <a href="policy/privacy.html" class="footer-item-link">Privacy Policy</a>
                 <a href="policy/cookies.html" class="footer-item-link">Cookies &amp; Storage Policy</a>
-                <a href="bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
+                <a href="policy/bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
               </div>
             </div>
 
