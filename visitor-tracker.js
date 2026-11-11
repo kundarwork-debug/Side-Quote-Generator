@@ -95,19 +95,23 @@
     style.textContent = `
       #apml-privacy-consent{position:fixed;inset:0;z-index:100900;display:grid;place-items:center;padding:16px;background:rgba(15,18,24,.58);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;animation:apmlCookieFade .2s ease}
       #apml-privacy-consent *{box-sizing:border-box}
-      #apml-privacy-consent .apml-cookie-card{width:min(100%,340px);max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:25px 25px 23px;border:1px solid rgba(255,255,255,.8);border-radius:14px;background:#fff;color:#1a1a1a;text-align:center;box-shadow:2px 2px 24px rgba(0,0,0,.12);animation:apmlCookiePop .24s ease}
+      html[data-theme="dark"] #apml-privacy-consent .apml-cookie-card{background:var(--surface-card,#151e2e);color:var(--text-main,#f8fafc);border-color:var(--surface-border,#334155)}
+      html[data-theme="dark"] #apml-privacy-consent .apml-cookie-heading{color:var(--text-main,#f8fafc)}
+      html[data-theme="dark"] #apml-privacy-consent .apml-cookie-description{color:var(--text-muted,#a8b5c7)}
+      html[data-theme="dark"] #apml-privacy-consent .apml-cookie-decline{background:var(--surface-raised,#1e293b);color:var(--text-main,#f8fafc)}
+      #apml-privacy-consent .apml-cookie-card{width:min(100%,340px);max-height:calc(100dvh - 32px);overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:25px 25px 23px;border:1px solid var(--md-sys-color-outline-variant,#e2e8f0);border-radius:14px;background:var(--md-sys-color-surface-container-lowest,#fff);color:var(--md-sys-color-on-surface,#0f172a);text-align:center;box-shadow:var(--md-elevation-3,0 12px 32px rgba(0,0,0,.15));animation:apmlCookiePop .24s ease}
       #apml-privacy-consent .apml-cookie-icon{display:block;width:50px;height:50px;flex:none}
-      #apml-privacy-consent .apml-cookie-icon path{fill:#615151}
-      #apml-privacy-consent .apml-cookie-heading{margin:0;color:#1a1a1a;font-size:20px;line-height:1.25;font-weight:800}
-      #apml-privacy-consent .apml-cookie-description{margin:0;color:#636363;font-size:12px;font-weight:600;line-height:1.65}
-      #apml-privacy-consent .apml-cookie-description a{color:#2563eb;text-decoration:none;text-underline-offset:3px}
+      #apml-privacy-consent .apml-cookie-icon path{fill:var(--md-sys-color-primary,#b91c1c)}
+      #apml-privacy-consent .apml-cookie-heading{margin:0;color:var(--md-sys-color-on-surface,#0f172a);font-size:20px;line-height:1.25;font-weight:800}
+      #apml-privacy-consent .apml-cookie-description{margin:0;color:var(--md-sys-color-on-surface-variant,#64748b);font-size:12px;font-weight:600;line-height:1.65}
+      #apml-privacy-consent .apml-cookie-description a{color:var(--md-sys-color-primary,#b91c1c);text-decoration:none;text-underline-offset:3px}
       #apml-privacy-consent .apml-cookie-description a:hover{text-decoration:underline}
       #apml-privacy-consent .apml-cookie-buttons{display:flex;flex-direction:row;justify-content:center;gap:14px;width:100%;margin-top:2px}
       #apml-privacy-consent .apml-cookie-buttons button{width:100px;min-height:38px;border:0;border-radius:20px;font:700 13px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;cursor:pointer;transition:background .2s ease,box-shadow .2s ease,transform .2s ease}
-      #apml-privacy-consent .apml-cookie-allow{background:#7b57ff;color:#fff;box-shadow:0 4px 8px -2px #977ef3}
-      #apml-privacy-consent .apml-cookie-allow:hover{background:#9173ff;box-shadow:0 8px 16px -3px #977ef3;transform:translateY(-1px)}
-      #apml-privacy-consent .apml-cookie-decline{background:#dadada;color:#2e2e2e;box-shadow:0 4px 8px -2px #bebdbd}
-      #apml-privacy-consent .apml-cookie-decline:hover{background:#ebebeb;box-shadow:0 8px 14px -3px #bebdbd;transform:translateY(-1px)}
+      #apml-privacy-consent .apml-cookie-allow{background:var(--md-sys-color-primary,#b91c1c);color:#fff;box-shadow:var(--md-elevation-1,0 1px 3px rgba(0,0,0,.08))}
+      #apml-privacy-consent .apml-cookie-allow:hover{background:var(--md-sys-color-on-primary-container,#991b1b);box-shadow:var(--md-elevation-2,0 6px 16px rgba(0,0,0,.1));transform:translateY(-1px)}
+      #apml-privacy-consent .apml-cookie-decline{background:var(--md-sys-color-surface-container,#e2e8f0);color:var(--md-sys-color-on-surface,#0f172a);box-shadow:var(--md-elevation-1,0 1px 3px rgba(0,0,0,.08))}
+      #apml-privacy-consent .apml-cookie-decline:hover{background:var(--md-sys-color-surface-container-low,#f1f5f9);box-shadow:var(--md-elevation-2,0 6px 16px rgba(0,0,0,.1));transform:translateY(-1px)}
       #apml-privacy-consent button:focus-visible,#apml-privacy-consent a:focus-visible{outline:3px solid #9c83ff;outline-offset:3px}
       @keyframes apmlCookieFade{from{opacity:0}to{opacity:1}}@keyframes apmlCookiePop{from{opacity:0;transform:translateY(8px) scale(.98)}to{opacity:1;transform:none}}
       @media(max-width:380px){#apml-privacy-consent .apml-cookie-card{padding:22px 19px}#apml-privacy-consent .apml-cookie-description{font-size:11px}}
