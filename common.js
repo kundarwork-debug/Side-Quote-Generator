@@ -423,7 +423,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">badge</span>
                 <span>Field Officer Directory WCRO</span>
               </a>
-              <a href="APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
+              <a href="modules/APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
               </a>
@@ -431,7 +431,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
               </a>
-              <a href="local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
+              <a href="modules/local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>APML Local Rate</span>
               </a>
