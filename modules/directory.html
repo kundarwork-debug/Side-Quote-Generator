@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <base href="../">
+  <script>(function(){var theme='light';try{var saved=localStorage.getItem('apml-theme');if(saved==='dark'||saved==='light')theme=saved;}catch(error){}document.documentElement.setAttribute('data-theme',theme);})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>APML Hub & Branch Directory</title>
+    
+    <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.35">
+    <link rel="stylesheet" href="common.css?v=23.0">
+
+    <!-- SweetAlert2 Library -->
+    <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        :root {
+            --primary: #c21d1d;
+            --primary-dark: #991b1b;
+            --primary-gradient: linear-gradient(135deg, #c21d1d 0%, #e11d48 50%, #f43f5e 100%);
+            --primary-soft: rgba(194, 29, 29, 0.08);
+            
+            --bg-base: #FDF8F5;
+            --surface-card: #FFFFFF;
+            
+            --border-subtle: #ede4de;
+            --border-hover: rgba(194, 29, 29, 0.35);
+            
+            --text-main: #292524;
+            --text-secondary: #44403c;
+            --text-muted: #78716c;
+            
+            --radius-xl: 20px;
+            --radius-pill: 9999px;
+            
+            --shadow-card: 0 4px 20px -2px rgba(120, 113, 108, 0.05);
+            --shadow-float: 0 16px 30px -8px rgba(185, 28, 28, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+            
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            overflow-y: scroll !important;
+            height: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            overflow-y: visible !important;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            padding-top: 80px;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+
+        /* FOOTER LOTTIE TRUCK LOADING SCREEN — shared with Cloud Drive */
+        #pageLoadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(253, 248, 245, 0.48);
+            -webkit-backdrop-filter: blur(12px) saturate(115%);
+            backdrop-filter: blur(12px) saturate(115%);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+        #pageLoadingOverlay.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-card-box {
+            background: rgba(255, 255, 255, 0.78);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            padding: 2rem 2.5rem;
+            border-radius: 1.25rem;
+            border: 1.5px solid rgba(255, 255, 255, 0.72);
+            box-shadow: 0 18px 48px rgba(45, 35, 30, 0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .loader.footer-truck-loader {
+            width: 220px;
+            height: 112px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-loading-truck { display: block; width: 210px; height: 112px; background: transparent; }
+        .loading-label {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 24px 24px 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .directory-header-wrap {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
+            color: var(--primary);
+            border-radius: var(--radius-pill);
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.03em;
+        }
+
+        .page-title span {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            color: #059669;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 14px;
+        }
+
+        .card {
+            background: #FFFFFF !important;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-float);
+        }
+
+        .card-header {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            letter-spacing: -0.01em;
+        }
+
+        .lookup-box {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .lookup-input {
+            width: 100%;
+            padding: 15px 20px 15px 48px;
+            font-size: 14.5px;
+            font-weight: 600;
+            border: 1.5px solid var(--border-subtle);
+            border-radius: var(--radius-pill);
+            outline: none;
+            background: #FFFFFF;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+        }
+
+        .lookup-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 29, 29, 0.1);
+        }
+
+        .lookup-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 22px;
+        }
+
+        .quick-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .chip {
+            background: #F7EDE6;
+            border: 1px solid var(--border-subtle);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .chip:hover { background: var(--primary); color: #ffffff; border-color: var(--primary); transform: translateY(-1px); }
+
+        .lookup-results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        /* APML Android/mobile viewport corrections */
+        @media (max-width: 768px) {
+            html, body { width: 100%; max-width: 100%; overflow-x: hidden !important; }
+            body { min-height: 100vh; height: auto !important; overflow-y: auto !important; }
+            .main-container { width: 100% !important; max-width: 100% !important; min-width: 0 !important; padding: 18px 14px 36px !important; gap: 20px !important; }
+            .card { min-width: 0 !important; max-width: 100% !important; padding: 18px !important; }
+            .lookup-input { min-width: 0 !important; max-width: 100% !important; }
+            .lookup-results-list, .directory-header-wrap { min-width: 0 !important; max-width: 100% !important; }
+            #footer-container, .site-footer { width: 100% !important; max-width: 100% !important; min-width: 0 !important; height: auto !important; overflow: visible !important; }
+            .site-footer { margin-top: 28px !important; padding: 26px 16px 22px !important; gap: 22px !important; }
+            .footer-grid-layout, .footer-bottom-row { width: 100% !important; flex-direction: column !important; align-items: flex-start !important; gap: 18px !important; }
+            .footer-left-col { width: 100% !important; max-width: 100% !important; min-width: 0 !important; }
+            .footer-right-col { width: 100% !important; max-width: 100% !important; }
+            .footer-brand-group { flex-wrap: wrap !important; }
+            .footer-subtitle, .footer-desc, .footer-copyright { overflow-wrap: anywhere !important; }
+            .footer-actions-group { flex-wrap: wrap !important; }
+        }
+        @media (max-width: 420px) {
+            .main-container { padding-left: 12px !important; padding-right: 12px !important; }
+            .card { padding: 14px !important; border-radius: 16px !important; }
+            .site-footer { padding-left: 14px !important; padding-right: 14px !important; }
+            .footer-author-pill { max-width: 100%; }
+        }
+
+        html[data-theme="dark"] body.apml-directory-page {
+            --primary:#f87171; --primary-dark:#ef4444; --primary-soft:rgba(248,113,113,.12);
+            --bg-base:var(--apml-color-page,#10141d); --surface-card:var(--apml-color-surface,#171d29);
+            --border-subtle:var(--apml-color-border,#303a4b); --border-hover:rgba(248,113,113,.35);
+            --text-main:var(--apml-color-text,#f2f3f5); --text-secondary:var(--apml-color-text-secondary,#d0d4dc);
+            --text-muted:var(--apml-color-text-muted,#a2aab8); --shadow-card:var(--apml-shadow-soft,0 2px 8px rgba(0,0,0,.18));
+        }
+        html[data-theme="dark"] body.apml-directory-page .header-badge,
+        html[data-theme="dark"] body.apml-directory-page #masterSearchInput,
+        html[data-theme="dark"] body.apml-directory-page .chip,
+        html[data-theme="dark"] body.apml-directory-page .directory-results-shell,
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row,
+        html[data-theme="dark"] body.apml-directory-page .directory-empty-state,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-form,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-form input,
+        html[data-theme="dark"] body.apml-directory-page #adminToggleBtn {
+            background:var(--apml-color-surface,#171d29)!important;
+            color:var(--apml-color-text,#f2f3f5)!important;
+            border-color:var(--apml-color-border,#303a4b)!important;
+        }
+        html[data-theme="dark"] body.apml-directory-page .directory-table-head,
+        html[data-theme="dark"] body.apml-directory-page .directory-edit-panel {
+            background:var(--apml-color-surface-subtle,#202838)!important;
+            border-color:var(--apml-color-border,#303a4b)!important;
+            color:var(--apml-color-text-muted,#a2aab8)!important;
+        }
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row[data-deleted="true"] { background:rgba(127,29,29,.18)!important; }
+        html[data-theme="dark"] body.apml-directory-page .directory-record-row:hover { background:var(--apml-color-surface-subtle,#202838)!important; }
+        html[data-theme="dark"] body.apml-directory-page .status-badge { background:rgba(16,185,129,.12)!important;border-color:rgba(52,211,153,.24)!important;color:#6ee7b7!important; }
+        html[data-theme="dark"] body.apml-directory-page .loader-card-box { background:var(--apml-color-surface,#171d29);border-color:var(--apml-color-border,#303a4b);color:var(--apml-color-text,#f2f3f5); }
+        #masterSearchInput { min-height:52px;font-size:16px!important; }
+        .chip { min-height:40px;display:inline-flex;align-items:center;justify-content:center; }
+        #createContactBtn,#bulkUploadBtn { min-height:44px; }\n        #bulkUploadBtn:focus-visible { outline:3px solid color-mix(in srgb,var(--primary) 48%,transparent);outline-offset:3px; }\n        @media(max-width:560px){ #bulkUploadBtn{padding:8px 10px!important;font-size:11px!important;} }
+        .chip:focus-visible,#createContactBtn:focus-visible,#adminToggleBtn:focus-visible,#masterSearchInput:focus-visible,
+        .directory-row-actions button:focus-visible,.directory-address-actions a:focus-visible,.directory-address-actions button:focus-visible {
+            outline:3px solid color-mix(in srgb,var(--primary) 48%,transparent);outline-offset:3px;
+        }
+        @media(max-width:560px) {
+            .main-container { padding-left:14px!important;padding-right:14px!important; }
+            .card-header { gap:10px!important; } .quick-chips { gap:7px!important; } .chip { padding:8px 12px!important; }
+        }
+        @media(max-width:560px) {
+            /* DIRECTORY MOBILE ACTION WRAP FIX */
+            .card-header > div:last-child {
+                display:flex !important;
+                flex-wrap:wrap !important;
+                justify-content:flex-start !important;
+                width:100% !important;
+                min-width:0 !important;
+                gap:8px !important;
+            }
+            #createContactBtn { flex:1 1 150px; justify-content:center; }
+            #bulkUploadBtn { flex:1 1 130px; justify-content:center; }
+            #adminToggleBtn { flex:0 0 42px !important; }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            *,*::before,*::after { scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important; }
+        }
+    
+        /* Final page-width override: this page must use the full desktop canvas. */
+        body.apml-directory-page main.main-container,
+        body.apml-directory-page .main-container {
+            display: flex !important;
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            align-self: stretch !important;
+            box-sizing: border-box !important;
+        }
+        body.apml-directory-page main.main-container > .card,
+        body.apml-directory-page .directory-results-shell,
+        body.apml-directory-page .lookup-results-list {
+            width: 100% !important;
+            max-width: none !important;
+            min-width: 0 !important;
+            box-sizing: border-box !important;
+        }
+
+    .directory-header-wrap>.apml-3d-page-icon{display:block;width:68px;height:68px;object-fit:contain;margin:0 auto 6px;filter:drop-shadow(0 7px 9px rgba(120,70,50,.14));}@media(max-width:600px){.directory-header-wrap>.apml-3d-page-icon{width:58px;height:58px;}}
+  </style>
+
+
+<style id="apml-compact-3d-header">
+  .directory-header-wrap { gap: 5px; margin-bottom: 16px; }
+  .directory-header-wrap > .apml-3d-page-icon {
+    width: 42px; height: 42px; margin: 0 auto 2px;
+  }
+  .directory-header-wrap .header-badge { margin-bottom: 2px; }
+  .directory-header-wrap .page-title { margin-top: 0; margin-bottom: 3px; }
+  @media(max-width:600px) {
+    .directory-header-wrap > .apml-3d-page-icon { width: 36px; height: 36px; }
+  }
+</style>
+
+
+<style id="apml-space-saving-header">
+  body .main-container { padding-top: 10px !important; gap: 20px !important; }
+  body .directory-header-wrap { gap: 4px !important; }
+  body .directory-header-wrap > .apml-3d-page-icon { width: 36px !important; height: 36px !important; margin-bottom: 0 !important; }
+  body .header-badge { margin-bottom: 0 !important; padding: 4px 11px !important; }
+  body .page-title { line-height: 1.12 !important; }
+  body .status-badge { margin-top: 6px !important; padding: 5px 11px !important; }
+  @media(max-width:768px) { body .main-container { padding-top: 8px !important; gap: 16px !important; } body .directory-header-wrap > .apml-3d-page-icon { width: 32px !important; height: 32px !important; } }
+</style>
+
+  <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+
+    <!-- FOOTER LOTTIE TRUCK LOADING OVERLAY -->
+    <div id="pageLoadingOverlay">
+        <div class="loader-card-box">
+            <div class="loader footer-truck-loader">
+                <lottie-player
+                    class="page-loading-truck"
+                    src="https://lottie.host/c98b389d-7d8c-4ef0-b1d7-9777c095e5c3/q4tTVYKfM5.json"
+                    background="transparent"
+                    speed="1"
+                    loop
+                    autoplay
+                    aria-hidden="true">
+                </lottie-player>
+            </div>
+            <div class="loading-label">Loading Directory...</div>
+        </div>
+    </div>
+
+    <div id="header-container"></div>
+
+    <main class="main-container">
+        
+        <div class="directory-header-wrap">
+            <img class="apml-3d-page-icon" src="https://3dicons.sgp1.cdn.digitaloceanspaces.com/v1/dynamic/color/location-dynamic-color.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <div class="header-badge">
+                <span class="material-symbols-outlined" style="font-size: 15px;">hub</span>
+                <span>APML Unified Enterprise Directory</span>
+            </div>
+            <h1 class="page-title">APML Hub &amp; Branch <span>Directory</span></h1>
+            
+            <span class="status-badge">
+                <span class="material-symbols-outlined" style="font-size: 16px;">cloud_sync</span>
+                Firebase Real-Time Synchronized (<span id="recordCount">0</span> Records)
+            </span>
+        </div>
+
+        <section class="card" style="border: 2px solid var(--border-hover);">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined">travel_explore</span>
+                    Search All Hubs &amp; Branches
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <!-- Create Contact Button -->
+                    <button type="button" id="createContactBtn" onclick="openCreateContactModal()" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary); color: #ffffff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(194, 29, 29, 0.2); transition: all 0.2s ease;">
+                        <span class="material-symbols-outlined" style="font-size: 18px;">add_circle</span> + Create Contact
+                    </button>
+                    <!-- Admin-only Excel bulk upload -->
+                    <button type="button" id="bulkUploadBtn" onclick="document.getElementById('contactsExcelInput').click()" title="Import contacts from Excel" style="display:none; align-items:center; gap:7px; padding:8px 14px; background:#1f6f4a; color:#fff; border:0; border-radius:9999px; font-size:12px; font-weight:700; cursor:pointer;">
+                        <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload Excel
+                    </button>
+                    <input type="file" id="contactsExcelInput" accept=".xlsx,.xls,.csv" hidden onchange="handleContactsExcel(event)">
+                    <!-- Google Logo Admin Button -->
+                    <button type="button" id="adminToggleBtn" onclick="toggleAdminMode()" title="Admin Login" style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #ffffff; border: 1.5px solid var(--border-subtle); border-radius: 50%; cursor: pointer; box-shadow: var(--shadow-card); transition: all 0.2s ease;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="lookup-box">
+                <span class="material-symbols-outlined lookup-icon">search</span>
+                <input type="text" id="masterSearchInput" class="lookup-input" placeholder="Type city, branch code, officer name, or phone number...">
+            </div>
+
+            <div class="quick-chips">
+                <span class="chip" onclick="filterByChip('Mumbai')">Mumbai</span>
+                <span class="chip" onclick="filterByChip('Pune')">Pune</span>
+                <span class="chip" onclick="filterByChip('Gurgaon')">Gurgaon</span>
+                <span class="chip" onclick="filterByChip('Ahmedabad')">Ahmedabad</span>
+                <span class="chip" onclick="filterByChip('Delhi')">Delhi</span>
+                <span class="chip" onclick="filterByChip('Bangalore')">Bangalore</span>
+                <span class="chip" onclick="filterByChip('Kolkata')">Kolkata</span>
+                <span class="chip" onclick="filterByChip('Hyderabad')">Hyderabad</span>
+                <span class="chip" onclick="filterByChip('Chennai')">Chennai</span>
+                <span class="chip" onclick="filterByChip('Indore')">Indore</span>
+                <span class="chip" onclick="filterByChip('Jaipur')">Jaipur</span>
+                <span class="chip" onclick="filterByChip('Nagpur')">Nagpur</span>
+                <span class="chip" onclick="filterByChip('Surat')">Surat</span>
+                <span class="chip" onclick="filterByChip('Lucknow')">Lucknow</span>
+            </div>
+
+            <div id="masterResultsContainer" class="lookup-results-list"></div>
+        </section>
+
+    </main>
+
+    <div id="footer-container"></div>
+
+    <!-- SheetJS is loaded only when an authorized admin selects an import file. -->\n\n    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+
+    <!-- Initialize Firebase -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8",
+            authDomain: "apml-portal.firebaseapp.com",
+            databaseURL: "https://apml-portal-default-rtdb.firebaseio.com",
+            projectId: "apml-portal",
+            storageBucket: "apml-portal.firebasestorage.app",
+            messagingSenderId: "479017159240",
+            appId: "1:479017159240:web:0853422718e6195b74a67d",
+            measurementId: "G-4H1HT31DYB"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+    </script>
+
+    <!-- Core Scripts -->
+    <script src="common.js?v=23.2"></script>
+    <script src="directory.js?v=4"></script>
+
+    <script>
+        function loadDirectoryScript(src) {
+            if (!window.__apmlDirectoryScriptPromises) window.__apmlDirectoryScriptPromises = {};
+            if (window.__apmlDirectoryScriptPromises[src]) return window.__apmlDirectoryScriptPromises[src];
+            window.__apmlDirectoryScriptPromises[src] = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.async = true;
+                script.onload = resolve;
+                script.onerror = () => {
+                    delete window.__apmlDirectoryScriptPromises[src];
+                    reject(new Error('Unable to load required library.'));
+                };
+                document.head.appendChild(script);
+            });
+            return window.__apmlDirectoryScriptPromises[src];
+        }
+
+        const db = firebase.database();
+        const directoryRef = db.ref('directory');
+
+        let directoryHelper = null;
+        let loadedMasterData = [];
+        let isAdminMode = false;
+
+        const ALLOWED_ADMIN_EMAILS = ["kundar701@gmail.com", "kundar.work@gmail.com"];
+
+        function hideLoadingOverlay() {
+            const overlay = document.getElementById('pageLoadingOverlay');
+            if (overlay) {
+                overlay.classList.add('hide');
+                setTimeout(() => { overlay.style.display = 'none'; }, 400);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            directoryHelper = new APMLDirectory('masterResultsContainer', 'masterSearchInput');
+
+            directoryRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                
+                if (!data || Object.keys(data).length === 0) {
+                    document.getElementById('recordCount').innerText = "0";
+                    hideLoadingOverlay();
+                    return;
+                }
+
+                loadedMasterData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                document.getElementById('recordCount').innerText = loadedMasterData.filter(i => !i.isDeleted).length;
+
+                directoryHelper.setData(loadedMasterData);
+                hideLoadingOverlay();
+            });
+        });
+
+        function filterByChip(term) {
+            const input = document.getElementById('masterSearchInput');
+            if (input && directoryHelper) {
+                input.value = term;
+                directoryHelper.filterData(term);
+            }
+        }
+
+        // Admin View Toggle with Google Login & Email Restriction
+        function toggleAdminMode() {
+            if (!firebase.auth) {
+                loadDirectoryScript('https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js')
+                    .then(() => toggleAdminMode())
+                    .catch(error => Swal.fire('Admin sign-in unavailable', error.message, 'error'));
+                return;
+            }
+            if (!isAdminMode) {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                firebase.auth().signInWithPopup(provider)
+                    .then((result) => {
+                        const userEmail = (result.user.email || "").toLowerCase().trim();
+
+                        if (!ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+                            firebase.auth().signOut();
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Access Denied',
+                                text: `Account (${userEmail}) is not authorized as an Admin.`
+                            });
+                            return;
+                        }
+
+                        isAdminMode = true;
+                        const uploadBtn = document.getElementById('bulkUploadBtn');
+                        if (uploadBtn) uploadBtn.style.display = 'inline-flex';
+                        const btn = document.getElementById('adminToggleBtn');
+                        btn.style.background = '#991b1b';
+                        btn.title = "Exit Admin View";
+                        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size: 18px; color: #ffffff;">logout</span>';
+
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: `Welcome Admin (${userEmail})`,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+
+                        if (directoryHelper) {
+                            directoryHelper.toggleAdminView(true);
+                        }
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Sign-In Failed',
+                            text: error.message
+                        });
+                    });
+            } else {
+                firebase.auth().signOut().then(() => {
+                    isAdminMode = false;
+                    const uploadBtn = document.getElementById('bulkUploadBtn');
+                    if (uploadBtn) uploadBtn.style.display = 'none';
+                    const fileInput = document.getElementById('contactsExcelInput');
+                    if (fileInput) fileInput.value = '';
+                    const btn = document.getElementById('adminToggleBtn');
+                    btn.style.background = '#ffffff';
+                    btn.title = "Admin Login";
+                    btn.innerHTML = `
+                        <svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
+                            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.13 0-5.78-2.11-6.73-4.96H1.15v3.14C3.15 21.32 7.22 24 12 24z"/>
+                            <path fill="#FBBC05" d="M5.27 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.62H1.15C.42 8.1 0 9.77 0 11.5s.42 3.4 1.15 4.88l4.12-3.14z"/>
+                            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.22 0 3.15 2.68 1.15 6.62l4.12 3.14c.95-2.85 3.6-4.96 6.73-4.96z"/>
+                        </svg>`;
+
+                    if (directoryHelper) {
+                        directoryHelper.toggleAdminView(false);
+                    }
+                });
+            }
+        }
+
+        // Open SweetAlert modal to create new contact
+        window.openCreateContactModal = async function() {
+            const { value: formValues } = await Swal.fire({
+                title: 'Create New Contact',
+                html:
+                    '<input id="swal-category" class="swal2-input" placeholder="Category (e.g., Hub / Branch)">' +
+                    '<input id="swal-location" class="swal2-input" placeholder="Location / Branch Name">' +
+                    '<input id="swal-region" class="swal2-input" placeholder="Region">' +
+                    '<input id="swal-designation" class="swal2-input" placeholder="Designation / Role">' +
+                    '<input id="swal-name" class="swal2-input" placeholder="Contact Person Name">' +
+                    '<input id="swal-contact" class="swal2-input" placeholder="Contact Number">' +
+                    '<input id="swal-address" class="swal2-input" placeholder="Full Address">',
+                focusConfirm: false,
+                showCancelButton: true,
+                confirmButtonColor: '#c21d1d',
+                preConfirm: () => {
+                    return {
+                        category: document.getElementById('swal-category').value.trim(),
+                        location: document.getElementById('swal-location').value.trim(),
+                        region: document.getElementById('swal-region').value.trim(),
+                        designation: document.getElementById('swal-designation').value.trim(),
+                        name: document.getElementById('swal-name').value.trim(),
+                        contact: document.getElementById('swal-contact').value.trim(),
+                        address: document.getElementById('swal-address').value.trim(),
+                        isDeleted: false
+                    }
+                }
+            });
+
+            if (formValues) {
+                if (!formValues.name || !formValues.location) {
+                    Swal.fire('Error', 'Name and Location are required fields!', 'error');
+                    return;
+                }
+
+                directoryRef.push(formValues).then(() => {
+                    Swal.fire({
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'New contact created successfully!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }).catch(err => {
+                    Swal.fire('Error', err.message, 'error');
+                });
+            }
+        };
+
+
+        // Excel bulk import into the same Realtime Database directory used by this page.
+        // Excel headers: category, contactName, contactNumber, designation, fullAddress, location, region.
+        window.handleContactsExcel = async function(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            if (!isAdminMode || !firebase.auth().currentUser ||
+                !ALLOWED_ADMIN_EMAILS.includes(String(firebase.auth().currentUser.email || '').toLowerCase().trim())) {
+                event.target.value = '';
+                Swal.fire('Admin access required', 'Please sign in with an authorized admin account first.', 'warning');
+                return;
+            }
+            if (!window.XLSX) {
+                try {
+                    await loadDirectoryScript('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+                } catch (loadError) {
+                    Swal.fire('Excel reader unavailable', 'Please check your connection and try again.', 'error');
+                    event.target.value = '';
+                    return;
+                }
+            }
+            try {
+                const buffer = await file.arrayBuffer();
+                const workbook = XLSX.read(buffer, { type: 'array', cellText: true, cellDates: false });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                if (!sheet) throw new Error('The workbook does not contain a readable sheet.');
+                const rows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false });
+                if (!rows.length) throw new Error('No contact rows were found in the first worksheet.');
+
+                const requiredHeaders = ['category','contactname','contactnumber','designation','fulladdress','location','region'];
+                const headers = Object.keys(rows[0]).map(h => String(h).trim().toLowerCase());
+                const missing = requiredHeaders.filter(h => !headers.includes(h));
+                if (missing.length) throw new Error('Missing columns: ' + missing.join(', ') + '. Please use the agreed seven column names exactly.');
+
+                const normalized = rows.map((row, index) => {
+                    const get = key => {
+                        const actual = Object.keys(row).find(h => String(h).trim().toLowerCase() === key.toLowerCase());
+                        return actual ? String(row[actual] ?? '').trim() : '';
+                    };
+                    const record = {
+                        category: get('category'),
+                        name: get('contactName'),
+                        contact: get('contactNumber').replace(/\s+/g, ''),
+                        designation: get('designation'),
+                        address: get('fullAddress'),
+                        location: get('location'),
+                        region: get('region'),
+                        isDeleted: false
+                    };
+                    return { rowNumber: index + 2, record };
+                }).filter(item => Object.values(item.record).some(v => v !== '' && v !== false));
+
+                const invalid = normalized.filter(x => !x.record.category || !x.record.name || !x.record.contact);
+                const valid = normalized.filter(x => x.record.category && x.record.name && x.record.contact);
+                const existingKeys = new Set((loadedMasterData || []).filter(x => !x.isDeleted).map(x =>
+                    String(x.contact || '').replace(/\D/g,'') + '|' + String(x.location || '').trim().toLowerCase()
+                ));
+                const seen = new Set();
+                const unique = [];
+                const duplicates = [];
+                valid.forEach(item => {
+                    const key = item.record.contact.replace(/\D/g,'') + '|' + item.record.location.trim().toLowerCase();
+                    if (existingKeys.has(key) || seen.has(key)) duplicates.push(item);
+                    else { seen.add(key); unique.push(item); }
+                });
+
+                const previewRows = unique.slice(0, 8).map(x =>
+                    '<tr><td>' + x.rowNumber + '</td><td>' + escapeHtml(x.record.name) + '</td><td>' +
+                    escapeHtml(x.record.contact) + '</td><td>' + escapeHtml(x.record.location) + '</td></tr>'
+                ).join('');
+                const preview = '<div style="text-align:left;font-size:13px;line-height:1.6">' +
+                    '<p><b>' + rows.length + '</b> rows read from <b>' + escapeHtml(file.name) + '</b>.</p>' +
+                    '<p>Ready to import: <b style="color:#15803d">' + unique.length + '</b> · Duplicates to skip: <b>' + duplicates.length +
+                    '</b> · Invalid rows: <b>' + invalid.length + '</b></p>' +
+                    (previewRows ? '<div style="max-height:220px;overflow:auto;margin-top:12px"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr><th>Row</th><th>Name</th><th>Number</th><th>Location</th></tr></thead><tbody>' + previewRows + '</tbody></table></div>' : '<p>No new valid contacts to import.</p>') +
+                    '</div>';
+                if (!unique.length) {
+                    await Swal.fire({ icon:'info', title:'Nothing to import', html:preview });
+                    return;
+                }
+                const confirm = await Swal.fire({
+                    icon:'question', title:'Review Excel import', html:preview,
+                    showCancelButton:true, confirmButtonText:'Import ' + unique.length + ' contacts',
+                    cancelButtonText:'Cancel', confirmButtonColor:'#1f6f4a', width:680
+                });
+                if (!confirm.isConfirmed) return;
+                if (!isAdminMode || !firebase.auth().currentUser ||
+                    !ALLOWED_ADMIN_EMAILS.includes(String(firebase.auth().currentUser.email || '').toLowerCase().trim())) {
+                    throw new Error('Admin session expired. Please sign in again.');
+                }
+
+                const updates = {};
+                unique.forEach(item => {
+                    const key = directoryRef.push().key;
+                    updates[key] = item.record;
+                });
+                const entries = Object.entries(updates);
+                let imported = 0;
+                for (let i = 0; i < entries.length; i += 200) {
+                    const chunk = Object.fromEntries(entries.slice(i, i + 200));
+                    await directoryRef.update(chunk);
+                    imported += Object.keys(chunk).length;
+                    Swal.update({ title:'Importing contacts…', html:'Successfully saved ' + imported + ' of ' + unique.length + ' contacts.' });
+                }
+                await Swal.fire({ icon:'success', title:'Import complete', html:
+                    '<p><b>' + imported + '</b> contacts added to the live Directory.</p>' +
+                    '<p>Skipped duplicates: ' + duplicates.length + ' · Invalid rows: ' + invalid.length + '</p>' });
+            } catch (error) {
+                console.error('Directory Excel import failed:', error);
+                Swal.fire('Import failed', error.message || 'Unable to import this workbook.', 'error');
+            } finally {
+                event.target.value = '';
+            }
+        };
+
+        window.saveRecord = function(id) {
+            const updatedData = {
+                category: document.getElementById(`cat_${id}`).value.trim(),
+                location: document.getElementById(`loc_${id}`).value.trim(),
+                region: document.getElementById(`reg_${id}`).value.trim(),
+                designation: document.getElementById(`des_${id}`).value.trim(),
+                name: document.getElementById(`nam_${id}`).value.trim(),
+                contact: document.getElementById(`con_${id}`).value.trim(),
+                address: document.getElementById(`adr_${id}`).value.trim()
+            };
+
+            const existing = loadedMasterData.find(i => String(i.id) === String(id));
+            if (existing && existing.isDeleted) {
+                updatedData.isDeleted = true;
+            }
+
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).set(updatedData).then(() => {
+                Swal.fire({
+                  position: "top-end",
+                  icon: "success",
+                  title: "Your work has been saved",
+                  showConfirmButton: false,
+                  timer: 1500
+                });
+                toggleEditCard(id);
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Error updating record: " + err.message
+                });
+            });
+        };
+
+        // Soft Delete: admin action executes immediately without a confirmation warning.
+        window.deleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).update({ isDeleted: true }).then(() => {
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  icon: "success",
+                  title: "Contact moved to deleted records",
+                  showConfirmButton: false,
+                  timer: 1800
+                });
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Delete failed",
+                  text: "Error deleting record: " + err.message
+                });
+            });
+        };
+
+        // Restore contact
+        window.restoreRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).update({ isDeleted: false }).then(() => {
+                Swal.fire({
+                  title: "Restored!",
+                  text: "Contact is now active again.",
+                  icon: "success",
+                  timer: 1500,
+                  showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Error restoring record: " + err.message
+                });
+            });
+        };
+
+        // Permanent Delete: admin action executes immediately without a confirmation warning.
+        window.permanentDeleteRecord = function(id) {
+            const record = loadedMasterData.find(i => String(i.id) === String(id) || String(i.firebaseKey) === String(id));
+            const targetKey = record ? (record.firebaseKey || record.id) : id;
+
+            directoryRef.child(targetKey).remove().then(() => {
+                Swal.fire({
+                  toast: true,
+                  position: "top-end",
+                  icon: "success",
+                  title: "Contact permanently deleted",
+                  showConfirmButton: false,
+                  timer: 1800
+                });
+            }).catch(err => {
+                Swal.fire({
+                  icon: "error",
+                  title: "Delete failed",
+                  text: "Error deleting permanently: " + err.message
+                });
+            });
+        };
+    </script>
+</body>
+</html>
