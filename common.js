@@ -411,7 +411,7 @@ window.sendPortalNotification = function () {};
                 <span class="material-symbols-outlined">photo_library</span>
                 <span>Gallery</span>
               </a>
-              <a href="drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
+              <a href="modules/drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">cloud</span>
                 <span>Cloud Drive</span>
               </a>
@@ -526,7 +526,7 @@ window.sendPortalNotification = function () {};
                 <a href="index.html" class="footer-item-link">Home Portal</a>
                 <a href="modules/editor.html" class="footer-item-link">Quotation Editor</a>
                 <a href="gallery.html" class="footer-item-link">Packing Gallery</a>
-                <a href="drive.html" class="footer-item-link">Cloud Drive</a>
+                <a href="modules/drive.html" class="footer-item-link">Cloud Drive</a>
               </div>
 
               <div class="footer-link-col">
