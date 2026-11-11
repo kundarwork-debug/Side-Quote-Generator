@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        var saved = localStorage.getItem('apml-theme');
+        if (saved === 'dark' || saved === 'light') theme = saved;
+      } catch (error) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Learn how APML Portal uses essential browser storage and optional visitor analytics, and review your privacy choices.">
+  <meta name="robots" content="index,follow">
+  <base href="../">
+  <title>Cookies &amp; Storage Policy — APML Portal</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=21.44">
+  <link rel="stylesheet" href="common.css?v=23.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <style>
+    :root {
+      --cookie-bg:#f8f5f0;--cookie-card:#fff;--cookie-border:#e7dfd7;
+      --cookie-text:#1c1917;--cookie-muted:#706963;--cookie-soft:#f5eee8;
+      --cookie-accent:#b91c1c;--cookie-shadow:0 16px 42px rgba(50,35,25,.07);
+    }
+    html[data-theme="dark"] {
+      --cookie-bg:#090d16;--cookie-card:#111b2d;--cookie-border:#29364b;
+      --cookie-text:#f8fafc;--cookie-muted:#aab6c7;--cookie-soft:#1b2940;
+      --cookie-accent:#f87171;--cookie-shadow:0 16px 42px rgba(0,0,0,.22);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--cookie-bg);color:var(--cookie-text);font-family:'Plus Jakarta Sans',sans-serif}
+    .cookie-page{position:relative;z-index:1;width:min(100% - 32px,920px);margin:112px auto 72px}
+    .cookie-hero{padding:clamp(25px,5vw,44px);border:1px solid var(--cookie-border);border-radius:24px;background:var(--cookie-card);box-shadow:var(--cookie-shadow)}
+    .cookie-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--cookie-border);border-radius:999px;background:var(--cookie-soft);color:var(--cookie-accent);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    h1{margin:17px 0 10px;font-size:clamp(30px,5vw,43px);line-height:1.12;letter-spacing:-.045em}
+    .cookie-lead{max-width:720px;margin:0;color:var(--cookie-muted);font-size:15px;line-height:1.75}
+    .cookie-updated{display:block;margin-top:18px;color:var(--cookie-muted);font-size:12px}
+    .cookie-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+    .cookie-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 17px;border:1px solid var(--cookie-border);border-radius:12px;background:var(--cookie-soft);color:var(--cookie-text);font:700 13px inherit;text-decoration:none;cursor:pointer}
+    .cookie-button.primary{background:var(--cookie-accent);border-color:var(--cookie-accent);color:#fff}
+    .cookie-section{margin-top:17px;padding:clamp(21px,4vw,30px);border:1px solid var(--cookie-border);border-radius:19px;background:var(--cookie-card)}
+    .cookie-section h2{margin:0 0 10px;font-size:19px;letter-spacing:-.025em}
+    .cookie-section p,.cookie-section li{color:var(--cookie-muted);font-size:14px;line-height:1.75}
+    .cookie-section p{margin:8px 0}
+    .cookie-section ul{padding-left:21px;margin:10px 0}
+    .cookie-table-wrap{overflow-x:auto;margin-top:14px;border:1px solid var(--cookie-border);border-radius:13px}
+    .cookie-table{width:100%;min-width:570px;border-collapse:collapse;font-size:13px}
+    .cookie-table th,.cookie-table td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--cookie-border)}
+    .cookie-table th{background:var(--cookie-soft);color:var(--cookie-text);font-weight:800}
+    .cookie-table td{color:var(--cookie-muted);line-height:1.6}
+    .cookie-table tr:last-child td{border-bottom:0}
+    .cookie-note{padding:14px 16px;border-left:3px solid var(--cookie-accent);border-radius:0 10px 10px 0;background:var(--cookie-soft)}
+    .cookie-note p{margin:0}
+    .cookie-links{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px}
+    .cookie-links a{color:var(--cookie-accent);font-size:13px;font-weight:750;text-underline-offset:3px}
+    @media(max-width:600px){.cookie-page{width:calc(100% - 24px);margin:92px auto 48px}.cookie-hero{border-radius:19px}.cookie-section{border-radius:16px}.cookie-actions{display:grid;grid-template-columns:1fr}.cookie-button{width:100%}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+  <link rel="canonical" href="https://apmlportal.vercel.app/policy/cookies.html">
+</head>
+<body>
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div id="header-container"></div>
+  <main class="cookie-page">
+    <header class="cookie-hero">
+      <span class="cookie-eyebrow"><span class="material-symbols-outlined" aria-hidden="true">tune</span> Privacy preferences</span>
+      <h1>Cookies &amp; Storage Policy</h1>
+      <p class="cookie-lead">A clear explanation of the small pieces of browser storage APML Portal uses, what optional visitor analytics means, and how you can change your choice.</p>
+      <span class="cookie-updated">Last reviewed: 11 November 2026</span>
+      <div class="cookie-actions">
+        <button class="cookie-button primary" type="button" onclick="if(window.apmlReviewPrivacyChoices){window.apmlReviewPrivacyChoices()}else{alert('Privacy choices are not available on this page right now. Please reload and try again.')}">
+          <span class="material-symbols-outlined" aria-hidden="true">manage_accounts</span> Review my choices
+        </button>
+        <a class="cookie-button" href="privacy.html"><span class="material-symbols-outlined" aria-hidden="true">shield</span> Read privacy policy</a>
+      </div>
+    </header>
+
+    <section class="cookie-section">
+      <h2>1. What do we mean by cookies?</h2>
+      <p>Cookies are small pieces of information a website may store in your browser. APML Portal also uses browser storage such as localStorage and sessionStorage. These technologies can remember preferences or maintain a temporary browser session; they are not all technically cookies.</p>
+      <p>This page uses the term “cookies &amp; storage” to explain these technologies together.</p>
+    </section>
+
+    <section class="cookie-section">
+      <h2>2. Essential storage</h2>
+      <p>Essential storage supports core portal behaviour and preferences. It remains active so the website can function, regardless of your optional analytics choice.</p>
+      <div class="cookie-table-wrap">
+        <table class="cookie-table">
+          <thead><tr><th>Storage key</th><th>Purpose</th><th>Storage type</th></tr></thead>
+          <tbody>
+            <tr><td><code>apml-theme</code></td><td>Remembers the selected light or dark appearance.</td><td>localStorage</td></tr>
+            <tr><td><code>apml-visitor-session</code></td><td>Identifies a browser session for visitor analytics when analytics has been allowed.</td><td>sessionStorage</td></tr>
+            <tr><td>Feature-specific preferences</td><td>Some portal tools may store settings or temporary state needed for their features.</td><td>Browser storage, depending on feature</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cookie-section">
+      <h2>3. Optional visitor analytics</h2>
+      <p>Visitor analytics is optional and starts only after you choose “Accept all” or save customized preferences with analytics enabled. It helps us understand portal usage and improve reliability and navigation.</p>
+      <p>When enabled, the portal's analytics script may use the following information:</p>
+      <ul>
+        <li>A browser visitor identifier and a session identifier.</li>
+        <li>The page path and page title visited.</li>
+        <li>The referring page address, when the browser provides one.</li>
+        <li>Time spent on a page, reported in short intervals.</li>
+        <li>Technical request information that the analytics service may use to derive an approximate city, masked IP address, or device category.</li>
+      </ul>
+      <p>The portal's consent prompt states that analytics does not use precise location or cross-site tracking. Analytics identifiers are stored in browser storage and are not used to make the portal's core features conditional on consent.</p>
+      <div class="cookie-table-wrap">
+        <table class="cookie-table">
+          <thead><tr><th>Storage key</th><th>Purpose</th><th>Storage type</th></tr></thead>
+          <tbody>
+            <tr><td><code>apml-privacy-consent</code></td><td>Remembers an accepted analytics choice and its update time.</td><td>localStorage</td></tr>
+            <tr><td><code>apml-analytics-consent</code></td><td>Legacy compatibility key for an explicit analytics opt-in.</td><td>localStorage</td></tr>
+            <tr><td><code>apml-visitor-id</code></td><td>Recognizes the same browser for analytics reporting.</td><td>localStorage</td></tr>
+            <tr><td><code>apml-visitor-session</code></td><td>Groups activity within a browser session.</td><td>sessionStorage</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cookie-section">
+      <h2>4. Your choices</h2>
+      <ul>
+        <li><strong>Accept all:</strong> enables optional visitor analytics and saves that choice in this browser.</li>
+        <li><strong>Reject optional:</strong> keeps essential storage available and does not enable optional analytics.</li>
+        <li><strong>Customize:</strong> lets you choose whether optional visitor analytics is enabled.</li>
+        <li><strong>Close the prompt:</strong> dismisses it for the current browser session; it may appear again on a later visit.</li>
+      </ul>
+      <p>You can revisit the consent prompt at any time using the “Review my choices” button at the top of this page. Your choice applies to this browser and may need to be made again on another device or browser.</p>
+    </section>
+
+    <section class="cookie-section">
+      <h2>5. Clearing browser storage</h2>
+      <p>You can clear website data through your browser's privacy or site-settings controls. Clearing it may reset saved preferences, remove analytics identifiers, sign you out of services, or affect other portal features. If you clear the consent record, the portal may ask for your analytics choice again.</p>
+    </section>
+
+    <section class="cookie-section">
+      <h2>6. Changes to this policy</h2>
+      <p>This explanation may be updated when the portal's storage or analytics behaviour changes. The review date at the top indicates the latest editorial review of this page.</p>
+      <div class="cookie-note"><p>Questions about privacy or how the portal handles information? Contact <a href="mailto:kundar.work@gmail.com">kundar.work@gmail.com</a>.</p></div>
+      <div class="cookie-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="index.html">Back to APML Portal</a>
+      </div>
+    </section>
+  </main>
+  <div id="footer-container"></div>
+  <script src="common.js?v=23.2"></script>
+  <script src="visitor-tracker.js?v=5"></script>
+</body>
+</html>
