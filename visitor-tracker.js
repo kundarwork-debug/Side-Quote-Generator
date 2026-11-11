@@ -163,6 +163,7 @@
   };
 
   function init() {
+    const isCookiesPolicyPage = /(?:^|\/)policy\/cookies\.html$/.test(window.location.pathname.replace(/\/+$/, ""));
     let privacyChoice = null;
     let dismissed = false;
     try {
@@ -177,7 +178,7 @@
       if (localStorage.getItem(CONSENT_KEY) === "no") localStorage.removeItem(CONSENT_KEY);
     } catch (_) {}
     if (privacyChoice && privacyChoice.analytics === true) startTracking();
-    else if (!dismissed) showConsent();
+    else if (!dismissed && !isCookiesPolicyPage) showConsent();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
