@@ -10,6 +10,10 @@
 
 </div>
 
+<p align="center">
+  <img src="other/apml-social-preview-final.png" alt="APML Portal banner" width="100%">
+</p>
+
 ---
 
 ## Overview
@@ -79,7 +83,7 @@ The project is built primarily with:
 ├── modules/car-rate.html          # Car rate utility
 ├── modules/local-rate.html        # Local rate utility
 ├── modules/APML-Lite.html         # APML Lite
-├── readme-banner.svg      # README banner artwork
+├── other/apml-social-preview-final.png # README banner artwork
 └── android-app/           # Android WebView application project
 ```
 
