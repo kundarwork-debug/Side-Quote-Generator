@@ -140,6 +140,7 @@
       if (analyticsAllowed) startTracking();
     }
     overlay.querySelector(".apml-cookie-allow").addEventListener("click", () => saveChoice(true, true));
+    overlay.querySelector(".apml-cookie-description a").addEventListener("click", () => { overlay.remove(); });
     overlay.querySelector(".apml-cookie-decline").addEventListener("click", () => saveChoice(false, false));
     overlay.addEventListener("click", event => { if (event.target === overlay) closeForSession(); });
     document.addEventListener("keydown", function onEscape(event) {
