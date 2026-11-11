@@ -9,7 +9,7 @@
    To force every visitor to drop old copies after a big change, just bump
    VERSION below (for example 'v7').
    ===================================================================== */
-const VERSION = 'v52';
+const VERSION = 'v53';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
@@ -23,8 +23,8 @@ const PRECACHE = [
   'APML-Lite.html',
   'car-rate.html',
   'local-rate.html',
-  'directory.html',
-  'directory.js',
+  'modules/directory.html',
+  'modules/directory.js',
   'field-officer.html',
   'field-officer.js',
   'editor.html',
