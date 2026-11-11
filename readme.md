@@ -40,7 +40,7 @@ The portal brings together contact and branch information, operational tools, qu
 - [Directory](https://apmlportal.vercel.app/modules/directory.html)
 - [Quotation Editor](https://apmlportal.vercel.app/modules/editor.html)
 - [Media Gallery](https://apmlportal.vercel.app/gallery.html)
-- [Cloud Drive](https://apmlportal.vercel.app/drive.html)
+- [Cloud Drive](https://apmlportal.vercel.app/modules/drive.html)
 - [Field Officer](https://apmlportal.vercel.app/modules/field-officer.html)
 - [APML Lite](https://apmlportal.vercel.app/APML-Lite.html)
 - [Car Rate Calculator](https://apmlportal.vercel.app/car-rate.html)
@@ -70,7 +70,7 @@ The project is built primarily with:
 ├── footer.html            # Shared footer
 ├── modules/analytics.html # Analytics dashboard\n├── modules/visitor-analytics.js # Analytics visitor reports
 ├── modules/directory.html         # Directory management
-├── drive.html             # Cloud Drive
+├── modules/drive.html    # Cloud Drive
 ├── gallery.html           # Media gallery
 ├── modules/editor.html   # Quotation editor
 ├── modules/field-officer.html # Field Officer workspace\n├── modules/field-officer.js   # Field Officer logic
