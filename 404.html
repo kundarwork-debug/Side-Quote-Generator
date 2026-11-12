@@ -14,8 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-  <!-- LOTTIE PLAYER SCRIPT -->
-  <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module" async></script>
 
   <style>
     :root {
@@ -378,11 +376,31 @@
       transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    dotlottie-wc {
-      width: 340px;
-      height: 340px;
+    .crt-mascot {
+      width: 280px;
+      height: 280px;
+      flex: 0 0 auto;
+      background-image: url("assets/empty-states/images/crt-directions.webp");
+      background-repeat: no-repeat;
+      background-size: 300% 300%;
+      background-position: 50% 50%;
       pointer-events: none;
-      filter: drop-shadow(0 12px 35px rgba(185, 28, 28, 0.22));
+      filter: drop-shadow(0 12px 24px rgba(15, 23, 42, 0.18));
+      transform-origin: center;
+      transition: transform 180ms ease, filter 180ms ease;
+      will-change: background-position, transform;
+    }
+
+    .crt-mascot.is-reacting {
+      transform: translateY(-5px) scale(1.035);
+      filter: drop-shadow(0 14px 28px rgba(185, 28, 28, 0.2));
+    }
+
+    @media (max-width: 640px) {
+      .crt-mascot {
+        width: min(72vw, 250px);
+        height: min(72vw, 250px);
+      }
     }
 
     .blast-ui-group {
@@ -886,11 +904,7 @@
     <!-- OPEN SPACE LOTTIE STAGE (BIGGER SIZE) -->
     <div class="open-space-stage" id="spaceStage">
       <div class="broken-planet-center" id="planetCenter">
-        <dotlottie-wc 
-          src="https://lottie.host/11b05400-33ac-4185-a8ef-6484729b3576/1PtJikL0WX.lottie" 
-          autoplay 
-          loop>
-        </dotlottie-wc>
+        <div class="crt-mascot" id="crtMascot" role="img" aria-label="Friendly CRT mascot"></div>
       </div>
     </div>
 
@@ -1086,6 +1100,64 @@
       const scoreCardBadge = document.getElementById('scoreCardBadge');
       const scoreCardHeading = document.getElementById('scoreCardHeading');
       const planetCenterEl = document.getElementById('planetCenter');
+      const crtMascot = document.getElementById('crtMascot');
+      let mascotDirection = { col: 1, row: 1 };
+      let mascotReactionTimer = null;
+      let mascotReacting = false;
+
+      const mascotReactions = {
+        happy: { col: 0, row: 0 },
+        love: { col: 1, row: 0 },
+        stars: { col: 2, row: 0 },
+        surprised: { col: 0, row: 1 },
+        starEyes: { col: 1, row: 1 },
+        blush: { col: 2, row: 1 },
+        sleepy: { col: 0, row: 2 },
+        dizzy: { col: 1, row: 2 },
+        laugh: { col: 2, row: 2 }
+      };
+
+      function setMascotSprite(sheet, col, row) {
+        if (!crtMascot) return;
+        crtMascot.style.backgroundImage = `url("assets/empty-states/images/crt-${sheet}.webp")`;
+        crtMascot.style.backgroundPosition = `${col * 50}% ${row * 50}%`;
+      }
+
+      function restoreMascotDirection() {
+        mascotReacting = false;
+        if (!crtMascot) return;
+        crtMascot.classList.remove('is-reacting');
+        setMascotSprite('directions', mascotDirection.col, mascotDirection.row);
+      }
+
+      function reactMascot(expression, duration = 1100) {
+        if (!crtMascot) return;
+        const frame = mascotReactions[expression];
+        if (!frame) return;
+        mascotReacting = true;
+        clearTimeout(mascotReactionTimer);
+        setMascotSprite('reactions', frame.col, frame.row);
+        crtMascot.classList.add('is-reacting');
+        if (duration > 0) {
+          mascotReactionTimer = setTimeout(restoreMascotDirection, duration);
+        }
+      }
+
+      function updateMascotDirection(x, y) {
+        if (!crtMascot || mascotReacting) return;
+        const rect = crtMascot.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = x - centerX;
+        const dy = y - centerY;
+        const thresholdX = Math.max(55, rect.width * 0.32);
+        const thresholdY = Math.max(55, rect.height * 0.32);
+        mascotDirection = {
+          col: dx < -thresholdX ? 0 : dx > thresholdX ? 2 : 1,
+          row: dy < -thresholdY ? 0 : dy > thresholdY ? 2 : 1
+        };
+        setMascotSprite('directions', mascotDirection.col, mascotDirection.row);
+      }
 
       if (!canvas) return;
 
@@ -1137,6 +1209,7 @@
       window.addEventListener('mousemove', (e) => {
         targetX = e.clientX;
         targetY = e.clientY;
+        updateMascotDirection(e.clientX, e.clientY);
         if (rocket && isGameActive && !isGameOver) {
           rocket.style.opacity = '1';
         }
@@ -1162,6 +1235,7 @@
         if (!isGameActive || isGameOver || !e.touches.length) return;
         targetX = e.touches[0].clientX;
         targetY = e.touches[0].clientY;
+        updateMascotDirection(targetX, targetY);
       }, { passive: true });
 
       function formatScoreDate(item) {
@@ -1293,6 +1367,7 @@
 
         isGameActive = true;
         isGameOver = false;
+        restoreMascotDirection();
         score = 0;
         lives = 5;
         level = 1;
@@ -1339,6 +1414,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         showToast("Mission Aborted");
+        reactMascot('sleepy', 0);
         switchToGameView();
       }
 
@@ -1614,6 +1690,7 @@
         lastKillAt = now;
         const multiplier = Math.min(4, 1 + Math.floor((comboCount - 1) / 3));
         addScore(points * multiplier);
+        reactMascot(comboCount > 1 && comboCount % 3 === 0 ? 'stars' : 'happy', comboCount > 1 && comboCount % 3 === 0 ? 1500 : 650);
         if (comboCount > 1 && comboCount % 3 === 0) showToast(`${comboCount}× COMBO • x${multiplier} score`);
         if (Math.random() < 0.12) spawnPowerUp(x, y);
       }
@@ -1639,6 +1716,7 @@
         if (!isGameActive || isGameOver) return;
         if (performance.now() < shieldUntil) { showToast('Shield absorbed the impact'); return; }
         lives--;
+        reactMascot('surprised', 1250);
         if (livesTextEl) livesTextEl.textContent = `${lives}`;
 
         if (lives <= 0) {
@@ -1650,6 +1728,7 @@
 
       function triggerGameOver() {
         if (isGameOver) return;
+        reactMascot('dizzy', 0);
         isGameOver = true;
         isGameActive = false;
         
@@ -2081,9 +2160,9 @@
           const colors = {shield:'#38bdf8',rapid:'#a78bfa',repair:'#4ade80'};
           ctx.save(); ctx.beginPath(); ctx.arc(p.x,p.y,p.radius,0,Math.PI*2); ctx.fillStyle=colors[p.type]||'#fff'; ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=16; ctx.fill(); ctx.fillStyle='#0f172a'; ctx.font='900 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(p.type==='shield'?'S':p.type==='rapid'?'R':'+',p.x,p.y); ctx.restore();
           if (Math.hypot(p.x-currentX,p.y-currentY)<p.radius+18) {
-            if (p.type==='shield') { shieldUntil=performance.now()+9000; showToast('SHIELD ACTIVE • 9 seconds'); }
-            else if (p.type==='rapid') { rapidFireUntil=performance.now()+9000; showToast('RAPID FIRE • 9 seconds'); }
-            else { lives=Math.min(5,lives+1); if(livesTextEl)livesTextEl.textContent=String(lives); showToast('REPAIR KIT • +1 life'); }
+            if (p.type==='shield') { shieldUntil=performance.now()+9000; reactMascot('love', 1400); showToast('SHIELD ACTIVE • 9 seconds'); }
+            else if (p.type==='rapid') { rapidFireUntil=performance.now()+9000; reactMascot('starEyes', 1400); showToast('RAPID FIRE • 9 seconds'); }
+            else { lives=Math.min(5,lives+1); if(livesTextEl)livesTextEl.textContent=String(lives); reactMascot('blush', 1400); showToast('REPAIR KIT • +1 life'); }
             powerUps.splice(i,1);
           } else if (p.life<=0 || p.y>canvas.height+30) powerUps.splice(i,1);
         }
