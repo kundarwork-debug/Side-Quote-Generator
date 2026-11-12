@@ -577,8 +577,8 @@
                 <span>Consignment Volume (CFT)</span>
                 <span style="color: var(--primary); font-size: 13px;" id="cftDisplayVal">200 CFT</span>
               </div>
-              <input type="number" id="cftInput" class="form-input" value="200" min="1" max="1500" placeholder="Enter Volume in CFT">
-              <input type="range" id="cftRange" class="cft-slider" min="50" max="1000" step="10" value="200">
+              <input type="number" id="cftInput" aria-label="Consignment volume in cubic feet" class="form-input" value="200" min="1" max="1500" placeholder="Enter Volume in CFT">
+              <input type="range" id="cftRange" aria-label="Adjust consignment volume" class="cft-slider" min="50" max="1000" step="10" value="200">
             </div>
 
             <!-- Additional Charges / Add-ons -->
@@ -590,72 +590,72 @@
                 <!-- Crossing -->
                 <div class="addon-item" id="itemCrossing">
                   <div class="addon-left" onclick="toggleCrossing()">
-                    <input type="checkbox" id="chkCrossing" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkCrossing" aria-label="Crossing requirement" style="accent-color: var(--primary);">
                     <span>Crossing Requirement</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">₹1,500 / trip</span>
-                    <input type="number" id="tripsCrossing" class="addon-counter-input" value="1" min="1" max="10" disabled>
+                    <input type="number" id="tripsCrossing" aria-label="Number of crossing trips" class="addon-counter-input" value="1" min="1" max="10" disabled>
                   </div>
                 </div>
 
                 <!-- 2nd Day Manpower -->
                 <div class="addon-item" id="itemManpower">
                   <div class="addon-left" onclick="toggleManpower()">
-                    <input type="checkbox" id="chkManpower" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkManpower" aria-label="Additional manpower on second day" style="accent-color: var(--primary);">
                     <span>Additional Manpower (2nd Day)</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">₹1,000 / person</span>
-                    <input type="number" id="countManpower" class="addon-counter-input" value="1" min="1" max="10" disabled>
+                    <input type="number" id="countManpower" aria-label="Number of additional manpower" class="addon-counter-input" value="1" min="1" max="10" disabled>
                   </div>
                 </div>
 
                 <!-- AC / Geyser / Fan Removal -->
                 <div class="addon-item" id="itemAppliance">
                   <div class="addon-left" onclick="toggleAppliance()">
-                    <input type="checkbox" id="chkAppliance" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkAppliance" aria-label="Removal or uninstallation of AC, fan or geyser" style="accent-color: var(--primary);">
                     <span>Removal / Uninstallation (AC, Fan, Geyser)</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">As Actuals</span>
-                    <input type="number" id="amtAppliance" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                    <input type="number" id="amtAppliance" aria-label="Appliance removal charge in rupees" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
                   </div>
                 </div>
 
                 <!-- Wooden Crate -->
                 <div class="addon-item" id="itemCrate">
                   <div class="addon-left" onclick="toggleCrate()">
-                    <input type="checkbox" id="chkCrate" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkCrate" aria-label="Wooden crate requirement" style="accent-color: var(--primary);">
                     <span>Wooden Crate</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">As Actuals</span>
-                    <input type="number" id="amtCrate" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                    <input type="number" id="amtCrate" aria-label="Wooden crate charge in rupees" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
                   </div>
                 </div>
 
                 <!-- Rope Requirement -->
                 <div class="addon-item" id="itemRope">
                   <div class="addon-left" onclick="toggleRope()">
-                    <input type="checkbox" id="chkRope" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkRope" aria-label="Rope requirement" style="accent-color: var(--primary);">
                     <span>Rope Requirement</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">As Actuals</span>
-                    <input type="number" id="amtRope" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                    <input type="number" id="amtRope" aria-label="Rope charge in rupees" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
                   </div>
                 </div>
 
                 <!-- Mathadi Charges -->
                 <div class="addon-item" id="itemMathadi">
                   <div class="addon-left" onclick="toggleMathadi()">
-                    <input type="checkbox" id="chkMathadi" style="accent-color: var(--primary);">
+                    <input type="checkbox" id="chkMathadi" aria-label="Mathadi charges" style="accent-color: var(--primary);">
                     <span>Mathadi Charges</span>
                   </div>
                   <div class="addon-right">
                     <span class="addon-rate">As Actuals</span>
-                    <input type="number" id="amtMathadi" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
+                    <input type="number" id="amtMathadi" aria-label="Mathadi charge in rupees" class="addon-counter-input" style="width:75px;" value="0" min="0" step="100" placeholder="₹" disabled>
                   </div>
                 </div>
 
