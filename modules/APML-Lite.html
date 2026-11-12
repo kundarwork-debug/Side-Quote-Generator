@@ -433,7 +433,21 @@
   .header-tag-wrap .apml-3d-page-icon { width: 36px !important; height: 36px !important; margin-bottom: 0 !important; }
   .header-tag-wrap .header-badge { margin-bottom: 3px !important; }
   @media(max-width:600px) { .container { padding-top: 68px !important; } .header-tag-wrap .apml-3d-page-icon { width: 32px !important; height: 32px !important; } }
-</style>
+
+    
+    /* Compact module hero titles — shared sizing, original visual styles retained. */
+    .header-tag-wrap > .page-title {
+      font-size: clamp(22px, 3.1vw, 30px) !important;
+      line-height: 1.14;
+      letter-spacing: -0.035em;
+    }
+    @media (max-width: 480px) {
+      .header-tag-wrap > .page-title {
+        font-size: clamp(21px, 6vw, 25px) !important;
+        line-height: 1.16;
+      }
+    }
+  </style>
 
   <meta name="description" content="Calculate APML Lite packing and moving rates for Mumbai and Pune hub routes with the APML Portal rate calculator.">
   <link rel="canonical" href="https://apmlportal.vercel.app/modules/APML-Lite.html">
