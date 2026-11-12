@@ -1182,6 +1182,14 @@
       let spawnTimer = null;
       let gameFrameId = null;
       let globalHighestScore = parseInt(localStorage.getItem('apml_global_highest_score') || '0', 10);
+      // Adaptive difficulty is stored only in this browser; no account or server tracking.
+      const adaptiveLossKey = 'apml_asteroid_loss_streak';
+      let adaptiveLossStreak = 0;
+      let adaptiveDifficulty = 0;
+      let maxLives = 5;
+      try {
+        adaptiveLossStreak = Math.max(0, Math.min(20, parseInt(localStorage.getItem(adaptiveLossKey) || '0', 10) || 0));
+      } catch (error) {}
       if (globalHighScoreEl) globalHighScoreEl.textContent = globalHighestScore.toLocaleString();
 
       const missiles = [];
@@ -1369,11 +1377,13 @@
         isGameOver = false;
         restoreMascotDirection();
         score = 0;
-        lives = 5;
         level = 1;
+        adaptiveDifficulty = adaptiveLossStreak >= 7 ? 3 : adaptiveLossStreak >= 5 ? 2 : adaptiveLossStreak >= 3 ? 1 : 0;
+        maxLives = 5 + adaptiveDifficulty;
+        lives = maxLives;
 
         if (curScoreEl) curScoreEl.textContent = '0';
-        if (livesTextEl) livesTextEl.textContent = '5';
+        if (livesTextEl) livesTextEl.textContent = String(lives);
         if (levelEl) levelEl.textContent = '1';
 
         document.body.classList.add('game-active');
@@ -1392,7 +1402,7 @@
 
         resetSpawnTimer();
         if (gameFrameId === null && !document.hidden) gameFrameId = requestAnimationFrame(gameLoop);
-        showToast("Defense Initialized • Clear Incoming Comets!");
+        showToast(adaptiveDifficulty ? `Assist mode ${adaptiveDifficulty}/3 • Extra protection enabled` : "Defense Initialized • Clear Incoming Comets!");
       }
 
       if (btnStartGame) {
@@ -1670,7 +1680,9 @@
         const radius = Math.max(38, Math.min(52, Math.min(canvas.width, canvas.height) * 0.065));
         const numPoints = 11;
         const offsets = Array.from({length:numPoints}, () => 0.82 + Math.random() * 0.34);
-        asteroids.push({x,y,vx:Math.cos(angle)*(1.05+level*.035),vy:Math.sin(angle)*(1.05+level*.035),angle,radius,numPoints,offsets,rot:0,rotSpeed:.012,trailHistory:[],boss:true,hp:Math.min(24,10+Math.floor(level/2)),maxHp:Math.min(24,10+Math.floor(level/2))});
+        const bossHp = Math.max(6, Math.min(24, 10 + Math.floor(level / 2) - adaptiveDifficulty * 2));
+        const bossSpeed = (1.05 + level * .035) * (1 - adaptiveDifficulty * 0.08);
+        asteroids.push({x,y,vx:Math.cos(angle)*bossSpeed,vy:Math.sin(angle)*bossSpeed,angle,radius,numPoints,offsets,rot:0,rotSpeed:.012,trailHistory:[],boss:true,hp:bossHp,maxHp:bossHp});
         showToast(`BOSS INBOUND • Level ${level}`);
       }
 
@@ -1692,7 +1704,7 @@
         addScore(points * multiplier);
         reactMascot(comboCount > 1 && comboCount % 3 === 0 ? 'stars' : 'happy', comboCount > 1 && comboCount % 3 === 0 ? 1500 : 650);
         if (comboCount > 1 && comboCount % 3 === 0) showToast(`${comboCount}× COMBO • x${multiplier} score`);
-        if (Math.random() < 0.12) spawnPowerUp(x, y);
+        if (Math.random() < 0.12 + adaptiveDifficulty * 0.07) spawnPowerUp(x, y);
       }
 
       function showToast(text) {
@@ -1722,12 +1734,15 @@
         if (lives <= 0) {
           triggerGameOver();
         } else {
-          showToast(`Lifeline Lost! (${lives}/5 Remaining)`);
+          showToast(`Lifeline Lost! (${lives}/${maxLives} Remaining)`);
         }
       }
 
       function triggerGameOver() {
         if (isGameOver) return;
+        // Reaching level 5 is treated as a strong run and clears the losing streak.
+        adaptiveLossStreak = level >= 5 ? 0 : Math.min(20, adaptiveLossStreak + 1);
+        try { localStorage.setItem(adaptiveLossKey, String(adaptiveLossStreak)); } catch (error) {}
         reactMascot('dizzy', 0);
         isGameOver = true;
         isGameActive = false;
@@ -1771,7 +1786,7 @@
 
       function spawnAsteroid() {
         if (!isGameActive || isGameOver || bossActive) return;
-        const maxAsteroids = 8 + Math.min(level, 12) * 2;
+        const maxAsteroids = Math.max(8, 8 + Math.min(level, 12) * 2 - adaptiveDifficulty * 2);
         if (asteroids.length >= maxAsteroids) return;
 
         const side = Math.floor(Math.random() * 4);
@@ -1797,7 +1812,7 @@
 
         const baseSpeed = Math.random() * 1.0 + 0.85;
         const levelSpeedMultiplier = 1 + (level - 1) * 0.25;
-        const speed = baseSpeed * levelSpeedMultiplier;
+        const speed = baseSpeed * levelSpeedMultiplier * (1 - adaptiveDifficulty * 0.10);
 
         const numPoints = Math.floor(Math.random() * 3) + 7;
         const radius = Math.random() * 10 + 14;
@@ -1822,7 +1837,8 @@
 
       function resetSpawnTimer() {
         if (spawnTimer) clearInterval(spawnTimer);
-        const interval = Math.max(430, 1350 - (level - 1) * 85);
+        const baseInterval = Math.max(430, 1350 - (level - 1) * 85);
+        const interval = Math.round(baseInterval * (1 + adaptiveDifficulty * 0.13));
         spawnTimer = setInterval(spawnAsteroid, interval);
       }
 
