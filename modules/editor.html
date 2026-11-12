@@ -1064,22 +1064,22 @@
     <!-- HIGHLIGHTED CUSTOMER & DETAILS CARD -->
     <div class="field-group" id="sharedFieldGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 18px;">person</span> Customer &amp; details <span style="text-transform:none; font-weight:600; opacity:0.85;">— shared</span></h2>
-      <div class="field"><label>Date</label><input id="f_date"></div>
-      <div class="field"><label>Customer name *</label><input id="f_custName"></div>
+      <div class="field"><label for="f_date">Date</label><input id="f_date"></div>
+      <div class="field"><label for="f_custName">Customer name *</label><input id="f_custName"></div>
       <div class="row2">
-        <div class="field"><label>Customer company</label><input id="f_custCompany"></div>
-        <div class="field"><label>Customer GST</label><input id="f_custGst"></div>
+        <div class="field"><label for="f_custCompany">Customer company</label><input id="f_custCompany"></div>
+        <div class="field"><label for="f_custGst">Customer GST</label><input id="f_custGst"></div>
       </div>
       <div class="row2">
-        <div class="field"><label>Moving from *</label><input id="f_fromCity"></div>
-        <div class="field"><label>Moving to *</label><input id="f_toCity"></div>
+        <div class="field"><label for="f_fromCity">Moving from *</label><input id="f_fromCity"></div>
+        <div class="field"><label for="f_toCity">Moving to *</label><input id="f_toCity"></div>
       </div>
     </div>
 
     <div class="field-group" id="docDetailsGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 16px;">description</span> Document details</h2>
-      <div class="field"><label id="lblDocNoLabel">Estimate No.</label><input id="f_docNo"></div>
-      <div class="field"><label id="lblGstLabel">GST No. (ours)</label><input id="f_gstNo"></div>
+      <div class="field"><label id="lblDocNoLabel" for="f_docNo">Estimate No.</label><input id="f_docNo"></div>
+      <div class="field"><label id="lblGstLabel" for="f_gstNo">GST No. (ours)</label><input id="f_gstNo"></div>
     </div>
 
     <div class="field-group" id="costItemsGroup">
@@ -1093,7 +1093,7 @@
         </div>
 
         <div class="field" style="margin-bottom:12px;">
-          <label style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
+          <label for="f_totalAmount" style="color:var(--text-main); font-weight:800;">Total amount (auto-fills below using standard %)</label>
           <div style="display:flex; gap:8px;">
             <input id="f_totalAmount" placeholder="e.g. 47500" style="flex:1; border-color: rgba(185, 28, 28, 0.35); background: #ffffff;">
             <button type="button" id="applyTotalBtn" style="flex:none; padding:0 20px; border-radius:12px; border:none; background:var(--primary); color:#ffffff; font-size:13px; font-weight:800; cursor:pointer; transition: var(--transition-m3); box-shadow: var(--shadow-soft);">Apply</button>
@@ -1102,11 +1102,11 @@
 
         <div class="row2" style="margin-bottom:0;">
           <div class="field" style="margin-bottom:0;">
-            <label style="color:var(--text-main); font-weight:800;">Car Freight (₹)</label>
+            <label for="f_carFreight" style="color:var(--text-main); font-weight:800;">Car Freight (₹)</label>
             <input id="f_carFreight" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
           </div>
           <div class="field" style="margin-bottom:0;">
-            <label style="color:var(--text-main); font-weight:800;">GST %</label>
+            <label for="f_gstPercent" style="color:var(--text-main); font-weight:800;">GST %</label>
             <input id="f_gstPercent" placeholder="0" type="number" style="background: #ffffff; border-color: rgba(185, 28, 28, 0.35);">
           </div>
         </div>
@@ -1132,10 +1132,10 @@
 
     <div class="field-group" id="regOfficeGroup">
       <h2><span class="material-symbols-outlined" style="font-size: 16px;">domain</span> <span id="footerHeading">Registered office</span></h2>
-      <div class="field"><label id="lblAddr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
+      <div class="field"><label id="lblAddr" for="f_addr">Registered address</label><textarea id="f_addr" style="min-height:50px;"></textarea></div>
       <div class="row2">
-        <div class="field"><label>Phone</label><input id="f_phone"></div>
-        <div class="field" id="emailFieldWrap"><label>Email</label><input id="f_email"></div>
+        <div class="field"><label for="f_phone">Phone</label><input id="f_phone"></div>
+        <div class="field" id="emailFieldWrap"><label for="f_email">Email</label><input id="f_email"></div>
       </div>
     </div>
 
@@ -1469,9 +1469,9 @@ function renderForm(){
     const row = document.createElement('div');
     row.className = 'cost-row';
     row.innerHTML = `
-      <input class="label-in" data-idx="${idx}" data-field="label" value="${escapeAttr(item.label)}">
-      <input class="amt-in" data-idx="${idx}" data-field="amount" value="${item.amount}">
-      <button type="button" class="icon-btn" data-remove-cost="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+      <input class="label-in" data-idx="${idx}" data-field="label" aria-label="Cost item description" value="${escapeAttr(item.label)}">
+      <input class="amt-in" data-idx="${idx}" data-field="amount" aria-label="Cost item amount" value="${item.amount}">
+      <button type="button" class="icon-btn" data-remove-cost="${idx}" title="Remove" aria-label="Remove cost item"><span class="material-symbols-outlined">delete</span></button>
     `;
     costWrap.appendChild(row);
   });
@@ -1482,8 +1482,8 @@ function renderForm(){
     const row = document.createElement('div');
     row.className = 'term-row';
     row.innerHTML = `
-      <textarea data-term-idx="${idx}">${escapeHtml(t)}</textarea>
-      <button type="button" class="icon-btn" data-remove-term="${idx}" title="Remove"><span class="material-symbols-outlined">delete</span></button>
+      <textarea data-term-idx="${idx}" aria-label="Quotation term">${escapeHtml(t)}</textarea>
+      <button type="button" class="icon-btn" data-remove-term="${idx}" title="Remove" aria-label="Remove quotation term"><span class="material-symbols-outlined">delete</span></button>
     `;
     termWrap.appendChild(row);
   });
