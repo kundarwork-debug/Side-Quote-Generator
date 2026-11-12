@@ -302,11 +302,13 @@ window.addEventListener('DOMContentLoaded', recordDailyVisitorIfAllowed);
 window.addEventListener('apml-analytics-consent-granted', recordDailyVisitorIfAllowed);
 
 // --- TRACK PEAK CONCURRENT ONLINE USERS PER DAY ---
+let dailyPeakTrackingStarted = false;
 function initDailyPeakTracker() {
+  if (dailyPeakTrackingStarted || !hasAnalyticsConsent()) return;
   try {
     if (!hasAnalyticsConsent() || typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
-    
+    dailyPeakTrackingStarted = true;
     const today = getIndiaDateKey();
     const peakRef = db.ref(`analytics/daily_logs/${today}/peak_online`);
 
