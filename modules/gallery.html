@@ -1996,7 +1996,7 @@
         btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; border-width:2px; margin:0; display:inline-block;"></span> Downloading...`;
       }
 
-      totalMediaDownloadsRef.transaction((currentValue) => {
+      if (window.apmlHasAnalyticsConsent && window.apmlHasAnalyticsConsent()) totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
       await recordInteraction(firebaseKey, 'downloadsCount');
