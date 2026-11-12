@@ -1,21 +1,19 @@
 /* =====================================================================
    APML Portal - service worker
-   - Pages: network first (so a new deploy shows up straight away),
-            cached copy when offline.
-   - CSS / JS / images / fonts: served from cache instantly, refreshed in
-            the background.
+   - Pages: network first, with a short wait before using a saved page.
+   - CSS / JS / images / fonts: cache first, refresh in the background.
    - Live data (Firebase, Supabase, Cloudinary, your Workers): never touched.
 
-   To force every visitor to drop old copies after a big change, just bump
-   VERSION below (for example 'v7').
+   Bump VERSION after changing cache behaviour or the offline shell.
    ===================================================================== */
-const VERSION = 'v67';
+const VERSION = 'v68';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
+const NAVIGATION_TIMEOUT_MS = 2500;
 
 // Files saved on install so the portal opens even with no signal.
-// A file that does not exist is skipped, it never breaks the install.
+// Missing files are skipped and never break installation.
 const PRECACHE = [
   './',
   'index.html',
@@ -50,7 +48,8 @@ const PRECACHE = [
   'manifest.json'
 ];
 
-// Third-party files that are safe to keep (they never hold your data)
+// Only public, versioned/static assets are cached cross-origin.
+// Firebase, Supabase, Cloudinary and Worker/API traffic stays live.
 function isStaticCdn(url) {
   return url.hostname === 'fonts.googleapis.com' ||
          url.hostname === 'fonts.gstatic.com' ||
@@ -58,6 +57,9 @@ function isStaticCdn(url) {
          url.hostname === 'releases.transloadit.com' ||
          url.hostname === 'cdnjs.cloudflare.com' ||
          url.hostname === 'unpkg.com' ||
+         url.hostname === '3dicons.sgp1.cdn.digitaloceanspaces.com' ||
+         url.hostname === 'koboyo.com' ||
+         url.hostname === 'www.koboyo.com' ||
          (url.hostname === 'www.gstatic.com' && url.pathname.indexOf('/firebasejs/') === 0);
 }
 
@@ -65,7 +67,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(SHELL_CACHE);
     await Promise.allSettled(PRECACHE.map(async (path) => {
-      const url = new URL(path, self.location.href).href;      // always relative to where sw.js lives
+      const url = new URL(path, self.location.href).href;
       const res = await fetch(new Request(url, { cache: 'reload' }));
       if (res.ok) await cache.put(url, res);
     }));
@@ -77,7 +79,9 @@ self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keep = [SHELL_CACHE, RUNTIME_CACHE];
     const names = await caches.keys();
-    await Promise.all(names.filter((n) => n.indexOf('apml-') === 0 && keep.indexOf(n) === -1).map((n) => caches.delete(n)));
+    await Promise.all(names
+      .filter((name) => name.indexOf('apml-') === 0 && keep.indexOf(name) === -1)
+      .map((name) => caches.delete(name)));
     if (self.registration.navigationPreload) {
       try { await self.registration.navigationPreload.enable(); } catch (e) {}
     }
@@ -91,42 +95,68 @@ self.addEventListener('message', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;                       // saves, uploads, deletes go straight through
-  if (req.headers.has('range')) return;                   // video seeking
+  if (req.method !== 'GET' || req.headers.has('range')) return;
   const url = new URL(req.url);
   if (url.protocol !== 'http:' && url.protocol !== 'https:') return;
 
   if (url.origin === self.location.origin) {
-    if (url.pathname.slice(-6) === '/sw.js') return;
-    if (req.mode === 'navigate') { event.respondWith(pageStrategy(event)); return; }
-    const d = req.destination;
-    if (d === 'script' || d === 'style' || d === 'font' || d === 'image' || d === 'manifest') {
+    if (url.pathname.endsWith('/sw.js')) return;
+    if (req.mode === 'navigate') {
+      event.respondWith(pageStrategy(event));
+      return;
+    }
+    const destination = req.destination;
+    if (destination === 'script' || destination === 'style' ||
+        destination === 'font' || destination === 'image' ||
+        destination === 'manifest') {
       event.respondWith(staleWhileRevalidate(event));
     } else {
-      event.respondWith(networkFirst(event));             // JSON and other data files stay fresh
+      event.respondWith(networkFirst(event));
     }
     return;
   }
-  if (isStaticCdn(url)) { event.respondWith(staleWhileRevalidate(event)); return; }
-  // Firebase, Supabase, Cloudinary, workers.dev ...: not handled here, always live.
+
+  if (isStaticCdn(url)) event.respondWith(staleWhileRevalidate(event));
 });
 
 // ---------- strategies ----------
 async function pageStrategy(event) {
   const req = event.request;
+  const network = Promise.resolve(event.preloadResponse)
+    .then((preloaded) => preloaded || fetch(req))
+    .then((res) => {
+      if (res && res.ok) {
+        const copy = res.clone();
+        return caches.open(SHELL_CACHE).then((cache) => cache.put(req, copy)).then(() => res);
+      }
+      return res;
+    });
+
+  // Keep the network update alive even when a cached page wins the race.
+  event.waitUntil(network.catch(() => undefined));
+
   try {
-    const res = (await event.preloadResponse) || (await fetch(req));
-    if (res && res.ok) {
-      const copy = res.clone();
-      event.waitUntil(caches.open(SHELL_CACHE).then((c) => c.put(req, copy)));
-    }
-    return res;
-  } catch (err) {
-    const cached = (await caches.match(req)) || (await caches.match(req, { ignoreSearch: true }));
+    const firstResponse = await Promise.race([
+      network,
+      new Promise((resolve) => setTimeout(() => resolve(null), NAVIGATION_TIMEOUT_MS))
+    ]);
+    if (firstResponse) return firstResponse;
+
+    const cached = (await caches.match(req)) ||
+                   (await caches.match(req, { ignoreSearch: true }));
     if (cached) return cached;
-    const home = (await caches.match('index.html')) || (await caches.match('./'));
-    return home || offlineResponse();
+
+    // First visit: no cached page exists, so wait for the network normally.
+    const lateResponse = await network;
+    if (lateResponse) return lateResponse;
+  } catch (err) {
+    const cached = (await caches.match(req)) ||
+                   (await caches.match(req, { ignoreSearch: true }));
+    if (cached) return cached;
   }
+
+  const home = (await caches.match('index.html')) || (await caches.match('./'));
+  return home || offlineResponse();
 }
 
 async function networkFirst(event) {
@@ -135,7 +165,9 @@ async function networkFirst(event) {
     const res = await fetch(req);
     if (res && res.ok) {
       const copy = res.clone();
-      event.waitUntil(caches.open(RUNTIME_CACHE).then((c) => c.put(req, copy)).then(trimRuntime));
+      event.waitUntil(caches.open(RUNTIME_CACHE)
+        .then((cache) => cache.put(req, copy))
+        .then(trimRuntime));
     }
     return res;
   } catch (err) {
@@ -151,15 +183,20 @@ async function staleWhileRevalidate(event) {
   const refresh = fetch(req).then((res) => {
     if (res && (res.ok || res.type === 'opaque')) {
       const copy = res.clone();
-      return caches.open(RUNTIME_CACHE).then((c) => c.put(req, copy)).then(trimRuntime).then(() => res);
+      return caches.open(RUNTIME_CACHE)
+        .then((cache) => cache.put(req, copy))
+        .then(trimRuntime)
+        .then(() => res);
     }
     return res;
   }).catch(() => null);
 
-  if (cached) { event.waitUntil(refresh); return cached; }   // instant, and updated for next time
+  if (cached) {
+    event.waitUntil(refresh);
+    return cached;
+  }
   const res = await refresh;
   if (res) return res;
-  // offline and this exact URL was never saved: use the plain copy
   const fallback = await caches.match(req, { ignoreSearch: true });
   return fallback || Response.error();
 }
@@ -167,7 +204,9 @@ async function staleWhileRevalidate(event) {
 async function trimRuntime() {
   const cache = await caches.open(RUNTIME_CACHE);
   const keys = await cache.keys();
-  for (let i = 0; i < keys.length - RUNTIME_MAX_ENTRIES; i++) await cache.delete(keys[i]);
+  for (let i = 0; i < keys.length - RUNTIME_MAX_ENTRIES; i++) {
+    await cache.delete(keys[i]);
+  }
 }
 
 function offlineResponse() {
