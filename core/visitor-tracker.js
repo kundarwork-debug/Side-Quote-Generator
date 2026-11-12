@@ -31,16 +31,16 @@
 
   let visitorId, sessionId, lastCountedAt = Date.now(), heartbeat = null;
   let trackingStarted = false;
-  function payload(action, seconds) {
-    return {
+  function payload(action, seconds, extra) {
+    return Object.assign({
       action, visitorId, sessionId, page: location.pathname.slice(0, 180) || "/",
       title: document.title.slice(0, 120), referrer: document.referrer.slice(0, 240),
       seconds: Math.max(0, Math.min(45, Number(seconds) || 0))
-    };
+    }, extra || {});
   }
   let sendQueue = Promise.resolve();
-  function send(action, seconds, keepalive) {
-    const body = JSON.stringify(payload(action, seconds));
+  function send(action, seconds, keepalive, extra) {
+    const body = JSON.stringify(payload(action, seconds, extra));
     if (keepalive && navigator.sendBeacon) {
       try {
         if (navigator.sendBeacon(ENDPOINT, new Blob([body], { type: "text/plain;charset=UTF-8" }))) return Promise.resolve();
@@ -64,6 +64,24 @@
     visitorId = getId("apml-visitor-id");
     sessionId = getSessionId();
     send("start", 0, false).then(() => send("pageview", 0, false));
+    const recordPerformance = () => {
+      if (!trackingStarted) return;
+      const nav = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+      if (!nav) return;
+      const loadMs = Math.round(nav.loadEventEnd || nav.domContentLoadedEventEnd || 0);
+      const domMs = Math.round(nav.domContentLoadedEventEnd || 0);
+      const ttfbMs = Math.round(nav.responseStart || 0);
+      if (!loadMs || loadMs < 0) return;
+      send("performance", 0, false, {
+        loadMs: Math.min(120000, loadMs),
+        domMs: Math.min(120000, Math.max(0, domMs)),
+        ttfbMs: Math.min(60000, Math.max(0, ttfbMs)),
+        navType: nav.type || "other",
+        serviceWorkerControlled: !!(navigator.serviceWorker && navigator.serviceWorker.controller)
+      });
+    };
+    if (document.readyState === "complete") window.setTimeout(recordPerformance, 0);
+    else window.addEventListener("load", recordPerformance, { once: true });
     heartbeat = window.setInterval(() => {
       if (document.visibilityState === "visible") accountPageTime();
     }, 20000);
