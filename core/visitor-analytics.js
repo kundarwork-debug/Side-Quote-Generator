@@ -190,15 +190,15 @@
     $("viVisitors").innerHTML=recent.map(s=>{
       const place=[s.city,s.region,s.country].filter(Boolean).join(", ")||"Unknown";
       const journey=Array.isArray(s.journey)&&s.journey.length?s.journey.map(x=>x.path).join(" → "):Object.values(s.pages||{}).sort((a,b)=>(a.lastSeen||0)-(b.lastSeen||0)).map(p=>p.path).filter(Boolean).join(" → ");
-      return '<tr><td>'+new Date(s.startedAt).toLocaleString("en-IN")+'</td><td>Visitor · '+esc(String(s.visitorId||"").slice(-8).toUpperCase()||"—")+'</td><td>'+esc(place)+'</td><td>'+esc(s.maskedIp||"—")+'</td><td>'+esc([s.device,s.os,s.browser].filter(Boolean).join(" / "))+'</td><td>'+duration(s.totalSeconds)+'</td><td>'+fmt(s.pageViews)+'</td><td>'+esc(journey||s.firstPage||"—")+'</td></tr>';
-    }).join("")||'<tr><td colspan="8">No sessions in this period. New sessions appear after visitors allow analytics.</td></tr>';
+      return '<tr><td>'+new Date(s.startedAt).toLocaleString("en-IN")+'</td><td>Visitor · '+esc(String(s.visitorId||"").slice(-8).toUpperCase()||"—")+'</td><td>'+esc(place)+'</td><td>'+esc([s.device,s.os,s.browser].filter(Boolean).join(" / "))+'</td><td>'+duration(s.totalSeconds)+'</td><td>'+fmt(s.pageViews)+'</td><td>'+esc(journey||s.firstPage||"—")+'</td></tr>';
+    }).join("")||'<tr><td colspan="7">No sessions in this period. New sessions appear after visitors allow analytics.</td></tr>';
     const topDay=Object.entries(days).sort((a,b)=>b[1]-a[1])[0];
     $("viPeakDay").textContent=topDay?new Date(topDay[0]+"T00:00:00+05:30").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"})+" · "+fmt(topDay[1]):"—";
     $("viUpdated").textContent="Live · updated "+new Date().toLocaleTimeString("en-IN");
   }
   function exportCsv(){
-    const rows=[["Started","Anonymous visitor ID","City","Masked IP","Device","OS","Browser","Duration seconds","Page views","Journey"]];
-    filtered.forEach(s=>rows.push([new Date(s.startedAt).toISOString(),s.visitorId,[s.city,s.region,s.country].filter(Boolean).join(", "),s.maskedIp,s.device,s.os,s.browser,s.totalSeconds,s.pageViews,(s.journey||[]).map(p=>p.path).join(" | ")]));
+    const rows=[["Started","Anonymous visitor ID","Approximate location","Device","OS","Browser","Duration seconds","Page views","Journey"]];
+    filtered.forEach(s=>rows.push([new Date(s.startedAt).toISOString(),s.visitorId,[s.city,s.region,s.country].filter(Boolean).join(", "),s.device,s.os,s.browser,s.totalSeconds,s.pageViews,(s.journey||[]).map(p=>p.path).join(" | ")]));
     const csv=rows.map(row=>row.map(v=>{const x=String(v==null?"":v);return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;}).join(",")).join("\r\n");
     const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
     const a=document.createElement("a");a.href=url;a.download="apml-visitor-intelligence.csv";a.click();URL.revokeObjectURL(url);
