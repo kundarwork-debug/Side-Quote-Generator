@@ -488,7 +488,22 @@
     }
   </style>
 
-  <meta name="robots" content="noindex, nofollow">
+  <style id="apml-performance-analytics-styles">
+  .perf-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:14px 0 18px}
+  .perf-stat{padding:17px;border:1px solid var(--surface-border);border-radius:15px;background:var(--surface-raised);min-width:0}
+  .perf-stat span{display:block;color:var(--text-muted);font-size:12px;font-weight:700}
+  .perf-stat strong{display:block;margin-top:8px;font:700 25px var(--font-mono);letter-spacing:-.03em}
+  .perf-stat small{display:block;margin-top:4px;color:var(--text-faint);font-size:11px;line-height:1.4}
+  .perf-layout{display:grid;grid-template-columns:1.2fr .8fr;gap:16px}
+  .perf-panel{min-width:0;border:1px solid var(--surface-border);border-radius:var(--radius-lg);padding:18px;background:var(--surface-card)}
+  .perf-panel h3{font-size:14px;margin-bottom:12px}
+  .perf-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .perf-toolbar select{padding:8px 11px;border:1px solid var(--surface-border);border-radius:10px;background:var(--surface-raised);color:var(--text-main);font:600 12px var(--font-sans)}
+  #perfTrend{min-height:260px}
+  @media(max-width:760px){.perf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.perf-layout{grid-template-columns:1fr}}
+  @media(max-width:420px){.perf-grid{gap:9px}.perf-stat{padding:13px}.perf-stat strong{font-size:21px}.perf-panel{padding:14px}}
+</style>
+<meta name="robots" content="noindex, nofollow">
 </head>
 <body>
 
@@ -675,6 +690,26 @@
         <div class="insight-list" id="smartInsights"><div class="insight-item"><span class="material-symbols-outlined">info</span><span>Insights will appear after analytics data loads.</span></div></div>
       </section>
     </div>
+
+    <section class="section-stack" aria-labelledby="performanceTitle" style="margin-top:28px">
+      <div class="card">
+        <div class="vi-head">
+          <div><h2 class="card-title" id="performanceTitle"><span class="material-symbols-outlined">speed</span> Portal performance</h2><p class="muted-note">Real browser navigation timings · collected only after analytics consent</p></div>
+          <div class="perf-toolbar"><label for="perfRange" class="muted-note">Reporting period</label><select id="perfRange"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option><option value="all">All available</option></select><span class="muted-note" id="perfUpdated">Loading performance data…</span></div>
+        </div>
+        <div class="perf-grid" aria-live="polite">
+          <article class="perf-stat"><span>Average page load</span><strong id="perfAverage">—</strong><small>Across recorded page loads</small></article>
+          <article class="perf-stat"><span>75th percentile</span><strong id="perfP75">—</strong><small>Three out of four loads were this fast or faster</small></article>
+          <article class="perf-stat"><span>Measured page loads</span><strong id="perfSamples">—</strong><small>Latest 500 visitor sessions</small></article>
+          <article class="perf-stat"><span>Service-worker controlled</span><strong id="perfControlled">—</strong><small>Page had an active service worker controller; not a cache-hit rate</small></article>
+        </div>
+      </div>
+      <div class="perf-layout">
+        <section class="perf-panel"><h3>Average load time by day</h3><div id="perfTrend" role="img" aria-label="Average portal page load time by day"></div></section>
+        <section class="perf-panel"><h3>Slowest pages by average load</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Page</th><th>Average</th><th>Samples</th></tr></thead><tbody id="perfPages"><tr><td colspan="3">Loading…</td></tr></tbody></table></div></section>
+      </div>
+      <p class="vi-note">Load time is measured from navigation start to the browser's load event. It varies by device, network and browser. Service-worker control indicates that the page was controlled by the portal's worker; it does not prove that every asset came from cache. No page content, form values or full IP addresses are collected by this performance report.</p>
+    </section>
 
     <section class="section-stack" aria-labelledby="visitorIntelligenceTitle" style="margin-top:28px">
       <div class="card">
@@ -1307,5 +1342,6 @@
   })();
   </script>
   <script src="core/visitor-analytics.js?v=4"></script>
+  <script src="core/performance-analytics.js?v=1"></script>
 </body>
 </html>
