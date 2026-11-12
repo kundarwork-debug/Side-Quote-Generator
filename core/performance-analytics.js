@@ -31,14 +31,14 @@
     const series = keys.map(k => Math.round(daily[k].total / daily[k].count));
     if (window.ApexCharts && $("perfTrend")) {
       const opts = {
-        chart: { type: "area", height: 260, toolbar: { show: false }, fontFamily: "inherit", animations: { enabled: !window.matchMedia("(prefers-reduced-motion: reduce)").matches } },
-        series: [{ name: "Average load", data: series }],
-        xaxis: { categories: labels, labels: { style: { colors: "var(--text-muted)" } } },
-        yaxis: { min: 0, labels: { formatter: v => ms(v), style: { colors: "var(--text-muted)" } } },
-        dataLabels: { enabled: false }, stroke: { curve: "smooth", width: 2 },
-        fill: { type: "gradient", gradient: { opacityFrom: .25, opacityTo: .03 } },
-        colors: ["#b91c1c"], grid: { borderColor: "var(--surface-border)", strokeDashArray: 4 },
-        tooltip: { y: { formatter: v => ms(v) } }, noData: { text: "No performance measurements yet" }
+        chart:{type:"area",height:230,toolbar:{show:false},fontFamily:"inherit",animations:{enabled:!window.matchMedia("(prefers-reduced-motion: reduce)").matches}},
+        series:[{name:"Average load time",data:series}],
+        xaxis:{categories:labels,labels:{style:{colors:"var(--text-muted)"}}},
+        yaxis:{min:0,forceNiceScale:true,labels:{formatter:v=>ms(v)}},
+        dataLabels:{enabled:false},stroke:{curve:"smooth",width:2},
+        fill:{type:"gradient",gradient:{opacityFrom:.28,opacityTo:.03}},
+        colors:["#b91c1c"],grid:{borderColor:"var(--surface-border)",strokeDashArray:4},
+        tooltip:{y:{formatter:v=>ms(v)}},noData:{text:"No performance measurements yet"}
       };
       if (!chart) { chart = new ApexCharts($("perfTrend"), opts); chart.render(); }
       else chart.updateOptions(opts, false, false);
