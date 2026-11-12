@@ -257,18 +257,39 @@ window.toggleEditCard = function(id) {
   }
 };
 
-window.copyAddressToClipboard = function(addressText, btnElement) {
-  navigator.clipboard.writeText(addressText).then(() => {
-    const originalHTML = btnElement.innerHTML;
-    btnElement.innerHTML = '<span class="material-symbols-outlined" style="font-size: 14px;">check</span> Copied!';
-    btnElement.style.color = '#059669';
-    setTimeout(() => {
-      btnElement.innerHTML = originalHTML;
+window.copyAddressToClipboard = async function(addressText, btnElement) {
+  const text = String(addressText || '');
+  const originalHTML = btnElement ? btnElement.innerHTML : '';
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const helper = document.createElement('textarea');
+      helper.value = text;
+      helper.setAttribute('readonly', '');
+      helper.style.position = 'fixed';
+      helper.style.opacity = '0';
+      helper.style.pointerEvents = 'none';
+      document.body.appendChild(helper);
+      helper.select();
+      const copied = document.execCommand('copy');
+      helper.remove();
+      if (!copied) throw new Error('Clipboard access is unavailable in this browser.');
+    }
+    if (btnElement) {
+      btnElement.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true" style="font-size: 14px;">check</span> Copied!';
       btnElement.style.color = '#059669';
-    }, 2000);
-  }).catch(err => {
-    alert("Failed to copy address: " + err);
-  });
+      btnElement.setAttribute('aria-label', 'Address copied');
+      window.setTimeout(() => {
+        btnElement.innerHTML = originalHTML;
+        btnElement.style.color = '';
+        btnElement.removeAttribute('aria-label');
+      }, 2000);
+    }
+  } catch (_) {
+    if (window.Swal) Swal.fire({ icon: 'error', title: 'Copy failed', text: 'Please select and copy the address manually.' });
+    else alert('Copy failed. Please select and copy the address manually.');
+  }
 };
 
 function escapeHtml(str) {
