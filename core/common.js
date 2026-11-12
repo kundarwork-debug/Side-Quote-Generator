@@ -1483,7 +1483,7 @@ window.sendPortalNotification = function () {};
   if (window.__apmlVisitorTrackerRequested) return;
   window.__apmlVisitorTrackerRequested = true;
   var script = document.createElement('script');
-  script.src = './core/visitor-tracker.js?v=9';
+  script.src = './core/visitor-tracker.js?v=10';
   script.async = true;
   document.head.appendChild(script);
 })();
