@@ -183,6 +183,7 @@
       localStorage.removeItem(CONSENT_KEY);
       sessionStorage.removeItem("apml-privacy-dismissed");
       sessionStorage.removeItem("apml-analytics-consent-dismissed");
+      sessionStorage.setItem("apml-force-privacy-prompt", "yes");
     } catch (_) {}
     window.location.reload();
   };
@@ -191,7 +192,10 @@
     const isCookiesPolicyPage = /(?:^|\/)policy\/cookies\.html$/.test(window.location.pathname.replace(/\/+$/, ""));
     let privacyChoice = null;
     let dismissed = false;
+    let forcePrompt = false;
     try {
+      forcePrompt = sessionStorage.getItem("apml-force-privacy-prompt") === "yes";
+      if (forcePrompt) sessionStorage.removeItem("apml-force-privacy-prompt");
       privacyChoice = JSON.parse(localStorage.getItem(PRIVACY_KEY) || "null");
       // Backward compatibility: existing explicit analytics opt-ins remain respected.
       if (!privacyChoice && localStorage.getItem(CONSENT_KEY) === "yes") {
@@ -203,7 +207,7 @@
       if (localStorage.getItem(CONSENT_KEY) === "no" && !privacyChoice) privacyChoice = { essential: true, analytics: false };
     } catch (_) {}
     if (privacyChoice && privacyChoice.analytics === true) startTracking();
-    else if (!privacyChoice && !dismissed && !isCookiesPolicyPage) showConsent();
+    else if (forcePrompt || (!privacyChoice && !dismissed && !isCookiesPolicyPage)) showConsent();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
