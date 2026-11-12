@@ -735,6 +735,11 @@
         <section class="vi-card"><h3>Devices, operating systems &amp; browsers</h3><ul class="vi-list" id="viDevices"><li class="vi-empty">Loading…</li></ul></section>
       </div>
       <section class="vi-card"><h3>Most visited pages · engagement</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Page</th><th>Views</th><th>Time spent</th></tr></thead><tbody id="viPages"><tr><td colspan="3">Loading…</td></tr></tbody></table></div></section>
+      <div class="vi-columns">
+        <section class="vi-card"><h3>Page drop-off signals</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Last recorded page</th><th>Sessions</th><th>Share</th><th>Views / session</th></tr></thead><tbody id="viDropoffPages"><tr><td colspan="4">Loading…</td></tr></tbody></table></div><p class="vi-note">These are last observed pages in recorded journeys, not confirmed exits. Some sessions may end because a browser closes, a connection drops, or tracking stops.</p></section>
+        <section class="vi-card"><h3>Mobile vs desktop experience</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Device</th><th>Sessions</th><th>Avg. time</th><th>Views / session</th><th>Avg. load</th></tr></thead><tbody id="viDeviceCompare"><tr><td colspan="5">Loading…</td></tr></tbody></table></div><p class="vi-note">Load averages use available browser performance samples; blank values mean no measurements are available.</p></section>
+      </div>
+      <section class="vi-card" style="margin-top:16px"><h3>Smart improvement suggestions</h3><ul class="vi-list" id="viSmartSuggestions"><li class="vi-empty">Waiting for enough data…</li></ul><p class="vi-note">Suggestions are generated from aggregate session and performance patterns. They do not identify individual visitors.</p></section>
       <section class="vi-card" style="margin-top:16px"><h3>Returning browser profiles</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Anonymous browser</th><th>Sessions</th><th>First seen</th><th>Last seen</th><th>Device / browser</th><th>Approx. location</th><th>Page views</th><th>Top page</th></tr></thead><tbody id="viBrowserVisitors"><tr><td colspan="8">Loading…</td></tr></tbody></table></div><p class="vi-note">Each profile is a random browser ID, not a person's name or verified identity. Clearing browser storage, using private browsing, or switching devices/browsers can create a new ID. Profiles are calculated from the latest 500 sessions loaded for this report.</p></section>
       <section class="vi-card" style="margin-top:16px"><h3>Recent visitor sessions</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Started</th><th>Anonymous browser</th><th>Approx. location</th><th>Masked IP</th><th>Device / browser</th><th>Time spent</th><th>Page views</th><th>Journey</th></tr></thead><tbody id="viVisitors"><tr><td colspan="8">Loading…</td></tr></tbody></table></div><p class="vi-note">IP addresses are masked before storage (IPv4 /24, IPv6 /48). Location is approximate and depends on network geolocation. Analytics runs only after consent. Visitor IDs are random browser identifiers, not real-world identities. Journey order is exact for sessions recorded after this upgrade; older sessions show an approximate order. Reports use the latest 500 sessions available to this dashboard.</p></section>
     </section>
@@ -1344,7 +1349,7 @@
     else start();
   })();
   </script>
-  <script src="core/visitor-analytics.js?v=4"></script>
+  <script src="core/visitor-analytics.js?v=5"></script>
   <script src="core/performance-analytics.js?v=1"></script>
 </body>
 </html>
