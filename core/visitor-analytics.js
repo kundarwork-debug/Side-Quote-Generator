@@ -119,6 +119,73 @@
       return '<tr><td><strong>Visitor · '+esc(shortId)+'</strong></td><td>'+fmt(p.sessions)+'</td><td>'+new Date(p.firstAt).toLocaleDateString("en-IN")+'</td><td>'+new Date(p.lastSeen).toLocaleString("en-IN")+'</td><td>'+esc([p.device,p.os,p.browser].filter(Boolean).join(" / ")||"Unknown")+'</td><td>'+esc(place)+'</td><td>'+fmt(p.pageViews)+'</td><td>'+esc(topPage?topPage[0]+' ('+topPage[1]+')':'—')+'</td></tr>';
     }).join("")||'<tr><td colspan="8">No browser profiles in this period. New profiles appear after visitors allow analytics.</td></tr>';
 
+    // Journey analysis: last recorded page is a proxy, not a confirmed exit event.
+    const lastPageOf = session => {
+      if(Array.isArray(session.journey) && session.journey.length) {
+        const last=session.journey[session.journey.length-1];
+        if(last && last.path) return last.path;
+      }
+      const pages=Object.values(session.pages||{}).filter(p=>p && p.path);
+      pages.sort((a,b)=>(Number(b.lastSeen)||0)-(Number(a.lastSeen)||0));
+      return (pages[0]&&pages[0].path)||session.lastPage||session.firstPage||"";
+    };
+    const dropPages={};
+    filtered.forEach(session=>{
+      const path=lastPageOf(session);
+      if(!path) return;
+      if(!dropPages[path]) dropPages[path]={sessions:0,views:0};
+      dropPages[path].sessions++;
+      dropPages[path].views+=Number(session.pageViews)||0;
+    });
+    const dropTotal=Object.values(dropPages).reduce((sum,item)=>sum+item.sessions,0);
+    const dropRows=Object.entries(dropPages).sort((a,b)=>b[1].sessions-a[1].sessions).slice(0,10);
+    const dropNode=$("viDropoffPages");
+    if(dropNode) dropNode.innerHTML=dropRows.map(([path,item])=>'<tr><td>'+esc(path)+'</td><td>'+fmt(item.sessions)+'</td><td>'+Math.round(item.sessions/Math.max(1,dropTotal)*100)+'%</td><td>'+(item.sessions?(item.views/item.sessions).toFixed(1):"0")+'</td></tr>').join("")||'<tr><td colspan="4">Not enough journey data yet</td></tr>';
+
+    // Compare device engagement and performance from the same consented sessions.
+    const deviceStats={};
+    const pageLoads={};
+    filtered.forEach(session=>{
+      const device=session.device||"Unknown";
+      if(!deviceStats[device]) deviceStats[device]={sessions:0,seconds:0,views:0,loads:[]};
+      const stat=deviceStats[device];
+      stat.sessions++;
+      stat.seconds+=Number(session.totalSeconds)||0;
+      stat.views+=Number(session.pageViews)||0;
+      (Array.isArray(session.performance)?session.performance:[]).forEach(sample=>{
+        if(Number.isFinite(Number(sample.loadMs))) stat.loads.push(Number(sample.loadMs));
+        const path=String(sample.path||"/");
+        if(!pageLoads[path]) pageLoads[path]={total:0,count:0};
+        pageLoads[path].total+=Number(sample.loadMs)||0;
+        pageLoads[path].count++;
+      });
+    });
+    const deviceRows=Object.entries(deviceStats).sort((x,y)=>y[1].sessions-x[1].sessions);
+    const deviceNode=$("viDeviceCompare");
+    if(deviceNode) deviceNode.innerHTML=deviceRows.map(([name,item])=>{
+      const loadLabel=item.loads.length?Math.round(item.loads.reduce((sum,n)=>sum+n,0)/item.loads.length)+" ms":"—";
+      return '<tr><td>'+esc(name)+'</td><td>'+fmt(item.sessions)+'</td><td>'+duration(item.sessions?item.seconds/item.sessions:0)+'</td><td>'+(item.sessions?(item.views/item.sessions).toFixed(1):"0")+'</td><td>'+loadLabel+'</td></tr>';
+    }).join("")||'<tr><td colspan="5">No device comparison data yet</td></tr>';
+
+    // Recommendations are rule-based observations from aggregate data.
+    const suggestions=[];
+    const topDrop=dropRows[0];
+    if(topDrop && topDrop[1].sessions>=3 && topDrop[1].sessions/Math.max(1,dropTotal)>=.25) {
+      suggestions.push({icon:"flag",text:"Review "+topDrop[0]+": it is the last recorded page in "+fmt(topDrop[1].sessions)+" sessions ("+Math.round(topDrop[1].sessions/Math.max(1,dropTotal)*100)+"% of sessions with a recorded journey)."});
+    }
+    Object.entries(pageLoads).map(([path,item])=>({path,avg:item.total/Math.max(1,item.count),count:item.count}))
+      .filter(item=>item.count>=3&&item.avg>=3000).sort((x,y)=>y.avg-x.avg).slice(0,2).forEach(item=>{
+        suggestions.push({icon:"speed",text:"Improve loading on "+item.path+": average recorded load is "+Math.round(item.avg)+" ms across "+fmt(item.count)+" measurements."});
+      });
+    const mobile=deviceStats.Mobile, desktop=deviceStats.Desktop;
+    if(mobile&&desktop&&mobile.sessions>=3&&desktop.sessions>=3) {
+      const mobileViews=mobile.views/mobile.sessions, desktopViews=desktop.views/desktop.sessions;
+      if(desktopViews>0&&mobileViews<desktopViews*.75) suggestions.push({icon:"smartphone",text:"Check the mobile experience: mobile sessions average "+mobileViews.toFixed(1)+" page views versus "+desktopViews.toFixed(1)+" on desktop."});
+      else if(desktopViews>0&&mobileViews>desktopViews*1.25) suggestions.push({icon:"smartphone",text:"Mobile visitors browse more pages per session ("+mobileViews.toFixed(1)+") than desktop visitors ("+desktopViews.toFixed(1)+"). Keep mobile navigation easy to use."});
+    }
+    const suggestionNode=$("viSmartSuggestions");
+    if(suggestionNode) suggestionNode.innerHTML=suggestions.length?suggestions.map(item=>'<li><span class="material-symbols-outlined">'+esc(item.icon)+'</span><span>'+esc(item.text)+'</span></li>').join(""):'<li class="vi-empty">Collecting enough sessions and performance samples to make useful suggestions. Insights appear automatically as data grows.</li>';
+
     const recent=filtered.slice().sort((a,b)=>(b.lastSeen||0)-(a.lastSeen||0)).slice(0,100);
     $("viVisitors").innerHTML=recent.map(s=>{
       const place=[s.city,s.region,s.country].filter(Boolean).join(", ")||"Unknown";
