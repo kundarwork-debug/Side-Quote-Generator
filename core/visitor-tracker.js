@@ -60,6 +60,7 @@
   function startTracking() {
     if (trackingStarted) return;
     trackingStarted = true;
+    window.dispatchEvent(new Event('apml-analytics-consent-granted'));
     visitorId = getId("apml-visitor-id");
     sessionId = getSessionId();
     send("start", 0, false).then(() => send("pageview", 0, false));
