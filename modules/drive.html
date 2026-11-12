@@ -1824,7 +1824,7 @@
     }
 
     async function handleItemDownload(firebaseKey, fileUrl, fileName) {
-      totalMediaDownloadsRef.transaction((currentValue) => {
+      if (window.apmlHasAnalyticsConsent && window.apmlHasAnalyticsConsent()) totalMediaDownloadsRef.transaction((currentValue) => {
         return (currentValue || 0) + 1;
       });
 
