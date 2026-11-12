@@ -203,6 +203,15 @@
     const url=URL.createObjectURL(new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}));
     const a=document.createElement("a");a.href=url;a.download="apml-visitor-intelligence.csv";a.click();URL.revokeObjectURL(url);
   }
+  window.__apmlVisitorExport = function () {
+    return {
+      reportingRange: rangeSelect ? rangeSelect.value : "30",
+      loadedSessionCount: allSessions.length,
+      filteredSessionCount: filtered.length,
+      sessions: allSessions.map(session => JSON.parse(JSON.stringify(session))),
+      filteredSessions: filtered.map(session => JSON.parse(JSON.stringify(session)))
+    };
+  };
   function init(){
     if(typeof firebase==="undefined"||!firebase.apps.length){$("viUpdated").textContent="Firebase is not initialized";return;}
     const sessionsRef = firebase.database().ref("analytics/visitor_sessions").limitToLast(500);
