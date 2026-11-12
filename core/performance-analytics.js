@@ -55,6 +55,13 @@
       .join("") || '<tr><td colspan="3">No measurements yet. Data appears after visitors opt in to analytics.</td></tr>';
     $("perfUpdated").textContent = rows.length ? "Updated " + new Date().toLocaleTimeString("en-IN") : "Waiting for consent-based measurements";
   }
+  window.__apmlPerformanceExport = function () {
+    return {
+      reportingRange: range && range.value !== "all" ? range.value + " days" : "all available",
+      measurementCount: allRows.length,
+      measurements: allRows.map(item => JSON.parse(JSON.stringify(item)))
+    };
+  };
   function init() {
     if (typeof firebase === "undefined" || !firebase.apps.length) {
       $("perfUpdated").textContent = "Firebase is not initialized"; return;
