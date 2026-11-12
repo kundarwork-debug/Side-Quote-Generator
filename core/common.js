@@ -489,7 +489,7 @@ window.sendPortalNotification = function () {};
                 <span class="footer-title-text">APML Portal</span>
               </div>
               <p class="footer-brand-desc">
-                Enterprise operations workspace designed to simplify quotation drafting, branch directories, and packing logistics standards.
+                Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.
               </p>
               <div class="footer-developer-tag">
                 Designed &amp; developed by <span>Prasad Kundar</span>
