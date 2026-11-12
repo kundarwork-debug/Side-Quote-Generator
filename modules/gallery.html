@@ -1210,7 +1210,7 @@
         </div>
 
         <div class="panel-row">
-          <select id="uploadFolderSelect" class="folder-select" required onchange="this.classList.remove('select-highlight-error')">
+          <select id="uploadFolderSelect" class="folder-select" aria-label="Select upload folder" required onchange="this.classList.remove('select-highlight-error')">
             <option value="" disabled selected>-- Select Folder (Compulsory) * --</option>
           </select>
           
@@ -2236,7 +2236,7 @@
           paginationHtml += `
             <div class="pagination-jump-row">
               <span>Go to page:</span>
-              <input type="number" id="jumpPageInput" class="jump-input" min="1" max="${totalPages}" placeholder="${currentPage}">
+              <input type="number" id="jumpPageInput" class="jump-input" aria-label="Page number to jump to" min="1" max="${totalPages}" placeholder="${currentPage}">
               <button type="button" class="btn-jump-go" onclick="jumpToCustomPage(${totalPages})">Go</button>
             </div>
           `;
