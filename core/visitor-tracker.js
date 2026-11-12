@@ -34,7 +34,6 @@
   function payload(action, seconds, extra) {
     return Object.assign({
       action, visitorId, sessionId, page: location.pathname.slice(0, 180) || "/",
-      title: document.title.slice(0, 120), referrer: document.referrer.slice(0, 240),
       seconds: Math.max(0, Math.min(45, Number(seconds) || 0))
     }, extra || {});
   }
@@ -166,7 +165,7 @@
     }
     overlay.querySelector(".apml-cookie-allow").addEventListener("click", () => saveChoice(true, true));
     overlay.querySelector(".apml-cookie-description a").addEventListener("click", () => { overlay.remove(); });
-    overlay.querySelector(".apml-cookie-decline").addEventListener("click", () => saveChoice(false, false));
+    overlay.querySelector(".apml-cookie-decline").addEventListener("click", () => saveChoice(false, true));
     overlay.addEventListener("click", event => { if (event.target === overlay) closeForSession(); });
     document.addEventListener("keydown", function onEscape(event) {
       if (event.key === "Escape" && document.body.contains(overlay)) {
@@ -203,7 +202,7 @@
       if (localStorage.getItem(CONSENT_KEY) === "no" && !privacyChoice) privacyChoice = { essential: true, analytics: false };
     } catch (_) {}
     if (privacyChoice && privacyChoice.analytics === true) startTracking();
-    else if (!dismissed && !isCookiesPolicyPage) showConsent();
+    else if (!privacyChoice && !dismissed && !isCookiesPolicyPage) showConsent();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
