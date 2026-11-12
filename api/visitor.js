@@ -9,20 +9,6 @@ function json(res, status, body) {
 function safeText(value, max) {
   return String(value || "").replace(/[<>\u0000-\u001f]/g, "").trim().slice(0, max);
 }
-function maskIp(value) {
-  const ip = String(value || "").split(",")[0].trim();
-  if (!ip) return "unavailable";
-  if (ip.includes(".")) {
-    const parts = ip.split(".");
-    if (parts.length !== 4 || parts.some(p => !/^\d{1,3}$/.test(p) || Number(p) > 255)) return "unavailable";
-    return parts.slice(0, 3).join(".") + ".0";
-  }
-  if (ip.includes(":")) {
-    const parts = ip.split(":").filter(Boolean);
-    return parts.slice(0, 3).join(":") + "::/48";
-  }
-  return "unavailable";
-}
 function classifyDevice(ua) {
   const s = String(ua || "");
   const browser = /Edg\//.test(s) ? "Edge" : /OPR\//.test(s) ? "Opera" : /SamsungBrowser\//.test(s) ? "Samsung Internet" : /Firefox\//.test(s) ? "Firefox" : /CriOS\//.test(s) ? "Chrome (iOS)" : /Chrome\//.test(s) ? "Chrome" : /Safari\//.test(s) ? "Safari" : "Other";
@@ -68,14 +54,9 @@ module.exports = async function handler(req, res) {
 
   const now = Date.now();
   const page = safeText(body.page, 180) || "/";
-  const title = safeText(body.title, 120);
-  let referrer = "";
-  try { referrer = new URL(safeText(body.referrer, 500)).origin; } catch (_) {}
   const delta = Math.max(0, Math.min(45, Number(body.seconds) || 0));
   const ua = safeText(req.headers["user-agent"], 500);
   const device = classifyDevice(ua);
-  const forwarded = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "";
-  const maskedIp = maskIp(forwarded);
   const city = safeText(req.headers["x-vercel-ip-city"], 80) || "Unknown";
   const region = safeText(req.headers["x-vercel-ip-country-region"], 80);
   const country = safeText(req.headers["x-vercel-ip-country"], 8) || "Unknown";
@@ -83,7 +64,7 @@ module.exports = async function handler(req, res) {
   const base = {
     visitorId, sessionId, lastSeen: now, lastPage: page,
     device: device.device, browser: device.browser, os: device.os,
-    city, region, country, maskedIp, referrer: referrer || undefined
+    city, region, country
   };
   const sessionUrl = DB + "/analytics/visitor_sessions/" + encodeURIComponent(sessionId) + ".json";
   try {
@@ -94,7 +75,6 @@ module.exports = async function handler(req, res) {
     if (action === "start" && !current.startedAt) {
       next.startedAt = now;
       next.firstPage = page;
-      next.firstTitle = title;
       next.pageViews = 0;
       next.totalSeconds = 0;
       next.pages = {};
@@ -104,16 +84,16 @@ module.exports = async function handler(req, res) {
       next.pages = current.pages || {};
       const key = pageKey(page);
       const previous = next.pages[key] || {};
-      next.pages[key] = { path: page, title, views: (Number(previous.views) || 0) + 1, seconds: Number(previous.seconds) || 0, lastSeen: now };
+      next.pages[key] = { path: page, views: (Number(previous.views) || 0) + 1, seconds: Number(previous.seconds) || 0, lastSeen: now };
       next.journey = Array.isArray(current.journey) ? current.journey.slice(-29) : [];
-      next.journey.push({ path: page, title, at: now });
+      next.journey.push({ path: page, at: now });
     }
     if (action === "heartbeat" || action === "page_time") {
       next.totalSeconds = (Number(current.totalSeconds) || 0) + delta;
       next.pages = current.pages || {};
       const key = pageKey(page);
-      const previous = next.pages[key] || { path: page, title, views: 0, seconds: 0 };
-      next.pages[key] = { ...previous, path: page, title, seconds: (Number(previous.seconds) || 0) + delta, lastSeen: now };
+      const previous = next.pages[key] || { path: page, views: 0, seconds: 0 };
+      next.pages[key] = { ...previous, path: page, seconds: (Number(previous.seconds) || 0) + delta, lastSeen: now };
     }
     if (action === "performance") {
       const loadMs = Math.round(Number(body.loadMs));
