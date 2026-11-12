@@ -268,39 +268,43 @@ function getIndiaDateKey() {
   }).format(new Date());
 }
 
+function hasAnalyticsConsent() {
+  try {
+    const choice = JSON.parse(localStorage.getItem('apml-privacy-consent') || 'null');
+    return !!(choice && choice.analytics === true) || localStorage.getItem('apml-analytics-consent') === 'yes';
+  } catch (_) { return false; }
+}
+window.apmlHasAnalyticsConsent = hasAnalyticsConsent;
+
 function logDailyActivity(type) {
   try {
-    if (typeof firebase === 'undefined' || !firebase.database) return;
+    if (!hasAnalyticsConsent() || typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
-    
-    // Get today's date string in YYYY-MM-DD format (local date)
     const today = getIndiaDateKey();
     const logRef = db.ref(`analytics/daily_logs/${today}/${type}`);
-    
-    // Atomically increment the counter for today in Firebase
-    logRef.transaction((currentValue) => {
-      return (currentValue || 0) + 1;
-    });
+    logRef.transaction((currentValue) => (currentValue || 0) + 1);
   } catch (err) {
     console.warn("Daily log error:", err);
   }
 }
 
-// Automatically log unique visitor once per calendar day per browser session
-window.addEventListener('DOMContentLoaded', () => {
-  const lastVisitDate = localStorage.getItem('apml_last_visit_date');
-  const today = getIndiaDateKey();
-  
-  if (lastVisitDate !== today) {
-    logDailyActivity('visitors');
-    localStorage.setItem('apml_last_visit_date', today);
-  }
-});
+function recordDailyVisitorIfAllowed() {
+  if (!hasAnalyticsConsent()) return;
+  try {
+    const today = getIndiaDateKey();
+    if (localStorage.getItem('apml_last_visit_date') !== today) {
+      logDailyActivity('visitors');
+      localStorage.setItem('apml_last_visit_date', today);
+    }
+  } catch (_) {}
+}
+window.addEventListener('DOMContentLoaded', recordDailyVisitorIfAllowed);
+window.addEventListener('apml-analytics-consent-granted', recordDailyVisitorIfAllowed);
 
 // --- TRACK PEAK CONCURRENT ONLINE USERS PER DAY ---
 function initDailyPeakTracker() {
   try {
-    if (typeof firebase === 'undefined' || !firebase.database) return;
+    if (!hasAnalyticsConsent() || typeof firebase === 'undefined' || !firebase.database) return;
     const db = firebase.database();
     
     const today = getIndiaDateKey();
@@ -322,6 +326,7 @@ function initDailyPeakTracker() {
 }
 
 window.addEventListener('DOMContentLoaded', initDailyPeakTracker);
+window.addEventListener('apml-analytics-consent-granted', initDailyPeakTracker);
 
 // =========================================================
 // EMAIL ALERTS REMOVED
