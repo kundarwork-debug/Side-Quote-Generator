@@ -498,6 +498,10 @@ window.sendPortalNotification = function () {};
               <p class="footer-brand-desc">
                 Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.
               </p>
+              <div class="footer-contact-details">
+                <a href="mailto:Kundar.work@gmail.com">Kundar.work@gmail.com</a>
+                <a href="tel:+919910579530">+91 99105 79530</a>
+              </div>
               <div class="footer-developer-tag">
                 Designed &amp; developed by <span>Prasad Kundar</span>
               </div>
@@ -708,7 +712,8 @@ window.sendPortalNotification = function () {};
             letter-spacing: -0.02em;
           }
 
-          .footer-brand-desc {
+          .footer-contact-details{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;font-weight:700}.footer-contact-details a{color:var(--text-secondary);text-decoration:none}.footer-contact-details a:hover{text-decoration:underline}
+  .footer-brand-desc {
             font-size: 13.5px;
             color: var(--text-muted, #78716c);
             line-height: 1.6;
