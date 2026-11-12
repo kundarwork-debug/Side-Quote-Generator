@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
   if (!/^[a-zA-Z0-9_-]{12,80}$/.test(sessionId) || !/^[a-zA-Z0-9_-]{12,80}$/.test(visitorId)) {
     return json(res, 400, { ok: false, error: "Invalid visitor identifiers" });
   }
-  if (!["start", "pageview", "heartbeat", "page_time"].includes(action)) {
+  if (!["start", "pageview", "heartbeat", "page_time", "performance"].includes(action)) {
     return json(res, 400, { ok: false, error: "Invalid action" });
   }
 
@@ -114,6 +114,23 @@ module.exports = async function handler(req, res) {
       const key = pageKey(page);
       const previous = next.pages[key] || { path: page, title, views: 0, seconds: 0 };
       next.pages[key] = { ...previous, path: page, title, seconds: (Number(previous.seconds) || 0) + delta, lastSeen: now };
+    }
+    if (action === "performance") {
+      const loadMs = Math.round(Number(body.loadMs));
+      const domMs = Math.round(Number(body.domMs));
+      const ttfbMs = Math.round(Number(body.ttfbMs));
+      if (![loadMs, domMs, ttfbMs].every(Number.isFinite) ||
+          loadMs < 0 || loadMs > 120000 || domMs < 0 || domMs > 120000 ||
+          ttfbMs < 0 || ttfbMs > 60000) {
+        return json(res, 400, { ok: false, error: "Invalid performance measurements" });
+      }
+      const navType = ["navigate", "reload", "back_forward", "prerender"].includes(body.navType) ? body.navType : "other";
+      next.performance = Array.isArray(current.performance) ? current.performance.slice(-29) : [];
+      next.performance.push({
+        path: page, loadMs, domMs, ttfbMs, navType,
+        serviceWorkerControlled: body.serviceWorkerControlled === true,
+        measuredAt: now
+      });
     }
     if (!next.startedAt) next.startedAt = now;
     const save = await fetch(sessionUrl, {
