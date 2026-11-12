@@ -150,11 +150,14 @@
           sessionStorage.removeItem("apml-privacy-dismissed");
           sessionStorage.removeItem("apml-analytics-consent-dismissed");
         } catch (_) {}
-      } else {
+      } else if (persist) {
         try {
-          localStorage.removeItem(PRIVACY_KEY);
-          localStorage.removeItem(CONSENT_KEY);
+          localStorage.setItem(PRIVACY_KEY, JSON.stringify({ essential: true, analytics: false, updatedAt: Date.now() }));
+          localStorage.setItem(CONSENT_KEY, "no");
+          sessionStorage.removeItem("apml-privacy-dismissed");
+          sessionStorage.removeItem("apml-analytics-consent-dismissed");
         } catch (_) {}
+      } else {
         closeForSession();
         return;
       }
@@ -197,7 +200,7 @@
       }
       dismissed = sessionStorage.getItem("apml-privacy-dismissed") === "yes"
         || sessionStorage.getItem("apml-analytics-consent-dismissed") === "yes";
-      if (localStorage.getItem(CONSENT_KEY) === "no") localStorage.removeItem(CONSENT_KEY);
+      if (localStorage.getItem(CONSENT_KEY) === "no" && !privacyChoice) privacyChoice = { essential: true, analytics: false };
     } catch (_) {}
     if (privacyChoice && privacyChoice.analytics === true) startTracking();
     else if (!dismissed && !isCookiesPolicyPage) showConsent();
