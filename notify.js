@@ -182,7 +182,7 @@
 
   function announceVisit() {
     try {
-      if (ENABLED.visit === false || muted() || looksLikeBot()) return;
+      if (ENABLED.visit === false || muted() || looksLikeBot() || !window.apmlHasAnalyticsConsent || !window.apmlHasAnalyticsConsent()) return;
       var now = Date.now();
       var last = Number(localStorage.getItem('apml_visit_last') || 0);
       if (last && now - last < VISIT.cooldownHours * 3600 * 1000) return;
@@ -209,6 +209,8 @@
       }
     }, VISIT.delayMs);
   }
+  window.addEventListener("apml-analytics-consent-granted", announceVisit);
+
   // ---------------- announcements ----------------
   var annNow = null, annPinned = '', annLastPoll = 0, annTries = 0;
 
