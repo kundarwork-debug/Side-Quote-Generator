@@ -1134,7 +1134,21 @@
   .gallery-head-bar { margin-bottom: 12px !important; gap: 12px !important; }
   .gallery-header .apml-3d-page-icon { width: 36px !important; height: 36px !important; margin-right: 7px !important; }
   @media(max-width:600px) { .gallery-container { margin-top: 64px !important; } .gallery-header .apml-3d-page-icon { width: 32px !important; height: 32px !important; } }
-</style>
+
+    
+    /* Compact module hero titles — shared sizing, original visual styles retained. */
+    .gallery-header > .gallery-title {
+      font-size: clamp(22px, 3.1vw, 30px) !important;
+      line-height: 1.14;
+      letter-spacing: -0.035em;
+    }
+    @media (max-width: 480px) {
+      .gallery-header > .gallery-title {
+        font-size: clamp(21px, 6vw, 25px) !important;
+        line-height: 1.16;
+      }
+    }
+  </style>
 
   <meta name="robots" content="noindex, nofollow">
 </head>
