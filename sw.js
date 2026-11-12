@@ -6,7 +6,7 @@
 
    Bump VERSION after changing cache behaviour or the offline shell.
    ===================================================================== */
-const VERSION = 'v68';
+const VERSION = 'v69';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
@@ -38,6 +38,7 @@ const PRECACHE = [
   'core/common.js',
   'core/visitor-tracker.js',
   'core/visitor-analytics.js',
+  'core/performance-analytics.js',
   'notify.js',
   'core/common.css',
   'core/header.html',
