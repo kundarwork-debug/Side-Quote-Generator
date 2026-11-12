@@ -1274,7 +1274,7 @@ document.addEventListener('DOMContentLoaded', () => {
 }, { once: true });
 
 function incrementPdfDownloadCount() {
-  if (db) {
+  if (db && window.apmlHasAnalyticsConsent && window.apmlHasAnalyticsConsent()) {
     db.ref("analytics/totalPdfDownloads").transaction((currentCount) => {
       return (currentCount || 0) + 1;
     });
