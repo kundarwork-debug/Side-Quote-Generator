@@ -744,6 +744,13 @@
       <section class="vi-card" style="margin-top:16px"><h3>Recent visitor sessions</h3><div class="vi-table-wrap"><table class="vi-table"><thead><tr><th>Started</th><th>Anonymous browser</th><th>Approx. location</th><th>Masked IP</th><th>Device / browser</th><th>Time spent</th><th>Page views</th><th>Journey</th></tr></thead><tbody id="viVisitors"><tr><td colspan="8">Loading…</td></tr></tbody></table></div><p class="vi-note">IP addresses are masked before storage (IPv4 /24, IPv6 /48). Location is approximate and depends on network geolocation. Analytics runs only after consent. Visitor IDs are random browser identifiers, not real-world identities. Journey order is exact for sessions recorded after this upgrade; older sessions show an approximate order. Reports use the latest 500 sessions available to this dashboard.</p></section>
     </section>
 
+    <section class="vi-card" aria-label="Download all analytics data" style="margin-top:28px;text-align:center;padding:24px">
+      <h3>Download all analytics data</h3>
+      <p class="vi-note">Export the dashboard's daily totals, visitor intelligence sessions, page journeys and available performance measurements together in one JSON file.</p>
+      <button type="button" class="btn" id="downloadAllAnalytics" style="margin:12px auto 0"><span class="material-symbols-outlined">download</span> Download all data</button>
+      <p class="vi-note" id="downloadAllStatus" aria-live="polite">Includes the latest 500 visitor sessions currently available to the dashboard.</p>
+    </section>
+
   </main>
 
   <!-- COMMON FOOTER PLACEHOLDER -->
@@ -1344,6 +1351,39 @@
     }
 
     // a hook for testing and for the browser console
+    $('downloadAllAnalytics').addEventListener('click', function () {
+      var status = $('downloadAllStatus');
+      try {
+        var bundle = {
+          exportedAt: new Date().toISOString(),
+          portal: 'APML Portal',
+          formatVersion: 1,
+          notes: {
+            visitorIdentity: 'Anonymous browser identifiers; not real-world identities.',
+            location: 'Approximate location and masked IP only, where available.',
+            coverage: 'Visitor and performance records are limited to the latest 500 sessions currently loaded by the dashboard.'
+          },
+          dailyAnalytics: {
+            reportingRange: state.range,
+            selectedPeriod: state.last ? state.last.win : null,
+            allAvailableDailyLogs: state.logs || null,
+            totals: state.totals
+          },
+          visitorIntelligence: window.__apmlVisitorExport ? window.__apmlVisitorExport() : null,
+          performance: window.__apmlPerformanceExport ? window.__apmlPerformanceExport() : null
+        };
+        var blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'apml-portal-all-analytics-' + istKey(new Date()) + '.json';
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 5000);
+        status.textContent = 'Your combined analytics file is being downloaded.';
+      } catch (err) {
+        status.textContent = 'Could not create the export. Please reload Analytics and try again.';
+      }
+    });
     window.__analytics = { istKey: istKey, keyDaysAgo: keyDaysAgo, windowOf: windowOf, customWindow: customWindow, deltaOf: deltaOf, peakOf: peakOf, buildCsv: buildCsv, render: render, state: state };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
     else start();
