@@ -81,7 +81,7 @@
       });
     };
     if (document.readyState === "complete") window.setTimeout(recordPerformance, 0);
-    else window.addEventListener("load", recordPerformance, { once: true });
+    else window.addEventListener("load", () => window.setTimeout(recordPerformance, 0), { once: true });
     heartbeat = window.setInterval(() => {
       if (document.visibilityState === "visible") accountPageTime();
     }, 20000);
