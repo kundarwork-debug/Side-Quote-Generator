@@ -1740,14 +1740,21 @@
           };
           if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
           const db = firebase.database();
-          const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
-          const myPresenceRef = db.ref("presence/" + userSessionId);
-          db.ref(".info/connected").on("value", snap => {
-            if (snap.val() === true) {
-              myPresenceRef.onDisconnect().remove();
-              myPresenceRef.set({ online: true, timestamp: Date.now() });
-            }
-          });
+          let presenceStarted = false;
+          function startPresenceIfAllowed() {
+            if (presenceStarted || !window.apmlHasAnalyticsConsent || !window.apmlHasAnalyticsConsent()) return;
+            presenceStarted = true;
+            const userSessionId = "user_" + Math.random().toString(36).substring(2, 9);
+            const myPresenceRef = db.ref("presence/" + userSessionId);
+            db.ref(".info/connected").on("value", snap => {
+              if (snap.val() === true) {
+                myPresenceRef.onDisconnect().remove();
+                myPresenceRef.set({ online: true, timestamp: Date.now() });
+              }
+            });
+          }
+          startPresenceIfAllowed();
+          window.addEventListener('apml-analytics-consent-granted', startPresenceIfAllowed);
           db.ref("presence").on("value", snap => {
             targetData.liveUserCount = snap.numChildren() || 1;
             if (hasBeenViewed) {
