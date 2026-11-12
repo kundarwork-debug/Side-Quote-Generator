@@ -1373,11 +1373,16 @@ async function handleTelegramWebhook(request, env, ctx) {
   // Suppress rapid repeated admin commands instead of replying to every tap.
   if(env.ANNOUNCE_KV){
     const commandKey='telegram_command_cooldown:'+senderId;
+    let storageOperation='read';
     try{
       const last=Number(await env.ANNOUNCE_KV.get(commandKey)||0);
       if(Date.now()-last<CONFIG.TELEGRAM_COMMAND_COOLDOWN_MS)return ok();
+      storageOperation='write';
       await env.ANNOUNCE_KV.put(commandKey,String(Date.now()),{expirationTtl:15});
-    }catch(error){console.error('Telegram command cooldown storage unavailable:',error);return ok();}
+    }catch(error){
+      console.error('Telegram command cooldown storage unavailable:',storageOperation,String(error&&error.name||'Error'),String(error&&error.message||error));
+      return ok();
+    }
   }
 
   try {
