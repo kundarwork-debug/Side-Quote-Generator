@@ -1378,7 +1378,7 @@ async function handleTelegramWebhook(request, env, ctx) {
       const last=Number(await env.ANNOUNCE_KV.get(commandKey)||0);
       if(Date.now()-last<CONFIG.TELEGRAM_COMMAND_COOLDOWN_MS)return ok();
       storageOperation='write';
-      await env.ANNOUNCE_KV.put(commandKey,String(Date.now()),{expirationTtl:15});
+      await env.ANNOUNCE_KV.put(commandKey,String(Date.now()),{expirationTtl:60});
     }catch(error){
       console.error('Telegram command cooldown storage unavailable:',storageOperation,String(error&&error.name||'Error'),String(error&&error.message||error));
       return ok();
