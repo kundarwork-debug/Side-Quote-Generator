@@ -504,7 +504,21 @@
   .calc-header .apml-3d-page-icon { width: 36px !important; height: 36px !important; margin-bottom: 0 !important; }
   .calc-header .sop-badge { margin-bottom: 4px !important; }
   @media(max-width:600px) { .calculator-shell { gap: 12px !important; } .calc-header .apml-3d-page-icon { width: 32px !important; height: 32px !important; } }
-</style>
+
+    
+    /* Compact module hero titles — shared sizing, original visual styles retained. */
+    .calc-header > .calc-title {
+      font-size: clamp(22px, 3.1vw, 30px) !important;
+      line-height: 1.14;
+      letter-spacing: -0.035em;
+    }
+    @media (max-width: 480px) {
+      .calc-header > .calc-title {
+        font-size: clamp(21px, 6vw, 25px) !important;
+        line-height: 1.16;
+      }
+    }
+  </style>
 
   <meta name="description" content="Estimate local household shifting charges with the APML Portal local shifting rate calculator.">
   <link rel="canonical" href="https://apmlportal.vercel.app/modules/local-rate.html">
