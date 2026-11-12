@@ -68,6 +68,7 @@
     $("viReturning").textContent=fmt(returning);
     $("viAvgTime").textContent=duration(filtered.length?totalSeconds/filtered.length:0);
     if($("viUnique")) $("viUnique").textContent=fmt(unique);
+    if($("viNew")) $("viNew").textContent=fmt(Math.max(0,unique-returning));
 
     const cities={},devices={},pages={},hours=Array(24).fill(0),days={};
     filtered.forEach(s=>{
