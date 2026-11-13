@@ -1604,3 +1604,22 @@ button, input, textarea, select {
     padding-bottom: 12px;
   }
 }
+
+
+/* Shared footer surface must always match the shared header/page canvas. */
+#footer-container,
+#footer-container .site-footer-extended,
+#footer-container .apml-tw-footer {
+  background: var(--apml-color-page, #f7f5f0) !important;
+  background-color: var(--apml-color-page, #f7f5f0) !important;
+  background-image: none !important;
+  color: var(--apml-color-text, #202124);
+}
+html[data-theme="dark"] #footer-container,
+html[data-theme="dark"] #footer-container .site-footer-extended,
+html[data-theme="dark"] #footer-container .apml-tw-footer {
+  background: var(--apml-color-page, #10141d) !important;
+  background-color: var(--apml-color-page, #10141d) !important;
+  background-image: none !important;
+  color: var(--apml-color-text, #f2f3f5);
+}
