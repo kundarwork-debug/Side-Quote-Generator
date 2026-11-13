@@ -2005,7 +2005,7 @@ export default {
       return json({
         ok: true,
         service: 'APML Drive API',
-        version: '2026-11-11-telegram-safety',
+        version: '2026-11-13-nova-analytics',
         routes: {
           announcement: true,
           maintenance: true,
