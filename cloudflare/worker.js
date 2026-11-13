@@ -1850,7 +1850,7 @@ async function handleNovaAnalytics(request) {
   const requestedDays = Number(url.searchParams.get('days')) || 30;
   const days = [7, 30, 90].includes(requestedDays) ? requestedDays : 30;
   const now = Date.now();
-  const cutoff = now - days * 86400000;
+  const cutoff = now - (days - 1) * 86400000;
   const startKey = new Date(cutoff).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
 
   const [dailyResult, sessionsResult, pdfResult, mediaResult] = await Promise.all([
