@@ -529,6 +529,7 @@ window.sendPortalNotification = function () {};
                   <ul>
                     <li><a href="/about.html">About Developer</a></li>
                     <li><a href="/policy/bug-report.html">Report a Bug</a></li>
+                    <li><a href="/404.html">Play Now</a></li>
                   </ul>
                 </nav>
                 <nav aria-label="Legal">
@@ -544,14 +545,7 @@ window.sendPortalNotification = function () {};
 
             <div class="apml-tw-footer-bottom">
               <p>© ${currentYear} APML Portal. All rights reserved.</p>
-              <div class="apml-tw-footer-actions">
-                <button type="button" class="footer-fun-btn" onclick="window.location.href='/404.html'" title="Play!">
-                  <span class="play">play</span><span class="now">now!</span>
-                </button>
-                <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
-                  <svg class="svgIcon" viewBox="0 0 384 512" aria-hidden="true"><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
-                </button>
-              </div>
+
             </div>
           </div>
         </footer>
@@ -595,9 +589,6 @@ window.sendPortalNotification = function () {};
           #footer-container .apml-tw-link-grid a:hover{color:var(--apml-tw-accent)}
           #footer-container .apml-tw-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:42px;padding-top:22px;border-top:1px solid var(--apml-color-border,#e7dfd8)}
           #footer-container .apml-tw-footer-bottom>p{margin:0;color:var(--apml-tw-muted);font-size:12.5px}
-          #footer-container .apml-tw-footer-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-          #footer-container .apml-tw-footer-actions .footer-about-pill{background:transparent}
-          #footer-container .apml-tw-footer-actions .footer-back-to-top-btn{flex:0 0 42px}
           html[data-theme="dark"] #footer-container .apml-tw-footer{--apml-tw-bg:#10141d;--apml-tw-text:#f8fafc;--apml-tw-muted:#cbd5e1;border-color:#334155}
           @media(max-width:1000px){#footer-container .apml-tw-footer-top{grid-template-columns:1fr;gap:36px}#footer-container .apml-tw-link-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}}
           @media(max-width:700px){#footer-container .apml-tw-footer-inner{padding:38px 22px 24px}#footer-container .apml-tw-link-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px}#footer-container .apml-tw-footer-bottom{align-items:flex-start;flex-direction:column;margin-top:34px}#footer-container .apml-tw-footer-actions{gap:10px}}
@@ -606,16 +597,6 @@ window.sendPortalNotification = function () {};
         </style>
       `;;
 
-      // Footer Back to Top Click Handler
-      const footerBackToTopBtn = document.getElementById("footerBackToTopBtn");
-      if (footerBackToTopBtn) {
-        footerBackToTopBtn.addEventListener("click", () => {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-          });
-        });
-      }
     }
   }
 
