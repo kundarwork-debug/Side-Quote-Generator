@@ -888,9 +888,22 @@ window.sendPortalNotification = function () {};
             width: 100%;
             margin-top: auto;
             padding: clamp(42px, 6vw, 76px) clamp(18px, 5vw, 56px) 26px;
-            background: var(--apml-color-page, #f8f5f0);
+            /* Force a solid page-matched surface on every page, including index. */
+            background: var(--apml-color-page, #f7f5f0) !important;
+            background-color: var(--apml-color-page, #f7f5f0) !important;
+            background-image: none !important;
             color: var(--apml-color-text, #292524);
             border-top: 1px solid var(--apml-color-border, #e7dfd8);
+          }
+          #footer-container {
+            background: var(--apml-color-page, #f7f5f0) !important;
+            background-color: var(--apml-color-page, #f7f5f0) !important;
+          }
+          html[data-theme="dark"] #footer-container,
+          html[data-theme="dark"] #footer-container .site-footer-extended {
+            background: var(--apml-color-page, #10141d) !important;
+            background-color: var(--apml-color-page, #10141d) !important;
+            background-image: none !important;
           }
           #footer-container .site-footer-extended .footer-grid-container {
             width: 100%;
