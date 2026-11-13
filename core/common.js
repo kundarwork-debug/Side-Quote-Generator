@@ -498,9 +498,13 @@ window.sendPortalNotification = function () {};
               <p class="footer-brand-desc">
                 Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.
               </p>
-              <div class="footer-contact-details">
-                <a href="mailto:Kundar.work@gmail.com">Kundar.work@gmail.com</a>
-                <a href="tel:+919910579530">+91 99105 79530</a>
+              <div class="footer-contact-details" aria-label="Contact links" style="display:flex;align-items:center;gap:14px;margin-top:14px;">
+                <a href="mailto:Kundar.work@gmail.com" aria-label="Email APML Portal" title="Email" style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;color:var(--text-main,#292524);background:var(--surface-card,#fff);border:1px solid var(--border-subtle,#e7dfd7);text-decoration:none;">
+                  <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+                </a>
+                <a href="https://wa.me/919910579530" target="_blank" rel="noopener noreferrer" aria-label="Contact on WhatsApp" title="WhatsApp" style="display:inline-flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;color:#fff;background:#25D366;text-decoration:none;">
+                  <svg viewBox="0 0 24 24" width="23" height="23" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.04 2a9.86 9.86 0 0 0-8.48 14.9L2.2 22l5.25-1.38A9.95 9.95 0 1 0 12.04 2Zm0 18.1a8.1 8.1 0 0 1-4.13-1.13l-.3-.18-3.12.82.83-3.04-.2-.31A8.12 8.12 0 1 1 12.04 20.1Zm4.45-6.08c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.95-1.2-.72-.64-1.2-1.43-1.34-1.67-.14-.24-.02-.37.1-.49.11-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.1.15 1.51.09.46-.07 1.43-.58 1.63-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z"/></svg>
+                </a>
               </div>
               <div class="footer-developer-tag">
                 Designed &amp; developed by <span>Prasad Kundar</span>
