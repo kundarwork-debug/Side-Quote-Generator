@@ -6,7 +6,7 @@
 
    Bump VERSION after changing cache behaviour or the offline shell.
    ===================================================================== */
-const VERSION = 'v88';
+const VERSION = 'v89';
 const SHELL_CACHE = 'apml-shell-' + VERSION;
 const RUNTIME_CACHE = 'apml-runtime-' + VERSION;
 const RUNTIME_MAX_ENTRIES = 120;
