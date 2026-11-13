@@ -484,565 +484,121 @@ window.sendPortalNotification = function () {};
     if (footerContainer) {
       const currentYear = new Date().getFullYear();
       footerContainer.innerHTML = `
-        <footer class="site-footer-extended">
-          <div class="footer-grid-container">
-            
-            <!-- Left Brand Section -->
-            <div class="footer-brand-col">
-              <div class="footer-brand-heading">
-                <div class="logo-badge" style="width: 32px; height: 32px;">
-                  <img src="logo.svg" alt="APML Hub" style="width: 20px; height: 20px; display: block; object-fit: contain;">
-                </div>
-                <span class="footer-title-text">APML Portal</span>
-              </div>
-              <p class="footer-brand-desc">
-                Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.
-              </p>
-                            <style>
-                .apml-footer-socials{display:flex;align-items:center;gap:12px;margin-top:14px;flex-wrap:wrap}
-                .apml-footer-socials .socialContainer{width:42px;height:42px;flex:0 0 42px;border-radius:50%;background:#2c2c2c;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;text-decoration:none;transition:background-color .3s ease,transform .3s ease}
-                .apml-footer-socials .socialSvg{width:17px;height:17px;fill:#fff;transition:transform .3s ease}
-                .apml-footer-socials .socialContainer:hover{transform:translateY(-3px)}
-                .apml-footer-socials .socialContainer:active{transform:scale(.9)}
-                .apml-footer-socials .emailLink:hover{background:#64748b}
-                .apml-footer-socials .whatsappLink:hover{background:#128c7e}
-                .apml-footer-socials .githubLink:hover{background:#333}
-                .apml-footer-socials .socialContainer:hover .socialSvg{animation:apml-social-slide-in .3s both}
-                @keyframes apml-social-slide-in{from{transform:translateY(-28px);opacity:0}to{transform:translateY(0);opacity:1}}
-                @media(prefers-reduced-motion:reduce){.apml-footer-socials .socialContainer,.apml-footer-socials .socialSvg{transition:none;animation:none!important}}
-              </style>
-              <div class="apml-footer-socials" aria-label="Contact and social links">
-                <a class="socialContainer emailLink" href="mailto:Kundar.work@gmail.com" aria-label="Email APML Portal" title="Email">
-                  <svg viewBox="0 0 16 16" class="socialSvg" aria-hidden="true"><path d="M1.5 2h13A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2zm0 1a.5.5 0 0 0-.5.5v.2l7 4.6 7-4.6v-.2a.5.5 0 0 0-.5-.5h-13zM15 5l-6.7 4.4a.55.55 0 0 1-.6 0L1 5v7.5a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5V5z"/></svg>
+        <footer class="site-footer-extended apml-tw-footer">
+          <div class="apml-tw-footer-inner">
+            <div class="apml-tw-footer-top">
+              <section class="apml-tw-brand" aria-label="APML Portal information">
+                <a class="apml-tw-logo" href="/index.html" aria-label="APML Portal home">
+                  <img src="/logo.svg" alt="APML Portal" width="150" height="42">
                 </a>
-                <a class="socialContainer whatsappLink" href="https://wa.me/919910579530" target="_blank" rel="noopener noreferrer" aria-label="Contact on WhatsApp" title="WhatsApp">
-                  <svg viewBox="0 0 16 16" class="socialSvg" aria-hidden="true"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+                <p>Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.</p>
+                <ul class="apml-tw-socials" aria-label="Contact and social links">
+                  <li><a href="mailto:Kundar.work@gmail.com" aria-label="Email APML Portal" title="Email">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 8L4 7v10h16V7l-8 6zm0-2 7-4H5l7 4z"/></svg>
+                  </a></li>
+                  <li><a href="https://wa.me/919910579530" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l6-1.6A11.8 11.8 0 0 0 23.5 11a11.7 11.7 0 0 0-3-7.5zM12 21a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4A9.8 9.8 0 1 1 12 21zm5.4-7.3c-.3-.2-1.7-.9-2-.9-.2-.1-.4-.2-.6.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.2.2 2 3.1 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
+                  </a></li>
+                  <li><a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.5 21.8c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.4-4-1.4-.5-1.3-1.2-1.6-1.2-1.6-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.6-2.8 5.6-5.4 5.9.4.3.8 1 .8 2v3c0 .3.2.7.8.6A11.2 11.2 0 0 0 12 .8z"/></svg>
+                  </a></li>
+                </ul>
+                <div class="footer-developer-tag">Designed &amp; developed by <span>Prasad Kundar</span></div>
+              </section>
+
+              <div class="apml-tw-link-grid">
+                <nav aria-label="Work tools">
+                  <h2>Work tools</h2>
+                  <ul>
+                    <li><a href="/index.html">Home Portal</a></li>
+                    <li><a href="/modules/editor.html">Quotation Editor</a></li>
+                    <li><a href="/modules/gallery.html">Packing Gallery</a></li>
+                    <li><a href="/modules/drive.html">Cloud Drive</a></li>
+                  </ul>
+                </nav>
+                <nav aria-label="Directories">
+                  <h2>Directories</h2>
+                  <ul>
+                    <li><a href="/modules/directory.html">Hub &amp; Branch Directory</a></li>
+                    <li><a href="/modules/field-officer.html">Field Officer WCRO</a></li>
+                  </ul>
+                </nav>
+                <nav aria-label="Helpful links">
+                  <h2>Helpful links</h2>
+                  <ul>
+                    <li><a href="/about.html">About Developer</a></li>
+                    <li><a href="/policy/bug-report.html">Report a Bug</a></li>
+                  </ul>
+                </nav>
+                <nav aria-label="Legal">
+                  <h2>Legal</h2>
+                  <ul>
+                    <li><a href="/policy/privacy.html">Privacy Policy</a></li>
+                    <li><a href="/policy/terms.html">Terms &amp; Conditions</a></li>
+                    <li><a href="/policy/cookies.html">Cookies &amp; Storage Policy</a></li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+
+            <div class="apml-tw-footer-bottom">
+              <p>© ${currentYear} APML Portal. All rights reserved.</p>
+              <div class="apml-tw-footer-actions">
+                <a href="/about.html" class="footer-about-pill">
+                  <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='/logo.svg'">
+                  <span>About Developer</span>
                 </a>
-                <a class="socialContainer githubLink" href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub">
-                  <svg viewBox="0 0 16 16" class="socialSvg" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.22.48-2.69-.94-2.69-.94-.36-.92-.89-1.16-.89-1.16-.73-.5.06-.49.06-.49.8.06 1.22.82 1.22.82.72 1.22 1.88.87 2.34.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.96 0-.87.31-1.59.82-2.15-.08-.2-.36-1 .08-2.12 0 0 .67-.21 2.2.82A7.65 7.65 0 0 1 8 4.05c.68 0 1.36.09 2 .27 1.53-1.03 2.2-.82 2.2-.82.44 1.12.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.08-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.14.46.55.38A8.001 8.001 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
-                </a>
+                <button type="button" class="footer-fun-btn" onclick="window.location.href='/404.html'" title="Play!">
+                  <span class="play">play</span><span class="now">now!</span>
+                </button>
+                <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
+                  <svg class="svgIcon" viewBox="0 0 384 512" aria-hidden="true"><path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
+                </button>
               </div>
-              <div class="footer-developer-tag">
-                Designed &amp; developed by <span>Prasad Kundar</span>
-              </div>
-            </div>
-
-            <!-- Right Links Columns -->
-            <div class="footer-links-columns">
-              <div class="footer-link-col">
-                <div class="footer-col-title">Quick Links</div>
-                <a href="/index.html" class="footer-item-link">Home Portal</a>
-                <a href="/modules/editor.html" class="footer-item-link">Quotation Editor</a>
-                <a href="/modules/gallery.html" class="footer-item-link">Packing Gallery</a>
-                <a href="/modules/drive.html" class="footer-item-link">Cloud Drive</a>
-              </div>
-
-              <div class="footer-link-col">
-                <div class="footer-col-title">Directories</div>
-                <a href="/modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
-                <a href="/modules/field-officer.html" class="footer-item-link">Field Officer WCRO</a>
-              </div>
-
-              <div class="footer-link-col">
-                <div class="footer-col-title">Resources &amp; Legal</div>
-                <a href="/policy/terms.html" class="footer-item-link">Terms &amp; Conditions</a>
-                <a href="/policy/privacy.html" class="footer-item-link">Privacy Policy</a>
-                <a href="/policy/cookies.html" class="footer-item-link">Cookies &amp; Storage Policy</a>
-                <a href="/policy/bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
-              </div>
-            </div>
-
-          </div>
-
-          <nav class="footer-mobile-links" aria-label="Footer navigation">
-            <div class="footer-mobile-link-group">
-              <h2 class="footer-col-title">Resources</h2>
-              <a href="/modules/editor.html" class="footer-item-link">Quotation Editor</a>
-              <a href="/modules/gallery.html" class="footer-item-link">Packing Gallery</a>
-              <a href="/modules/drive.html" class="footer-item-link">Cloud Drive</a>
-              <a href="/modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
-              <a href="/modules/field-officer.html" class="footer-item-link">Field Officer WCRO</a>
-            </div>
-            <div class="footer-mobile-link-group">
-              <h2 class="footer-col-title">Legal</h2>
-              <a href="/policy/privacy.html" class="footer-item-link">Privacy Policy</a>
-              <a href="/policy/terms.html" class="footer-item-link">Terms &amp; Conditions</a>
-              <a href="/policy/cookies.html" class="footer-item-link">Cookies &amp; Storage Policy</a>
-              <a href="/policy/bug-report.html" class="footer-item-link">Report a Bug</a>
-            </div>
-          </nav>
-
-          <div class="footer-bottom-bar">
-            <div class="footer-copyright-group">
-
-              <span>© ${currentYear} APML Portal. All rights reserved.</span>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 16px;">
-              <a href="/about.html" class="footer-about-pill">
-                <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
-                <span>About Developer</span>
-              </a>
-
-              <!-- CUSTOM UIVERSE BUTTON LINKING TO 404 -->
-              <button type="button" class="footer-fun-btn" onclick="window.location.href='/404.html'" title="Play!">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 36 36"
-                  width="18px"
-                  height="18px"
-                >
-                  <rect width="36" height="36" x="0" y="0" fill="#fdd835"></rect>
-                  <path
-                    fill="#e53935"
-                    d="M38.67,42H11.52C11.27,40.62,11,38.57,11,36c0-5,0-11,0-11s1.44-7.39,3.22-9.59 c1.67-2.06,2.76-3.48,6.78-4.41c3-0.7,7.13-0.23,9,1c2.15,1.42,3.37,6.67,3.81,11.29c1.49-0.3,5.21,0.2,5.5,1.28 C40.89,30.29,39.48,38.31,38.67,42z"
-                  ></path>
-                  <path
-                    fill="#b71c1c"
-                    d="M39.02,42H11.99c-0.22-2.67-0.48-7.05-0.49-12.72c0.83,4.18,1.63,9.59,6.98,9.79 c3.48,0.12,8.27,0.55,9.83-2.45c1.57-3,3.72-8.95,3.51-15.62c-0.19-5.84-1.75-8.2-2.13-8.7c0.59,0.66,3.74,4.49,4.01,11.7 c0.03,0.83,0.06,1.72,0.08,2.66c4.21-0.15,5.93,1.5,6.07,2.35C40.68,33.85,39.8,38.9,39.02,42z"
-                  ></path>
-                  <path
-                    fill="#212121"
-                    d="M35,27.17c0,3.67-0.28,11.2-0.42,14.83h-2C32.72,38.42,33,30.83,33,27.17 c0-5.54-1.46-12.65-3.55-14.02c-1.65-1.08-5.49-1.48-8.23-0.85c-3.62,0.83-4.57,1.99-6.14,3.92L15,16.32 c-1.31,1.6-2.59,6.92-3,8.96v10.8c0,2.58,0.28,4.61,0.54,5.92H10.5c-0.25-1.41-0.5-3.42-0.5-5.92l0.02-11.09 c0.15-0.77,1.55-7.63,3.43-9.94l0.08-0.09c1.65-2.03,2.96-3.63,7.25-4.61c3.28-0.76,7.67-0.25,9.77,1.13 C33.79,13.6,35,22.23,35,27.17z"
-                  ></path>
-                  <path
-                    fill="#01579b"
-                    d="M17.165,17.283c5.217-0.055,9.391,0.283,9,6.011c-0.391,5.728-8.478,5.533-9.391,5.337 c-0.913-0.196-7.826-0.043-7.696-5.337C9.209,18,13.645,17.32,17.165,17.283z"
-                  ></path>
-                  <path
-                    fill="#212121"
-                    d="M40.739,37.38c-0.28,1.99-0.69,3.53-1.22,4.62h-2.43c0.25-0.19,1.13-1.11,1.67-4.9 c0.57-4-0.23-11.79-0.93-12.78c-0.4-0.4-2.63-0.8-4.37-0.89l0.1-1.99c1.04,0.05,4.53,0.31,5.71,1.49 C40.689,24.36,41.289,33.53,40.739,37.38z"
-                  ></path>
-                  <path
-                    fill="#81d4fa"
-                    d="M10.154,20.201c0.261,2.059-0.196,3.351,2.543,3.546s8.076,1.022,9.402-0.554 c1.326-1.576,1.75-4.365-0.891-5.267C19.336,17.287,12.959,16.251,10.154,20.201z"
-                  ></path>
-                  <path
-                    fill="#212121"
-                    d="M17.615,29.677c-0.502,0-0.873-0.03-1.052-0.069c-0.086-0.019-0.236-0.035-0.434-0.06 c-5.344-0.679-8.053-2.784-8.052-6.255c0.001-2.698,1.17-7.238,8.986-7.32l0.181-0.002c3.444-0.038,6.414-0.068,8.272,1.818 c1.173,1.191,1.712,3,1.647,5.53c-0.044,1.688-0.785,3.147-2.144,4.217C22.785,29.296,19.388,29.677,17.615,29.677z M17.086,17.973 c-7.006,0.074-7.008,4.023-7.008,5.321c-0.001,3.109,3.598,3.926,6.305,4.27c0.273,0.035,0.48,0.063,0.601,0.089 c0.563,0.101,4.68,0.035,6.855-1.732c0.865-0.702,1.299-1.57,1.326-2.653c0.051-1.958-0.301-3.291-1.073-4.075 c-1.262-1.281-3.834-1.255-6.825-1.222L17.086,17.973z"
-                  ></path>
-                  <path
-                    fill="#e1f5fe"
-                    d="M15.078,19.043c1.957-0.326,5.122-0.529,4.435,1.304c-0.489,1.304-7.185,2.185-7.185,0.652 C12.328,19.467,15.078,19.043,15.078,19.043z"
-                  ></path>
-                </svg>
-                <span class="now">now!</span>
-                <span class="play">play</span>
-              </button>
-
-              <!-- EMBEDDED FOOTER BACK TO TOP BUTTON -->
-              <button type="button" class="footer-back-to-top-btn" id="footerBackToTopBtn" aria-label="Scroll to top" title="Go to top">
-                <svg class="svgIcon" viewBox="0 0 384 512">
-                  <path d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"></path>
-                </svg>
-              </button>
             </div>
           </div>
         </footer>
-
         <style>
-          /* EXTENDED STRETCHED FOOTER STYLING */
-          /* Keep this shared footer isolated from page-specific legacy footer rules. */
-          #footer-container .site-footer-extended {
-            display: block !important;
-            width: 100% !important;
-            max-width: none !important;
+          #footer-container .apml-tw-footer {
+            --apml-tw-accent: var(--md-sys-color-primary, #b91c1c);
+            --apml-tw-bg: var(--apml-color-page, #f7f5f0);
+            --apml-tw-text: var(--apml-color-text, #292524);
+            --apml-tw-muted: var(--apml-color-text-secondary, #57534e);
+            display:block;width:100%;box-sizing:border-box;
+            padding:0;background:var(--apml-tw-bg)!important;
+            background-color:var(--apml-tw-bg)!important;background-image:none!important;
+            color:var(--apml-tw-text);border-top:1px solid var(--apml-color-border,#e7dfd8);
           }
-          #footer-container .site-footer-extended .footer-grid-container {
-            display: grid !important;
-            grid-template-columns: minmax(0, 1.5fr) minmax(0, 3fr) !important;
-          }
-          #footer-container .site-footer-extended .footer-brand-col {
-            display: flex !important;
-            flex-direction: column !important;
-          }
-          #footer-container .site-footer-extended .footer-links-columns {
-            display: grid !important;
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-          }
-          #footer-container .site-footer-extended .footer-link-col {
-            display: flex !important;
-            flex-direction: column !important;
-          }
-          #footer-container .site-footer-extended .footer-bottom-bar {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-          }
-          #footer-container .site-footer-extended .footer-copyright-group {
-            display: inline-flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-            flex-wrap: nowrap !important;
-            gap: 7px !important;
-          }
-          #footer-container .site-footer-extended .footer-copyright-group > span {
-            display: inline-block !important;
-            white-space: normal !important;
-          }
-          #footer-container .site-footer-extended .footer-about-pill {
-            display: inline-flex !important;
-            flex-direction: row !important;
-            align-items: center !important;
-          }
-          @media (max-width: 768px) {
-            #footer-container .site-footer-extended .footer-grid-container {
-              grid-template-columns: minmax(0, 1fr) !important;
-            }
-            #footer-container .site-footer-extended .footer-links-columns {
-              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            }
-            #footer-container .site-footer-extended .footer-bottom-bar {
-              align-items: flex-start !important;
-            }
-          }
-          @media (max-width: 480px) {
-            #footer-container .site-footer-extended .footer-links-columns {
-              grid-template-columns: minmax(0, 1fr) !important;
-            }
-            #footer-container .site-footer-extended .footer-bottom-bar {
-              flex-direction: column !important;
-              align-items: flex-start !important;
-            }
-          }
-          .footer-copyright-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            min-width: 0;
-          }
-          .site-footer-extended {
-            background: var(--md-sys-color-surface-container-low, #f7ede6);
-            border-top: 1px solid var(--md-sys-color-outline-variant, #ede4de);
-            padding: 60px 40px 30px;
-            width: 100%;
-            margin-top: auto;
-            color: var(--text-main, #292524);
-          }
-
-          .footer-grid-container {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1.5fr 3fr;
-            gap: 40px;
-            align-items: start;
-            padding-bottom: 40px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-          }
-
-          .footer-brand-col {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-          }
-
-          .footer-brand-heading {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .footer-title-text {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-          }
-
-          .footer-contact-details{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;font-weight:700}.footer-contact-details a{color:var(--text-secondary);text-decoration:none}.footer-contact-details a:hover{text-decoration:underline}
-  .footer-brand-desc {
-            font-size: 13.5px;
-            color: var(--text-muted, #78716c);
-            line-height: 1.6;
-            max-width: 440px;
-          }
-
-          .footer-developer-tag {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted, #78716c);
-            margin-top: 4px;
-          }
-
-          .footer-developer-tag span {
-            color: var(--primary, #b91c1c);
-            font-weight: 700;
-          }
-
-          .footer-links-columns {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            width: 100%;
-          }
-
-          .footer-col-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 14.5px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            color: var(--text-main, #292524);
-            letter-spacing: -0.01em;
-          }
-
-          .footer-link-col {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-          }
-
-          .footer-item-link {
-            font-size: 13.5px;
-            font-weight: 500;
-            color: var(--text-muted, #78716c);
-            text-decoration: none;
-            transition: color 0.2s ease;
-          }
-
-          .footer-item-link:hover {
-            color: var(--primary, #b91c1c);
-          }
-
-          .footer-bottom-bar {
-            width: 100%;
-            margin-top: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12.5px;
-            color: var(--text-muted, #78716c);
-            flex-wrap: wrap;
-            gap: 12px;
-          }
-
-          .footer-about-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-            border: 1px solid var(--md-sys-color-outline-variant, #ede4de);
-            padding: 6px 14px;
-            border-radius: 9999px;
-            color: var(--text-main, #292524);
-            font-weight: 600;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-            position: relative;
-            z-index: 10;
-          }
-
-          .footer-about-pill:hover {
-            transform: translateY(-1px);
-          }
-
-          .footer-about-pill img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            object-fit: cover;
-          }
-
-          /* Responsive shared footer: prevent the desktop grid from compressing
-             the brand and link columns on tablet and mobile screens. */
-          @media (max-width: 768px) {
-            .site-footer-extended {
-              padding: 40px 24px 24px;
-            }
-
-            .footer-grid-container {
-              grid-template-columns: minmax(0, 1fr);
-              gap: 28px;
-              padding-bottom: 28px;
-            }
-
-            .footer-links-columns {
-              grid-template-columns: repeat(2, minmax(0, 1fr));
-              gap: 22px 18px;
-            }
-
-            .footer-bottom-bar {
-              align-items: flex-start;
-            }
-          }
-
-          @media (max-width: 480px) {
-            .site-footer-extended {
-              padding: 32px 18px 22px;
-            }
-
-            .footer-links-columns {
-              grid-template-columns: minmax(0, 1fr);
-              gap: 20px;
-            }
-
-            .footer-bottom-bar {
-              flex-direction: column;
-              align-items: flex-start;
-            }
-          }
-        
-          /* APML adaptation of the multi-column footer template */
-          #footer-container .site-footer-extended {
-            box-sizing: border-box;
-            width: 100%;
-            margin-top: auto;
-            padding: clamp(42px, 6vw, 76px) clamp(18px, 5vw, 56px) 26px;
-            /* Force a solid page-matched surface on every page, including index. */
-            background: var(--apml-color-page, #f7f5f0) !important;
-            background-color: var(--apml-color-page, #f7f5f0) !important;
-            background-image: none !important;
-            color: var(--apml-color-text, #292524);
-            border-top: 1px solid var(--apml-color-border, #e7dfd8);
-          }
-          #footer-container {
-            background: var(--apml-color-page, #f7f5f0) !important;
-            background-color: var(--apml-color-page, #f7f5f0) !important;
-          }
-          html[data-theme="dark"] #footer-container,
-          html[data-theme="dark"] #footer-container .site-footer-extended {
-            background: var(--apml-color-page, #10141d) !important;
-            background-color: var(--apml-color-page, #10141d) !important;
-            background-image: none !important;
-          }
-          #footer-container .site-footer-extended .footer-grid-container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: minmax(220px, 1.1fr) minmax(0, 2fr);
-            gap: clamp(32px, 5vw, 76px);
-            align-items: start;
-            padding: 0 0 42px;
-            border-bottom: 1px solid var(--apml-color-border, #e7dfd8);
-          }
-          #footer-container .site-footer-extended .footer-brand-col {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 16px;
-            min-width: 0;
-          }
-          #footer-container .site-footer-extended .footer-brand-heading { gap: 12px; }
-          #footer-container .site-footer-extended .footer-title-text {
-            font-size: 21px;
-            font-weight: 800;
-            letter-spacing: -.035em;
-            color: var(--apml-color-text, #292524);
-          }
-          #footer-container .site-footer-extended .footer-brand-desc {
-            max-width: 28em;
-            margin: 0;
-            color: var(--apml-color-text-secondary, #57534e);
-            font-size: 14px;
-            line-height: 1.7;
-          }
-          #footer-container .site-footer-extended .footer-developer-tag {
-            margin-top: 0;
-            font-size: 13px;
-            color: var(--apml-color-text-muted, #78716c);
-          }
-          #footer-container .site-footer-extended .footer-links-columns {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: clamp(18px, 3vw, 38px);
-            width: 100%;
-          }
-          #footer-container .site-footer-extended .footer-link-col {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-            min-width: 0;
-          }
-          #footer-container .site-footer-extended .footer-col-title {
-            margin: 0 0 5px;
-            color: var(--apml-color-text, #292524);
-            font-size: 13px;
-            font-weight: 800;
-            letter-spacing: .075em;
-            text-transform: uppercase;
-          }
-          #footer-container .site-footer-extended .footer-item-link {
-            color: var(--apml-color-text-secondary, #57534e);
-            font-size: 14px;
-            line-height: 1.5;
-            font-weight: 550;
-            text-decoration: none;
-            transition: color .2s ease, transform .2s ease;
-          }
-          #footer-container .site-footer-extended .footer-item-link:hover {
-            color: var(--primary, #b91c1c);
-            transform: translateX(2px);
-          }
-          #footer-container .site-footer-extended .footer-bottom-bar {
-            width: 100%;
-            max-width: 1200px;
-            margin: 22px auto 0;
-            padding-top: 2px;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-          }
-          #footer-container .site-footer-extended .footer-mobile-links { display: none; }
-          #footer-container .site-footer-extended .footer-copyright-group,
-          #footer-container .site-footer-extended .footer-bottom-bar > div:last-child {
-            min-width: 0;
-          }
-          #footer-container .site-footer-extended .footer-back-to-top-btn {
-            flex: 0 0 42px;
-          }
-          @media (max-width: 820px) {
-            #footer-container .site-footer-extended .footer-grid-container {
-              grid-template-columns: minmax(0, 1fr);
-              gap: 32px;
-            }
-            #footer-container .site-footer-extended .footer-brand-col {
-              max-width: 560px;
-            }
-          }
-          @media (max-width: 768px) {
-            #footer-container .site-footer-extended {
-              padding: 28px 18px 30px;
-            }
-            #footer-container .site-footer-extended .footer-grid-container,
-            #footer-container .site-footer-extended .footer-bottom-bar {
-              display: none !important;
-            }
-            #footer-container .site-footer-extended .footer-mobile-links {
-              display: grid !important;
-              grid-template-columns: repeat(2, minmax(0, 1fr));
-              gap: 22px 18px;
-              width: 100%;
-              max-width: 560px;
-              margin: 0 auto;
-            }
-            #footer-container .site-footer-extended .footer-mobile-link-group {
-              display: flex;
-              flex-direction: column;
-              align-items: flex-start;
-              gap: 11px;
-              min-width: 0;
-            }
-            #footer-container .site-footer-extended .footer-mobile-link-group .footer-col-title {
-              margin-bottom: 3px;
-            }
-            #footer-container .site-footer-extended .footer-mobile-link-group .footer-item-link {
-              font-size: 13px;
-              overflow-wrap: anywhere;
-            }
-          }
-          @media (max-width: 360px) {
-            #footer-container .site-footer-extended { padding-left: 14px; padding-right: 14px; }
-            #footer-container .site-footer-extended .footer-mobile-links { gap: 18px 12px; }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            #footer-container .site-footer-extended .footer-item-link { transition: none; }
-          }
-</style>
-      `;
+          #footer-container .apml-tw-footer-inner{max-width:1280px;margin:0 auto;padding:56px 32px 26px}
+          #footer-container .apml-tw-footer-top{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);gap:56px}
+          #footer-container .apml-tw-brand{display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-width:0}
+          #footer-container .apml-tw-logo{display:inline-flex;align-items:center;min-height:42px;text-decoration:none}
+          #footer-container .apml-tw-logo img{display:block;width:auto;height:38px;max-width:180px;object-fit:contain}
+          #footer-container .apml-tw-brand>p{max-width:340px;margin:0;color:var(--apml-tw-muted);font-size:14px;line-height:1.75}
+          #footer-container .apml-tw-socials{display:flex;gap:10px;list-style:none;margin:2px 0 0;padding:0}
+          #footer-container .apml-tw-socials a{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:color-mix(in srgb,var(--apml-tw-text) 7%,transparent);color:var(--apml-tw-muted);transition:background .2s,color .2s,transform .2s}
+          #footer-container .apml-tw-socials a:hover{background:var(--apml-tw-accent);color:#fff;transform:translateY(-2px)}
+          #footer-container .apml-tw-socials svg{width:19px;height:19px;fill:currentColor}
+          #footer-container .apml-tw-brand .footer-developer-tag{margin:0;color:var(--apml-tw-muted);font-size:12px}
+          #footer-container .apml-tw-brand .footer-developer-tag span{color:var(--apml-tw-accent)}
+          #footer-container .apml-tw-link-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+          #footer-container .apml-tw-link-grid nav{min-width:0}
+          #footer-container .apml-tw-link-grid h2{margin:0 0 20px;color:var(--apml-tw-text);font-size:14px;font-weight:750;letter-spacing:.02em}
+          #footer-container .apml-tw-link-grid ul{display:flex;flex-direction:column;gap:14px;list-style:none;margin:0;padding:0}
+          #footer-container .apml-tw-link-grid a{color:var(--apml-tw-muted);font-size:13.5px;line-height:1.5;text-decoration:none;transition:color .2s}
+          #footer-container .apml-tw-link-grid a:hover{color:var(--apml-tw-accent)}
+          #footer-container .apml-tw-footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:42px;padding-top:22px;border-top:1px solid var(--apml-color-border,#e7dfd8)}
+          #footer-container .apml-tw-footer-bottom>p{margin:0;color:var(--apml-tw-muted);font-size:12.5px}
+          #footer-container .apml-tw-footer-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+          #footer-container .apml-tw-footer-actions .footer-about-pill{background:transparent}
+          #footer-container .apml-tw-footer-actions .footer-back-to-top-btn{flex:0 0 42px}
+          html[data-theme="dark"] #footer-container .apml-tw-footer{--apml-tw-bg:#10141d;--apml-tw-text:#f8fafc;--apml-tw-muted:#cbd5e1;border-color:#334155}
+          @media(max-width:1000px){#footer-container .apml-tw-footer-top{grid-template-columns:1fr;gap:36px}#footer-container .apml-tw-link-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}}
+          @media(max-width:700px){#footer-container .apml-tw-footer-inner{padding:38px 22px 24px}#footer-container .apml-tw-link-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:30px 18px}#footer-container .apml-tw-footer-bottom{align-items:flex-start;flex-direction:column;margin-top:34px}#footer-container .apml-tw-footer-actions{gap:10px}}
+          @media(max-width:380px){#footer-container .apml-tw-footer-inner{padding-left:16px;padding-right:16px}#footer-container .apml-tw-link-grid{gap:24px 12px}}
+          @media(prefers-reduced-motion:reduce){#footer-container .apml-tw-footer *{transition:none!important;animation:none!important}}
+        </style>
+      `;;
 
       // Footer Back to Top Click Handler
       const footerBackToTopBtn = document.getElementById("footerBackToTopBtn");
