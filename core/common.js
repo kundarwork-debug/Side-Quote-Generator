@@ -489,7 +489,8 @@ window.sendPortalNotification = function () {};
             <div class="apml-tw-footer-top">
               <section class="apml-tw-brand" aria-label="APML Portal information">
                 <a class="apml-tw-logo" href="/index.html" aria-label="APML Portal home">
-                  <img src="/logo.svg" alt="APML Portal" width="150" height="42">
+                  <span class="apml-tw-logo-badge"><img src="/logo.svg" alt="" width="24" height="24"></span>
+                  <span class="apml-tw-logo-text">APML <span>PORTAL</span></span>
                 </a>
                 <p>Independent, unofficial utility website built primarily to help APML employees with selected work tasks. It is not an official company website.</p>
                 <ul class="apml-tw-socials" aria-label="Contact and social links">
@@ -562,12 +563,18 @@ window.sendPortalNotification = function () {};
             --apml-tw-text: var(--apml-color-text, #292524);
             --apml-tw-muted: var(--apml-color-text-secondary, #57534e);
             display:block;width:100%;box-sizing:border-box;
-            padding:0;background:#f7f5f0!important;
-            background-color:#f7f5f0!important;background-image:none!important;
+            padding:0;background:var(--apml-color-page,#f7f5f0)!important;
+            background-color:var(--apml-color-page,#f7f5f0)!important;background-image:none!important;
             color:var(--apml-tw-text);border-top:1px solid var(--apml-color-border,#e7dfd8);
           }
-          html[data-theme="dark"] #footer-container{background:#10141d!important}
-          html[data-theme="dark"] #footer-container .apml-tw-footer{background:#10141d!important;background-color:#10141d!important}
+          html[data-theme="dark"] #footer-container{background:var(--apml-color-page,#10141d)!important}
+          html[data-theme="dark"] #footer-container .apml-tw-footer{background:var(--apml-color-page,#10141d)!important;background-color:var(--apml-color-page,#10141d)!important}
+          #footer-container .apml-tw-logo{display:inline-flex;align-items:center;gap:10px;min-height:42px;text-decoration:none;color:var(--apml-tw-text)}
+          #footer-container .apml-tw-logo-badge{width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%;background:var(--md-sys-color-primary-container,rgba(185,28,28,.1));border:1.5px solid rgba(185,28,28,.25)}
+          #footer-container .apml-tw-logo-badge img{display:block;width:24px;height:24px;object-fit:contain;animation:unifiedLogoSpin 12s linear infinite;transform-origin:center center;will-change:transform}
+          #footer-container .apml-tw-logo-text{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--apml-tw-text);white-space:nowrap}
+          #footer-container .apml-tw-logo-text span{color:var(--apml-tw-accent)}
+          @media(prefers-reduced-motion:reduce){#footer-container .apml-tw-logo-badge img{animation:none}}
           #footer-container .apml-tw-footer-inner{max-width:1280px;margin:0 auto;padding:56px 32px 26px}
           #footer-container .apml-tw-footer-top{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);gap:56px}
           #footer-container .apml-tw-brand{display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-width:0}
