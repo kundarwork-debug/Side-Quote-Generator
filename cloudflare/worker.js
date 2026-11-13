@@ -398,6 +398,22 @@ async function fbRead(path) {
 
 }
 
+
+async function fbReadLimited(path, limit = 500) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), CONFIG.STATS_TIMEOUT_MS);
+  try {
+    const query = '?orderBy=%22%24key%22&limitToLast=' + Math.max(1, Math.min(500, limit));
+    const res = await fetch(CONFIG.FIREBASE_DB_URL + '/' + path + '.json' + query, { signal: ctl.signal });
+    if (!res.ok) return { ok: false };
+    return { ok: true, value: await res.json() };
+  } catch (e) {
+    return { ok: false };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 const asCount = (r) => (r.ok && typeof r.value === 'number' && isFinite(r.value) && r.value >= 0 ? Math.floor(r.value) : null);
 
 function getTodayIST() {
@@ -1825,6 +1841,120 @@ async function sendHourlyAnalyticsSummary(env) {
 
 }
 
+
+async function handleNovaAnalytics(request) {
+  const admin = await getAdminEmail(request);
+  if (!admin) return json({ ok: false, error: 'Approved APML admin login required.' }, 401);
+
+  const url = new URL(request.url);
+  const requestedDays = Number(url.searchParams.get('days')) || 30;
+  const days = [7, 30, 90].includes(requestedDays) ? requestedDays : 30;
+  const now = Date.now();
+  const cutoff = now - days * 86400000;
+  const startKey = new Date(cutoff).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+
+  const [dailyResult, sessionsResult, pdfResult, mediaResult] = await Promise.all([
+    fbRead('analytics/daily_logs'),
+    fbReadLimited('analytics/visitor_sessions', 500),
+    fbRead(CONFIG.PDF_TOTAL_PATH),
+    fbRead(CONFIG.MEDIA_TOTAL_PATH)
+  ]);
+
+  if (!dailyResult.ok) {
+    return json({ ok: false, error: 'APML daily analytics could not be read. Check Firebase read permissions.' }, 502);
+  }
+
+  const dailySource = dailyResult.value && typeof dailyResult.value === 'object' ? dailyResult.value : {};
+  const daily = Object.keys(dailySource).filter(key => /^\d{4}-\d{2}-\d{2}$/.test(key) && key >= startKey)
+    .sort().map(key => ({ date: key, ...dailyFields(dailySource[key]) }));
+  const totals = daily.reduce((acc, row) => {
+    acc.visitors += row.visitors;
+    acc.pdf += row.pdf;
+    acc.media += row.media;
+    acc.peakOnline = Math.max(acc.peakOnline, row.peak);
+    return acc;
+  }, { visitors: 0, pdf: 0, media: 0, peakOnline: 0 });
+
+  const sessionSource = sessionsResult.ok && sessionsResult.value && typeof sessionsResult.value === 'object'
+    ? sessionsResult.value : {};
+  const sessions = Object.values(sessionSource).filter(s => s && Number(s.lastSeen || s.startedAt || 0) >= cutoff);
+  const visitorSessions = new Map();
+  const devices = {};
+  const browsers = {};
+  const cities = {};
+  const pages = {};
+  let pageViews = 0;
+  let totalSeconds = 0;
+  let performanceCount = 0;
+  let loadTotal = 0;
+  let domTotal = 0;
+  let ttfbTotal = 0;
+
+  for (const session of sessions) {
+    if (session.visitorId) visitorSessions.set(session.visitorId, (visitorSessions.get(session.visitorId) || 0) + 1);
+    const device = String(session.device || 'Unknown').slice(0, 32);
+    const browser = String(session.browser || 'Unknown').slice(0, 40);
+    const city = String(session.city || 'Unknown').slice(0, 60);
+    devices[device] = (devices[device] || 0) + 1;
+    browsers[browser] = (browsers[browser] || 0) + 1;
+    cities[city] = (cities[city] || 0) + 1;
+    pageViews += Math.max(0, Number(session.pageViews) || 0);
+    totalSeconds += Math.max(0, Number(session.totalSeconds) || 0);
+    const sessionPages = session.pages && typeof session.pages === 'object' ? session.pages : {};
+    for (const page of Object.values(sessionPages)) {
+      if (!page || typeof page !== 'object') continue;
+      const path = String(page.path || '/').slice(0, 120);
+      pages[path] = (pages[path] || 0) + Math.max(0, Number(page.views) || 0);
+    }
+    const measurements = Array.isArray(session.performance) ? session.performance : [];
+    for (const sample of measurements) {
+      const load = Number(sample.loadMs), dom = Number(sample.domMs), ttfb = Number(sample.ttfbMs);
+      if (![load, dom, ttfb].every(Number.isFinite)) continue;
+      loadTotal += load; domTotal += dom; ttfbTotal += ttfb; performanceCount++;
+    }
+  }
+
+  const top = (map, limit = 6) => Object.entries(map).sort((a, b) => b[1] - a[1])
+    .slice(0, limit).map(([name, count]) => ({ name, count }));
+  const uniqueBrowsers = visitorSessions.size;
+  const returningBrowsers = [...visitorSessions.values()].filter(count => count > 1).length;
+
+  return json({
+    ok: true,
+    generatedAt: now,
+    timezone: 'Asia/Kolkata',
+    periodDays: days,
+    daily,
+    totals: {
+      ...totals,
+      totalPdfsLifetime: pdfResult.ok && Number.isFinite(Number(pdfResult.value)) ? Number(pdfResult.value) : null,
+      totalMediaLifetime: mediaResult.ok && Number.isFinite(Number(mediaResult.value)) ? Number(mediaResult.value) : null
+    },
+    visitorIntelligence: {
+      sessions: sessions.length,
+      uniqueBrowsers,
+      returningBrowsers,
+      pageViews,
+      averageSessionSeconds: sessions.length ? Math.round(totalSeconds / sessions.length) : 0,
+      devices: top(devices),
+      browsers: top(browsers),
+      cities: top(cities),
+      topPages: top(pages)
+    },
+    performance: {
+      samples: performanceCount,
+      averageLoadMs: performanceCount ? Math.round(loadTotal / performanceCount) : null,
+      averageDomMs: performanceCount ? Math.round(domTotal / performanceCount) : null,
+      averageTtfbMs: performanceCount ? Math.round(ttfbTotal / performanceCount) : null
+    },
+    dataNotes: [
+      'Daily visitors are summed from APML daily counters and are not deduplicated lifetime people.',
+      'Visitor intelligence includes only consented sessions among the latest 500 stored sessions.',
+      'Visitor IDs and individual session records are not returned; only aggregate counts are shared.'
+    ]
+  });
+}
+
 export default {
 
   async fetch(request, env, ctx) {
@@ -1883,7 +2013,8 @@ export default {
           telegram: true,
           download: true,
           quotationCleanup: true,
-          adminNotifications: true
+          adminNotifications: true,
+          novaAnalytics: true
         },
         configuration: {
           firebase: !!CONFIG.FIREBASE_DB_URL,
@@ -1896,6 +2027,8 @@ export default {
         timestamp: new Date().toISOString()
       });
     }
+
+    if (request.method === 'GET' && path === '/nova/analytics') return await handleNovaAnalytics(request);
 
     if (request.method === 'GET' && path === '/announcement') return await handleAnnouncementRead(env);
 
