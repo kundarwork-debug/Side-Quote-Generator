@@ -1606,20 +1606,35 @@ button, input, textarea, select {
 }
 
 
-/* Shared footer surface must always match the shared header/page canvas. */
-#footer-container,
-#footer-container .site-footer-extended,
-#footer-container .apml-tw-footer {
-  background: var(--apml-color-page, #f7f5f0) !important;
+/* Canonical opaque footer surface: exactly the same page-colour token as the header. */
+#footer-container {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
   background-color: var(--apml-color-page, #f7f5f0) !important;
   background-image: none !important;
-  color: var(--apml-color-text, #202124);
+  opacity: 1 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#footer-container .site-footer-extended,
+#footer-container .apml-tw-footer,
+#footer-container > .site-footer {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  background-color: var(--apml-color-page, #f7f5f0) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
 html[data-theme="dark"] #footer-container,
 html[data-theme="dark"] #footer-container .site-footer-extended,
-html[data-theme="dark"] #footer-container .apml-tw-footer {
-  background: var(--apml-color-page, #10141d) !important;
+html[data-theme="dark"] #footer-container .apml-tw-footer,
+html[data-theme="dark"] #footer-container > .site-footer {
   background-color: var(--apml-color-page, #10141d) !important;
   background-image: none !important;
-  color: var(--apml-color-text, #f2f3f5);
+  color: var(--apml-color-text, #f2f3f5) !important;
 }
