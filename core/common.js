@@ -499,6 +499,10 @@ window.sendPortalNotification = function () {};
                   <li><a href="https://wa.me/919910579530" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 2 17.7L.5 23.5l6-1.6A11.8 11.8 0 0 0 23.5 11a11.7 11.7 0 0 0-3-7.5zM12 21a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4A9.8 9.8 0 1 1 12 21zm5.4-7.3c-.3-.2-1.7-.9-2-.9-.2-.1-.4-.2-.6.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.5.1-.6l.5-.6c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.3.3-1 1-1 2.4s1 2.8 1.1 3c.2.2 2 3.1 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
                   </a></li>
+                  <li><a href="/about.html" class="apml-tw-about-link" aria-label="About Developer" title="About Developer">
+                    <img src="https://github.com/kundarwork-debug.png" alt="" onerror="this.src='/logo.svg'">
+                    <span>About Developer</span>
+                  </a></li>
                   <li><a href="https://github.com/kundarwork-debug" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile" title="GitHub">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .8a11.2 11.2 0 0 0-3.5 21.8c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.4-4-1.4-.5-1.3-1.2-1.6-1.2-1.6-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.6-2.8 5.6-5.4 5.9.4.3.8 1 .8 2v3c0 .3.2.7.8.6A11.2 11.2 0 0 0 12 .8z"/></svg>
                   </a></li>
@@ -544,10 +548,6 @@ window.sendPortalNotification = function () {};
             <div class="apml-tw-footer-bottom">
               <p>© ${currentYear} APML Portal. All rights reserved.</p>
               <div class="apml-tw-footer-actions">
-                <a href="/about.html" class="footer-about-pill">
-                  <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='/logo.svg'">
-                  <span>About Developer</span>
-                </a>
                 <button type="button" class="footer-fun-btn" onclick="window.location.href='/404.html'" title="Play!">
                   <span class="play">play</span><span class="now">now!</span>
                 </button>
@@ -578,6 +578,9 @@ window.sendPortalNotification = function () {};
           #footer-container .apml-tw-socials{display:flex;gap:10px;list-style:none;margin:2px 0 0;padding:0}
           #footer-container .apml-tw-socials a{display:grid;place-items:center;width:40px;height:40px;border-radius:11px;background:color-mix(in srgb,var(--apml-tw-text) 7%,transparent);color:var(--apml-tw-muted);transition:background .2s,color .2s,transform .2s}
           #footer-container .apml-tw-socials a:hover{background:var(--apml-tw-accent);color:#fff;transform:translateY(-2px)}
+          #footer-container .apml-tw-socials .apml-tw-about-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:auto;height:40px;padding:0 13px;border-radius:999px;color:var(--apml-tw-text);background:color-mix(in srgb,var(--apml-tw-text) 7%,transparent);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
+          #footer-container .apml-tw-socials .apml-tw-about-link img{width:25px;height:25px;border-radius:50%;object-fit:cover}
+          #footer-container .apml-tw-socials .apml-tw-about-link:hover{color:#fff;background:var(--apml-tw-accent)}
           #footer-container .apml-tw-socials svg{width:19px;height:19px;fill:currentColor}
           #footer-container .apml-tw-brand .footer-developer-tag{margin:0;color:var(--apml-tw-muted);font-size:12px}
           #footer-container .apml-tw-brand .footer-developer-tag span{color:var(--apml-tw-accent)}
