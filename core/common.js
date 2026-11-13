@@ -555,16 +555,19 @@ window.sendPortalNotification = function () {};
           </div>
         </footer>
         <style>
+          #footer-container{background:var(--apml-color-page,#f7f5f0)!important}
           #footer-container .apml-tw-footer {
             --apml-tw-accent: var(--md-sys-color-primary, #b91c1c);
             --apml-tw-bg: var(--apml-color-page, #f7f5f0);
             --apml-tw-text: var(--apml-color-text, #292524);
             --apml-tw-muted: var(--apml-color-text-secondary, #57534e);
             display:block;width:100%;box-sizing:border-box;
-            padding:0;background:var(--apml-tw-bg)!important;
-            background-color:var(--apml-tw-bg)!important;background-image:none!important;
+            padding:0;background:#f7f5f0!important;
+            background-color:#f7f5f0!important;background-image:none!important;
             color:var(--apml-tw-text);border-top:1px solid var(--apml-color-border,#e7dfd8);
           }
+          html[data-theme="dark"] #footer-container{background:#10141d!important}
+          html[data-theme="dark"] #footer-container .apml-tw-footer{background:#10141d!important;background-color:#10141d!important}
           #footer-container .apml-tw-footer-inner{max-width:1280px;margin:0 auto;padding:56px 32px 26px}
           #footer-container .apml-tw-footer-top{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2fr);gap:56px}
           #footer-container .apml-tw-brand{display:flex;flex-direction:column;align-items:flex-start;gap:18px;min-width:0}
