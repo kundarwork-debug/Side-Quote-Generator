@@ -125,7 +125,7 @@
   if (!document.querySelector('link[rel="manifest"]')) {
     const manifest = document.createElement('link');
     manifest.rel = 'manifest';
-    manifest.href = './manifest.json';
+    manifest.href = '/manifest.json';
     document.head.appendChild(manifest);
   }
 
@@ -133,7 +133,7 @@
   if (!document.querySelector('link[rel="apple-touch-icon"]')) {
     const appleIcon = document.createElement('link');
     appleIcon.rel = 'apple-touch-icon';
-    appleIcon.href = './icon-192.png';
+    appleIcon.href = '/icon-192.png';
     document.head.appendChild(appleIcon);
   }
 
@@ -354,7 +354,7 @@ window.sendPortalNotification = function () {};
         <header class="site-header" id="siteHeader">
           <div class="header-inner">
             <div style="display: flex; align-items: center; gap: 20px;">
-              <a href="index.html" class="site-logo">
+              <a href="/index.html" class="site-logo">
                 <div class="logo-badge">
                   <img src="logo.svg" alt="APML Hub" style="width: 24px; height: 24px; display: block; object-fit: contain;">
                 </div>
@@ -383,43 +383,43 @@ window.sendPortalNotification = function () {};
 
             <!-- Navigation Menu Dropdown -->
             <nav class="nav-menu" id="navMenu">
-              <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
+              <a href="/index.html" class="nav-link ${isHomePage ? 'active' : ''}">
                 <span class="material-symbols-outlined">home</span>
                 <span>Home</span>
               </a>
-              <a href="modules/editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
+              <a href="/modules/editor.html" class="nav-link ${currentPage === 'editor.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">edit_note</span>
                 <span>Quotation Editor</span>
               </a>
-              <a href="modules/gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
+              <a href="/modules/gallery.html" class="nav-link ${currentPage === 'gallery.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">photo_library</span>
                 <span>Gallery</span>
               </a>
-              <a href="modules/drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
+              <a href="/modules/drive.html" class="nav-link ${currentPage === 'drive.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">cloud</span>
                 <span>Cloud Drive</span>
               </a>
-              <a href="modules/directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
+              <a href="/modules/directory.html" class="nav-link ${currentPage === 'directory.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">location_city</span>
                 <span>Hub &amp; Branch Directory</span>
               </a>
-              <a href="modules/field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
+              <a href="/modules/field-officer.html" class="nav-link ${currentPage === 'field-officer.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">badge</span>
                 <span>Field Officer Directory WCRO</span>
               </a>
-              <a href="modules/APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
+              <a href="/modules/APML-Lite.html" class="nav-link ${currentPage === 'APML-Lite.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">grid_view</span>
                 <span>APML Lite</span>
               </a>
-              <a href="modules/car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
+              <a href="/modules/car-rate.html" class="nav-link ${currentPage === 'car-rate.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">directions_car</span>
                 <span>Car Rate</span>
               </a>
-              <a href="modules/local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
+              <a href="/modules/local-rate.html" class="nav-link ${currentPage === 'local-rate.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span>APML Local Rate</span>
               </a>
-              <a href="modules/system-health.html" class="nav-link ${currentPage === 'system-health.html' ? 'active' : ''}">
+              <a href="/modules/system-health.html" class="nav-link ${currentPage === 'system-health.html' ? 'active' : ''}">
                 <span class="material-symbols-outlined">monitor_heart</span>
                 <span>System Health</span>
               </a>
@@ -511,24 +511,24 @@ window.sendPortalNotification = function () {};
             <div class="footer-links-columns">
               <div class="footer-link-col">
                 <div class="footer-col-title">Quick Links</div>
-                <a href="index.html" class="footer-item-link">Home Portal</a>
-                <a href="modules/editor.html" class="footer-item-link">Quotation Editor</a>
-                <a href="modules/gallery.html" class="footer-item-link">Packing Gallery</a>
-                <a href="modules/drive.html" class="footer-item-link">Cloud Drive</a>
+                <a href="/index.html" class="footer-item-link">Home Portal</a>
+                <a href="/modules/editor.html" class="footer-item-link">Quotation Editor</a>
+                <a href="/modules/gallery.html" class="footer-item-link">Packing Gallery</a>
+                <a href="/modules/drive.html" class="footer-item-link">Cloud Drive</a>
               </div>
 
               <div class="footer-link-col">
                 <div class="footer-col-title">Directories</div>
-                <a href="modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
-                <a href="modules/field-officer.html" class="footer-item-link">Field Officer WCRO</a>
+                <a href="/modules/directory.html" class="footer-item-link">Hub &amp; Branch Directory</a>
+                <a href="/modules/field-officer.html" class="footer-item-link">Field Officer WCRO</a>
               </div>
 
               <div class="footer-link-col">
                 <div class="footer-col-title">Resources &amp; Legal</div>
-                <a href="policy/terms.html" class="footer-item-link">Terms &amp; Conditions</a>
-                <a href="policy/privacy.html" class="footer-item-link">Privacy Policy</a>
-                <a href="policy/cookies.html" class="footer-item-link">Cookies &amp; Storage Policy</a>
-                <a href="policy/bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
+                <a href="/policy/terms.html" class="footer-item-link">Terms &amp; Conditions</a>
+                <a href="/policy/privacy.html" class="footer-item-link">Privacy Policy</a>
+                <a href="/policy/cookies.html" class="footer-item-link">Cookies &amp; Storage Policy</a>
+                <a href="/policy/bug-report.html" class="footer-item-link" style="color: var(--primary, #b91c1c);">Report a Bug</a>
               </div>
             </div>
 
@@ -541,13 +541,13 @@ window.sendPortalNotification = function () {};
             </div>
             
             <div style="display: flex; align-items: center; gap: 16px;">
-              <a href="about.html" class="footer-about-pill">
+              <a href="/about.html" class="footer-about-pill">
                 <img src="https://github.com/kundarwork-debug.png" alt="Profile" onerror="this.src='logo.svg'">
                 <span>About Developer</span>
               </a>
 
               <!-- CUSTOM UIVERSE BUTTON LINKING TO 404 -->
-              <button type="button" class="footer-fun-btn" onclick="window.location.href='404.html'" title="Play!">
+              <button type="button" class="footer-fun-btn" onclick="window.location.href='/404.html'" title="Play!">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 36 36"
@@ -1446,7 +1446,7 @@ window.sendPortalNotification = function () {};
   // 3. SERVICE WORKER REGISTRATION (PWA Support)
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch((err) => {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
         console.warn('ServiceWorker registration note:', err);
       });
     });
@@ -1488,7 +1488,7 @@ window.sendPortalNotification = function () {};
   if (window.__apmlVisitorTrackerRequested) return;
   window.__apmlVisitorTrackerRequested = true;
   var script = document.createElement('script');
-  script.src = './core/visitor-tracker.js?v=10';
+  script.src = '/core/visitor-tracker.js?v=10';
   script.async = true;
   document.head.appendChild(script);
 })();
