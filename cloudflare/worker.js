@@ -13,6 +13,8 @@ const CONFIG = {
 
   FIREBASE_DB_URL: 'https://apml-portal-default-rtdb.firebaseio.com',
 
+  FIREBASE_API_KEY: 'AIzaSyDgJ6uRCABWxAHOU1bIY4VuA-nQ0zM3aF8',
+
   SUPABASE_URL: 'https://jethunntsnnjlwnwsjrh.supabase.co',
 
   SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpldGh1bm50c25uamx3bndzanJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3MTM1MTMsImV4cCI6MjEwMzI4OTUxM30.LscEvNwTob22YmaCqeYQn58eYWJremA5lm6LvQboJN0',
@@ -193,6 +195,29 @@ async function getAdminEmail(request) {
 
   return CONFIG.ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(email) ? email : null;
 
+}
+
+async function getFirebaseAdminEmail(request) {
+  const token = (request.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim();
+  if (!token) return null;
+
+  try {
+    const response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + CONFIG.FIREBASE_API_KEY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idToken: token })
+    });
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    const user = Array.isArray(data.users) ? data.users[0] : null;
+    if (!user || user.emailVerified !== true) return null;
+
+    const email = String(user.email || '').trim().toLowerCase();
+    return CONFIG.ADMIN_EMAILS.map((item) => item.toLowerCase()).includes(email) ? email : null;
+  } catch {
+    return null;
+  }
 }
 
 async function trimQuotations(env) {
@@ -1843,7 +1868,7 @@ async function sendHourlyAnalyticsSummary(env) {
 
 
 async function handleNovaAnalytics(request) {
-  const admin = await getAdminEmail(request);
+  const admin = await getFirebaseAdminEmail(request);
   if (!admin) return json({ ok: false, error: 'Approved APML admin login required.' }, 401);
 
   const url = new URL(request.url);
