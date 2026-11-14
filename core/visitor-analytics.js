@@ -214,7 +214,7 @@
   };
   function init(){
     if(typeof firebase==="undefined"||!firebase.apps.length){$("viUpdated").textContent="Firebase is not initialized";return;}
-    const sessionsRef = firebase.database().ref("analytics/visitor_sessions").limitToLast(500);
+    const sessionsRef = firebase.database().ref("analytics/visitor_sessions");
     const handleSession = snap => {
       const session = snap.val();
       if (session && session.startedAt) sessionsById.set(snap.key, session);
