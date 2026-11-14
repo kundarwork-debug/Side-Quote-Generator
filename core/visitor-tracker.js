@@ -21,12 +21,27 @@
       return value;
     } catch (_) { return randomId(); }
   };
+  const SESSION_KEY = "apml-visitor-session";
+  const SESSION_ACTIVITY_KEY = "apml-visitor-last-activity";
+  const SESSION_TIMEOUT = 30 * 60 * 1000;
   const getSessionId = () => {
+    const now = Date.now();
     try {
-      let value = sessionStorage.getItem("apml-visitor-session");
-      if (!value) { value = randomId(); sessionStorage.setItem("apml-visitor-session", value); }
+      const previousId = localStorage.getItem(SESSION_KEY);
+      const lastActivity = Number(localStorage.getItem(SESSION_ACTIVITY_KEY)) || 0;
+      if (previousId && lastActivity && now - lastActivity < SESSION_TIMEOUT) return previousId;
+      const value = randomId();
+      localStorage.setItem(SESSION_KEY, value);
+      localStorage.setItem(SESSION_ACTIVITY_KEY, String(now));
       return value;
     } catch (_) { return randomId(); }
+  };
+  const readLastActivity = () => {
+    try { return Number(localStorage.getItem(SESSION_ACTIVITY_KEY)) || 0; }
+    catch (_) { return 0; }
+  };
+  const markActivity = () => {
+    try { localStorage.setItem(SESSION_ACTIVITY_KEY, String(Date.now())); } catch (_) {}
   };
 
   let visitorId, sessionId, lastCountedAt = Date.now(), heartbeat = null;
@@ -57,12 +72,31 @@
     lastCountedAt = now;
     if (delta > 0 && trackingStarted) send("page_time", delta, true);
   }
+  function beginNewSession() {
+    sessionId = randomId();
+    try { localStorage.setItem(SESSION_KEY, sessionId); } catch (_) {}
+    markActivity();
+    lastCountedAt = Date.now();
+    send("start", 0, false).then(() => send("pageview", 0, false));
+  }
+  function handleVisitorActivity() {
+    if (!trackingStarted) return;
+    const now = Date.now();
+    const lastActivity = readLastActivity();
+    if (!sessionId || !lastActivity || now - lastActivity >= SESSION_TIMEOUT) {
+      accountPageTime();
+      beginNewSession();
+    } else {
+      markActivity();
+    }
+  }
   function startTracking() {
     if (trackingStarted) return;
     trackingStarted = true;
     window.dispatchEvent(new Event('apml-analytics-consent-granted'));
     visitorId = getId("apml-visitor-id");
     sessionId = getSessionId();
+    markActivity();
     send("start", 0, false).then(() => send("pageview", 0, false));
     const recordPerformance = () => {
       if (!trackingStarted) return;
@@ -88,10 +122,20 @@
     window.addEventListener("pagehide", accountPageTime, { passive: true });
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "hidden") accountPageTime();
-      else lastCountedAt = Date.now();
+      else {
+        lastCountedAt = Date.now();
+        handleVisitorActivity();
+      }
     });
     window.addEventListener("pageshow", event => {
-      if (event.persisted) { lastCountedAt = Date.now(); send("pageview", 0, false); }
+      if (event.persisted) {
+        lastCountedAt = Date.now();
+        handleVisitorActivity();
+        send("pageview", 0, false);
+      }
+    });
+    ["pointerdown", "keydown", "scroll", "touchstart"].forEach(type => {
+      window.addEventListener(type, handleVisitorActivity, { passive: true });
     });
   }
 
